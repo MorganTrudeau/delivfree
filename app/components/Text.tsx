@@ -1,0 +1,173 @@
+import i18n from "i18n-js";
+import React from "react";
+import {
+  StyleProp,
+  Text as RNText,
+  TextProps as RNTextProps,
+  TextStyle,
+} from "react-native";
+import { isRTL, translate, TxKeyPath } from "../i18n";
+import { colors, typography } from "../theme";
+
+type Sizes = keyof typeof $fontSizeStyles;
+type Weights = keyof typeof typography.primary;
+type Presets = keyof typeof $presets;
+
+export interface TextProps extends RNTextProps {
+  /**
+   * Text which is looked up via i18n.
+   */
+  tx?: TxKeyPath;
+  /**
+   * The text to display if not using `tx` or nested components.
+   */
+  text?: string;
+  /**
+   * Optional options to pass to i18n. Useful for interpolation
+   * as well as explicitly setting locale or translation fallbacks.
+   */
+  txOptions?: i18n.TranslateOptions;
+  /**
+   * An optional style override useful for padding & margin.
+   */
+  style?: StyleProp<TextStyle>;
+  /**
+   * One of the different types of text presets.
+   */
+  preset?: Presets;
+  /**
+   * Text weight modifier.
+   */
+  weight?: Weights;
+  /**
+   * Text size modifier.
+   */
+  size?: Sizes;
+  /**
+   * Children components.
+   */
+  children?: React.ReactNode;
+}
+
+/**
+ * For your text displaying needs.
+ * This component is a HOC over the built-in React Native one.
+ *
+ * - [Documentation and Examples](https://github.com/infinitered/ignite/blob/master/docs/Components-Text.md)
+ */
+export function Text(props: TextProps) {
+  const {
+    weight,
+    size,
+    tx,
+    txOptions,
+    text,
+    children,
+    style: $styleOverride,
+    ...rest
+  } = props;
+
+  const i18nText = tx && translate(tx, txOptions);
+  const content = i18nText || text || children;
+
+  const preset: Presets =
+    props.preset && $presets[props.preset] ? props.preset : "default";
+  const $styles = [
+    $rtlStyle,
+    $presets[preset],
+    weight && $fontWeightStyles[weight],
+    size && $fontSizeStyles[size],
+    $styleOverride,
+  ];
+
+  return (
+    <RNText allowFontScaling={preset !== "heading"} {...rest} style={$styles}>
+      {content}
+    </RNText>
+  );
+}
+
+const LARGE_SCREEN = false; // Dimensions.get("window").width > 700;
+
+const scaleSize = (size: number) => {
+  return LARGE_SCREEN ? size + 3 : size;
+};
+
+export const $fontSizeStyles = {
+  xxl: {
+    fontSize: scaleSize(36),
+    lineHeight: scaleSize(44),
+  } satisfies TextStyle,
+  xl: {
+    fontSize: scaleSize(24),
+    lineHeight: scaleSize(34),
+  } satisfies TextStyle,
+  lg: {
+    fontSize: scaleSize(20),
+    lineHeight: scaleSize(32),
+  } satisfies TextStyle,
+  md: {
+    fontSize: scaleSize(18),
+    lineHeight: scaleSize(26),
+  } satisfies TextStyle,
+  sm: {
+    fontSize: scaleSize(16),
+    lineHeight: scaleSize(24),
+  } satisfies TextStyle,
+  xs: {
+    fontSize: scaleSize(14),
+    lineHeight: scaleSize(21),
+  } satisfies TextStyle,
+  xxs: {
+    fontSize: scaleSize(12),
+    lineHeight: scaleSize(18),
+  } satisfies TextStyle,
+};
+
+const $fontWeightStyles = Object.entries(typography.primary).reduce(
+  (acc, [weight, fontFamily]) => {
+    return { ...acc, [weight]: { fontFamily } };
+  },
+  {}
+) as Record<Weights, TextStyle>;
+
+const $secondaryFontWeightStyles = Object.entries(typography.secondary).reduce(
+  (acc, [weight, fontFamily]) => {
+    return { ...acc, [weight]: { fontFamily } };
+  },
+  {}
+) as Record<Weights, TextStyle>;
+
+const $baseStyle: StyleProp<TextStyle> = [
+  $fontSizeStyles.sm,
+  $fontWeightStyles.normal,
+  { color: colors.text },
+];
+
+const $presets = {
+  default: $baseStyle,
+
+  bold: [$baseStyle, $fontWeightStyles.bold] as StyleProp<TextStyle>,
+
+  heading: [
+    $baseStyle,
+    $fontSizeStyles.xxl,
+    $secondaryFontWeightStyles.bold,
+  ] as StyleProp<TextStyle>,
+
+  subheading: [
+    $baseStyle,
+    $fontSizeStyles.lg,
+    $fontWeightStyles.medium,
+  ] as StyleProp<TextStyle>,
+
+  formLabel: [$baseStyle, $fontWeightStyles.medium] as StyleProp<TextStyle>,
+
+  formHelper: [
+    $baseStyle,
+    $fontSizeStyles.sm,
+    $fontWeightStyles.normal,
+  ] as StyleProp<TextStyle>,
+};
+
+const $rtlStyle: TextStyle = isRTL ? { writingDirection: "rtl" } : {};
