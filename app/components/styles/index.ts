@@ -1,12 +1,14 @@
 import { colors, spacing, typography } from "app/theme";
+import { borderRadius } from "app/theme/borderRadius";
 import { sizing } from "app/theme/sizing";
 import {
   Dimensions,
-  ImageStyle,
+  StyleProp,
   StyleSheet,
   TextStyle,
   ViewStyle,
 } from "react-native";
+import { ImageStyle } from "react-native-fast-image";
 import { Edge } from "react-native-safe-area-context";
 
 export const NO_TOP_BOTTOM_SAFE_AREA_EDGES: Edge[] = [
@@ -24,7 +26,11 @@ export const $containerPadding: ViewStyle = {
   paddingHorizontal: spacing.md,
   paddingVertical: spacing.md,
 };
-
+export const $screen: ViewStyle = {
+  paddingHorizontal: spacing.md,
+  paddingVertical: spacing.sm,
+  flex: 1,
+};
 export const $screenHeading: TextStyle = {
   marginBottom: spacing.xl,
   textAlign: "center",
@@ -168,3 +174,16 @@ export const $listItemButton: ViewStyle = {
   paddingVertical: spacing.xxs,
   minHeight: 0,
 };
+export const $image: ImageStyle = {
+  ...StyleSheet.absoluteFillObject,
+  borderRadius: borderRadius.md,
+};
+export const $imageContainer: StyleProp<ViewStyle> = [
+  $shadow,
+  {
+    borderRadius: borderRadius.md,
+    width: "100%",
+    aspectRatio: 2.8,
+    backgroundColor: colors.background,
+  },
+];

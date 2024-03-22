@@ -95,7 +95,7 @@ const scaleSize = (size: number) => {
 
 export const $fontSizeStyles = {
   xxl: {
-    fontSize: scaleSize(36),
+    fontSize: scaleSize(30),
     lineHeight: scaleSize(44),
   } satisfies TextStyle,
   xl: {

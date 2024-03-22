@@ -6,7 +6,7 @@ import { Icon } from "./Icon";
 import { sizing } from "app/theme/sizing";
 import { colors, spacing } from "app/theme";
 import { AuthModal } from "./AuthModal";
-import { ModalRef } from "smarticus";
+import { ModalRef } from "delivfree";
 
 export const CreateAccount = ({ style }: { style?: ViewStyle }) => {
   const authModal = useRef<ModalRef>(null);

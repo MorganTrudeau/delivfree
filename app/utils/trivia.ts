@@ -1,4 +1,4 @@
-import { DEFAULT_RATING, Ratings, TriviaCategory } from "smarticus";
+import { DEFAULT_RATING, Ratings, TriviaCategory } from "delivfree";
 
 export const getGameRating = (
   category: TriviaCategory | "random" | null | undefined,

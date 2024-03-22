@@ -1,4 +1,4 @@
-import { Ratings, TriviaCategory } from "smarticus";
+import { Ratings, TriviaCategory } from "delivfree";
 import firestore from "./firestoreMock";
 
 export const categories = [

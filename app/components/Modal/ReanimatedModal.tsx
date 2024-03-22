@@ -1,4 +1,4 @@
-import { ModalRef } from "smarticus";
+import { ModalRef } from "delivfree";
 import React, {
   forwardRef,
   useCallback,

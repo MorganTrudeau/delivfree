@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { ModalRef } from "smarticus";
+import { ModalRef } from "delivfree";
 import { SignUpForm } from "./Auth/SignUpForm";
 import { ViewStyle } from "react-native";
 import { spacing } from "app/theme";

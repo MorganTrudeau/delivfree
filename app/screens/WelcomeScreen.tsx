@@ -39,7 +39,6 @@ export const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
           }}
           resizeMode="contain"
         />
-        {/* <Text preset="heading">SMARTICUS</Text> */}
       </View>
 
       <View style={$bottomContainer}>

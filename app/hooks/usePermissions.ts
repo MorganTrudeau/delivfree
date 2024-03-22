@@ -23,6 +23,11 @@ export const ImageLibraryPermission = Platform.select({
       : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
 });
 
+export const LocationPermission = Platform.select({
+  ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+  default: PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+});
+
 const storePermissionDenied = async (permission: Permission) => {
   return AsyncStorage.setItem(permission, "TRUE");
 };
@@ -56,6 +61,10 @@ const handlePermissionResult = async (
 ): Promise<PermissionStatus> => {
   switch (status) {
     case RESULTS.UNAVAILABLE:
+      if (shouldAskIfPossible) {
+        console.log("Requesting");
+        return requestPermission(permission);
+      }
       console.log(
         "This feature is not available (on this device / in this context)"
       );
@@ -89,6 +98,8 @@ export const usePermissions = () => {
           android: "storage",
           default: "photo gallery",
         })} permission`;
+      case LocationPermission:
+        return "Missing location permission";
       default:
         return "Missing permission";
     }
@@ -97,12 +108,14 @@ export const usePermissions = () => {
   const getAlertMessage = (permission: Permission) => {
     switch (permission) {
       case CameraPermission:
-        return "Missing camera permission";
+        return "You can enable Delivfree camera permissions in your phone's settings";
       case ImageLibraryPermission:
-        return `You can enable Frenly ${Platform.select({
+        return `You can enable DelivFree ${Platform.select({
           android: "storage",
           default: "photo gallery",
         })} permissions in your phone's settings.`;
+      case LocationPermission:
+        return "You can enable DelivFree location permissions in your phone's settings";
       default:
         return "Missing permission";
     }
@@ -115,10 +128,17 @@ export const usePermissions = () => {
       case RESULTS.DENIED:
         return false;
       case RESULTS.UNAVAILABLE:
-        return Alert.alert(
-          "Feature unavailable",
-          "We could not complete your request as your device does not support this feature."
-        );
+        if (permission === LocationPermission) {
+          return Alert.alert(
+            "Location Services Unavailable",
+            "Ensure location services are enabled in your device settings."
+          );
+        } else {
+          return Alert.alert(
+            "Feature unavailable",
+            "We could not complete your request as your device does not support this feature."
+          );
+        }
       case RESULTS.GRANTED:
       case RESULTS.LIMITED:
         return true;
@@ -143,7 +163,7 @@ export const usePermissions = () => {
               } catch (error) {
                 Alert.alert(
                   "There was a problem",
-                  "We could not open your settings. Please navigate to your phone's setting to enable this permission for Frenly"
+                  "We could not open your settings. Please navigate to your phone's setting to enable this permission for DelivFree"
                 );
                 console.log("Failed to open settings", error);
               }

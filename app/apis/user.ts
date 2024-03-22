@@ -2,11 +2,10 @@ import firestore, {
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
 import { getListenersManager } from "app/utils/ListenersManager";
-import { User } from "smarticus";
+import { User } from "delivfree";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "app/redux/store";
 import functions from "@react-native-firebase/functions";
-import { getAvatarColor } from "app/utils/user";
 
 export const blockUser = (activeUserId: string, userId: string) => {
   return firestore()
@@ -35,12 +34,7 @@ export const listenToUser = (
     snapshot: FirebaseFirestoreTypes.DocumentSnapshot
   ) => {
     const user = snapshot.data() as User | null;
-
-    if (user && user.avatar && !user.color) {
-      const color = await getAvatarColor(user.avatar);
-      await updateUser(user.id, { color });
-    }
-
+    console.log("USER", user);
     onData(user);
   };
   getListenersManager().addListener("user", query, onSuccess);

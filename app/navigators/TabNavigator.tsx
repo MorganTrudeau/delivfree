@@ -8,7 +8,7 @@ import { TextStyle, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "../components";
 import { translate } from "../i18n";
-import { HomeScreen, LeaderboardScreen, ProfileScreen } from "../screens";
+import { HomeScreen } from "../screens";
 import { colors, spacing, typography } from "../theme";
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator";
 import { sizing } from "app/theme/sizing";
@@ -70,21 +70,6 @@ export function TabNavigator() {
         }}
       />
 
-      <Tab.Screen
-        name="Leaderboard"
-        component={LeaderboardScreen}
-        options={{
-          tabBarLabel: translate("common.leaderboard"),
-          tabBarIcon: ({ focused }) => (
-            <Icon
-              icon="podium"
-              color={focused ? colors.tint : undefined}
-              size={TAB_ICON_SIZE}
-            />
-          ),
-        }}
-      />
-
       {/* <Tab.Screen
         name="Vetting"
         component={RateQuestionsScreen}
@@ -100,22 +85,6 @@ export function TabNavigator() {
           ),
         }}
       /> */}
-
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarAccessibilityLabel: translate("common.profile"),
-          tabBarLabel: translate("common.profile"),
-          tabBarIcon: ({ focused }) => (
-            <Icon
-              icon="account"
-              color={focused ? colors.tint : undefined}
-              size={TAB_ICON_SIZE}
-            />
-          ),
-        }}
-      />
     </Tab.Navigator>
   );
 }

@@ -45,7 +45,7 @@ export const TextInput = forwardRef(TextInputWithoutRef);
 
 const $input: TextStyle = {
   paddingVertical: spacing.xs,
-  paddingHorizontal: spacing.xxs,
+  // paddingHorizontal: spacing.xxs,
   borderBottomWidth: 2,
   color: colors.text,
   fontSize: 16,

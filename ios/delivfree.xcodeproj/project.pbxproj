@@ -586,7 +586,7 @@
 					"$(inherited)",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnify.delivfree;
+				PRODUCT_BUNDLE_IDENTIFIER = com.delivfree.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/delivfree.app/delivfree";
@@ -613,7 +613,7 @@
 					"$(inherited)",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnify.delivfree;
+				PRODUCT_BUNDLE_IDENTIFIER = com.delivfree.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/delivfree.app/delivfree";
@@ -632,7 +632,7 @@
 				DEVELOPMENT_TEAM = 76CNXZG585;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = delivfree/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Smarticus;
+				INFOPLIST_KEY_CFBundleDisplayName = DelivFree;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.delivfree-games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -645,7 +645,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnify.delivfree;
+				PRODUCT_BUNDLE_IDENTIFIER = com.delivfree.app;
 				PRODUCT_NAME = delivfree;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -668,7 +668,7 @@
 				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 76CNXZG585;
 				INFOPLIST_FILE = delivfree/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Smarticus;
+				INFOPLIST_KEY_CFBundleDisplayName = DelivFree;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.delivfree-games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -681,7 +681,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnify.delivfree;
+				PRODUCT_BUNDLE_IDENTIFIER = com.delivfree.app;
 				PRODUCT_NAME = delivfree;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

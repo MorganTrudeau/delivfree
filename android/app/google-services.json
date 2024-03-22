@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "305022913578",
-    "project_id": "trivia-b4527",
-    "storage_bucket": "trivia-b4527.appspot.com"
+    "project_number": "1012298016071",
+    "project_id": "delivfree-dev",
+    "storage_bucket": "delivfree-dev.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:305022913578:android:195b070f2f2d97b30ac753",
+        "mobilesdk_app_id": "1:1012298016071:android:2d2e5654ef34124823d862",
         "android_client_info": {
-          "package_name": "com.magnify.trivia"
+          "package_name": "com.delivfree.app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCqKfwiZHP8hCDlhwMTBL-M7UWH1uQlF7g"
+          "current_key": "AIzaSyBBt_9wBXGaMne8RGettMKSJe9Ec6XecTI"
         }
       ],
       "services": {

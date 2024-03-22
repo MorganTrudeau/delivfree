@@ -10,7 +10,7 @@ import {
   FCMMessage,
   AppMessage,
 } from "../../utils/notifications";
-import { AppMessageTypes } from "smarticus";
+import { AppMessageTypes } from "delivfree";
 import { requestNotifications } from "react-native-permissions";
 import firestore from "@react-native-firebase/firestore";
 import { getDeviceId } from "react-native-device-info";

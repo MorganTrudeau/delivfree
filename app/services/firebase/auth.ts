@@ -1,11 +1,13 @@
 import auth from "@react-native-firebase/auth";
 import { useEffect, useRef } from "react";
 import { setAnonymous, setAuthToken } from "app/redux/reducers/auth";
+import { setUser } from "app/redux/reducers/user";
 import { useAppDispatch } from "app/redux/store";
 import { getListenersManager } from "app/utils/ListenersManager";
 import crashlytics from "@react-native-firebase/crashlytics";
 import { resetAppState } from "app/redux/resetAppState";
 import { logAnalytics } from "./analytics";
+import { listenToUser } from "app/apis/user";
 
 export const FirebaseAuth = () => {
   const authToken = useRef<string>();
@@ -29,6 +31,7 @@ export const FirebaseAuth = () => {
           loginCrashlytics(user.uid);
           dispatch(setAuthToken(user.uid));
           dispatch(setAnonymous(user.isAnonymous));
+          listenToUser(user.uid, (user) => dispatch(setUser(user)));
           logAnalytics("signin");
         }
       } else {

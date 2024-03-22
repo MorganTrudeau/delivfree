@@ -22,7 +22,7 @@ import { BottomSheet, BottomSheetRef } from "./BottomSheet";
 import { Text } from "../Text";
 import { colors, spacing } from "app/theme";
 import { $borderBottom, $row, HORIZONTAL_SAFE_AREA_EDGES } from "../styles";
-import { BottomSheetModalRef } from "smarticus";
+import { BottomSheetModalRef } from "delivfree";
 import { SafeAreaView } from "../SafeAreaView";
 
 export const OPTION_HEIGHT = 50;

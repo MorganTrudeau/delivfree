@@ -8,7 +8,7 @@ import {
   ViewStyle,
 } from "react-native";
 import MaterialIcon from "@expo/vector-icons/MaterialCommunityIcons";
-import { IconName } from "smarticus";
+import { IconName } from "delivfree";
 import { colors } from "app/theme";
 import { sizing } from "app/theme/sizing";
 

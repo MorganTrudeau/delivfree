@@ -3,7 +3,7 @@ import { Platform, TextStyle, View, ViewStyle } from "react-native";
 import { hexColorFromName } from "../utils/general";
 import FastImage, { ImageStyle } from "react-native-fast-image";
 import { sizing } from "app/theme/sizing";
-import { User } from "smarticus";
+import { User } from "delivfree";
 import { Text } from "./Text";
 import { colors, typography } from "app/theme";
 import { $avatar } from "./styles";

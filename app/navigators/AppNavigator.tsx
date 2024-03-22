@@ -1,7 +1,4 @@
-import {
-  NavigationContainer,
-  NavigationProp as NativeNavigationProp,
-} from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
@@ -11,8 +8,7 @@ import * as Screens from "app/screens";
 import Config from "../config";
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities";
 import { colors, typography } from "app/theme";
-import { TabNavigator, TabParamList } from "./TabNavigator";
-import { GameType, TriviaCategory, TriviaResults } from "smarticus";
+import { TabParamList, TabScreenProps } from "./TabNavigator";
 import { FirebaseMessaging } from "app/services/firebase/messaging";
 import { useAppSelector } from "app/redux/store";
 import RNBootSplash from "react-native-bootsplash";
@@ -20,46 +16,24 @@ import { $fontSizeStyles } from "app/components";
 import { rateApp, shouldAskRating } from "app/utils/rate";
 import { Platform } from "react-native";
 import { StackAnimationTypes } from "react-native-screens";
-import { useAdMob } from "app/hooks";
+import { Cuisine } from "functions/src/types";
 
 export type AppStackParamList = {
   Welcome: undefined;
   Login: undefined;
   SignUp: undefined;
   Tabs: undefined;
-  Game: {
-    category?: TriviaCategory | "random";
-    gameType: GameType;
-    dailyTriviaDate?: string;
-  };
-  Challenge: {
-    challengeId: string;
-  };
-  Category: { gameType: GameType };
-  Versus: undefined;
-  Results: {
-    category?: TriviaCategory | "random";
-    gameType: GameType;
-    results: TriviaResults[];
-    challengeUser?: string;
-  };
-  StartChallenge: { userId?: string; challengeId?: string };
-  AcceptChallenge: { challengeId: string };
   EditProfile: undefined;
-  DailyTrivia: undefined;
-  QuestionApproval: undefined;
   Settings: undefined;
   About: undefined;
   DeleteAccount: undefined;
-  BlockedUsers: undefined;
-  IncomingChallenges: undefined;
-  ActiveChallenges: undefined;
-  OutgoingChallenges: undefined;
+  Home: undefined;
+  Restaurants: { cuisine: Cuisine };
 };
 
-export type NavigationProp = NativeNavigationProp<
-  AppStackParamList & TabParamList
->;
+export type NavigationProp =
+  | AppStackScreenProps<keyof AppStackParamList>["navigation"]
+  | TabScreenProps<keyof TabParamList>["navigation"];
 
 /**
  * This is a list of all the route names that will exit the app if the back button
@@ -104,13 +78,21 @@ const AppStack = () => {
         animationDuration: 100,
       }}
       initialRouteName={
-        authToken ? (userLoaded ? "Tabs" : "EditProfile") : "Welcome"
+        authToken ? (userLoaded ? "Home" : "EditProfile") : "Welcome"
       }
     >
       {!!authToken && userLoaded ? (
         user || deleteAccountLoading ? (
           <>
-            <Stack.Screen name="Tabs" component={TabNavigator} />
+            <Stack.Screen name="Home" component={Screens.HomeScreen} />
+            <Stack.Screen
+              name="Restaurants"
+              component={Screens.RestaurantsScreen}
+              options={{
+                headerShown: true,
+                headerTransparent: false,
+              }}
+            />
             <Stack.Screen
               name="Settings"
               component={Screens.SettingsScreen}
@@ -143,6 +125,11 @@ const AppStack = () => {
             <Stack.Screen
               name="EditProfile"
               component={Screens.EditUserScreen}
+              options={{
+                headerShown: true,
+                headerRight: () => null,
+                headerTransparent: false,
+              }}
             />
           </>
         )

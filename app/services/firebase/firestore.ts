@@ -2,7 +2,7 @@ import { useAppDispatch } from "app/redux/store";
 import firestore from "@react-native-firebase/firestore";
 import { setConfig } from "app/redux/reducers/appConfig";
 import { useEffect } from "react";
-import { AppConfig } from "smarticus";
+import { AppConfig } from "delivfree";
 
 export const DataLoading = () => {
   const dispatch = useAppDispatch();

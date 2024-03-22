@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { User } from "smarticus";
+import { User } from "delivfree";
 import { resetAppState } from "../resetAppState";
 import createTransform from "redux-persist/es/createTransform";
 

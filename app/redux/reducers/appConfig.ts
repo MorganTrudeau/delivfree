@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { AppConfig } from "smarticus";
+import { AppConfig } from "delivfree";
 
 const defaultConfig: AppConfig = {
   skipAdCoins: 10,

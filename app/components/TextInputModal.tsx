@@ -9,7 +9,7 @@ import React, {
 import { Keyboard, View, ViewStyle, ActivityIndicator } from "react-native";
 import { colors, spacing } from "app/theme";
 import { Text } from "./Text";
-import { MAX_USERNAME_LENGTH, ModalRef } from "smarticus";
+import { MAX_USERNAME_LENGTH, ModalRef } from "delivfree";
 import ConfirmCancelButtons from "./ConfirmCancelButtons";
 import { useEditUsername } from "app/hooks";
 import { TextField } from "./TextField";

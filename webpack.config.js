@@ -6,7 +6,7 @@ const { presets, plugins, env } = require(`${appDirectory}/babel.config.js`);
 
 const compileNodeModules = [
   // Add every react-native package that needs compiling
-  "smarticus",
+  "@types/delivfree",
 ].map((moduleName) => path.resolve(appDirectory, `node_modules/${moduleName}`));
 
 const babelLoaderConfiguration = {
@@ -28,7 +28,7 @@ const babelLoaderConfiguration = {
       ],
       plugins: [
         "lodash",
-        '@babel/plugin-transform-runtime',
+        "@babel/plugin-transform-runtime",
         "react-native-web",
         ["@babel/plugin-proposal-private-methods", { loose: true }],
         ...plugins,
@@ -48,15 +48,15 @@ const svgLoaderConfiguration = {
   ],
 };
 
-const imageLoaderConfiguration = {
-  test: /\.(png|jpe?g|gif)$/,
-  options: {
-    name: "static/media/[name].[hash:8].[ext]",
-    esModule: false,
-    scalings: { "@2x": 2, "@3x": 3 },
-  },
-  loader: "react-native-web-image-loader",
-};
+// const imageLoaderConfiguration = {
+//   test: /\.(png|jpe?g|gif)$/,
+//   options: {
+//     name: "static/media/[name].[hash:8].[ext]",
+//     esModule: false,
+//     scalings: { "@2x": 2, "@3x": 3 },
+//   },
+//   loader: "react-native-web-image-loader",
+// };
 
 const alias = {
   "@react-native-firebase/auth": path.join(

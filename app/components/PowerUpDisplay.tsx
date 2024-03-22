@@ -2,7 +2,7 @@ import React from "react";
 import { colors, spacing } from "app/theme";
 import { Pressable, TextStyle, View, ViewStyle } from "react-native";
 import { $row } from "./styles";
-import { PowerUp, PowerUps } from "smarticus";
+import { PowerUp, PowerUps } from "delivfree";
 import { getPowerUpInfo } from "app/utils/powerUps";
 import { AnimatedNumber } from "./AnimatedNumber";
 

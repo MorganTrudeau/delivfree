@@ -4,7 +4,7 @@ import { useAppSelector } from "app/redux/store";
 import { useToast } from "app/hooks";
 import { translate } from "app/i18n";
 import firestore from "@react-native-firebase/firestore";
-import { ModalRef, User, Trivia } from "smarticus";
+import { ModalRef, User, Trivia } from "delivfree";
 
 type Props = {
   trivia: Trivia;

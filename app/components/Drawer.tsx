@@ -50,7 +50,11 @@ export const Drawer = ({
         renderNavigationView={() => (
           <DrawerContent
             navigation={navigation}
-            onItemPress={() => drawerRef.current?.closeDrawer()}
+            onItemPress={() => {
+              setTimeout(() => {
+                drawerRef.current?.closeDrawer();
+              }, 3000);
+            }}
           />
         )}
         {...rest}

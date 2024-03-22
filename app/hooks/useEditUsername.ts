@@ -2,7 +2,7 @@ import { useToast } from "./useToast";
 import { useEffect, useRef, useState } from "react";
 import { useAlert } from "./useAlert";
 import firestore from "@react-native-firebase/firestore";
-import { MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH, User } from "smarticus";
+import { MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH, User } from "delivfree";
 import { useThrottle } from "./useThrottle";
 
 export const isValidUsername = (username: string) => {

@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.5</string>
+	<string>1.0.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -25,12 +25,12 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>smarticus</string>
+				<string>delivfree</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>30</string>
+	<string>1</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-6154128464262377~3879925599</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -39,7 +39,7 @@
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>https://www.smarticus.app</key>
+			<key>https://www.delivfree.com</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
@@ -53,14 +53,20 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is required to find restaurants in your area.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Location is required to find restaurants in your area.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Location is required to find restaurants in your area.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow Smarticus access to your camera to upload photos.</string>
+	<string>Allow Delivfree access to your camera to upload photos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Allow Smarticus to save photos to your device.</string>
+	<string>Allow Delivfree to save photos to your device.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow Smarticus access to your image library to upload photos</string>
+	<string>Allow Delivfree access to your image library to upload photos</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

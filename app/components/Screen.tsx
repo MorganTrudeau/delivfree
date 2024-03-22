@@ -2,10 +2,8 @@ import { useScrollToTop } from "@react-navigation/native";
 import { StatusBar, StatusBarProps } from "expo-status-bar";
 import React, { useRef, useState } from "react";
 import {
-  KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   LayoutChangeEvent,
-  Platform,
   ScrollView,
   ScrollViewProps,
   StyleProp,
@@ -93,8 +91,6 @@ export type ScreenProps =
   | ScrollScreenProps
   | FixedScreenProps
   | AutoScreenProps;
-
-const isIos = Platform.OS === "ios";
 
 function isNonScrolling(preset?: ScreenProps["preset"]) {
   return !preset || preset === "fixed";
@@ -213,8 +209,6 @@ function ScreenWithScrolling(props: ScreenProps) {
 export function Screen(props: ScreenProps) {
   const {
     backgroundColor = colors.background,
-    KeyboardAvoidingViewProps,
-    keyboardOffset = 0,
     safeAreaEdges,
     StatusBarProps,
     statusBarStyle = "dark",
@@ -240,36 +234,21 @@ export function Screen(props: ScreenProps) {
         />
       )}
 
-      <KeyboardAvoidingView
-        behavior={isIos ? "padding" : undefined}
-        keyboardVerticalOffset={keyboardOffset}
-        {...KeyboardAvoidingViewProps}
-        style={[$keyboardAvoidingViewStyle, KeyboardAvoidingViewProps?.style]}
-      >
-        {isNonScrolling(props.preset) ? (
-          <ScreenWithoutScrolling {...props} />
-        ) : (
-          <ScreenWithScrolling {...props} />
-        )}
-      </KeyboardAvoidingView>
+      {isNonScrolling(props.preset) ? (
+        <ScreenWithoutScrolling {...props} />
+      ) : (
+        <ScreenWithScrolling {...props} />
+      )}
     </View>
   );
 }
 
 const $containerStyle: ViewStyle = {
   flex: 1,
-  height: "100%",
-  width: "100%",
-};
-
-const $keyboardAvoidingViewStyle: ViewStyle = {
-  flex: 1,
 };
 
 const $outerStyle: ViewStyle = {
   flex: 1,
-  height: "100%",
-  width: "100%",
 };
 
 const $innerStyle: ViewStyle = {

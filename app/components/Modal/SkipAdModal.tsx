@@ -1,5 +1,5 @@
 import React, { forwardRef, useContext, useRef } from "react";
-import { ModalRef } from "smarticus";
+import { ModalRef } from "delivfree";
 import { TextStyle, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
 import { Button } from "../Button";

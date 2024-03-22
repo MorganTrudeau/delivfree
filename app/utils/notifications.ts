@@ -1,7 +1,7 @@
 import { generateUid } from "./general";
 import { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { ReceivedNotification } from "react-native-push-notification";
-import { AppMessageTypes, TriviaCategory } from "smarticus";
+import { AppMessageTypes, TriviaCategory } from "delivfree";
 
 export const formatFCMMessage = (fcmMessage: FCMMessage): AppMessage => {
   const messageId = fcmMessage.messageId || generateUid();

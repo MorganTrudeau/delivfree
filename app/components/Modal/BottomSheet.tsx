@@ -1,4 +1,10 @@
-import React, { ReactNode, Ref, forwardRef, useCallback } from "react";
+import React, {
+  ReactNode,
+  Ref,
+  forwardRef,
+  useCallback,
+  useState,
+} from "react";
 import { Portal } from "react-native-portalize";
 import GHMBottomSheet, {
   BottomSheetBackdrop,
@@ -13,7 +19,6 @@ const snapPoints = ["92%"];
 
 type Props = Partial<Omit<BottomSheetProps, "children">> & {
   children: ReactNode | ReactNode[];
-  hideContentOnClose?: boolean;
 };
 
 export type BottomSheetRef = GHMBottomSheet;
@@ -27,7 +32,7 @@ const BottomSheetWithoutRef = (
       <BottomSheetBackdrop
         {...props}
         appearsOnIndex={0}
-        pressBehavior={"close"}
+        pressBehavior={!rest.enablePanDownToClose ? "none" : "close"}
         enableTouchThrough={false}
         disappearsOnIndex={-1}
         opacity={0.3}

@@ -3,7 +3,7 @@ import { TextStyle, View, ViewStyle } from "react-native";
 import ColorPicker from "../ColorPicker";
 import { spacing } from "app/theme";
 import { Text } from "../Text";
-import { ModalRef } from "smarticus";
+import { ModalRef } from "delivfree";
 import { ReanimatedModal } from "./ReanimatedModal";
 
 type Props = {

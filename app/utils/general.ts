@@ -39,7 +39,9 @@ export const errorHasMessage = (
   return !!error && typeof error === "object" && "message" in error;
 };
 
-export const errorHasCode = (error: unknown): error is { code: string } => {
+export const errorHasCode = (
+  error: unknown
+): error is { code: string | number } => {
   return !!error && typeof error === "object" && "code" in error;
 };
 

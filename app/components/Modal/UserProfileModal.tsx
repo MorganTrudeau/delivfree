@@ -19,7 +19,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { Icon, IconTypes } from "../Icon";
-import { Badge, Ratings, User } from "smarticus";
+import {  User } from "delivfree";
 import { useToast } from "app/hooks";
 import { RootState, useAppDispatch, useAppSelector } from "app/redux/store";
 import { sizing } from "app/theme/sizing";

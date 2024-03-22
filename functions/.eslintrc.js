@@ -14,26 +14,19 @@ module.exports = {
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    // project: ["tsconfig.json", "tsconfig.dev.json"],
-    tsconfigRootDir: __dirname,
+    project: ["tsconfig.json", "tsconfig.dev.json"],
     sourceType: "module",
   },
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
-    "node_modules",
   ],
-  plugins: ["@typescript-eslint", "import"],
+  plugins: [
+    "@typescript-eslint",
+    "import",
+  ],
   rules: {
+    "quotes": ["error", "double"],
     "import/no-unresolved": 0,
-    "object-curly-spacing": 0,
-    indent: 0,
-    "max-len": 0,
-    "quote-props": 0,
-    "operator-linebreak": 0,
-    "@typescript-eslint/ban-ts-comment": 0,
-    "@typescript-eslint/no-explicit-any": 1,
-    semi: 0,
-    "comma-dangle": 0,
-    quotes: 0,
+    "indent": ["error", 2],
   },
 };

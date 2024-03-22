@@ -1,7 +1,7 @@
 import React from "react";
 import { $row } from "./styles";
 import { TextStyle, View, ViewStyle } from "react-native";
-import { BadgeId, Size, User } from "smarticus";
+import { BadgeId, Size, User } from "delivfree";
 import { BadgeIcon } from "./Badges/BadgeIcon";
 import { Text, TextProps } from "./Text";
 import { useAppSelector } from "app/redux/store";

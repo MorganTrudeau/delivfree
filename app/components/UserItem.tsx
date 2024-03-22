@@ -1,4 +1,4 @@
-import { BadgeId, User } from "smarticus";
+import { BadgeId, User } from "delivfree";
 import React from "react";
 import { $row } from "./styles";
 import { Avatar } from "./Avatar";

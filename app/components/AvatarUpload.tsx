@@ -9,7 +9,7 @@ import {
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { hexColorFromName } from "../utils/general";
 import { useAlert, useCropImage, useUploadImage } from "../hooks";
-import { ModalRef, User } from "smarticus";
+import { ModalRef, User } from "delivfree";
 import { colors, spacing } from "app/theme";
 import { Icon } from "./Icon";
 import { $shadow } from "./styles";

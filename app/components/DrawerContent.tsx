@@ -5,7 +5,6 @@ import { isRTL } from "app/i18n";
 import { colors, spacing } from "app/theme";
 import { Text } from "./Text";
 import { AppStackParamList, NavigationProp } from "app/navigators";
-import { GameTypes } from "smarticus/enums";
 import { rateApp } from "app/utils/rate";
 import { Icon } from "./Icon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,20 +12,14 @@ import { useHeaderHeight } from "app/hooks";
 
 const Items = [
   {
-    text: "Ranked Game",
-    route: "Category",
-    params: { gameType: GameTypes.RANKED },
+    text: "Sign up as a Vendor",
   },
   {
-    text: "Training Game",
-    route: "Category",
-    params: { gameType: GameTypes.CASUAL },
+    text: "Sign up as a Driver",
   },
-  { text: "Versus", route: "Versus", params: {} },
   {
     text: "Rate App",
   },
-  { text: "Blocked Users", route: "BlockedUsers" },
   { text: "Settings", route: "Settings" },
 ] as const;
 
@@ -59,7 +52,7 @@ export const DrawerContent = ({
       ListHeaderComponent={
         <View style={[$logoContainer, { height: headerHeight }]}>
           <Text preset="heading" size={"xl"}>
-            SMARTICUS
+            DELIVFREE
           </Text>
         </View>
       }

@@ -7,3 +7,4 @@ export * from "./EditUserScreen";
 export * from "./SettingsScreen";
 export * from "./AboutScreen";
 export * from "./DeleteAccountScreen";
+export * from "./RestaurantsScreen";
