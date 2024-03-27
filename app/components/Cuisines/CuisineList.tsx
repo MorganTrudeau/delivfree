@@ -9,26 +9,37 @@ import {
   FlatListProps,
 } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";
-import { $shadow } from "../styles";
+import { $image, $imageContainer, $shadow } from "../styles";
 import { borderRadius } from "app/theme/borderRadius";
 import { colors, spacing } from "app/theme";
 import { Text } from "../Text";
 import { data } from "../../utils/cuisines";
-import { Cuisine } from "functions/src/types";
+import { Cuisine, Restaurant, RestaurantLocation } from "functions/src/types";
+import RestaurantListItem from "../RestaurantListItem";
 
-interface Props extends Partial<FlatListProps<Data>> {
-  onPress: (cuisine: Cuisine) => void;
+interface Props extends Partial<FlatListProps<Data | RestaurantLocation>> {
+  onCuisinePress: (cuisine: Cuisine) => void;
+  onRestaurantPress: (restaurant: RestaurantLocation) => void;
+  restaurants: RestaurantLocation[];
+  showRestaurants: boolean;
 }
 
-const CuisineList = ({ onPress, contentContainerStyle, ...rest }: Props) => {
+const CuisineList = ({
+  onCuisinePress,
+  onRestaurantPress,
+  contentContainerStyle,
+  restaurants,
+  showRestaurants,
+  ...rest
+}: Props) => {
   const _contentContainerStyle = useMemo(
     () => [$content, contentContainerStyle],
     [contentContainerStyle]
   );
-  const renderItem = useCallback(
-    ({ item }: { item: (typeof data)[number] }) => {
+  const renderCuisine = useCallback(
+    ({ item }: { item: Data }) => {
       return (
-        <Pressable onPress={() => onPress(item.cuisine)}>
+        <Pressable onPress={() => onCuisinePress(item.cuisine)}>
           <View style={$imageContainer}>
             <FastImage source={item.image} style={$image} />
           </View>
@@ -38,13 +49,22 @@ const CuisineList = ({ onPress, contentContainerStyle, ...rest }: Props) => {
         </Pressable>
       );
     },
-    [onPress]
+    [onCuisinePress]
+  );
+  const renderRestaurant = useCallback(
+    ({ item }: { item: RestaurantLocation }) => {
+      return (
+        <RestaurantListItem restaurant={item} onPress={onRestaurantPress} />
+      );
+    },
+    [onRestaurantPress]
   );
   const renderSeparator = useCallback(() => <View style={$separator} />, []);
   return (
     <FlatList
-      data={data}
-      renderItem={renderItem}
+      data={showRestaurants ? restaurants : data}
+      // @ts-ignore
+      renderItem={showRestaurants ? renderRestaurant : renderCuisine}
       style={$list}
       contentContainerStyle={_contentContainerStyle}
       ItemSeparatorComponent={renderSeparator}
@@ -57,21 +77,9 @@ const CuisineList = ({ onPress, contentContainerStyle, ...rest }: Props) => {
 
 export default CuisineList;
 
-const keyExtractor = (item: Data) => item.cuisine;
+const keyExtractor = (item: Data | RestaurantLocation) =>
+  "id" in item ? item.id : item.cuisine;
 
-const $imageContainer: StyleProp<ViewStyle> = [
-  $shadow,
-  {
-    borderRadius: borderRadius.md,
-    width: "100%",
-    aspectRatio: 2.8,
-    backgroundColor: colors.background,
-  },
-];
-const $image: ImageStyle = {
-  ...StyleSheet.absoluteFillObject,
-  borderRadius: borderRadius.md,
-};
 const $list: ViewStyle = { flex: 1 };
 const $content: ViewStyle = {
   flexGrow: 1,

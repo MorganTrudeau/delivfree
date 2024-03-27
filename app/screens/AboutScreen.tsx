@@ -7,7 +7,7 @@ import {
   $row,
   NO_TOP_BOTTOM_SAFE_AREA_EDGES,
 } from "app/components/styles";
-import { version, buildNumber } from "../../app.json";
+import appJson from "../../app.json";
 
 export const AboutScreen = () => {
   return (
@@ -18,12 +18,12 @@ export const AboutScreen = () => {
     >
       <ListItem
         text={"Version"}
-        RightComponent={<Text weight="semiBold">{version}</Text>}
+        RightComponent={<Text weight="semiBold">{appJson.version}</Text>}
         style={[$borderBottom, $row]}
       />
       <ListItem
         text={"Build Number"}
-        RightComponent={<Text weight="semiBold">{buildNumber}</Text>}
+        RightComponent={<Text weight="semiBold">{appJson.buildNumber}</Text>}
         style={[$borderBottom, $row]}
       />
     </Screen>

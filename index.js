@@ -1,4 +1,4 @@
-import Bugsnag from "@bugsnag/react-native";
+// import Bugsnag from "@bugsnag/react-native";
 import "react-native-gesture-handler";
 
 // This is the first file that ReactNative will run when it starts up.
@@ -8,13 +8,17 @@ import "react-native-gesture-handler";
 // import "./wdyr";
 
 import App from "./app/app.tsx";
-import React from "react";
 import { AppRegistry } from "react-native";
-Bugsnag.start();
+import { initFirebase } from "./app/web/modules/firebase/initWeb.web.js";
+import { registerRootComponent } from "expo";
+// Bugsnag.start();
 
-function IgniteApp() {
-  return <App />;
-}
-
-AppRegistry.registerComponent("delivfree", () => IgniteApp);
+// if (Platform.OS !== "web") {
+//   registerRootComponent(IgniteApp);
+// } else {
+//   initFirebase();
+// }
+registerRootComponent(App);
+initFirebase();
+// AppRegistry.registerComponent("delivfree", () => App);
 export default App;

@@ -268,7 +268,7 @@ const $inputWrapperStyle: ViewStyle = {
   flexDirection: "row",
   alignItems: "flex-start",
   paddingVertical: spacing.xs,
-  paddingHorizontal: spacing.xxs,
+  paddingHorizontal: 0,
   borderBottomWidth: 2,
   overflow: "hidden",
 };

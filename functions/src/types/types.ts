@@ -1,19 +1,35 @@
 import { Cuisines } from "./enums";
 
+export type ModalRef = { open: () => void; close: () => void };
 export type User = {
   id: string;
   firstName: string;
   lastName: string;
-  location: { latitude: number; longitude: number; address: string } | null;
+  location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+    geohash: string;
+  } | null;
 };
 export type Cuisine = (typeof Cuisines)[keyof typeof Cuisines];
+export type RestaurantLocation = {
+  address: string;
+  latitude: number;
+  longitude: number;
+  geohash: string;
+  cusines: Cuisine[];
+  id: string;
+  keywords: string[];
+  restaurantId: string;
+  phoneNumber: string;
+  name: string;
+  menuLink: string;
+  orderLink: string;
+  image: string;
+};
 export type Restaurant = {
   id: string;
-  name: string;
-  locations: string[];
-  menuLink: string;
-  phoneNumber: string;
-  image: string;
 };
 export type LatLng = { latitude: number; longitude: number };
 export type IconName =

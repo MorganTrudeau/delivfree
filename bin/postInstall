@@ -14,7 +14,7 @@ if (["darwin", "linux"].includes(process.platform)) {
   run('pkill -f "cli.js start" || set exit 0');
 }
 
-run("react-native setup-ios-permissions");
+// run("react-native setup-ios-permissions");
 
 /**
  * On darwin machine:

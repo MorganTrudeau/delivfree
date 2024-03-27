@@ -11,6 +11,7 @@ import { translate } from "app/i18n";
 import { useAlert } from "app/hooks";
 import { useAppSelector } from "app/redux/store";
 import { User } from "functions/src/types";
+import * as geofire from "geofire-common";
 
 interface Props {
   onRequestClose: () => void;
@@ -35,6 +36,7 @@ const LocationContent = ({ onRequestClose }: Props) => {
     const {
       position: { latitude, longitude },
     } = location;
+    const geohash = geofire.geohashForLocation([latitude, longitude]);
     try {
       const response = await Location.reverseGeocodeAsync({
         latitude,
@@ -42,7 +44,7 @@ const LocationContent = ({ onRequestClose }: Props) => {
       });
       for (const item of response) {
         const address = `${item.city}, ${item.isoCountryCode}`;
-        setLocation({ latitude, longitude, address });
+        setLocation({ latitude, longitude, address, geohash });
       }
       setFindingLocation(false);
     } catch (error) {

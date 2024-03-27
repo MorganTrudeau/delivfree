@@ -291,3 +291,18 @@ export const hexColorFromName = (name: string) => {
   const i = sumChars(name) % avatarColors.length;
   return avatarColors[i];
 };
+
+export function isValidEmail(email: string) {
+  const reg =
+    /^[_a-zA-Z0-9-+]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$/;
+  return reg.test(email);
+}
+
+export function isValidPostalCode(postalCode: string) {
+  if (!postalCode || typeof postalCode !== "string") {
+    return false;
+  }
+  const reg =
+    /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i;
+  return reg.test(postalCode);
+}

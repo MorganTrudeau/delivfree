@@ -7,17 +7,33 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { HORIZONTAL_SAFE_AREA_EDGES } from "app/components/styles";
+import {
+  $row,
+  $screen,
+  HORIZONTAL_SAFE_AREA_EDGES,
+} from "app/components/styles";
 import CuisineList from "app/components/Cuisines/CuisineList";
-import { Pressable, ViewStyle } from "react-native";
-import { spacing } from "app/theme";
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  View,
+  ViewStyle,
+} from "react-native";
+import { colors, spacing } from "app/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TextInput } from "app/components/TextInput";
 import { AppStackScreenProps } from "app/navigators";
-import { Cuisine } from "functions/src/types";
+import { Cuisine, Restaurant, RestaurantLocation } from "functions/src/types";
 import LocationModal from "app/components/Modal/LocationModal";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { useAppSelector } from "app/redux/store";
+import RestaurantsList from "app/components/RestaurantsList";
+import { useDebounce } from "app/hooks";
+import { fetchRestaurants } from "app/apis/restaurants";
+import { sizing } from "app/theme/sizing";
+
+const isWeb = Platform.OS === "web";
 
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
@@ -42,21 +58,61 @@ export const HomeScreen = (props: HomeScreenProps) => {
 
   const listContent = useMemo(
     () => ({
+      paddingTop: isWeb ? spacing.sm : 0,
+      paddingHorizontal: spacing.md,
       paddingBottom: spacing.sm + insets.bottom,
     }),
     [insets.bottom]
   );
-  const [search, setSearch] = useState("");
+
   const navigateToCuisine = useCallback(
     (cuisine: Cuisine) => {
       props.navigation.navigate("Restaurants", { cuisine });
     },
     [props.navigation]
   );
-  const renderListHeader = useCallback(
+
+  const navigateToRestaurant = useCallback(
+    (restaurant: Restaurant) =>
+      props.navigation.navigate("RestaurantDetail", {
+        restaurantId: restaurant.id,
+      }),
+    [props.navigation]
+  );
+
+  const [search, setSearch] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [restaurants, setRestaurants] = useState<RestaurantLocation[]>([]);
+
+  const debounce = useDebounce(300);
+
+  const searchRestaurants = debounce(async (query: string) => {
+    setSearchLoading(true);
+    const _restaurants = await fetchRestaurants(
+      {
+        latitude: activeUser?.location?.latitude as number,
+        longitude: activeUser?.location?.longitude as number,
+      },
+      { keyword: query }
+    );
+    setRestaurants(_restaurants);
+    setSearchLoading(false);
+  });
+
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    if (value) {
+      searchRestaurants(value);
+    } else {
+      setRestaurants([]);
+    }
+  };
+
+  const ListHeader = useMemo(
     () => (
       <>
-        <Text preset={"heading"}>DELIVFREE</Text>
+        <Text preset={"heading"}>{isWeb ? "Pick a cuisine" : "DELIVFREE"}</Text>
+
         {!!activeUser?.location?.address && (
           <Pressable
             style={$location}
@@ -68,7 +124,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
         )}
         <TextInput
           value={search}
-          onChangeText={setSearch}
+          onChangeText={handleSearch}
           placeholder={"Search restaurants"}
           style={$search}
         />
@@ -76,6 +132,20 @@ export const HomeScreen = (props: HomeScreenProps) => {
     ),
     [search, activeUser?.location?.address]
   );
+
+  const EmptySearch = useMemo(() => {
+    return !searchLoading ? (
+      <View style={$emptyList}>
+        <Icon icon={"magnify"} size={sizing.xxl} style={$emptyIcon} />
+        <Text>No results for "{search}"</Text>
+      </View>
+    ) : (
+      <ActivityIndicator size={"small"} color={colors.text} />
+    );
+  }, [searchLoading, search]);
+
+  console.log("RESTAURANTS", restaurants);
+
   return (
     <Drawer navigation={props.navigation}>
       <Screen
@@ -85,8 +155,12 @@ export const HomeScreen = (props: HomeScreenProps) => {
       >
         <CuisineList
           contentContainerStyle={listContent}
-          onPress={navigateToCuisine}
-          ListHeaderComponent={renderListHeader}
+          onCuisinePress={navigateToCuisine}
+          onRestaurantPress={navigateToRestaurant}
+          ListHeaderComponent={ListHeader}
+          restaurants={restaurants}
+          showRestaurants={!!search}
+          ListEmptyComponent={EmptySearch}
         />
         <LocationModal
           ref={locationModal}
@@ -97,10 +171,14 @@ export const HomeScreen = (props: HomeScreenProps) => {
   );
 };
 
-const $screen = { flex: 1, paddingHorizontal: spacing.md };
 const $search: ViewStyle = { marginBottom: spacing.lg };
 const $location: ViewStyle = {
   marginVertical: spacing.xxs,
   flexDirection: "row",
   alignItems: "center",
 };
+const $emptyList: ViewStyle = {
+  alignSelf: "center",
+  alignItems: "center",
+};
+const $emptyIcon: ViewStyle = { marginBottom: spacing.xs };

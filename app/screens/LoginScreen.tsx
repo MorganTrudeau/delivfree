@@ -115,6 +115,12 @@ export const LoginScreen = (_props: LoginScreenProps) => {
         onSubmitEditing={login}
         RightAccessory={PasswordRightAccessory}
       />
+      <Text
+        style={$forgotPassword}
+        onPress={() => _props.navigation.navigate("ForgotPassword")}
+      >
+        Forgot password?
+      </Text>
 
       <Button
         testID="login-button"
@@ -139,16 +145,19 @@ const $screenContentContainer: ViewStyle = {
   paddingHorizontal: spacing.md,
 };
 
-const $signIn: TextStyle = {
-  marginBottom: spacing.lg,
+const $forgotPassword: TextStyle = {
+  marginTop: spacing.xs,
+  color: colors.textDim,
 };
 
+const $signIn: TextStyle = {};
+
 const $textField: ViewStyle = {
-  marginBottom: spacing.lg,
+  marginTop: spacing.lg,
 };
 
 const $tapButton: ViewStyle = {
-  marginTop: spacing.xs,
+  marginTop: spacing.lg,
 };
 
 const $loginMessage: TextStyle = { marginTop: spacing.lg, textAlign: "center" };

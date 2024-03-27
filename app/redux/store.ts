@@ -19,6 +19,7 @@ import {
 } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import reactotron from "app/services/reactotron/reactotron";
+import { Platform } from "react-native";
 
 const persistConfig = {
   key: "2",
@@ -36,7 +37,7 @@ const rootReducer = combineReducers({
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const enhancers =
-  __DEV__ && reactotron.createEnhancer
+  Platform.OS !== "web" && __DEV__ && reactotron.createEnhancer
     ? [reactotron.createEnhancer()]
     : undefined;
 

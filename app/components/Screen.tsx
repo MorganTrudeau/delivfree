@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import {
   KeyboardAvoidingViewProps,
   LayoutChangeEvent,
+  Platform,
   ScrollView,
   ScrollViewProps,
   StyleProp,
@@ -226,7 +227,7 @@ export function Screen(props: ScreenProps) {
         backgroundColor={colors.background}
         {...StatusBarProps}
       />
-      {inDrawer && (
+      {inDrawer && Platform.OS !== "web" && (
         <Header
           LeftActionComponent={<DrawerIconButton />}
           title={title}

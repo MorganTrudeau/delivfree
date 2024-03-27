@@ -15,3 +15,5 @@ export const Cuisines = {
   DessertsSweets: "desserts_sweets",
   CoffeeShopsCafes: "coffee_shops_cafes",
 } as const;
+
+export const AppMessageTypes = {} as const;

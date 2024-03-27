@@ -6,7 +6,7 @@ const { presets, plugins, env } = require(`${appDirectory}/babel.config.js`);
 
 const compileNodeModules = [
   // Add every react-native package that needs compiling
-  "@types/delivfree",
+  "delivfree",
 ].map((moduleName) => path.resolve(appDirectory, `node_modules/${moduleName}`));
 
 const babelLoaderConfiguration = {
@@ -108,7 +108,10 @@ const alias = {
 
 // Expo CLI will await this method so you can optionally return a promise.
 module.exports = async function (env, argv) {
-  const config = await createExpoWebpackConfigAsync(env, argv);
+  const config = await createExpoWebpackConfigAsync(
+    { ...env, mode: "development" },
+    argv
+  );
   // If you want to add a new alias to the config.
 
   Object.entries(alias).forEach(([library, libPath]) => {

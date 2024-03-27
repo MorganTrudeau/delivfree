@@ -253,39 +253,41 @@ export const FirebaseMessaging = () => {
   const handleMessage = async (message: AppMessage) => {
     const { data } = message;
 
-    switch (data.type) {
-      case AppMessageTypes.CHALLENGE_CREATE: {
-        if (data.challengeId) {
-          const navigationState = navigation.getState();
-          const currentRoute = navigationState?.routes?.[navigationState.index];
-          if (currentRoute?.name !== "Challenge") {
-            navigation.navigate("AcceptChallenge", {
-              challengeId: data.challengeId,
-            });
-          }
-        }
-        break;
-      }
-      case AppMessageTypes.CHALLENGE_ACCEPT: {
-        if (data.challengeId) {
-          navigation.navigate("Challenge", {
-            challengeId: data.challengeId,
-          });
-        }
-        break;
-      }
-      case AppMessageTypes.CHALLENGE_UPDATE: {
-        if (data.challengeId) {
-          navigation.navigate("Challenge", {
-            challengeId: data.challengeId,
-          });
-        }
-        break;
-      }
-      case AppMessageTypes.DAILY_TRIVIA: {
-        navigation.navigate("DailyTrivia");
-        break;
-      }
+    switch (
+      data.type
+      // case AppMessageTypes.CHALLENGE_CREATE: {
+      //   if (data.challengeId) {
+      //     const navigationState = navigation.getState();
+      //     const currentRoute = navigationState?.routes?.[navigationState.index];
+      //     if (currentRoute?.name !== "Challenge") {
+      //       navigation.navigate("AcceptChallenge", {
+      //         challengeId: data.challengeId,
+      //       });
+      //     }
+      //   }
+      //   break;
+      // }
+      // case AppMessageTypes.CHALLENGE_ACCEPT: {
+      //   if (data.challengeId) {
+      //     navigation.navigate("Challenge", {
+      //       challengeId: data.challengeId,
+      //     });
+      //   }
+      //   break;
+      // }
+      // case AppMessageTypes.CHALLENGE_UPDATE: {
+      //   if (data.challengeId) {
+      //     navigation.navigate("Challenge", {
+      //       challengeId: data.challengeId,
+      //     });
+      //   }
+      //   break;
+      // }
+      // case AppMessageTypes.DAILY_TRIVIA: {
+      //   navigation.navigate("DailyTrivia");
+      //   break;
+      // }
+    ) {
     }
   };
   // Unsubscribe to background and foreground messages

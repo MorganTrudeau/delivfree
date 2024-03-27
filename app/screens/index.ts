@@ -8,3 +8,5 @@ export * from "./SettingsScreen";
 export * from "./AboutScreen";
 export * from "./DeleteAccountScreen";
 export * from "./RestaurantsScreen";
+export * from "./RestaurantDetailScreen";
+export * from "./ForgotPasswordScreen";
