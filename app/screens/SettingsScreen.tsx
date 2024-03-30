@@ -1,6 +1,6 @@
 import React from "react";
 import { ListItem, Screen } from "app/components";
-import { Alert, Linking, ViewStyle } from "react-native";
+import { Linking, ViewStyle } from "react-native";
 import auth from "@react-native-firebase/auth";
 import { AppStackScreenProps } from "app/navigators";
 import { spacing } from "app/theme";
@@ -8,10 +8,13 @@ import {
   $borderBottom,
   NO_TOP_BOTTOM_SAFE_AREA_EDGES,
 } from "app/components/styles";
+import { useAlert } from "app/hooks";
 
 interface Props extends AppStackScreenProps<"Settings"> {}
 
 export const SettingsScreen = ({ navigation }: Props) => {
+  const Alert = useAlert();
+
   const confirmLogout = async () => {
     try {
       await new Promise((resolve, reject) =>

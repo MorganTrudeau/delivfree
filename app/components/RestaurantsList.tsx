@@ -20,8 +20,8 @@ import RestaurantListItem from "./RestaurantListItem";
 interface Props extends Partial<FlatListProps<RestaurantLocation>> {
   restaurants: Restaurant[];
   loadMore?: () => void;
-  refreshing: boolean;
-  onPress: (restaurant: RestaurantLocation) => void;
+  refreshing?: boolean;
+  onPress?: (restaurant: RestaurantLocation) => void;
 }
 
 const RestaurantsList = ({
@@ -39,7 +39,7 @@ const RestaurantsList = ({
   );
   const renderSeparator = useCallback(() => <View style={$separator} />, []);
   const Refresh = useMemo(
-    () => <RefreshControl onRefresh={loadMore} refreshing={refreshing} />,
+    () => <RefreshControl onRefresh={loadMore} refreshing={!!refreshing} />,
     [loadMore]
   );
   return (

@@ -1,5 +1,5 @@
 import * as Location from "expo-location";
-import { useAlert } from "./index";
+import { useAlert } from "./useAlert";
 import { useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
 import { LocationPermission, usePermissions } from "./usePermissions";
@@ -67,6 +67,8 @@ export const useGeoPosition = () => {
     position: { latitude: number; longitude: number };
   } | null> => {
     const hasPermission = await canUse(LocationPermission);
+
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
     if (hasPermission) {
       try {

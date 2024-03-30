@@ -3,6 +3,7 @@ import { borderRadius } from "app/theme/borderRadius";
 import { sizing } from "app/theme/sizing";
 import {
   Dimensions,
+  Platform,
   StyleProp,
   StyleSheet,
   TextStyle,
@@ -20,14 +21,37 @@ export const NO_BOTTOM_SAFE_AREA_EDGES: Edge[] = ["top", "right", "left"];
 export const SAFE_AREA_EDGES: Edge[] = ["top", "right", "left", "bottom"];
 export const HORIZONTAL_SAFE_AREA_EDGES: Edge[] = ["right", "left"];
 
+export const MAX_CENTER_MODAL_WIDTH = Platform.select({
+  web: 600,
+  default: 650,
+});
+export const MAX_CONTAINER_WIDTH = Platform.select({ default: 700, web: 900 });
 export const LG_SCREEN = Dimensions.get("window").width > 700;
 
+export const $card: ViewStyle = {
+  padding: spacing.lg,
+  shadowOffset: { width: 0, height: 0 },
+  shadowRadius: 10,
+  shadowColor: "#000",
+  shadowOpacity: 0.1,
+  elevation: 2,
+  zIndex: 2,
+  width: "100%",
+  maxWidth: MAX_CONTAINER_WIDTH,
+  alignSelf: Platform.select({ default: "center", web: "center" }),
+  borderRadius: 6,
+  backgroundColor: colors.background,
+  borderColor: colors.border,
+  borderWidth: StyleSheet.hairlineWidth,
+};
 export const $containerPadding: ViewStyle = {
   paddingHorizontal: spacing.md,
   paddingVertical: spacing.md,
+  flexGrow: 1,
 };
 export const $screen: ViewStyle = {
   flex: 1,
+  maxWidth: 1300,
 };
 export const $screenHeading: TextStyle = {
   marginBottom: spacing.xl,

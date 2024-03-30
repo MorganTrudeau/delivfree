@@ -1,24 +1,11 @@
-// import Bugsnag from "@bugsnag/react-native";
-import "react-native-gesture-handler";
-
-// This is the first file that ReactNative will run when it starts up.
-// If you use Expo (`yarn expo:start`), the entry point is ./App.js instead.
-// Both do essentially the same thing.
-
 // import "./wdyr";
-
+import "react-native-gesture-handler";
 import App from "./app/app.tsx";
 import { AppRegistry } from "react-native";
-import { initFirebase } from "./app/web/modules/firebase/initWeb.web.js";
-import { registerRootComponent } from "expo";
-// Bugsnag.start();
+import Bugsnag from "@bugsnag/react-native";
 
-// if (Platform.OS !== "web") {
-//   registerRootComponent(IgniteApp);
-// } else {
-//   initFirebase();
-// }
-registerRootComponent(App);
-initFirebase();
-// AppRegistry.registerComponent("delivfree", () => App);
+Bugsnag.start();
+
+AppRegistry.registerComponent("delivfree", () => App);
+
 export default App;

@@ -1,5 +1,6 @@
-import { Alert } from "react-native";
+import { AlertContext } from "app/components/Alert/AlertContext";
+import { useContext } from "react";
 
 export const useAlert = () => {
-  return Alert;
+  return useContext(AlertContext);
 };

@@ -7,6 +7,7 @@ import { ActivityIndicator, Alert, TextStyle, ViewStyle } from "react-native";
 import auth from "@react-native-firebase/auth";
 import { useAppDispatch } from "app/redux/store";
 import { setDeleteAccountLoading } from "app/redux/reducers/user";
+import { Card } from "app/components/Card";
 
 export const DeleteAccountScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -75,22 +76,24 @@ export const DeleteAccountScreen = () => {
       preset="scroll"
       contentContainerStyle={$screen}
     >
-      <Text preset="subheading" style={$title}>
-        Deleting your account
-      </Text>
-      <Text>
-        This will erase all your data and delete your account. You will no
-        longer be able to login and access your account. This cannot be
-        reversed.
-      </Text>
-      <Button
-        text="Delete account"
-        style={$button}
-        textStyle={$buttonText}
-        onPress={confirmDelete}
-        LeftAccessory={ButtonIcon}
-        RightAccessory={ButtonLoading}
-      />
+      <Card>
+        <Text preset="subheading" style={$title}>
+          Deleting your account
+        </Text>
+        <Text>
+          This will erase all your data and delete your account. You will no
+          longer be able to login and access your account. This cannot be
+          reversed.
+        </Text>
+        <Button
+          text="Delete account"
+          style={$button}
+          textStyle={$buttonText}
+          onPress={confirmDelete}
+          LeftAccessory={ButtonIcon}
+          RightAccessory={ButtonLoading}
+        />
+      </Card>
     </Screen>
   );
 };

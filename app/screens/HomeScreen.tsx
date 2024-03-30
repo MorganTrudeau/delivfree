@@ -7,11 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  $row,
-  $screen,
-  HORIZONTAL_SAFE_AREA_EDGES,
-} from "app/components/styles";
+import { $screen, HORIZONTAL_SAFE_AREA_EDGES } from "app/components/styles";
 import CuisineList from "app/components/Cuisines/CuisineList";
 import {
   ActivityIndicator,
@@ -28,7 +24,6 @@ import { Cuisine, Restaurant, RestaurantLocation } from "functions/src/types";
 import LocationModal from "app/components/Modal/LocationModal";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { useAppSelector } from "app/redux/store";
-import RestaurantsList from "app/components/RestaurantsList";
 import { useDebounce } from "app/hooks";
 import { fetchRestaurants } from "app/apis/restaurants";
 import { sizing } from "app/theme/sizing";
@@ -111,7 +106,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
   const ListHeader = useMemo(
     () => (
       <>
-        <Text preset={"heading"}>{isWeb ? "Pick a cuisine" : "DELIVFREE"}</Text>
+        {/* <Text preset={"heading"}>{isWeb ? "Pick a cuisine" : "DELIVFREE"}</Text> */}
 
         {!!activeUser?.location?.address && (
           <Pressable

@@ -1,7 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Pressable,
   TextInput,
   TextStyle,
@@ -20,10 +19,14 @@ import { colors, spacing } from "../theme";
 import auth from "@react-native-firebase/auth";
 import { firebaseAuthErrorToMessage } from "app/utils/firebase";
 import { NO_TOP_BOTTOM_SAFE_AREA_EDGES } from "app/components/styles";
+import { Card } from "app/components/Card";
+import { useAlert } from "app/hooks";
 
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const LoginScreen = (_props: LoginScreenProps) => {
+  const Alert = useAlert();
+
   const authPasswordInput = useRef<TextInput>(null);
 
   const [authEmail, setAuthEmail] = useState("");
@@ -67,9 +70,7 @@ export const LoginScreen = (_props: LoginScreenProps) => {
   const Loading = useMemo(
     () =>
       loading
-        ? ({ style }) => (
-            <ActivityIndicator color={colors.palette.accent500} style={style} />
-          )
+        ? ({ style }) => <ActivityIndicator color={"#fff"} style={style} />
         : undefined,
     [loading]
   );
@@ -80,62 +81,64 @@ export const LoginScreen = (_props: LoginScreenProps) => {
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={NO_TOP_BOTTOM_SAFE_AREA_EDGES}
     >
-      <Text
-        testID="login-heading"
-        tx="loginScreen.signIn"
-        preset="heading"
-        style={$signIn}
-      />
-      {/* <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails} /> */}
+      <Card>
+        <Text
+          testID="login-heading"
+          tx="loginScreen.signIn"
+          preset="heading"
+          style={$signIn}
+        />
+        {/* <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails} /> */}
 
-      <TextField
-        value={authEmail}
-        onChangeText={setAuthEmail}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        labelTx="loginScreen.emailFieldLabel"
-        placeholderTx="loginScreen.emailFieldPlaceholder"
-        onSubmitEditing={() => authPasswordInput.current?.focus()}
-      />
+        <TextField
+          value={authEmail}
+          onChangeText={setAuthEmail}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          labelTx="loginScreen.emailFieldLabel"
+          placeholderTx="loginScreen.emailFieldPlaceholder"
+          onSubmitEditing={() => authPasswordInput.current?.focus()}
+        />
 
-      <TextField
-        ref={authPasswordInput}
-        value={authPassword}
-        onChangeText={setAuthPassword}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        labelTx="loginScreen.passwordFieldLabel"
-        placeholderTx="loginScreen.passwordFieldPlaceholder"
-        onSubmitEditing={login}
-        RightAccessory={PasswordRightAccessory}
-      />
-      <Text
-        style={$forgotPassword}
-        onPress={() => _props.navigation.navigate("ForgotPassword")}
-      >
-        Forgot password?
-      </Text>
-
-      <Button
-        testID="login-button"
-        tx="loginScreen.tapToSignIn"
-        style={$tapButton}
-        preset="reversed"
-        onPress={login}
-        RightAccessory={Loading}
-      />
-
-      <Pressable onPress={() => _props.navigation.navigate("SignUp")}>
-        <Text style={$loginMessage}>
-          Don't have an account? <Text style={$loginText}>Sign Up</Text>
+        <TextField
+          ref={authPasswordInput}
+          value={authPassword}
+          onChangeText={setAuthPassword}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          labelTx="loginScreen.passwordFieldLabel"
+          placeholderTx="loginScreen.passwordFieldPlaceholder"
+          onSubmitEditing={login}
+          RightAccessory={PasswordRightAccessory}
+        />
+        <Text
+          style={$forgotPassword}
+          onPress={() => _props.navigation.navigate("ForgotPassword")}
+        >
+          Forgot password?
         </Text>
-      </Pressable>
+
+        <Button
+          testID="login-button"
+          tx="loginScreen.tapToSignIn"
+          style={$tapButton}
+          preset="filled"
+          onPress={login}
+          RightAccessory={Loading}
+        />
+
+        <Pressable onPress={() => _props.navigation.navigate("SignUp")}>
+          <Text style={$loginMessage}>
+            Don't have an account? <Text style={$loginText}>Sign Up</Text>
+          </Text>
+        </Pressable>
+      </Card>
     </Screen>
   );
 };

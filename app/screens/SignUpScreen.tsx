@@ -1,7 +1,6 @@
 import React, { FC, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   TextInput,
   TextStyle,
   ViewStyle,
@@ -20,10 +19,14 @@ import auth from "@react-native-firebase/auth";
 import { firebaseAuthErrorToMessage } from "app/utils/firebase";
 import { logAnalytics } from "app/services/firebase/analytics";
 import { NO_TOP_BOTTOM_SAFE_AREA_EDGES } from "app/components/styles";
+import { Card } from "app/components/Card";
+import { useAlert } from "app/hooks";
 
 interface SignUpScreenProps extends AppStackScreenProps<"SignUp"> {}
 
 export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
+  const Alert = useAlert();
+
   const authPasswordInput = useRef<TextInput>(null);
 
   const [authEmail, setAuthEmail] = useState("");
@@ -88,9 +91,7 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
   const SignUpLoading = useMemo(
     () =>
       loading
-        ? ({ style }) => (
-            <ActivityIndicator color={colors.palette.accent500} style={style} />
-          )
+        ? ({ style }) => <ActivityIndicator color={"#fff"} style={style} />
         : undefined,
     [loading]
   );
@@ -109,73 +110,71 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={NO_TOP_BOTTOM_SAFE_AREA_EDGES}
     >
-      <Text
-        testID="login-heading"
-        tx="signUpScreen.signIn"
-        preset="heading"
-        style={$signIn}
-      />
-      {/* <Text tx="signUpScreen.enterDetails" preset="subheading" style={$enterDetails} /> */}
+      <Card>
+        <Text
+          testID="login-heading"
+          tx="signUpScreen.signIn"
+          preset="heading"
+          style={$signIn}
+        />
+        {/* <Text tx="signUpScreen.enterDetails" preset="subheading" style={$enterDetails} /> */}
 
-      <TextField
-        value={authEmail}
-        onChangeText={setAuthEmail}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        labelTx="signUpScreen.emailFieldLabel"
-        placeholderTx="signUpScreen.emailFieldPlaceholder"
-        onSubmitEditing={() => authPasswordInput.current?.focus()}
-      />
+        <TextField
+          value={authEmail}
+          onChangeText={setAuthEmail}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          labelTx="signUpScreen.emailFieldLabel"
+          placeholderTx="signUpScreen.emailFieldPlaceholder"
+          onSubmitEditing={() => authPasswordInput.current?.focus()}
+        />
 
-      <TextField
-        ref={authPasswordInput}
-        value={authPassword}
-        onChangeText={setAuthPassword}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        labelTx="signUpScreen.passwordFieldLabel"
-        placeholderTx="signUpScreen.passwordFieldPlaceholder"
-        onSubmitEditing={signup}
-        RightAccessory={PasswordRightAccessory}
-      />
+        <TextField
+          ref={authPasswordInput}
+          value={authPassword}
+          onChangeText={setAuthPassword}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          labelTx="signUpScreen.passwordFieldLabel"
+          placeholderTx="signUpScreen.passwordFieldPlaceholder"
+          onSubmitEditing={signup}
+          RightAccessory={PasswordRightAccessory}
+        />
 
-      <Button
-        testID="login-button"
-        tx="signUpScreen.tapToSignIn"
-        style={$tapButton}
-        preset="reversed"
-        onPress={signup}
-        RightAccessory={SignUpLoading}
-      />
+        <Button
+          testID="login-button"
+          tx="signUpScreen.tapToSignIn"
+          style={$tapButton}
+          preset="filled"
+          onPress={signup}
+          RightAccessory={SignUpLoading}
+        />
 
-      <Text preset="formLabel" style={$guestAccountTitle}>
-        Don't want to create an account?
-      </Text>
-      <Text preset="formHelper" style={$guestAccountMessage}>
-        Guest accounts won't save your progress, but you can create an account
-        later.
-      </Text>
+        <Text preset="formLabel" style={$guestAccountTitle}>
+          Don't want to create an account?
+        </Text>
 
-      <Button
-        testID="login-button"
-        text="Continue as guest"
-        style={$tapButton}
-        preset="filled"
-        onPress={continueAsGuest}
-        RightAccessory={GuestLoading}
-      />
+        <Button
+          testID="login-button"
+          text="Continue as guest"
+          style={$tapButton}
+          preset="default"
+          onPress={continueAsGuest}
+          RightAccessory={GuestLoading}
+        />
 
-      {/* <Pressable onPress={() => _props.navigation.navigate("Login")}>
+        {/* <Pressable onPress={() => _props.navigation.navigate("Login")}>
         <Text style={$loginMessage}>
           Already have an account? <Text style={$loginText}>Log In</Text>
         </Text>
       </Pressable> */}
+      </Card>
     </Screen>
   );
 };

@@ -1,8 +1,12 @@
 const path = require("path");
+const webpack = require("webpack");
 const createExpoWebpackConfigAsync = require("@expo/webpack-config");
 
 const appDirectory = path.resolve(__dirname);
 const { presets, plugins, env } = require(`${appDirectory}/babel.config.js`);
+
+const getWebpackEnv = require("./webpack-env");
+const dotEnv = getWebpackEnv();
 
 const compileNodeModules = [
   // Add every react-native package that needs compiling
@@ -91,6 +95,10 @@ const alias = {
     __dirname,
     "app/web/modules/react-native-push-notification"
   ),
+  "react-native-config": path.join(
+    __dirname,
+    "app/web/modules/react-native-config"
+  ),
   "react-native-share": path.join(
     __dirname,
     "app/web/modules/react-native-share"
@@ -112,6 +120,8 @@ module.exports = async function (env, argv) {
     { ...env, mode: "development" },
     argv
   );
+
+  config.entry = ["babel-polyfill", path.join(__dirname, "index.web.js")];
   // If you want to add a new alias to the config.
 
   Object.entries(alias).forEach(([library, libPath]) => {
@@ -135,6 +145,20 @@ module.exports = async function (env, argv) {
       },
     },
   ];
+
+  const definePluginIndex = config.plugins.findIndex((plugin) => {
+    return plugin instanceof webpack.DefinePlugin;
+  });
+  const definePlugin = new webpack.DefinePlugin({
+    __DEV__: JSON.stringify(true),
+    "process.env": JSON.stringify(dotEnv),
+  });
+
+  if (definePluginIndex === -1) {
+    config.plugins.push(definePlugin);
+  } else {
+    config.plugins[definePluginIndex] = definePlugin;
+  }
 
   // module: {
   //   rules: [

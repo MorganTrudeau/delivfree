@@ -1,4 +1,6 @@
 import { colors } from "app/theme";
+import { User } from "functions/src/types";
+import Config from "react-native-config";
 import { getColors } from "react-native-image-colors";
 
 export const createUserKeywords = (username: string) => {
@@ -23,4 +25,16 @@ export const getAvatarColor = async (avatar: string) => {
     : imageColors.platform === "ios"
     ? imageColors.background
     : "";
+};
+
+export const isUserRegistered = (user: User | null | undefined) => {
+  if (!user || !(user.firstName && user.lastName)) {
+    return false;
+  }
+  if (Config.APP === "ADMIN") {
+    return !!user.admin;
+  } else if (Config.APP === "VENDOR") {
+    return !!user.vendor || !!user.driver;
+  }
+  return !!user.consumer;
 };

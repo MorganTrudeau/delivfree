@@ -1,13 +1,14 @@
 import React from "react";
-import { Dimensions, TextStyle, View, ViewStyle } from "react-native";
-import { Button, Screen, Text } from "../components";
+import { Dimensions, View, ViewStyle } from "react-native";
+import { Button, Screen } from "../components";
 import { AppStackScreenProps } from "../navigators";
 import { colors, spacing } from "../theme";
 import { logAnalytics } from "app/services/firebase/analytics";
 import FastImage from "react-native-fast-image";
 import { SAFE_AREA_EDGES } from "app/components/styles";
 
-const IMAGE_SIZE = Math.min(233, Dimensions.get("window").width * 0.7);
+const IMAGE_WIDTH = Math.min(400, Dimensions.get("window").width * 0.85);
+const IMAGE_HEIGHT = IMAGE_WIDTH * (838 / 2200);
 
 interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> {}
 
@@ -24,7 +25,7 @@ export const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
 
   return (
     <Screen
-      backgroundColor={colors.palette.neutral200}
+      backgroundColor={colors.background}
       preset="scroll"
       style={$container}
       contentContainerStyle={$content}
@@ -32,25 +33,16 @@ export const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
     >
       <View style={$topContainer}>
         <FastImage
-          source={require("../../assets/images/splash-logo-all.png")}
+          source={require("../../assets/images/app-logo-tagline.png")}
           style={{
-            height: IMAGE_SIZE,
-            width: IMAGE_SIZE,
+            height: IMAGE_HEIGHT,
+            width: IMAGE_WIDTH,
           }}
           resizeMode="contain"
         />
       </View>
 
       <View style={$bottomContainer}>
-        <Text size="md" style={$text}>
-          Your first skill testing question:
-        </Text>
-        <Text preset="heading" size="xl" style={$text}>
-          Do you have an account?
-        </Text>
-        <Text style={$helperText} size="md">
-          (HINT: If no, sign up)
-        </Text>
         <Button
           testID="sign-up-button"
           preset="filled"
@@ -64,16 +56,6 @@ export const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
   );
 };
 
-const $text: TextStyle = {
-  textAlign: "center",
-};
-
-const $helperText: TextStyle = {
-  color: colors.textDim,
-  marginTop: spacing.xs,
-  textAlign: "center",
-};
-
 const $signUpButton: ViewStyle = {
   marginTop: spacing.xl,
   marginBottom: spacing.md,
@@ -81,7 +63,6 @@ const $signUpButton: ViewStyle = {
 
 const $container: ViewStyle = {
   flex: 1,
-  backgroundColor: colors.palette.neutral200,
 };
 
 const $content: ViewStyle = {

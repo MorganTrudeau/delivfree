@@ -1,4 +1,7 @@
+import Config from "react-native-config";
 import { avatarColors } from "../theme";
+
+export const getAppType = () => Config.APP as "CONSUMER" | "VENDOR" | "ADMIN";
 
 export const arrayDiff = <T>(
   arrA: Array<T>,
@@ -306,3 +309,27 @@ export function isValidPostalCode(postalCode: string) {
     /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i;
   return reg.test(postalCode);
 }
+
+export const localizeCurrency = (
+  value: number,
+  currency: string,
+  options = {},
+  locale?: string
+) => {
+  try {
+    const localizedCurrency = value.toLocaleString(locale, {
+      style: "currency",
+      currency: currency || "USD",
+      // @ts-ignore
+      currencyDisplay: "narrowSymbol", // This fails on some OS
+      ...options,
+    });
+    return localizedCurrency;
+  } catch (error) {
+    return value.toLocaleString(undefined, {
+      style: "currency",
+      currency: currency || "USD",
+      ...options,
+    });
+  }
+};

@@ -7,6 +7,7 @@ import auth from "@react-native-firebase/auth";
 import { isValidEmail } from "app/utils/general";
 import { useAlert } from "app/hooks";
 import { translate } from "app/i18n";
+import { Card } from "app/components/Card";
 
 export const ForgotPasswordScreen = () => {
   const Alert = useAlert();
@@ -47,23 +48,27 @@ export const ForgotPasswordScreen = () => {
 
   return (
     <Screen preset="scroll" style={$screen}>
-      <Text preset={"heading"} style={$heading}>
-        Reset your password
-      </Text>
-      <Text>Enter your email and we will send you a password reset link.</Text>
-      <TextInput
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Enter your email"
-        style={$input}
-      />
-      <Button
-        text="Reset Password"
-        onPress={resetPassword}
-        style={$button}
-        preset="filled"
-        RightAccessory={Loading}
-      />
+      <Card>
+        <Text preset={"heading"} style={$heading}>
+          Reset your password
+        </Text>
+        <Text>
+          Enter your email and we will send you a password reset link.
+        </Text>
+        <TextInput
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Enter your email"
+          style={$input}
+        />
+        <Button
+          text="Reset Password"
+          onPress={resetPassword}
+          style={$button}
+          preset="filled"
+          RightAccessory={Loading}
+        />
+      </Card>
     </Screen>
   );
 };

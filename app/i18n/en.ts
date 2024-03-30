@@ -45,7 +45,7 @@ const en = {
   errorScreen: {
     title: "Something went wrong!",
     friendlySubtitle:
-      "Sorry for the interruption. Please reset the app to start playing.",
+      "Sorry for the interruption. Please reset the app to try again.",
     reset: "Reset App",
     traceTitle: "Error from %{name} stack", // @demo remove-current-line
   },

@@ -34,7 +34,6 @@ export const listenToUser = (
     snapshot: FirebaseFirestoreTypes.DocumentSnapshot
   ) => {
     const user = snapshot.data() as User | null;
-    console.log("USER", user);
     onData(user);
   };
   getListenersManager().addListener("user", query, onSuccess);

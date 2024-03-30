@@ -8,12 +8,12 @@ import { spacing } from "app/theme";
 
 interface Props {
   restaurant: RestaurantLocation;
-  onPress: (restaurant: RestaurantLocation) => void;
+  onPress?: (restaurant: RestaurantLocation) => void;
 }
 
 const RestaurantListItem = ({ restaurant, onPress }: Props) => {
   return (
-    <Pressable onPress={() => onPress(restaurant)}>
+    <Pressable onPress={() => onPress?.(restaurant)}>
       <View style={$imageContainer}>
         <FastImage source={{ uri: restaurant.image }} style={$image} />
       </View>

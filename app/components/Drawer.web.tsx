@@ -6,10 +6,9 @@ import React, {
   useState,
 } from "react";
 import { DrawerLayout } from "react-native-gesture-handler";
-import { View, ViewProps } from "react-native";
+import { View, ViewProps, ViewStyle, useWindowDimensions } from "react-native";
 import { DrawerContent } from "./DrawerContent";
 import { NavigationProp } from "app/navigators";
-import { $row, $shadow } from "./styles";
 
 export const DrawerContext = createContext({
   drawerRef: { current: null } as MutableRefObject<DrawerLayout | null>,
@@ -26,28 +25,13 @@ export const Drawer = ({
   const drawerRef = useRef<DrawerLayout>(null);
   const [open, setOpen] = useState(false);
 
+  const { width } = useWindowDimensions();
+
   return (
     <DrawerContext.Provider value={{ drawerRef, open }}>
-      <View style={{ flexDirection: "row" }}>
-        <View
-          style={{
-            width: 375,
-            zIndex: 1000,
-          }}
-        >
-          <View
-            style={{
-              position: "fixed",
-              width: 375,
-              height: "100vh",
-              shadowOffset: { width: 2, height: 0 },
-              shadowRadius: 4,
-              shadowColor: "#000",
-              shadowOpacity: 0.2,
-              backgroundColor: colors.background,
-              zIndex: 1000,
-            }}
-          >
+      <View style={$row}>
+        <View style={[$drawerContentWrapper, { width: width * 0.2 }]}>
+          <View style={[$fixedDrawerContentContainer, { width: width * 0.2 }]}>
             <DrawerContent
               navigation={navigation}
               onItemPress={() => {
@@ -62,4 +46,27 @@ export const Drawer = ({
       </View>
     </DrawerContext.Provider>
   );
+};
+
+const DRAWER_WIDTH = 350;
+
+const $row: ViewStyle = { flexDirection: "row", flex: 1 };
+
+const $drawerContentWrapper: ViewStyle = {
+  width: DRAWER_WIDTH,
+  zIndex: 1000,
+};
+
+const $fixedDrawerContentContainer: ViewStyle = {
+  // @ts-ignore
+  position: "fixed",
+  width: "100%",
+  // @ts-ignore
+  height: "100vh",
+  shadowOffset: { width: 2, height: 0 },
+  shadowRadius: 4,
+  shadowColor: "#000",
+  shadowOpacity: 0.1,
+  backgroundColor: colors.surface,
+  zIndex: 1000,
 };

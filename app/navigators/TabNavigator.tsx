@@ -10,9 +10,10 @@ import { Icon } from "../components";
 import { translate } from "../i18n";
 import { HomeScreen } from "../screens";
 import { colors, spacing, typography } from "../theme";
-import { AppStackParamList, AppStackScreenProps } from "./AppNavigator";
+import { AppStackScreenProps } from "./AppNavigator";
 import { sizing } from "app/theme/sizing";
 import { LG_SCREEN } from "app/components/styles";
+import { AppStackParamList } from "./StackNavigator";
 
 export type TabParamList = {
   Home: undefined;

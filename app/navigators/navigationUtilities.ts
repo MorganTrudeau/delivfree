@@ -4,7 +4,9 @@ import {
   NavigationState,
   createNavigationContainerRef,
 } from "@react-navigation/native";
-import type { AppStackParamList } from "./AppNavigator";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Cuisine } from "functions/src/types";
+import { AppStackParamList } from "./StackNavigator";
 
 /**
  * Reference to the root App Navigator.

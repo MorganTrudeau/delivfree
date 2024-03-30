@@ -1,14 +1,14 @@
 // TODO: write documentation for colors and palette in own markdown file and add links from here
 
 const palette = {
-  neutral100: "#fcf1ea",
-  neutral200: "#fbebe1",
-  neutral300: "#eed0bf",
-  neutral400: "#6f5241",
-  neutral500: "#594134",
-  neutral600: "#423127",
-  neutral700: "#2c201a",
-  neutral800: "#16100d",
+  neutral100: "#FFFFFF",
+  neutral200: "#faf9f9",
+  neutral300: "#F4F2F1",
+  neutral400: "#D7CEC9",
+  neutral500: "#B6ACA6",
+  neutral600: "#978F8A",
+  neutral700: "#564E4A",
+  neutral800: "#191015",
   neutral900: "#000000",
 
   shade100: "#FFFFFF",
@@ -21,12 +21,12 @@ const palette = {
   shade800: "#191015",
   shade900: "#000000",
 
-  primary100: "#e4b195",
-  primary200: "#dfa483",
-  primary300: "#db9772",
-  primary400: "#d68a60",
-  primary500: "#d27e4f",
-  primary600: "#cd6f3b",
+  primary100: "#f68d91",
+  primary200: "#f4767b",
+  primary300: "#f26065",
+  primary400: "#f0494f",
+  primary500: "#ee3239",
+  primary600: "#ed1c24",
 
   secondary100: "#DCDDE9",
   secondary200: "#BCC0D6",
@@ -79,11 +79,12 @@ export const colors = {
   /**
    * The default color of the views atop background.
    */
-  surface: palette.primary200,
+  surface: palette.neutral200,
   /**
    * The default border color.
    */
-  border: palette.primary400,
+  border: palette.shade300,
+  borderLight: palette.shade200,
   /**
    * The main tinting color of icons.
    */

@@ -1,6 +1,6 @@
 import { Button, Screen, Text } from "app/components";
 import { TextInput } from "app/components/TextInput";
-import { colors, spacing } from "app/theme";
+import { spacing } from "app/theme";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -12,6 +12,8 @@ import { User } from "delivfree";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { createUser } from "app/apis/user";
 import { useAlert } from "app/hooks";
+import { getAppType } from "app/utils/general";
+import { Card } from "app/components/Card";
 
 export const EditUserScreen = () => {
   const Alert = useAlert();
@@ -19,9 +21,10 @@ export const EditUserScreen = () => {
   const lastNameInput = useRef<RNInput>(null);
 
   const authToken = useAppSelector((state) => state.auth.authToken as string);
+  const user = useAppSelector((state) => state.user.user);
   const dispatch = useAppDispatch();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [lastName, setLastName] = useState(user?.lastName || "");
   const [loading, setLoading] = useState(false);
 
   const onFirstNameSubmit = useCallback(
@@ -42,6 +45,11 @@ export const EditUserScreen = () => {
       lastName,
       location: null,
     };
+
+    if (getAppType() === "CONSUMER") {
+      user.consumer = {};
+    }
+
     try {
       setLoading(true);
       await dispatch(createUser(user));
@@ -54,37 +62,41 @@ export const EditUserScreen = () => {
 
   const Loading = useMemo(
     () =>
-      loading ? () => <ActivityIndicator color={colors.text} /> : undefined,
+      loading
+        ? ({ style }) => <ActivityIndicator color={"#fff"} style={style} />
+        : undefined,
     [loading]
   );
 
   return (
     <Screen preset={"scroll"} contentContainerStyle={$screen}>
-      <Text style={$header} preset={"heading"} weight={"bold"}>
-        What's your name?
-      </Text>
-      <TextInput
-        onChangeText={setFirstName}
-        placeholder="First Name"
-        style={$firstNameInput}
-        value={firstName}
-        returnKeyType={"next"}
-        onSubmitEditing={onFirstNameSubmit}
-      />
-      <TextInput
-        ref={lastNameInput}
-        onChangeText={setLastName}
-        placeholder="Last Name"
-        value={lastName}
-        onSubmitEditing={handleCreateUser}
-      />
-      <Button
-        preset={"filled"}
-        style={$button}
-        text={"Continue"}
-        onPress={handleCreateUser}
-        RightAccessory={Loading}
-      />
+      <Card>
+        <Text style={$header} preset={"heading"} weight={"bold"}>
+          What's your name?
+        </Text>
+        <TextInput
+          onChangeText={setFirstName}
+          placeholder="First Name"
+          style={$firstNameInput}
+          value={firstName}
+          returnKeyType={"next"}
+          onSubmitEditing={onFirstNameSubmit}
+        />
+        <TextInput
+          ref={lastNameInput}
+          onChangeText={setLastName}
+          placeholder="Last Name"
+          value={lastName}
+          onSubmitEditing={handleCreateUser}
+        />
+        <Button
+          preset={"filled"}
+          style={$button}
+          text={"Continue"}
+          onPress={handleCreateUser}
+          RightAccessory={Loading}
+        />
+      </Card>
     </Screen>
   );
 };

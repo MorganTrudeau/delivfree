@@ -10,20 +10,15 @@ import {
   FCMMessage,
   AppMessage,
 } from "../../utils/notifications";
-import { AppMessageTypes } from "delivfree";
 import { requestNotifications } from "react-native-permissions";
 import firestore from "@react-native-firebase/firestore";
 import { getDeviceId } from "react-native-device-info";
 import { colors } from "app/theme";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { AppStackParamList } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 
 export const LOCAL_NOTIFICATION_CHANNEL = "local_notifications";
 
 export const FirebaseMessaging = () => {
-  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-
   const authToken = useAppSelector((state) => state.auth.authToken);
   // const previousAuthToken = useAppSelector((state) => state.auth.previousAuthToken)
   // Listener unsubscribe functions

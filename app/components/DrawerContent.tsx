@@ -1,16 +1,17 @@
-import React, { FC } from "react";
-import { FlatList, TextStyle, View, ViewStyle } from "react-native";
+import React, { FC, useMemo } from "react";
+import { FlatList, Platform, View, ViewStyle } from "react-native";
 import { ListItem } from "./ListItem";
 import { isRTL } from "app/i18n";
 import { colors, spacing } from "app/theme";
-import { Text } from "./Text";
-import { AppStackParamList, NavigationProp } from "app/navigators";
+import { NavigationProp } from "app/navigators";
 import { rateApp } from "app/utils/rate";
-import { Icon } from "./Icon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "app/hooks";
+import FastImage from "react-native-fast-image";
+import { AppStackParamList } from "app/navigators/StackNavigator";
+import { useAppSelector } from "app/redux/store";
 
-const Items = [
+const ConsumerItems = [
   {
     text: "Sign up as a Vendor",
   },
@@ -19,9 +20,25 @@ const Items = [
   },
   {
     text: "Rate App",
+    include: () => Platform.OS !== "web",
   },
   { text: "Settings", route: "Settings" },
-] as const;
+].filter((item) => !item.include || item.include());
+
+const VendorItems = [
+  { text: "Home", route: "Home" },
+  { text: "Orders", route: "Orders" },
+  { text: "Profile", route: "Profile" },
+  { text: "Locations", route: "Locations" },
+  { text: "Subscription", route: "Subscription" },
+  {
+    text: "Rate App",
+    include: () => Platform.OS !== "web",
+  },
+  { text: "Settings", route: "Settings" },
+].filter((item) => !item.include || item.include());
+
+const DriverItems = [];
 
 export const DrawerContent = ({
   navigation,
@@ -32,6 +49,40 @@ export const DrawerContent = ({
 }) => {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+
+  const userType = useAppSelector((state) => state.appConfig.userType);
+  const Items = useMemo(
+    () =>
+      userType === "vendor"
+        ? VendorItems
+        : userType === "driver"
+        ? DriverItems
+        : ConsumerItems,
+    [userType]
+  );
+
+  const activeRoute = useMemo(() => {
+    const state = navigation.getState();
+    return state.routes[state.index].name;
+  }, [navigation]);
+
+  const renderListHeader = useMemo(
+    () => () =>
+      (
+        <View style={$logoContainer}>
+          <FastImage
+            source={require("../../assets/images/delivfree-logo.png")}
+            style={{
+              height: headerHeight,
+              width: headerHeight * headerImageRatio,
+            }}
+            resizeMode="contain"
+          />
+        </View>
+      ),
+    [headerHeight]
+  );
+
   return (
     <FlatList<{ text: string; route?: keyof AppStackParamList; params?: any }>
       style={$drawer}
@@ -46,20 +97,17 @@ export const DrawerContent = ({
       data={Items}
       keyExtractor={(item) => item.text}
       renderItem={({ item, index }) => (
-        <DrawerItem {...{ item, index, navigation, onItemPress }} />
+        <DrawerItem
+          {...{ item, index, navigation, onItemPress, activeRoute }}
+        />
       )}
       showsVerticalScrollIndicator={false}
-      ListHeaderComponent={
-        <View style={[$logoContainer, { height: headerHeight }]}>
-          <Text preset="heading" size={"xl"}>
-            DELIVFREE
-          </Text>
-        </View>
-      }
+      ListHeaderComponent={renderListHeader}
     />
   );
 };
 
+const headerImageRatio = 1638 / 822;
 interface DemoListItem {
   item: {
     text: string;
@@ -70,6 +118,7 @@ interface DemoListItem {
   index: number;
   navigation: NavigationProp;
   onItemPress: () => void;
+  activeRoute: string;
 }
 
 const DrawerItem: FC<DemoListItem> = ({
@@ -77,6 +126,7 @@ const DrawerItem: FC<DemoListItem> = ({
   index,
   navigation,
   onItemPress,
+  activeRoute,
 }) => {
   const icon = isRTL ? "caretLeft" : "caretRight";
   const isRateItem = item.text === "Rate App";
@@ -85,15 +135,11 @@ const DrawerItem: FC<DemoListItem> = ({
     <ListItem
       key={`section${index}-${item.text}`}
       text={item.text}
-      RightComponent={
-        item.RightComponent ? (
-          <View style={$rightComponent}>
-            {item.RightComponent}
-            <Icon icon={icon} style={$icon} size={24} />
-          </View>
-        ) : undefined
+      textStyle={
+        "route" in item && item.route === activeRoute
+          ? { color: colors.primary }
+          : undefined
       }
-      rightIcon={icon}
       onPress={() => {
         if (isRateItem) {
           rateApp(false);
@@ -107,30 +153,16 @@ const DrawerItem: FC<DemoListItem> = ({
 };
 
 const $drawer: ViewStyle = {
-  backgroundColor: colors.background,
   flex: 1,
 };
 
 const $flatListContentContainer: ViewStyle = {
-  // paddingHorizontal: spacing.md,
-  // paddingVertical: spacing.md,
   flexGrow: 1,
 };
 
 const $logoContainer: ViewStyle = {
   alignSelf: "flex-start",
   justifyContent: "center",
-  // paddingTop: spacing.xs,
-  marginBottom: spacing.sm,
-};
-
-const $rightComponent: ViewStyle = {
-  height: 56,
-  alignItems: "center",
-  justifyContent: "center",
-  flexDirection: "row",
-};
-
-const $icon: TextStyle = {
-  marginStart: spacing.xs,
+  paddingTop: spacing.md,
+  paddingBottom: spacing.md,
 };

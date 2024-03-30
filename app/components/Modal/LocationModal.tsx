@@ -71,14 +71,14 @@ const LocationContent = ({ onRequestClose }: Props) => {
   const LocationLoading = useMemo(
     () =>
       findingLocation
-        ? () => <ActivityIndicator color={colors.text} style={$spinner} />
+        ? () => <ActivityIndicator color={"#fff"} style={$spinner} />
         : undefined,
     [findingLocation]
   );
   const ConfirmLoading = useMemo(
     () =>
       confirmingLocation
-        ? () => <ActivityIndicator color={colors.text} style={$spinner} />
+        ? () => <ActivityIndicator color={"#fff"} style={$spinner} />
         : undefined,
     [confirmingLocation]
   );

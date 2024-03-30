@@ -11,6 +11,10 @@ export type User = {
     address: string;
     geohash: string;
   } | null;
+  consumer?: {};
+  vendor?: {};
+  driver?: {};
+  admin?: {};
 };
 export type Cuisine = (typeof Cuisines)[keyof typeof Cuisines];
 export type RestaurantLocation = {
@@ -18,7 +22,7 @@ export type RestaurantLocation = {
   latitude: number;
   longitude: number;
   geohash: string;
-  cusines: Cuisine[];
+  cuisines: Cuisine[];
   id: string;
   keywords: string[];
   restaurantId: string;
@@ -30,6 +34,20 @@ export type RestaurantLocation = {
 };
 export type Restaurant = {
   id: string;
+};
+export type OrderStatus =
+  | "complete"
+  | "in-progress"
+  | "incomplete"
+  | "canceled";
+export type Order = {
+  id: string;
+  customer: string;
+  amount: number;
+  tip: number;
+  description: string;
+  status: OrderStatus;
+  date: string;
 };
 export type LatLng = { latitude: number; longitude: number };
 export type IconName =
