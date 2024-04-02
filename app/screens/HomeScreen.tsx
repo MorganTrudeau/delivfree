@@ -166,9 +166,12 @@ export const HomeScreen = (props: HomeScreenProps) => {
   );
 };
 
-const $search: ViewStyle = { marginBottom: spacing.lg, maxWidth: 700 };
+const $search: ViewStyle = {
+  marginTop: spacing.sm,
+  marginBottom: spacing.lg,
+  maxWidth: 700,
+};
 const $location: ViewStyle = {
-  marginVertical: spacing.xxs,
   flexDirection: "row",
   alignItems: "center",
 };

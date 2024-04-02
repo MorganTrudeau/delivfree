@@ -1,4 +1,4 @@
-import { createUser } from "app/apis/user";
+import { createUser, updateUser } from "app/apis/user";
 import { Button, Screen, Text } from "app/components";
 import { Card } from "app/components/Card";
 import { TextInput } from "app/components/TextInput";
@@ -40,18 +40,20 @@ export const EditVendorProfileScreen = () => {
         "Please enter your first and last name."
       );
     }
-    const user: User = {
+    const newUser = {
       id: authToken,
       firstName,
       lastName,
-      location: null,
+      vendor: {},
     };
-
-    user.vendor = {};
 
     try {
       setLoading(true);
-      await dispatch(createUser(user));
+      if (user) {
+        await updateUser(newUser.id, newUser);
+      } else {
+        await dispatch(createUser({ ...newUser, location: null }));
+      }
       setLoading(false);
     } catch (error) {
       setLoading(false);

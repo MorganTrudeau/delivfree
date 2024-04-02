@@ -9,6 +9,7 @@ import React, {
 import {
   NativeSyntheticEvent,
   StyleProp,
+  StyleSheet,
   TextInput,
   TextInputFocusEventData,
   TextInputProps,
@@ -19,7 +20,8 @@ import {
 } from "react-native";
 import { isRTL, translate } from "../i18n";
 import { colors, spacing, typography } from "../theme";
-import { Text, TextProps } from "./Text";
+import { $fontSizeStyles, Text, TextProps } from "./Text";
+import { borderRadius } from "app/theme/borderRadius";
 
 export interface TextFieldAccessoryProps {
   style: StyleProp<any>;
@@ -176,22 +178,6 @@ export const TextField = forwardRef(function TextField(
     input.current?.focus();
   }
 
-  const [focused, setFocused] = useState(false);
-
-  const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-    if (props.onFocus) {
-      props.onFocus(e);
-    }
-    setFocused(true);
-  };
-
-  const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-    if (props.onBlur) {
-      props.onBlur(e);
-    }
-    setFocused(false);
-  };
-
   // @ts-ignore
   useImperativeHandle(ref, () => input.current);
 
@@ -213,7 +199,7 @@ export const TextField = forwardRef(function TextField(
         />
       )}
 
-      <View style={[$inputWrapperStyles, focused ? $focusStyle : $blurStyle]}>
+      <View style={$inputWrapperStyles}>
         {!!LeftAccessory && (
           <LeftAccessory
             style={$leftAccessoryStyle}
@@ -230,8 +216,6 @@ export const TextField = forwardRef(function TextField(
           placeholder={placeholderContent}
           placeholderTextColor={colors.textDim}
           {...TextInputProps}
-          onBlur={handleBlur}
-          onFocus={handleFocus}
           editable={!disabled}
           style={$inputStyles}
         />
@@ -267,27 +251,25 @@ const $labelStyle: TextStyle = {
 const $inputWrapperStyle: ViewStyle = {
   flexDirection: "row",
   alignItems: "flex-start",
-  paddingVertical: spacing.xs,
   paddingHorizontal: 0,
-  borderBottomWidth: 2,
   overflow: "hidden",
 };
-
-const $focusStyle: ViewStyle = { borderColor: colors.palette.primary600 };
-
-const $blurStyle: ViewStyle = { borderColor: colors.palette.primary100 };
 
 const $inputStyle: TextStyle = {
   flex: 1,
   alignSelf: "stretch",
-  fontFamily: typography.primary.normal,
+  paddingHorizontal: spacing.xs,
+  backgroundColor: colors.palette.neutral200,
+  borderWidth: StyleSheet.hairlineWidth,
+  borderRadius: borderRadius.sm,
   color: colors.text,
-  fontSize: 16,
-  // https://github.com/facebook/react-native/issues/21720#issuecomment-532642093
-  paddingVertical: 0,
-  paddingTop: 0,
-  paddingBottom: 0,
-  paddingHorizontal: 0,
+  fontSize: $fontSizeStyles.sm.fontSize,
+  minHeight: 38,
+  flexDirection: "column",
+  justifyContent: "center",
+  // @ts-ignore
+  outlineStyle: "none",
+  borderColor: colors.border,
 };
 
 const $helperStyle: TextStyle = {

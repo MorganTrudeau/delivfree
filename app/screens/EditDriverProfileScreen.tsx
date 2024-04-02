@@ -1,11 +1,10 @@
-import { createUser } from "app/apis/user";
+import { createUser, updateUser } from "app/apis/user";
 import { Button, Screen, Text } from "app/components";
 import { Card } from "app/components/Card";
 import { TextInput } from "app/components/TextInput";
 import { useAlert } from "app/hooks";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { spacing } from "app/theme";
-import { User } from "functions/src/types";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -38,18 +37,20 @@ export const EditDriverProfileScreen = () => {
         "Please enter your first and last name."
       );
     }
-    const user: User = {
+    const newUser = {
       id: authToken,
       firstName,
       lastName,
-      location: null,
+      driver: {},
     };
-
-    user.driver = {};
 
     try {
       setLoading(true);
-      await dispatch(createUser(user));
+      if (user) {
+        await updateUser(newUser.id, newUser);
+      } else {
+        await dispatch(createUser({ ...newUser, location: null }));
+      }
       setLoading(false);
     } catch (error) {
       setLoading(false);

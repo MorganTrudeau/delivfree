@@ -13,6 +13,15 @@ export const renderConsumerMainStack = () => {
     <>
       <Stack.Screen name="Home" component={Screens.HomeScreen} />
       <Stack.Screen
+        name="AddressSearch"
+        component={Screens.AddressSearchScreen}
+        options={{
+          headerTitle: "Address Search",
+          headerShown: true,
+          headerTransparent: false,
+        }}
+      />
+      <Stack.Screen
         name="Restaurants"
         component={Screens.RestaurantsScreen}
         options={{

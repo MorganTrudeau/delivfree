@@ -28,10 +28,13 @@
     "expo:android": "expo start --android",
     "expo:ios": "expo start --ios",
     "expo:web": "expo start --web",
-    "build-dev": "npm run write-meta-json && rm -rf dist/ && webpack --mode=production --config webpack.config.prod.js",
-    "web:consumer": "APP=consumer GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
-    "web:vendor": "APP=vendor GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
-    "web:admin": "APP=admin GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js"
+    "build:consumer": "rm -rf dist/ && MODE=production APP=consumer  GENERATE_SOURCEMAP=false webpack --mode=production --config webpack.config.js",
+    "build:vendor": "rm -rf dist/ && MODE=production APP=vendor  GENERATE_SOURCEMAP=false webpack --mode=production --config webpack.config.js",
+    "build:admin": "rm -rf dist/ && MODE=production APP=admin  GENERATE_SOURCEMAP=false webpack --mode=production --config webpack.config.js",
+    "host": "firebase deploy --only hosting",
+    "web:consumer": "MODE=development APP=consumer GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
+    "web:vendor": "MODE=development APP=vendor GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
+    "web:admin": "MODE=development APP=admin GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js"
   },
   "overrides": {
     "react-error-overlay": "6.0.9"

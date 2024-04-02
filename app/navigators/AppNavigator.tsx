@@ -18,10 +18,11 @@ import { renderMainStack } from "./MainStack";
 import { renderRegistrationStack } from "./RegistrationStack";
 import { isUserRegistered } from "app/utils/user";
 import { UserTypeManager } from "app/services/UserTypeManager";
+import { Host as PortalHost } from "react-native-portalize";
 
-export type NavigationProp =
-  | AppStackScreenProps<keyof AppStackParamList>["navigation"]
-  | TabScreenProps<keyof TabParamList>["navigation"];
+export type NavigationProp = AppStackScreenProps<
+  keyof AppStackParamList
+>["navigation"];
 
 /**
  * This is a list of all the route names that will exit the app if the back button
@@ -108,7 +109,9 @@ export const AppNavigator = (props: NavigationProps) => {
       onReady={onReady}
       {...props}
     >
-      <AppStack />
+      <PortalHost>
+        <AppStack />
+      </PortalHost>
       <FirebaseMessaging />
       <UserTypeManager />
     </NavigationContainer>

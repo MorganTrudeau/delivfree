@@ -18,3 +18,4 @@ export * from "./Vendor/VendorOrdersScreen";
 export * from "./Vendor/VendorSubscriptionScreen";
 export * from "./Vendor/VendorProfileScreen";
 export * from "./Vendor/VendorLocationsScreen";
+export * from "./AddressSearchScreen";

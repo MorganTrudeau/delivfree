@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { isRTL, translate, TxKeyPath } from "../i18n";
 import { colors, typography } from "../theme";
+import { scaleSize } from "./styles";
 
 type Sizes = keyof typeof $fontSizeStyles;
 type Weights = keyof typeof typography.primary;
@@ -86,12 +87,6 @@ export function Text(props: TextProps) {
     </RNText>
   );
 }
-
-const LARGE_SCREEN = false; // Dimensions.get("window").width > 700;
-
-const scaleSize = (size: number) => {
-  return LARGE_SCREEN ? size + 3 : size;
-};
 
 export const $fontSizeStyles = {
   xxl: {

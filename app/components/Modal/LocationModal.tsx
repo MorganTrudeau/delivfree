@@ -3,7 +3,7 @@ import { BottomSheet, BottomSheetRef } from "./BottomSheet";
 import { Button } from "../Button";
 import { Text } from "../Text";
 import { ActivityIndicator, TextStyle, View, ViewStyle } from "react-native";
-import { colors, spacing } from "app/theme";
+import { spacing } from "app/theme";
 import { useGeoPosition } from "app/hooks/useGeoPosition";
 import * as Location from "expo-location";
 import { updateUser } from "app/apis/user";
@@ -12,44 +12,54 @@ import { useAlert } from "app/hooks";
 import { useAppSelector } from "app/redux/store";
 import { User } from "functions/src/types";
 import * as geofire from "geofire-common";
+import { useNavigation } from "@react-navigation/native";
+import { NavigationProp } from "app/navigators";
 
 interface Props {
   onRequestClose: () => void;
 }
 
 const LocationContent = ({ onRequestClose }: Props) => {
+  const navigation = useNavigation<NavigationProp>();
+
   const Alert = useAlert();
   const activeUser = useAppSelector((state) => state.user.user as User);
 
   const [findingLocation, setFindingLocation] = useState(false);
   const [confirmingLocation, setConfirmingLocation] = useState(false);
   const [location, setLocation] = useState<User["location"]>(null);
-  const { getLocation } = useGeoPosition();
+  const { watchLocation } = useGeoPosition();
 
   const findMyLocation = async () => {
     setFindingLocation(true);
-    const location = await getLocation();
-    if (!location) {
-      setFindingLocation(false);
-      return;
-    }
-    const {
-      position: { latitude, longitude },
-    } = location;
-    const geohash = geofire.geohashForLocation([latitude, longitude]);
-    try {
-      const response = await Location.reverseGeocodeAsync({
-        latitude,
-        longitude,
-      });
-      for (const item of response) {
-        const address = `${item.city}, ${item.isoCountryCode}`;
-        setLocation({ latitude, longitude, address, geohash });
-      }
-      setFindingLocation(false);
-    } catch (error) {
-      setFindingLocation(false);
-    }
+    const unsubscribe = await watchLocation(
+      async (location) => {
+        console.log("LOCATION", location);
+        if (!location) {
+          setFindingLocation(false);
+          return;
+        }
+        unsubscribe();
+        const {
+          position: { latitude, longitude },
+        } = location;
+        const geohash = geofire.geohashForLocation([latitude, longitude]);
+        try {
+          const response = await Location.reverseGeocodeAsync({
+            latitude,
+            longitude,
+          });
+          for (const item of response) {
+            const address = `${item.city}, ${item.isoCountryCode}`;
+            setLocation({ latitude, longitude, address, geohash });
+          }
+          setFindingLocation(false);
+        } catch (error) {
+          setFindingLocation(false);
+        }
+      },
+      () => {}
+    );
   };
 
   const confirmLocation = async () => {
@@ -66,6 +76,11 @@ const LocationContent = ({ onRequestClose }: Props) => {
       setConfirmingLocation(false);
       Alert.alert(translate("errors.heading"), translate("errors.common"));
     }
+  };
+
+  const enterAddress = () => {
+    onRequestClose();
+    navigation.navigate("AddressSearch");
   };
 
   const LocationLoading = useMemo(
@@ -108,7 +123,11 @@ const LocationContent = ({ onRequestClose }: Props) => {
           RightAccessory={LocationLoading}
         />
       )}
-      <Button text={"Enter my address"} style={$button} />
+      <Button
+        text={"Enter my address"}
+        style={$button}
+        onPress={enterAddress}
+      />
     </View>
   );
 };

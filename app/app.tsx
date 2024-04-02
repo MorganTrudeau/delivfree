@@ -8,7 +8,6 @@ import { ErrorBoundary } from "./screens/ErrorScreen/ErrorBoundary";
 import { customFontsToLoad } from "./theme";
 import Config from "./config";
 import { FirebaseAuth } from "./services/firebase/auth";
-import { Host as PortalHost } from "react-native-portalize";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { $flex } from "./components/styles";
@@ -48,13 +47,9 @@ function App() {
             <SafeAreaProvider>
               <ErrorBoundary catchErrors={Config.catchErrors}>
                 <ToastProvider>
-                  <PortalHost>
-                    <PortalHost>
-                      <AlertProvider>
-                        <AppNavigator />
-                      </AlertProvider>
-                    </PortalHost>
-                  </PortalHost>
+                  <AlertProvider>
+                    <AppNavigator />
+                  </AlertProvider>
                   <FirebaseAuth />
                 </ToastProvider>
               </ErrorBoundary>

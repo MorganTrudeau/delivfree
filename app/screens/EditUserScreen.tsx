@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { User } from "delivfree";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
-import { createUser } from "app/apis/user";
+import { createUser, updateUser } from "app/apis/user";
 import { useAlert } from "app/hooks";
 import { getAppType } from "app/utils/general";
 import { Card } from "app/components/Card";
@@ -39,20 +39,20 @@ export const EditUserScreen = () => {
         "Please enter your first and last name."
       );
     }
-    const user: User = {
+    const newUser = {
       id: authToken,
       firstName,
       lastName,
-      location: null,
+      consumer: {},
     };
-
-    if (getAppType() === "CONSUMER") {
-      user.consumer = {};
-    }
 
     try {
       setLoading(true);
-      await dispatch(createUser(user));
+      if (user) {
+        await updateUser(newUser.id, newUser);
+      } else {
+        await dispatch(createUser({ ...newUser, location: null }));
+      }
       setLoading(false);
     } catch (error) {
       setLoading(false);

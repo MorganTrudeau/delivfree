@@ -15,22 +15,22 @@ export const UserTypeManager = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     let newUserType: typeof userType;
-    if (!userType) {
-      const appType = getAppType();
-      if (appType === "CONSUMER") {
-        newUserType = "consumer";
-      } else if (appType === "ADMIN") {
-        newUserType = "admin";
-      } else if (appType === "VENDOR") {
-        if (user?.driver) {
-          newUserType = "driver";
-        } else if (user?.vendor) {
-          newUserType = "vendor";
-        }
+
+    const appType = getAppType();
+
+    if (appType === "CONSUMER") {
+      newUserType = "consumer";
+    } else if (appType === "ADMIN") {
+      newUserType = "admin";
+    } else if (appType === "VENDOR") {
+      if (user?.driver) {
+        newUserType = "driver";
+      } else if (user?.vendor) {
+        newUserType = "vendor";
       }
-      if (newUserType) {
-        dispatch(setUserType(newUserType));
-      }
+    }
+    if (newUserType && newUserType !== userType) {
+      dispatch(setUserType(newUserType));
     }
   }, [user, userType]);
 

@@ -8,6 +8,7 @@ import {
   NO_TOP_BOTTOM_SAFE_AREA_EDGES,
 } from "app/components/styles";
 import appJson from "../../app.json";
+import { getAppType } from "app/utils/general";
 
 export const AboutScreen = () => {
   return (
@@ -24,6 +25,11 @@ export const AboutScreen = () => {
       <ListItem
         text={"Build Number"}
         RightComponent={<Text weight="semiBold">{appJson.buildNumber}</Text>}
+        style={[$borderBottom, $row]}
+      />
+      <ListItem
+        text={"Env"}
+        RightComponent={<Text weight="semiBold">{getAppType()}</Text>}
         style={[$borderBottom, $row]}
       />
     </Screen>

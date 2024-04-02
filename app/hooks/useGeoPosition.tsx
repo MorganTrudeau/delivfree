@@ -14,9 +14,14 @@ export const useGeoPosition = () => {
 
   const { canUse } = usePermissions();
 
+  const removeWatchSubscription = () => {
+    console.log("REMOVE", watchSubscription.current);
+    watchSubscription.current && watchSubscription.current.remove();
+  };
+
   useEffect(() => {
     return () => {
-      watchSubscription.current && watchSubscription.current.remove();
+      removeWatchSubscription();
     };
   }, []);
 
@@ -26,9 +31,7 @@ export const useGeoPosition = () => {
     }) => void,
     onError: (error: unknown) => void
   ) => {
-    if (watchSubscription.current) {
-      watchSubscription.current.remove();
-    }
+    removeWatchSubscription();
 
     const hasPermission = await canUse(LocationPermission);
 
@@ -61,6 +64,8 @@ export const useGeoPosition = () => {
       onError("missing-permission");
       handlePermissionError();
     }
+
+    return removeWatchSubscription;
   };
 
   const getLocation = async (): Promise<{
@@ -68,12 +73,10 @@ export const useGeoPosition = () => {
   } | null> => {
     const hasPermission = await canUse(LocationPermission);
 
-    await new Promise((resolve) => setTimeout(resolve, 200));
-
     if (hasPermission) {
       try {
         const position = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Highest,
+          accuracy: Location.Accuracy.Lowest,
         });
 
         const {

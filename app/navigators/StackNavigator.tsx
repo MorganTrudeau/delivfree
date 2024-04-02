@@ -21,6 +21,7 @@ export type AppStackParamList = {
   Profile: undefined;
   Subscription: undefined;
   Locations: undefined;
+  AddressSearch: undefined;
 };
 
 let _stack = createNativeStackNavigator<AppStackParamList>();

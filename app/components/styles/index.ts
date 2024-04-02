@@ -12,6 +12,12 @@ import {
 import { ImageStyle } from "react-native-fast-image";
 import { Edge } from "react-native-safe-area-context";
 
+const LARGE_SCREEN = false; // Dimensions.get("window").width > 700;
+
+export const scaleSize = (size: number) => {
+  return LARGE_SCREEN ? size + 3 : size;
+};
+
 export const NO_TOP_BOTTOM_SAFE_AREA_EDGES: Edge[] = [
   "bottom",
   "right",
@@ -210,3 +216,18 @@ export const $imageContainer: StyleProp<ViewStyle> = [
     backgroundColor: colors.background,
   },
 ];
+
+export const $input: TextStyle = {
+  paddingHorizontal: spacing.xs,
+  backgroundColor: colors.palette.neutral200,
+  borderWidth: StyleSheet.hairlineWidth,
+  borderRadius: borderRadius.sm,
+  color: colors.text,
+  fontSize: scaleSize(16),
+  minHeight: 38,
+  flexDirection: "column",
+  justifyContent: "center",
+  // @ts-ignore
+  outlineStyle: "none",
+  borderColor: colors.border,
+};
