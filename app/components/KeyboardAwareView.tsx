@@ -120,6 +120,7 @@ export default class AppKeyboardAwareView extends React.PureComponent<
       useNativeDriver: true,
     }).start();
   };
+
   animateDown = () => {
     Animated.timing(this.animation, {
       toValue: 0,
@@ -127,6 +128,7 @@ export default class AppKeyboardAwareView extends React.PureComponent<
       useNativeDriver: true,
     }).start();
   };
+
   onLayout = () => {
     if (this.viewRef.current) {
       this.viewRef.current.measure((x, y, width, height, px, py) => {

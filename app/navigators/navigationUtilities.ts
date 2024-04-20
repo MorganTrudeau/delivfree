@@ -5,7 +5,7 @@ import {
   createNavigationContainerRef,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Cuisine } from "functions/src/types";
+import { Cuisine } from "delivfree";
 import { AppStackParamList } from "./StackNavigator";
 
 /**

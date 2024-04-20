@@ -2,7 +2,9 @@ import React, {
   ComponentType,
   forwardRef,
   Ref,
+  useCallback,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -22,6 +24,7 @@ import { isRTL, translate } from "../i18n";
 import { colors, spacing, typography } from "../theme";
 import { $fontSizeStyles, Text, TextProps } from "./Text";
 import { borderRadius } from "app/theme/borderRadius";
+import NumberTextInput from "./NumberTextInput";
 
 export interface TextFieldAccessoryProps {
   style: StyleProp<any>;
@@ -31,6 +34,7 @@ export interface TextFieldAccessoryProps {
 }
 
 export interface TextFieldProps extends Omit<TextInputProps, "ref"> {
+  numberInput?: boolean;
   /**
    * A style modifier for different input states.
    */
@@ -106,6 +110,10 @@ export interface TextFieldProps extends Omit<TextInputProps, "ref"> {
    * Note: It is a good idea to memoize this.
    */
   LeftAccessory?: ComponentType<TextFieldAccessoryProps>;
+  /**
+   * Function to validate input
+   */
+  validation?: (val: string) => boolean;
 }
 
 /**
@@ -135,9 +143,54 @@ export const TextField = forwardRef(function TextField(
     style: $inputStyleOverride,
     containerStyle: $containerStyleOverride,
     inputWrapperStyle: $inputWrapperStyleOverride,
+    numberInput,
+    validation,
     ...TextInputProps
   } = props;
   const input = useRef<TextInput>(null);
+  const value = useRef(
+    TextInputProps.value || TextInputProps.defaultValue || ""
+  );
+
+  const [focused, setFocused] = useState();
+  const [error, setError] = useState(false);
+
+  const handleFocus = useCallback(
+    (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+      if (props.onFocus) {
+        props.onFocus(e);
+      }
+    },
+    [props.onFocus]
+  );
+
+  const handleBlur = useCallback(
+    (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+      if (props.onBlur) {
+        props.onBlur(e);
+      }
+      if (validation) {
+        const isValid = validation(value.current);
+        setError(!isValid);
+      }
+    },
+    [props.onBlur, validation]
+  );
+
+  const handleChangeText = useCallback(
+    (val: string) => {
+      if (props.onChangeText) {
+        props.onChangeText(val);
+      }
+      value.current = val;
+    },
+    [props.onChangeText]
+  );
+
+  const Input = useMemo(
+    () => (numberInput ? NumberTextInput : TextInput),
+    [numberInput]
+  );
 
   const disabled = TextInputProps.editable === false || status === "disabled";
 
@@ -151,7 +204,7 @@ export const TextField = forwardRef(function TextField(
 
   const $inputWrapperStyles = [
     $inputWrapperStyle,
-    status === "error" && { borderColor: colors.error },
+    error && { borderColor: colors.error },
     TextInputProps.multiline && { minHeight: 112 },
     LeftAccessory && { paddingStart: 0 },
     RightAccessory && { paddingEnd: 0 },
@@ -168,7 +221,7 @@ export const TextField = forwardRef(function TextField(
 
   const $helperStyles = [
     $helperStyle,
-    status === "error" && { color: colors.error },
+    error && { color: colors.error },
     HelperTextProps?.style,
   ];
 
@@ -209,7 +262,7 @@ export const TextField = forwardRef(function TextField(
           />
         )}
 
-        <TextInput
+        <Input
           ref={input}
           underlineColorAndroid={colors.transparent}
           textAlignVertical="top"
@@ -218,6 +271,9 @@ export const TextField = forwardRef(function TextField(
           {...TextInputProps}
           editable={!disabled}
           style={$inputStyles}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onChangeText={handleChangeText}
         />
 
         {!!RightAccessory && (
@@ -245,31 +301,27 @@ export const TextField = forwardRef(function TextField(
 });
 
 const $labelStyle: TextStyle = {
-  marginBottom: spacing.xs,
+  marginBottom: spacing.xxs,
 };
 
 const $inputWrapperStyle: ViewStyle = {
   flexDirection: "row",
-  alignItems: "flex-start",
-  paddingHorizontal: 0,
-  overflow: "hidden",
+  paddingHorizontal: spacing.xs,
+  backgroundColor: colors.palette.neutral200,
+  borderWidth: StyleSheet.hairlineWidth,
+  borderRadius: borderRadius.sm,
+  minHeight: 38,
+  justifyContent: "center",
+  borderColor: colors.border,
 };
 
 const $inputStyle: TextStyle = {
   flex: 1,
   alignSelf: "stretch",
-  paddingHorizontal: spacing.xs,
-  backgroundColor: colors.palette.neutral200,
-  borderWidth: StyleSheet.hairlineWidth,
-  borderRadius: borderRadius.sm,
   color: colors.text,
   fontSize: $fontSizeStyles.sm.fontSize,
-  minHeight: 38,
-  flexDirection: "column",
-  justifyContent: "center",
   // @ts-ignore
   outlineStyle: "none",
-  borderColor: colors.border,
 };
 
 const $helperStyle: TextStyle = {
@@ -285,4 +337,8 @@ const $leftAccessoryStyle: ViewStyle = {
   marginStart: spacing.xs,
   justifyContent: "center",
   alignItems: "center",
+};
+
+const $errorStyle: ViewStyle = {
+  borderColor: colors.error,
 };

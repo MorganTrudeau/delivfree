@@ -14,7 +14,7 @@ import { borderRadius } from "app/theme/borderRadius";
 import { colors, spacing } from "app/theme";
 import { Text } from "../Text";
 import { data } from "../../utils/cuisines";
-import { Cuisine, Restaurant, RestaurantLocation } from "functions/src/types";
+import { Cuisine, Vendor, RestaurantLocation } from "delivfree";
 import RestaurantListItem from "../RestaurantListItem";
 
 interface Props extends Partial<FlatListProps<Data | RestaurantLocation>> {

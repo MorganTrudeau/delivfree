@@ -1,9 +1,4 @@
-import {
-  Cuisine,
-  LatLng,
-  Restaurant,
-  RestaurantLocation,
-} from "functions/src/types";
+import { Cuisine, LatLng, RestaurantLocation } from "delivfree";
 import * as geofire from "geofire-common";
 import firestore, {
   FirebaseFirestoreTypes,
@@ -56,10 +51,19 @@ export const commitTestRestaurants = async () => {
   );
 };
 
+export const addRestaurantLocation = (
+  restaurantLocation: RestaurantLocation
+) => {
+  return firestore()
+    .collection("RestaurantLocations")
+    .doc(restaurantLocation.id)
+    .set(restaurantLocation);
+};
+
 export const fetchRestaurants = async (
   centerLatLng: LatLng,
   queryOptions: { cuisine?: Cuisine; limit?: number; keyword?: string } = {},
-  radiusKm = 50
+  radiusKm = 10
 ) => {
   const { cuisine, limit, keyword } = queryOptions;
 

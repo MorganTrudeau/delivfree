@@ -1,14 +1,17 @@
-import React from "react";
-import { Order, OrderStatus } from "functions/src/types";
-import { Pressable, StyleProp, View, ViewStyle } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import { Order, OrderStatus } from "delivfree";
+import { FlatList, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
 import moment from "moment";
 import { localizeCurrency } from "app/utils/general";
 import { colors, spacing } from "app/theme";
+import { useAppSelector } from "app/redux/store";
 
 interface Props {
   orders: Order[];
   style?: StyleProp<ViewStyle>;
+  loadOrders: () => void;
+  onOrderPress: (order: Order) => void;
 }
 
 const HEADERS = [
@@ -21,17 +24,18 @@ const HEADERS = [
 ] as const;
 
 const getHeaderWidth = (header: (typeof HEADERS)[number]) => {
+  return undefined;
   switch (header) {
     case "Amount":
       140;
     case "Tip":
       return 140;
     case "Customer":
-      return 150;
+      return undefined;
     case "Date":
       return 200;
     case "Description":
-      return 220;
+      return undefined;
     case "Status":
       return 150;
     default:
@@ -65,14 +69,25 @@ const getStatusText = (status: OrderStatus) => {
   }
 };
 
-export const OrdersList = ({ orders, style }: Props) => {
+export const OrdersList = ({
+  orders,
+  style,
+  loadOrders,
+  onOrderPress,
+}: Props) => {
+  useEffect(() => {
+    loadOrders();
+  }, []);
+
+  const customers = useAppSelector((state) => state.customers.data);
+
   const renderHeader = () => {
     return (
       <View style={$header}>
         {HEADERS.map((header) => (
           <View
             key={header}
-            style={{ flex: 1, maxWidth: getHeaderWidth(header) }}
+            style={[$tableCell, { maxWidth: getHeaderWidth(header) }]}
           >
             <Text preset="subheading" size="xs">
               {header}
@@ -83,48 +98,76 @@ export const OrdersList = ({ orders, style }: Props) => {
     );
   };
 
+  const renderItem = useCallback(({ item: order }: { item: Order }) => {
+    return (
+      <Pressable
+        key={order.id}
+        style={$listRow}
+        onPress={() => onOrderPress(order)}
+      >
+        <View style={[$tableCell, { maxWidth: getHeaderWidth("Amount") }]}>
+          <Text preset="subheading" size="sm">
+            {localizeCurrency(Number(order.amount), "USD")}
+          </Text>
+        </View>
+        <View style={[$tableCell, { maxWidth: getHeaderWidth("Tip") }]}>
+          <Text>{localizeCurrency(Number(order.tip), "USD")}</Text>
+        </View>
+        <View style={[$tableCell, { maxWidth: getHeaderWidth("Description") }]}>
+          <Text numberOfLines={1} ellipsizeMode="tail">
+            {order.description}
+          </Text>
+        </View>
+        <View style={[$tableCell, { maxWidth: getHeaderWidth("Customer") }]}>
+          <Text numberOfLines={1} ellipsizeMode="tail">
+            {customers[order.customer].name}
+          </Text>
+        </View>
+        <View style={[$tableCell, { maxWidth: getHeaderWidth("Date") }]}>
+          <Text numberOfLines={1} ellipsizeMode="tail">
+            {moment(order.date).format("MMM Do, h:mma")}
+          </Text>
+        </View>
+        <View
+          style={[
+            $tableCell,
+            {
+              maxWidth: getHeaderWidth("Status"),
+              flexDirection: "row",
+              alignItems: "center",
+            },
+          ]}
+        >
+          <View
+            style={[
+              $statusBubble,
+              { backgroundColor: getStatusColor(order.status) },
+            ]}
+          />
+          <Text>{getStatusText(order.status)}</Text>
+        </View>
+      </Pressable>
+    );
+  }, []);
+
+  const renderEmptyComponent = useCallback(
+    () => (
+      <Text preset="bold" style={{ margin: spacing.md, alignSelf: "center" }}>
+        No orders for this location
+      </Text>
+    ),
+    []
+  );
+
   return (
     <View style={style}>
       {renderHeader()}
-      {orders.map((order) => {
-        return (
-          <Pressable key={order.id} style={$listRow}>
-            <View style={{ flex: 1, maxWidth: getHeaderWidth("Amount") }}>
-              <Text preset="subheading" size="sm">
-                {localizeCurrency(order.amount, "USD")}
-              </Text>
-            </View>
-            <View style={{ flex: 1, maxWidth: getHeaderWidth("Tip") }}>
-              <Text>{localizeCurrency(order.tip, "USD")}</Text>
-            </View>
-            <View style={{ flex: 1, maxWidth: getHeaderWidth("Description") }}>
-              <Text>{order.description}</Text>
-            </View>
-            <View style={{ flex: 1, maxWidth: getHeaderWidth("Customer") }}>
-              <Text>{order.customer}</Text>
-            </View>
-            <View style={{ flex: 1, maxWidth: getHeaderWidth("Date") }}>
-              <Text>{moment(order.date).format("MMM Do, h:mma")}</Text>
-            </View>
-            <View
-              style={{
-                flex: 1,
-                maxWidth: getHeaderWidth("Status"),
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <View
-                style={[
-                  $statusBubble,
-                  { backgroundColor: getStatusColor(order.status) },
-                ]}
-              />
-              <Text>{getStatusText(order.status)}</Text>
-            </View>
-          </Pressable>
-        );
-      })}
+      <FlatList
+        data={orders}
+        renderItem={renderItem}
+        onEndReached={loadOrders}
+        ListEmptyComponent={renderEmptyComponent}
+      />
     </View>
   );
 };
@@ -145,6 +188,11 @@ const $listRow: ViewStyle = {
   paddingVertical: spacing.xs,
   borderBottomWidth: 1,
   borderBottomColor: colors.borderLight,
+};
+
+const $tableCell: ViewStyle = {
+  flex: 1,
+  paddingEnd: spacing.md,
 };
 
 const STATUS_BUBBLE_SIZE = 15;

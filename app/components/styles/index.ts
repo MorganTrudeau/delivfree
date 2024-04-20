@@ -172,9 +172,9 @@ export const $borderedArea: ViewStyle = {
   backgroundColor: colors.palette.neutral200,
   paddingHorizontal: spacing.sm,
   paddingVertical: spacing.xs,
-  borderRadius: 4,
+  borderRadius: borderRadius.md,
   borderColor: colors.border,
-  borderWidth: 2,
+  borderWidth: StyleSheet.hairlineWidth,
 };
 
 export const $popover: ViewStyle = {

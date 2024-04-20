@@ -1,4 +1,5 @@
 import { Screen, Text } from "app/components";
+import { AdBanner } from "app/components/AdBanner";
 import AnimatedHeaderTitle from "app/components/AnimatedHeaderTitle";
 import RestaurantsList from "app/components/RestaurantsList";
 import {
@@ -11,10 +12,10 @@ import { useRestaurantsLoading } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
 import { spacing } from "app/theme";
 import { getCuisineImage, getCuisineTitle } from "app/utils/cuisines";
-import { Restaurant } from "functions/src/types";
+import { RestaurantLocation, Vendor } from "delivfree";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { TextStyle, View } from "react-native";
-import FastImage from "react-native-fast-image";
+import { TextStyle, View, ViewStyle } from "react-native";
+import FastImage, { ImageStyle } from "react-native-fast-image";
 import {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -39,16 +40,16 @@ export const RestaurantsScreen = ({
   const handleScroll = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle: () => (
-        <AnimatedHeaderTitle
-          title={getCuisineTitle(cuisine)}
-          scrollY={scrollY}
-        />
-      ),
-    });
-  }, [navigation, route.params.cuisine]);
+  // useEffect(() => {
+  //   navigation.setOptions({
+  //     headerTitle: () => (
+  //       <AnimatedHeaderTitle
+  //         title={getCuisineTitle(cuisine)}
+  //         scrollY={scrollY}
+  //       />
+  //     ),
+  //   });
+  // }, [navigation, route.params.cuisine]);
 
   const listContent = useMemo(
     () => ({
@@ -59,17 +60,18 @@ export const RestaurantsScreen = ({
   );
 
   const handleRestaurantPress = useCallback(
-    (restaurant: Restaurant) =>
+    (restaurant: RestaurantLocation) =>
       navigation.navigate("RestaurantDetail", { restaurantId: restaurant.id }),
     [navigation]
   );
 
   const renderListHeader = useMemo(
     () => (
-      <View>
+      <View style={$listHeader}>
         <Text preset={"heading"} style={$heading}>
           {getCuisineTitle(cuisine)}
         </Text>
+        <AdBanner type={cuisine} style={$adBanner} />
       </View>
     ),
     [cuisine]
@@ -109,5 +111,10 @@ export const RestaurantsScreen = ({
   );
 };
 
-const $heading: TextStyle = { marginBottom: spacing.md };
+const $heading: TextStyle = {};
+const $listHeader: ViewStyle = { paddingBottom: spacing.md };
 const $emptyText: TextStyle = { marginTop: spacing.sm, textAlign: "center" };
+const $adBanner: ImageStyle = {
+  marginTop: spacing.sm,
+  marginBottom: spacing.md,
+};

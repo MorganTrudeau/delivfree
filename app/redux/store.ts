@@ -20,6 +20,11 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import reactotron from "app/services/reactotron/reactotron";
 import { Platform } from "react-native";
+import vendor from "./reducers/vendor";
+import customers from "./reducers/customers";
+import restaurantLocations from "./reducers/restaurantLocations";
+import subscription from "./reducers/subscription";
+import driver from "./reducers/driver";
 
 const persistConfig = {
   key: "2",
@@ -30,8 +35,13 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth,
+  driver,
   user,
   appConfig,
+  vendor,
+  customers,
+  restaurantLocations,
+  subscription,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

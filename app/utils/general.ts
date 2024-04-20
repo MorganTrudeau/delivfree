@@ -279,6 +279,12 @@ export const generateUid = (n = 9) => {
   return randomness.map((_) => S4()).join("");
 };
 
+export function generatePin(length = 6) {
+  const r = () => Math.floor(Math.random() * Math.floor(10)).toString();
+  const randomness = new Array(length).fill(0);
+  return randomness.map((n) => r()).join("");
+}
+
 export const sumChars = (str: string) => {
   let sum = 0;
   if (typeof str !== "string") {

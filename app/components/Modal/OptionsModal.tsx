@@ -22,8 +22,8 @@ import { BottomSheet, BottomSheetRef } from "./BottomSheet";
 import { Text } from "../Text";
 import { colors, spacing } from "app/theme";
 import { $borderBottom, $row, HORIZONTAL_SAFE_AREA_EDGES } from "../styles";
-import { BottomSheetModalRef } from "delivfree";
 import { SafeAreaView } from "../SafeAreaView";
+import { ModalRef } from "functions/src/types";
 
 export const OPTION_HEIGHT = 50;
 export const OPTION_ICON_SIZE = sizing.lg;
@@ -54,7 +54,7 @@ type OptionModalProps = {
 
 const OptionsModalWithoutRef = (
   { options = [], onSelect }: OptionModalProps,
-  ref: Ref<BottomSheetModalRef>
+  ref: Ref<ModalRef>
 ) => {
   const insets = useSafeAreaInsets();
   const windowHeight = useWindowDimensions();
@@ -131,7 +131,7 @@ const OptionsModalWithoutRef = (
   );
 };
 
-export const OptionsModal = forwardRef<BottomSheetModalRef, OptionModalProps>(
+export const OptionsModal = forwardRef<ModalRef, OptionModalProps>(
   OptionsModalWithoutRef
 );
 

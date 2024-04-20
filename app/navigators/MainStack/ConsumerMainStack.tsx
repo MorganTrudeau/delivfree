@@ -4,6 +4,7 @@ import { Pressable } from "react-native";
 import { spacing } from "app/theme";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "app/components";
+import { LogoHeader } from "app/components/LogoHeader";
 
 const Stack = getStackNavigator();
 
@@ -11,7 +12,11 @@ export const renderConsumerMainStack = () => {
   const navigation = useNavigation();
   return (
     <>
-      <Stack.Screen name="Home" component={Screens.HomeScreen} />
+      <Stack.Screen
+        name="Home"
+        component={Screens.HomeScreen}
+        options={{ headerTitle: LogoHeader }}
+      />
       <Stack.Screen
         name="AddressSearch"
         component={Screens.AddressSearchScreen}
@@ -27,6 +32,7 @@ export const renderConsumerMainStack = () => {
         options={{
           headerShown: true,
           headerTransparent: false,
+          headerTitle: LogoHeader,
         }}
       />
       <Stack.Screen

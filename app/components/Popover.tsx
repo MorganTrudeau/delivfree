@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { PopoverContext } from "app/context/PopoverContext";
 import React, {
   forwardRef,

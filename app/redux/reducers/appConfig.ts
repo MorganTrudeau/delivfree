@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { UserType } from "functions/src/types";
 
-type UserType = "consumer" | "driver" | "vendor" | "admin";
 export interface AppConfigState {
   userType: UserType | undefined;
 }

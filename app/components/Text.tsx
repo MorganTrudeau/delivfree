@@ -142,6 +142,7 @@ const $baseStyle: StyleProp<TextStyle> = [
 const $presets = {
   default: $baseStyle,
 
+  semibold: [$baseStyle, $fontWeightStyles.semiBold] as StyleProp<TextStyle>,
   bold: [$baseStyle, $fontWeightStyles.bold] as StyleProp<TextStyle>,
 
   heading: [

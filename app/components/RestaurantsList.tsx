@@ -1,24 +1,13 @@
-import { Cuisine, Restaurant, RestaurantLocation } from "delivfree";
+import { RestaurantLocation } from "delivfree";
 import React, { useCallback, useMemo } from "react";
-import {
-  FlatList,
-  Pressable,
-  View,
-  ViewStyle,
-  FlatListProps,
-  TextStyle,
-  RefreshControl,
-} from "react-native";
-import { $image, $imageContainer } from "./styles";
+import { View, ViewStyle, FlatListProps, RefreshControl } from "react-native";
 import { spacing } from "app/theme";
-import FastImage from "react-native-fast-image";
 import { Text } from "./Text";
-import { getCuisineImage } from "app/utils/cuisines";
 import Animated from "react-native-reanimated";
 import RestaurantListItem from "./RestaurantListItem";
 
 interface Props extends Partial<FlatListProps<RestaurantLocation>> {
-  restaurants: Restaurant[];
+  restaurants: RestaurantLocation[];
   loadMore?: () => void;
   refreshing?: boolean;
   onPress?: (restaurant: RestaurantLocation) => void;
@@ -42,6 +31,10 @@ const RestaurantsList = ({
     () => <RefreshControl onRefresh={loadMore} refreshing={!!refreshing} />,
     [loadMore]
   );
+  const renderListEmpty = useMemo(
+    () => <Text preset="bold">No restaurant locations found</Text>,
+    []
+  );
   return (
     <Animated.FlatList
       data={restaurants}
@@ -52,6 +45,7 @@ const RestaurantsList = ({
       onEndReached={loadMore}
       onEndReachedThreshold={0.5}
       refreshControl={Refresh}
+      ListEmptyComponent={renderListEmpty}
       {...rest}
     />
   );

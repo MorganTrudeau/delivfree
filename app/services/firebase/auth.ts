@@ -8,6 +8,9 @@ import crashlytics from "@react-native-firebase/crashlytics";
 import { resetAppState } from "app/redux/resetAppState";
 import { logAnalytics } from "./analytics";
 import { listenToUser } from "app/apis/user";
+import { getAppType } from "app/utils/general";
+import { setVendor } from "app/redux/reducers/vendor";
+import { setDriver } from "app/redux/reducers/driver";
 
 export const FirebaseAuth = () => {
   const authToken = useRef<string>();
@@ -31,7 +34,17 @@ export const FirebaseAuth = () => {
           loginCrashlytics(user.uid);
           dispatch(setAuthToken(user.uid));
           dispatch(setAnonymous(user.isAnonymous));
-          listenToUser(user.uid, (user) => dispatch(setUser(user)));
+          listenToUser(user.uid, (user) => {
+            dispatch(setUser(user));
+            if (getAppType() === "VENDOR") {
+              if (!user?.vendor) {
+                dispatch(setVendor(null));
+              }
+              if (!user?.driver) {
+                dispatch(setDriver(null));
+              }
+            }
+          });
           logAnalytics("signin");
         }
       } else {

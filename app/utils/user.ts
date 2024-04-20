@@ -1,5 +1,5 @@
 import { colors } from "app/theme";
-import { User } from "functions/src/types";
+import { Driver, User, Vendor } from "delivfree";
 import Config from "react-native-config";
 import { getColors } from "react-native-image-colors";
 
@@ -27,14 +27,21 @@ export const getAvatarColor = async (avatar: string) => {
     : "";
 };
 
-export const isUserRegistered = (user: User | null | undefined) => {
+export const isUserRegistered = (
+  user: User | null | undefined,
+  vendor: Vendor | null | undefined,
+  driver: Driver | null | undefined
+) => {
   if (!user || !(user.firstName && user.lastName)) {
     return false;
   }
   if (Config.APP === "ADMIN") {
     return !!user.admin;
   } else if (Config.APP === "VENDOR") {
-    return !!user.vendor || !!user.driver;
+    return (
+      (!!user.vendor?.ids && vendor?.registration?.status === "approved") ||
+      (!!user.driver?.id && driver?.registration?.status === "approved")
+    );
   }
   return !!user.consumer;
 };

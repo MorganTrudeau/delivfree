@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FirebaseStorageTypes } from "@react-native-firebase/storage";
 import { storeFile } from "app/services/firebase/storage";
+import { Platform } from "react-native";
 
 export const useUploadImage = () => {
   const [uploadTask, setUploadTask] =
@@ -18,12 +19,18 @@ export const useUploadImage = () => {
     }
   }, [uploadTask]);
 
-  const uploadImage = (
+  const uploadImage = async (
     image: string,
     ref: string,
     metadata?: { [key: string]: string }
   ): Promise<string> => {
-    const task = storeFile(ref, image, metadata);
+    let blob: Blob | undefined;
+
+    if (Platform.OS === "web") {
+      blob = await fetch(image).then((res) => res.blob());
+    }
+
+    const task = storeFile(ref, image, blob, metadata);
 
     setUploadTask(task);
 

@@ -14,7 +14,7 @@ export const CreateAccount = ({ style }: { style?: ViewStyle }) => {
   const isAnonymous = useAppSelector((state) => state.auth.isAnonymous);
 
   useEffect(() => {
-    if (authModal.current?.isOpen() && !isAnonymous) {
+    if (!isAnonymous) {
       authModal.current?.close();
     }
   }, [isAnonymous]);

@@ -1,58 +1,56 @@
 import { Icon, Screen, Text } from "app/components";
 import { ButtonSmall } from "app/components/ButtonSmall";
 import { Drawer } from "app/components/Drawer";
+import { ModalRef } from "app/components/Modal/CenterModal";
+import { ManageRestaurantLocationModal } from "app/components/RestaurantLocation/ManageRestaurantLocation";
 import RestaurantsList from "app/components/RestaurantsList";
 import { $containerPadding, $row, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
+import { useAppSelector } from "app/redux/store";
 import { spacing } from "app/theme";
-import { RestaurantLocation } from "functions/src/types";
-import React, { useMemo } from "react";
+import { RestaurantLocation } from "delivfree";
+import React, { useMemo, useRef, useState } from "react";
 import { View, ViewStyle } from "react-native";
 
 interface VendorLocationsScreenProps extends AppStackScreenProps<"Locations"> {}
 
-const LOCATIONS: RestaurantLocation[] = [
-  {
-    id: "a",
-    longitude: 0,
-    latitude: 0,
-    address: "20159 88 Ave c102, Langley Twp, BC V1M 0A4",
-    geohash: "",
-    cuisines: ["pizza"],
-    keywords: ["pizza"],
-    restaurantId: "phut",
-    phoneNumber: "778-808-9036",
-    name: "Pizza Hut Langley",
-    menuLink: "",
-    orderLink: "",
-    image:
-      "https://api.pizzahut.io/v1/content/en-ca/ca-1/images/pizza/pizza.supreme-lovers.3706cdc20b0752ac212c0d68a310fb18.1.jpg",
-  },
-  {
-    id: "a",
-    longitude: 0,
-    latitude: 0,
-    address: "11939 240 St #140, Maple Ridge, BC V4R 1M7",
-    geohash: "",
-    cuisines: ["pizza"],
-    keywords: ["pizza"],
-    restaurantId: "phut",
-    phoneNumber: "778-808-9036",
-    name: "Pizza Hut Maple Ridge",
-    menuLink: "",
-    orderLink: "",
-    image:
-      "https://recipes.net/wp-content/uploads/2024/02/what-is-dominos-bbq-pizza-1707720386.jpg",
-  },
-];
-
 export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
+  const manageLocationModal = useRef<ModalRef>(null);
+
+  const vendorId = useAppSelector((state) => state.vendor.data?.id);
+  const restaurantLocations = useAppSelector(
+    (state) => state.restaurantLocations.data
+  );
+  const restaurantLocationList = useMemo(
+    () => Object.values(restaurantLocations),
+    [restaurantLocations]
+  );
+
+  const [editLocation, setEditLocation] = useState<RestaurantLocation>();
+
+  const createLocation = () => {
+    manageLocationModal.current?.open();
+  };
+  const closeManageLocation = () => {
+    manageLocationModal.current?.close();
+  };
+
+  const handleEditLocation = (location: RestaurantLocation) => {
+    setEditLocation(location);
+    manageLocationModal.current?.open();
+  };
+
+  const onLocationModalClose = () => {
+    setEditLocation(undefined);
+  };
+
   const PlusIcon = useMemo(
     () =>
       ({ style }) =>
         <Icon icon="plus" color={"#fff"} style={style} />,
     []
   );
+
   return (
     <Drawer navigation={props.navigation}>
       <Screen
@@ -66,13 +64,24 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
             LeftAccessory={PlusIcon}
             text={"Add Location"}
             preset="filled"
+            onPress={createLocation}
           />
         </View>
         <RestaurantsList
-          restaurants={LOCATIONS}
+          restaurants={restaurantLocationList}
           style={$list}
           contentContainerStyle={$listContent}
+          onPress={handleEditLocation}
         />
+        {!!vendorId && (
+          <ManageRestaurantLocationModal
+            ref={manageLocationModal}
+            vendor={vendorId}
+            onClose={closeManageLocation}
+            onDismiss={onLocationModalClose}
+            editLocation={editLocation}
+          />
+        )}
       </Screen>
     </Drawer>
   );

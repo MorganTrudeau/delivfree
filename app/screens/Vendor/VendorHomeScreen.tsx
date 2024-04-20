@@ -52,8 +52,8 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
   }, []);
 
   const overviewLabels = useMemo(() => {
-    let start = moment().subtract(8, "days");
-    let end = moment().subtract(1, "days");
+    const start = moment().subtract(8, "days");
+    const end = moment().subtract(1, "days");
     const diff = end.diff(start, "days");
 
     const labels = new Array(diff).fill("");

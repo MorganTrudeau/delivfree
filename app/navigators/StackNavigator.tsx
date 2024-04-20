@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Cuisine } from "functions/src/types";
+import { Cuisine } from "delivfree";
 
 export type AppStackParamList = {
   Welcome: undefined;
@@ -19,12 +19,16 @@ export type AppStackParamList = {
   VendorDriverSelect: undefined;
   Orders: undefined;
   Profile: undefined;
-  Subscription: undefined;
+  Subscription: { locked?: true };
+  StartSubscription: { locked?: true };
   Locations: undefined;
   AddressSearch: undefined;
+  Drivers: undefined;
+  Loading: undefined;
+  DriverCode: undefined;
 };
 
-let _stack = createNativeStackNavigator<AppStackParamList>();
+const _stack = createNativeStackNavigator<AppStackParamList>();
 export function getStackNavigator() {
   return _stack;
 }

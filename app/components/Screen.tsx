@@ -17,7 +17,8 @@ import {
   useSafeAreaInsetsStyle,
 } from "../utils/useSafeAreaInsetsStyle";
 import { DrawerIconButton } from "./DrawerIconButton";
-import { Header } from "./Header";
+import { Header, HeaderProps } from "./Header";
+import { LogoHeader } from "./LogoHeader";
 
 interface BaseScreenProps {
   HeaderTitle?: React.ReactNode;
@@ -61,6 +62,10 @@ interface BaseScreenProps {
    * Pass any additional props directly to the KeyboardAvoidingView component.
    */
   KeyboardAvoidingViewProps?: KeyboardAvoidingViewProps;
+  /**
+   * Pass props to Header component
+   */
+  headerProps?: HeaderProps;
 }
 
 interface FixedScreenProps extends BaseScreenProps {
@@ -216,6 +221,7 @@ export function Screen(props: ScreenProps) {
     inDrawer,
     title,
     HeaderTitle,
+    headerProps,
   } = props;
 
   const $containerInsets = useSafeAreaInsetsStyle(safeAreaEdges);
@@ -231,7 +237,8 @@ export function Screen(props: ScreenProps) {
         <Header
           LeftActionComponent={<DrawerIconButton />}
           title={title}
-          HeaderTitle={HeaderTitle}
+          HeaderTitle={HeaderTitle || <LogoHeader />}
+          {...headerProps}
         />
       )}
 

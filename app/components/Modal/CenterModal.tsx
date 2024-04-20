@@ -9,6 +9,7 @@ import React, {
 import {
   Animated,
   Platform,
+  Pressable,
   ScrollView,
   StyleProp,
   StyleSheet,
@@ -30,6 +31,7 @@ type Props = {
   children: ViewProps["children"];
   onDismiss?: () => void;
   modalStyle?: ViewStyle;
+  contentStyle?: ViewStyle;
 };
 export type ModalRef = {
   open: () => void;
@@ -38,7 +40,7 @@ export type ModalRef = {
 
 const ReanimatedCenterModal = forwardRef<ModalRef, Props>(
   function ReanimatedCenterModal(
-    { tapToClose = true, children, onDismiss, modalStyle },
+    { tapToClose = true, children, onDismiss, modalStyle, contentStyle },
     ref
   ) {
     const { height } = useWindowDimensions();
@@ -92,8 +94,10 @@ const ReanimatedCenterModal = forwardRef<ModalRef, Props>(
           {hideContent && !visible ? null : (
             <>
               <Backdrop enabled={tapToClose} onPress={close} />
-              <View style={styles.childWrapper}>
-                <ModalChild maxHeight={height * 0.9}>{children}</ModalChild>
+              <View style={styles.childWrapper} pointerEvents="box-none">
+                <ModalChild maxHeight={height * 0.9} style={contentStyle}>
+                  {children}
+                </ModalChild>
               </View>
             </>
           )}
@@ -148,23 +152,27 @@ type BackdropProps = {
 };
 const Backdrop = ({ enabled, onPress, children, style }: BackdropProps) => {
   return (
-    <TouchableWithoutFeedback onPress={onPress} disabled={!enabled}>
-      <View style={[backdropStyles.background, style]}>{children}</View>
-    </TouchableWithoutFeedback>
+    <Pressable
+      style={[backdropStyles.background, style]}
+      onPress={onPress}
+      disabled={!enabled}
+    >
+      {children}
+    </Pressable>
   );
 };
 
 const backdropStyles = StyleSheet.create({
   background: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    left: 0,
-    bottom: 0,
     alignItems: "center",
-    justifyContent: "center",
-    padding: spacing.md,
     backgroundColor: "rgba(0,0,0,0.3)",
+    bottom: 0,
+    justifyContent: "center",
+    left: 0,
+    padding: spacing.md,
+    position: "absolute",
+    right: 0,
+    top: 0,
   },
 });
 
@@ -172,16 +180,6 @@ const _keyboardAwareViewEnabled = Platform.OS === "ios";
 const _scrollOffset = -spacing.md;
 
 const styles = StyleSheet.create({
-  childWrapper: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    left: 0,
-    bottom: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: spacing.md,
-  },
   childContainer: {
     backgroundColor: Platform.select({
       ios: "rgba(255,255,255,0.98)",
@@ -189,8 +187,17 @@ const styles = StyleSheet.create({
     }),
     borderRadius: borderRadius.md,
     maxWidth: MAX_CENTER_MODAL_WIDTH,
-    overflow: "hidden",
     width: "100%",
+  },
+  childWrapper: {
+    alignItems: "center",
+    bottom: 0,
+    justifyContent: "center",
+    left: 0,
+    padding: spacing.md,
+    position: "absolute",
+    right: 0,
+    top: 0,
   },
   scrollStyle: { flexGrow: 0 },
 });

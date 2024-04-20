@@ -1,4 +1,4 @@
-import { Restaurant, RestaurantLocation } from "functions/src/types";
+import { Vendor, RestaurantLocation } from "delivfree";
 import React from "react";
 import { $image, $imageContainer } from "./styles";
 import { Pressable, View } from "react-native";

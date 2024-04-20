@@ -55,7 +55,6 @@ const AlertProvider = ({ children }: { children: React.ReactNode }) => {
       const buttons = _buttons
         ? _buttons.reverse()
         : [{ text: "OK", onPress: () => {} }]; // Mobile buttons are in opposite order
-      console.log("OPEN");
       setAlertProps({ title, message, buttons, ...props });
       setTimeout(() => appAlert.current?.open(), 1);
     },

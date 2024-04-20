@@ -203,25 +203,25 @@ export function Header(props: HeaderProps) {
           ActionComponent={LeftActionComponent}
         />
 
-        {HeaderTitle ??
-          (!!titleContent && (
-            <View
-              style={[
-                titleMode === "center" && $titleWrapperCenter,
-                titleMode === "flex" && $titleWrapperFlex,
-                $titleContainerStyleOverride,
-              ]}
-              pointerEvents="none"
-            >
+        {(!!titleContent || !!HeaderTitle) && (
+          <View
+            style={[
+              titleMode === "center" && $titleWrapperCenter,
+              titleMode === "flex" && $titleWrapperFlex,
+              $titleContainerStyleOverride,
+            ]}
+            pointerEvents="none"
+          >
+            {HeaderTitle ?? (
               <Text
                 weight="medium"
                 size="md"
                 text={titleContent}
                 style={[$title, $titleStyleOverride]}
               />
-            </View>
-          ))}
-
+            )}
+          </View>
+        )}
         <HeaderAction
           tx={rightTx}
           text={rightText}

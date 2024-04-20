@@ -6,7 +6,7 @@ import { useAlert } from "app/hooks";
 import { translate } from "app/i18n";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
-import { User } from "functions/src/types";
+import { User } from "delivfree";
 import React, { useCallback, useEffect, useState } from "react";
 import { GooglePlaceDetail } from "react-native-google-places-autocomplete";
 import * as geofire from "geofire-common";
@@ -60,19 +60,17 @@ export const AddressSearchScreen = ({
   }, [placesData]);
 
   useEffect(() => {
-    if (placesData || confirmAddress) {
-      navigation.setOptions({
-        headerRight: () =>
-          confirmingAddress ? (
-            <ActivityIndicator color={colors.primary} />
-          ) : (
-            <Pressable onPress={confirmAddress}>
-              <Icon icon={"check-circle"} color={colors.primary} />
-            </Pressable>
-          ),
-      });
-    }
-  }, [confirmAddress, placesData, confirmAddress]);
+    navigation.setOptions({
+      headerRight: () =>
+        !(placesData || confirmingAddress) ? null : confirmingAddress ? (
+          <ActivityIndicator color={colors.primary} />
+        ) : (
+          <Pressable onPress={confirmAddress}>
+            <Icon icon={"check-circle"} color={colors.primary} />
+          </Pressable>
+        ),
+    });
+  }, [confirmAddress, placesData, confirmingAddress]);
 
   return (
     <Screen

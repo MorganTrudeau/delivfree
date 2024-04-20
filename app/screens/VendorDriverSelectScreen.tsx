@@ -26,7 +26,7 @@ export const VendorDriverSelectScreen = (
           Choose whether you are registering as a Restaurant or a Driver.
         </Text>
         <Button
-          text={"Restaurant"}
+          text={"Vendor"}
           onPress={selectRole("vendor")}
           style={$button}
         />

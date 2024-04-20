@@ -1,7 +1,7 @@
 import { generateUid } from "./general";
 import { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { ReceivedNotification } from "react-native-push-notification";
-import { AppMessageTypes, TriviaCategory } from "delivfree";
+import { AppMessageTypes } from "delivfree";
 
 export const formatFCMMessage = (fcmMessage: FCMMessage): AppMessage => {
   const messageId = fcmMessage.messageId || generateUid();
@@ -35,8 +35,6 @@ export type FCMMessage = FirebaseMessagingTypes.RemoteMessage & {
 
 export type AppMessageData = {
   type?: LinkMessageType;
-  challengeId?: string;
-  category?: TriviaCategory;
   localNotification?: boolean;
 };
 

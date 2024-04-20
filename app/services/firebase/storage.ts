@@ -1,17 +1,26 @@
 import storage from "@react-native-firebase/storage";
+import { Platform } from "react-native";
 
 export const storeFile = (
   refPath: string,
   filePath: string,
+  blob: Blob | undefined,
   metadata?: {
     [key: string]: string;
   } | null
 ) => {
   const mediaRef = storage().ref(refPath);
-  return mediaRef.putFile(
-    filePath,
-    metadata ? { customMetadata: metadata } : undefined
-  );
+  if (Platform.OS === "web" && blob) {
+    return mediaRef.put(
+      blob,
+      metadata ? { customMetadata: metadata } : undefined
+    );
+  } else {
+    return mediaRef.putFile(
+      filePath,
+      metadata ? { customMetadata: metadata } : undefined
+    );
+  }
 };
 
 export const deleteFile = (refPath: string) => {

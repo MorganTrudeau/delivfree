@@ -1,4 +1,6 @@
 import { Icon, IconTypes, Screen, Text } from "app/components";
+import { AdBanner } from "app/components/AdBanner";
+import { CheckoutPopUp, CheckoutPopUpRef } from "app/components/CheckoutPopUp";
 import { $flex, $screen, $shadow } from "app/components/styles";
 import { getRestaurantCache } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
@@ -25,6 +27,7 @@ interface RestaurantsScreenProps
 export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
   const { restaurantId } = route.params;
   const restaurant = useRef(getRestaurantCache().cache[restaurantId]).current;
+  const checkoutPopUp = useRef<CheckoutPopUpRef>(null);
   const insets = useSafeAreaInsets();
   const gradientStyles: ViewStyle = useMemo(
     () => ({
@@ -37,13 +40,16 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
     [insets.top]
   );
   const viewMenu = () => {
-    Linking.openURL(restaurant.menuLink);
+    checkoutPopUp.current?.open(restaurant.menuLink);
+    // Linking.openURL(restaurant.menuLink);
   };
   const orderOnline = () => {
-    Linking.openURL(restaurant.orderLink);
+    checkoutPopUp.current?.open(restaurant.orderLink);
+    // Linking.openURL(restaurant.orderLink);
   };
   const phoneRestaurant = () => {
-    Linking.openURL(`tel:${restaurant.phoneNumber}`);
+    checkoutPopUp.current?.open(`tel:${restaurant.phoneNumber}`);
+    // Linking.openURL(`tel:${restaurant.phoneNumber}`);
   };
   const viewAddress = () => {
     const scheme = Platform.select({
@@ -71,7 +77,8 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
         <Text preset={"subheading"} style={$name} size={"xl"}>
           {restaurant.name}
         </Text>
-        <View style={$freeDeliveryNotice}>
+        <AdBanner type="checkout" style={$adBanner} />
+        {/* <View style={$freeDeliveryNotice}>
           <Text size={"sm"} weight="semiBold">
             FREE DELIVERY & ZERO ADDED FEES
           </Text>
@@ -79,7 +86,7 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
             You are saving money on this order via DelivFree. The menu price is
             all you pay!
           </Text>
-        </View>
+        </View> */}
         <View style={$detailsContainer}>
           {!!restaurant.menuLink && (
             <DetailItem
@@ -115,6 +122,7 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
         <LinearGradient colors={GRADIENT_COLORS} style={gradientStyles} />
       )}
       <StatusBar style={"light"} />
+      <CheckoutPopUp ref={checkoutPopUp} />
     </>
   );
 };
@@ -155,4 +163,9 @@ const $freeDeliveryNotice: ViewStyle = {
   borderRadius: borderRadius.md,
   borderWidth: StyleSheet.hairlineWidth,
   borderColor: colors.border,
+};
+
+const $adBanner: ViewStyle = {
+  paddingHorizontal: spacing.md,
+  marginTop: spacing.md,
 };

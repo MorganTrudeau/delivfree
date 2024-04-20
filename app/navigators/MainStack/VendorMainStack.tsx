@@ -1,9 +1,35 @@
 import * as Screens from "app/screens";
 import { getStackNavigator } from "../StackNavigator";
+import { Stripe } from "stripe";
+import { Vendor } from "functions/src/types";
+import React from "react";
 
 const Stack = getStackNavigator();
 
-export const renderVendorMainStack = () => {
+export const renderVendorMainStack = ({
+  subscription,
+  vendor,
+}: {
+  subscription: Stripe.Subscription | null | undefined;
+  vendor: Vendor | null | undefined;
+}) => {
+  if (!vendor) {
+    return <Stack.Screen name="Loading" component={Screens.LoadingScreen} />;
+  }
+
+  if (
+    !subscription ||
+    !["active", "incomplete"].includes(subscription.status)
+  ) {
+    return (
+      <Stack.Screen
+        name="StartSubscription"
+        component={Screens.VendorSubscriptionScreen}
+        initialParams={{ locked: true }}
+      />
+    );
+  }
+
   return (
     <>
       <Stack.Screen name="Home" component={Screens.VendorHomeScreen} />
@@ -13,6 +39,7 @@ export const renderVendorMainStack = () => {
         name="Locations"
         component={Screens.VendorLocationsScreen}
       />
+      <Stack.Screen name="Drivers" component={Screens.VendorDriversScreen} />
       <Stack.Screen
         name="Subscription"
         component={Screens.VendorSubscriptionScreen}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
-import { Cuisine, Restaurant, RestaurantLocation } from "delivfree";
+import { Cuisine, Vendor, RestaurantLocation } from "delivfree";
 import { fetchRestaurants } from "app/apis/restaurants";
 import { useAppSelector } from "app/redux/store";
 
@@ -11,7 +11,7 @@ export const useRestaurantsLoading = (cuisine: Cuisine) => {
 
   const activeUser = useAppSelector((state) => state.user.user);
 
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(
+  const [restaurants, setRestaurants] = useState<RestaurantLocation[]>(
     cache.current.listCache[cuisine]
   );
 

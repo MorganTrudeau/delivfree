@@ -68,7 +68,6 @@ export const cropImage = async (
     height: 360,
     cropping: true,
     mediaType: "photo" as const,
-    cropperCircleOverlay: true,
     ...options,
   };
 

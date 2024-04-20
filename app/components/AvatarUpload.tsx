@@ -25,7 +25,7 @@ export type AvatarUploadRef = {
   closeOptions: () => void;
 };
 
-type UserUpdate = Partial<Pick<User, "avatar" | "avatarRef" | "color">>;
+type UserUpdate = any; // Partial<Pick<User, "avatar" | "avatarRef" | "color">>;
 
 type Props = {
   user: User;
@@ -117,13 +117,13 @@ const AvatarUpload = forwardRef<AvatarUploadRef, Props>(function AvatarUpdate(
     }
   };
 
-  const removeAvatarImage = () => {
-    const updatedUser: User = {
-      ...user,
-      avatar: "",
-    };
-    onUserChange(updatedUser);
-  };
+  // const removeAvatarImage = () => {
+  //   const updatedUser: User = {
+  //     ...user,
+  //     avatar: "",
+  //   };
+  //   onUserChange(updatedUser);
+  // };
 
   const getAvatarOptions = () => {
     const options: OptionModalItem[] = [
@@ -147,14 +147,14 @@ const AvatarUpload = forwardRef<AvatarUploadRef, Props>(function AvatarUpdate(
       },
     ];
 
-    if (user.avatar) {
-      options.push({
-        text: "Remove avatar",
-        onPress: removeAvatarImage,
-        value: "removeAvatar",
-        icon: "image-remove",
-      });
-    }
+    // if (user.avatar) {
+    //   options.push({
+    //     text: "Remove avatar",
+    //     onPress: removeAvatarImage,
+    //     value: "removeAvatar",
+    //     icon: "image-remove",
+    //   });
+    // }
 
     return options;
   };
@@ -198,10 +198,11 @@ const AvatarUpload = forwardRef<AvatarUploadRef, Props>(function AvatarUpdate(
       <ColorPickerModal
         ref={colorPickerModal}
         currentColor={
-          user.avatar
+          user.firstName
             ? undefined
-            : user.color ||
-              (findColorFromName ? hexColorFromName(user.username) : undefined)
+            : findColorFromName
+            ? hexColorFromName(user.firstName)
+            : undefined
         }
         onColorChange={updateUserColor}
       />

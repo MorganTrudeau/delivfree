@@ -10,7 +10,7 @@ import { updateUser } from "app/apis/user";
 import { translate } from "app/i18n";
 import { useAlert } from "app/hooks";
 import { useAppSelector } from "app/redux/store";
-import { User } from "functions/src/types";
+import { User } from "delivfree";
 import * as geofire from "geofire-common";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "app/navigators";

@@ -20,13 +20,15 @@ import { colors, spacing } from "app/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TextInput } from "app/components/TextInput";
 import { AppStackScreenProps } from "app/navigators";
-import { Cuisine, Restaurant, RestaurantLocation } from "functions/src/types";
+import { Cuisine, Vendor, RestaurantLocation } from "delivfree";
 import LocationModal from "app/components/Modal/LocationModal";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { useAppSelector } from "app/redux/store";
 import { useDebounce } from "app/hooks";
 import { fetchRestaurants } from "app/apis/restaurants";
 import { sizing } from "app/theme/sizing";
+import FastImage, { ImageStyle } from "react-native-fast-image";
+import { AdBanner } from "app/components/AdBanner";
 
 const isWeb = Platform.OS === "web";
 
@@ -53,7 +55,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
 
   const listContent = useMemo(
     () => ({
-      paddingTop: isWeb ? spacing.sm : 0,
+      paddingTop: spacing.sm,
       paddingHorizontal: spacing.md,
       paddingBottom: spacing.sm + insets.bottom,
     }),
@@ -68,7 +70,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
   );
 
   const navigateToRestaurant = useCallback(
-    (restaurant: Restaurant) =>
+    (restaurant: RestaurantLocation) =>
       props.navigation.navigate("RestaurantDetail", {
         restaurantId: restaurant.id,
       }),
@@ -105,9 +107,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
 
   const ListHeader = useMemo(
     () => (
-      <>
-        {/* <Text preset={"heading"}>{isWeb ? "Pick a cuisine" : "DELIVFREE"}</Text> */}
-
+      <View style={$listHeader}>
         {!!activeUser?.location?.address && (
           <Pressable
             style={$location}
@@ -123,7 +123,8 @@ export const HomeScreen = (props: HomeScreenProps) => {
           placeholder={"Search restaurants"}
           style={$search}
         />
-      </>
+        <AdBanner type={"general"} style={$adBanner} />
+      </View>
     ),
     [search, activeUser?.location?.address]
   );
@@ -168,7 +169,6 @@ export const HomeScreen = (props: HomeScreenProps) => {
 
 const $search: ViewStyle = {
   marginTop: spacing.sm,
-  marginBottom: spacing.lg,
   maxWidth: 700,
 };
 const $location: ViewStyle = {
@@ -180,3 +180,5 @@ const $emptyList: ViewStyle = {
   alignItems: "center",
 };
 const $emptyIcon: ViewStyle = { marginBottom: spacing.xs };
+const $adBanner: ImageStyle = { marginTop: spacing.md };
+const $listHeader: ViewStyle = { paddingBottom: spacing.xl };

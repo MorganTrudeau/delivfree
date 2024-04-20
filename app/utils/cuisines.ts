@@ -1,11 +1,11 @@
 import { Cuisine, Cuisines } from "delivfree";
 
 export const getCuisineTitle = (cuisine: Cuisine) => {
-  return data.find((c) => c.cuisine === cuisine)?.title;
+  return data.find((c) => c.cuisine === cuisine)?.title as string;
 };
 
 export const getCuisineImage = (cuisine: Cuisine) => {
-  return data.find((c) => c.cuisine === cuisine)?.image;
+  return data.find((c) => c.cuisine === cuisine)?.image as number;
 };
 
 export const data: { cuisine: Cuisine; image: number; title: string }[] = [

@@ -1,19 +1,21 @@
 import { Cuisines } from "./enums";
 
 export type ModalRef = { open: () => void; close: () => void };
+export type UserType = "consumer" | "driver" | "vendor" | "admin";
+export type Location = {
+  latitude: number;
+  longitude: number;
+  address: string;
+  geohash: string;
+};
 export type User = {
   id: string;
   firstName: string;
   lastName: string;
-  location: {
-    latitude: number;
-    longitude: number;
-    address: string;
-    geohash: string;
-  } | null;
+  location: Location | null;
   consumer?: {};
-  vendor?: {};
-  driver?: {};
+  vendor?: { ids: string[] };
+  driver?: { id: string };
   admin?: {};
 };
 export type Cuisine = (typeof Cuisines)[keyof typeof Cuisines];
@@ -25,29 +27,59 @@ export type RestaurantLocation = {
   cuisines: Cuisine[];
   id: string;
   keywords: string[];
-  restaurantId: string;
+  vendor: string;
   phoneNumber: string;
   name: string;
   menuLink: string;
   orderLink: string;
   image: string;
 };
-export type Restaurant = {
+export type Vendor = {
   id: string;
+  firstName: string;
+  lastName: string;
+  businessName: string;
+  phoneNumber: string;
+  registration: {
+    status: "pending" | "approved" | "declined";
+    message?: string;
+  };
+};
+export type Driver = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  registration: {
+    status: "pending" | "approved" | "declined";
+    message?: string;
+  };
+  vendors: string[];
+  parentDrivers: { [vendorId: string]: string /* parent driver iD */ };
 };
 export type OrderStatus =
-  | "complete"
   | "in-progress"
+  | "complete"
   | "incomplete"
   | "canceled";
 export type Order = {
   id: string;
   customer: string;
-  amount: number;
-  tip: number;
+  amount: string;
+  tip: string;
   description: string;
   status: OrderStatus;
   date: string;
+  vendor: string;
+  restaurantLocation: string;
+};
+export type Customer = {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  address: string;
+  vendor: string;
+  restaurantLocation: string;
 };
 export type LatLng = { latitude: number; longitude: number };
 export type IconName =

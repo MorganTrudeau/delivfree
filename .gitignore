@@ -86,3 +86,4 @@ web-build/
 !env.js
 functions/.runtimeconfig.json
 functions/firebase-debug.log
+functions/.env*

@@ -11,7 +11,14 @@ import FastImage from "react-native-fast-image";
 import { AppStackParamList } from "app/navigators/StackNavigator";
 import { useAppSelector } from "app/redux/store";
 
-const ConsumerItems = [
+type DrawerItem = {
+  text: string;
+  route?: keyof AppStackParamList;
+  params?: any;
+  include?: () => boolean;
+};
+
+const ConsumerItems: DrawerItem[] = [
   {
     text: "Sign up as a Vendor",
   },
@@ -23,20 +30,21 @@ const ConsumerItems = [
     include: () => Platform.OS !== "web",
   },
   { text: "Settings", route: "Settings" },
-].filter((item) => !item.include || item.include());
+];
 
 const VendorItems = [
   { text: "Home", route: "Home" },
   { text: "Orders", route: "Orders" },
-  { text: "Profile", route: "Profile" },
   { text: "Locations", route: "Locations" },
+  { text: "Drivers", route: "Drivers" },
   { text: "Subscription", route: "Subscription" },
+  { text: "Profile", route: "Profile" },
   {
     text: "Rate App",
     include: () => Platform.OS !== "web",
   },
   { text: "Settings", route: "Settings" },
-].filter((item) => !item.include || item.include());
+];
 
 const DriverItems = [];
 
@@ -83,6 +91,12 @@ export const DrawerContent = ({
     [headerHeight]
   );
 
+  const items = useMemo(
+    () =>
+      Items.filter((item) => !item.include || item.include()) as DrawerItem[],
+    []
+  );
+
   return (
     <FlatList<{ text: string; route?: keyof AppStackParamList; params?: any }>
       style={$drawer}
@@ -94,7 +108,7 @@ export const DrawerContent = ({
           paddingRight: spacing.md,
         },
       ]}
-      data={Items}
+      data={items}
       keyExtractor={(item) => item.text}
       renderItem={({ item, index }) => (
         <DrawerItem

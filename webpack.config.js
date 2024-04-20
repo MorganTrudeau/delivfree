@@ -116,11 +116,8 @@ const alias = {
 
 // Expo CLI will await this method so you can optionally return a promise.
 module.exports = async function (env, argv) {
-  console.log("ENV", process.env);
-  const config = await createExpoWebpackConfigAsync(
-    { ...env, mode: process.env.MODE || "development" },
-    argv
-  );
+  const mode = process.env.MODE || "development";
+  const config = await createExpoWebpackConfigAsync({ ...env, mode }, argv);
 
   config.entry = ["babel-polyfill", path.join(__dirname, "index.web.js")];
   // If you want to add a new alias to the config.
@@ -151,7 +148,7 @@ module.exports = async function (env, argv) {
     return plugin instanceof webpack.DefinePlugin;
   });
   const definePlugin = new webpack.DefinePlugin({
-    __DEV__: JSON.stringify(true),
+    __DEV__: JSON.stringify(mode === "development"),
     "process.env": JSON.stringify(dotEnv),
   });
 

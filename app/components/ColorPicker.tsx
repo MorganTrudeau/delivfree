@@ -1,11 +1,6 @@
 import { avatarColors } from "app/theme";
 import React from "react";
-import {
-  View,
-  TouchableWithoutFeedback,
-  Platform,
-  ViewStyle,
-} from "react-native";
+import { View, Platform, ViewStyle, Pressable } from "react-native";
 import { Icon } from "./Icon";
 
 type ColorProps = {
@@ -21,7 +16,7 @@ const Color = ({
   size,
   selected,
 }: ColorProps) => (
-  <TouchableWithoutFeedback onPress={onColorChange.bind(null, backgroundColor)}>
+  <Pressable onPress={onColorChange.bind(null, backgroundColor)}>
     <View
       style={[
         $color,
@@ -35,7 +30,7 @@ const Color = ({
     >
       {selected && <Icon color={"#fff"} size={size - 15} icon={"check"} />}
     </View>
-  </TouchableWithoutFeedback>
+  </Pressable>
 );
 
 type ColorPickerProps = {

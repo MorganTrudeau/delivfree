@@ -4,13 +4,14 @@ import {
   View,
   ActivityIndicator,
   AlertButton,
+  ViewStyle,
 } from "react-native";
 
 import { colors, spacing } from "app/theme";
 import { Icon, IconTypes } from "../Icon";
 import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
 import { Text } from "../Text";
-import { $borderTop, $row } from "../styles";
+import { $borderTop, $row, MAX_CENTER_MODAL_WIDTH } from "../styles";
 
 type AppAlertButtonProps = {
   onPress: () => void;
@@ -34,13 +35,11 @@ export const AppAlertButton = ({
     <TouchableOpacity onPress={onPress}>
       <View style={[$borderTop, $row, { padding: 15 }]}>
         <Text
-          style={[
-            {
+          style={{
               color,
               textAlign: "center",
               flex: 1,
-            },
-          ]}
+            }}
         >
           {text}
         </Text>
@@ -136,11 +135,17 @@ const AppAlert = forwardRef<ModalRef, AppAlertProps>(function AppAlert(
     <ReanimatedCenterModal
       ref={ref}
       tapToClose={tapToDismiss}
-      modalStyle={{ zIndex: 999 }}
+      modalStyle={$modalStyle}
+      contentStyle={$contentStyle}
     >
       <AlertContent {...rest} onRequestClose={onRequestClose} />
     </ReanimatedCenterModal>
   );
 });
+
+const $modalStyle = { zIndex: 999 };
+const $contentStyle: ViewStyle = {
+  maxWidth: MAX_CENTER_MODAL_WIDTH - spacing.md * 2,
+};
 
 export default AppAlert;

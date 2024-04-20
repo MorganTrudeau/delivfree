@@ -1,47 +1,67 @@
 import { createUser, updateUser } from "app/apis/user";
-import { Button, Screen, Text } from "app/components";
+import { Button, Icon, Screen, Text, TextField } from "app/components";
 import { Card } from "app/components/Card";
 import { TextInput } from "app/components/TextInput";
+import { $borderedArea, $row } from "app/components/styles";
 import { useAlert } from "app/hooks";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
-import { spacing } from "app/theme";
+import { createDriver } from "app/redux/thunks/driver";
+import { colors, spacing } from "app/theme";
+import { sizing } from "app/theme/sizing";
+import { generateUid } from "app/utils/general";
+import { Driver, User } from "functions/src/types";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   TextStyle,
   ViewStyle,
   TextInput as RNInput,
+  View,
 } from "react-native";
 
 export const EditDriverProfileScreen = () => {
   const Alert = useAlert();
 
   const lastNameInput = useRef<RNInput>(null);
+  const phoneNumberInput = useRef<RNInput>(null);
 
   const authToken = useAppSelector((state) => state.auth.authToken as string);
   const user = useAppSelector((state) => state.user.user);
+  const driver = useAppSelector((state) => state.driver.data);
+
   const dispatch = useAppDispatch();
-  const [firstName, setFirstName] = useState(user?.firstName || "");
-  const [lastName, setLastName] = useState(user?.lastName || "");
+
   const [loading, setLoading] = useState(false);
 
-  const onFirstNameSubmit = useCallback(
-    () => lastNameInput.current?.focus(),
-    []
-  );
+  const [driverState, setDriverState] = useState<Driver>({
+    id: generateUid(),
+    firstName: driver?.firstName || "",
+    lastName: driver?.lastName || "",
+    phoneNumber: driver?.phoneNumber || "",
+    registration: { status: "pending" },
+    vendors: [],
+    parentDrivers: {},
+  });
 
-  const handleCreateUser = useCallback(async () => {
-    if (!(firstName && lastName)) {
+  const updateState = (key: keyof Driver) => (val: string) => {
+    setDriverState((s) => ({ ...s, [key]: val }));
+  };
+
+  const fieldsComplete =
+    driverState.firstName && driverState.lastName && driverState.phoneNumber;
+
+  const handleCreateDriver = useCallback(async () => {
+    if (!fieldsComplete) {
       return Alert.alert(
         "Form incomplete",
-        "Please enter your first and last name."
+        "Please complete all fields before continuing."
       );
     }
-    const newUser = {
+    const newUser: Pick<User, "id" | "firstName" | "lastName" | "driver"> = {
       id: authToken,
-      firstName,
-      lastName,
-      driver: {},
+      firstName: driverState.firstName,
+      lastName: driverState.lastName,
+      driver: { id: driverState.id },
     };
 
     try {
@@ -51,12 +71,13 @@ export const EditDriverProfileScreen = () => {
       } else {
         await dispatch(createUser({ ...newUser, location: null }));
       }
+      await dispatch(createDriver(driverState));
       setLoading(false);
     } catch (error) {
       setLoading(false);
       Alert.alert("Something went wrong", "Please try that again.");
     }
-  }, [firstName, lastName, authToken, dispatch, Alert]);
+  }, [driverState, authToken, dispatch, Alert]);
 
   const Loading = useMemo(
     () =>
@@ -70,36 +91,87 @@ export const EditDriverProfileScreen = () => {
     <Screen preset={"scroll"} contentContainerStyle={$screen}>
       <Card>
         <Text style={$header} preset={"heading"} weight={"bold"}>
-          What's your name?
+          Driver profile
         </Text>
-        <TextInput
-          onChangeText={setFirstName}
-          placeholder="First Name"
-          style={$firstNameInput}
-          value={firstName}
+        <TextField
+          onChangeText={updateState("firstName")}
+          placeholder="First name"
+          label="First name"
+          containerStyle={$input}
+          value={driverState.firstName}
           returnKeyType={"next"}
-          onSubmitEditing={onFirstNameSubmit}
+          onSubmitEditing={() => lastNameInput.current?.focus()}
         />
-        <TextInput
+        <TextField
           ref={lastNameInput}
-          onChangeText={setLastName}
-          placeholder="Last Name"
-          value={lastName}
-          onSubmitEditing={handleCreateUser}
+          onChangeText={updateState("lastName")}
+          placeholder="Last name"
+          label="Last name"
+          value={driverState.lastName}
+          containerStyle={$input}
+          onSubmitEditing={() => phoneNumberInput.current?.focus()}
         />
-        <Button
-          preset={"filled"}
-          style={$button}
-          text={"Continue"}
-          onPress={handleCreateUser}
-          RightAccessory={Loading}
+        <TextField
+          ref={phoneNumberInput}
+          onChangeText={updateState("phoneNumber")}
+          placeholder="Phone number"
+          label="Phone number"
+          value={driverState.phoneNumber}
+          containerStyle={$input}
         />
+        {!driver?.registration ? (
+          <Button
+            preset={fieldsComplete ? "filled" : "default"}
+            style={$button}
+            text={"Continue"}
+            onPress={handleCreateDriver}
+            RightAccessory={Loading}
+          />
+        ) : (
+          <View style={[$borderedArea, { marginTop: spacing.lg }]}>
+            <Text>
+              <Text preset="subheading">Registration Status: </Text>
+              <Text size="lg">
+                {getRegistrationStatusText(driver.registration.status)}
+              </Text>
+            </Text>
+            {!!driver.registration.message ? (
+              <View style={$row}>
+                <Icon
+                  icon="information"
+                  color={colors.error}
+                  size={sizing.md}
+                />
+                <Text style={{ marginLeft: spacing.xs }}>
+                  {driver.registration.message}
+                </Text>
+              </View>
+            ) : (
+              <Text>
+                Please wait while we review your registration submission.
+              </Text>
+            )}
+          </View>
+        )}
       </Card>
     </Screen>
   );
 };
 
+const getRegistrationStatusText = (
+  status: Driver["registration"]["status"]
+) => {
+  switch (status) {
+    case "approved":
+      return "Approved";
+    case "declined":
+      return "Declined";
+    case "pending":
+      return "Pending";
+  }
+};
+
 const $screen = { padding: spacing.md };
 const $header: TextStyle = { marginBottom: spacing.lg, alignSelf: "center" };
-const $firstNameInput: ViewStyle = { marginBottom: spacing.md };
+const $input: ViewStyle = { marginTop: spacing.sm };
 const $button = { marginTop: spacing.lg };

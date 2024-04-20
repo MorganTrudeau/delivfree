@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import Config from "../config";
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities";
 import { colors, typography } from "app/theme";
-import { TabParamList, TabScreenProps } from "./TabNavigator";
 import { FirebaseMessaging } from "app/services/firebase/messaging";
 import { useAppSelector } from "app/redux/store";
 import RNBootSplash from "react-native-bootsplash";
@@ -19,6 +18,8 @@ import { renderRegistrationStack } from "./RegistrationStack";
 import { isUserRegistered } from "app/utils/user";
 import { UserTypeManager } from "app/services/UserTypeManager";
 import { Host as PortalHost } from "react-native-portalize";
+import AlertProvider from "app/components/Alert/AlertContext";
+import DataLoadingManager from "app/services/DataLoadingManager";
 
 export type NavigationProp = AppStackScreenProps<
   keyof AppStackParamList
@@ -35,48 +36,71 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> =
 
 const Stack = getStackNavigator();
 
-const AppStack = () => {
-  const { user, authToken, userLoaded, deleteAccountLoading } = useAppSelector(
-    (state) => ({
-      user: state.user.user,
-      userLoaded: state.user.loaded,
-      authToken: state.auth.authToken,
-      deleteAccountLoading: state.user.deleteAccountLoading,
-    })
-  );
+const screenOptions = {
+  headerBackTitleVisible: false,
+  headerShown: false,
+  headerTintColor: colors.primary,
+  headerTitleStyle: [
+    { fontFamily: typography.secondary.semiBold, color: colors.text },
+    $fontSizeStyles.lg,
+  ],
+  navigationBarColor: colors.background,
+  headerTitle: "",
+  headerTransparent: true,
+  headerStyle: { backgroundColor: colors.background },
+  headerShadowVisible: false,
+  animation: Platform.select<StackAnimationTypes>({
+    android: "fade_from_bottom",
+    default: "default",
+  }),
+  animationDuration: 100,
+};
 
-  const registered = isUserRegistered(user);
+const AppStack = () => {
+  const {
+    user,
+    vendor,
+    driver,
+    authToken,
+    userLoaded,
+    deleteAccountLoading,
+    subscription,
+    userType,
+  } = useAppSelector((state) => ({
+    user: state.user.user,
+    userLoaded: state.user.loaded,
+    authToken: state.auth.authToken,
+    deleteAccountLoading: state.user.deleteAccountLoading,
+    vendor: state.vendor.data,
+    driver: state.driver.data,
+    subscription: state.subscription.data,
+    userType: state.appConfig.userType,
+  }));
+
+  const registered = isUserRegistered(user, vendor, driver);
+
+  const renderStack = () => {
+    if (!(authToken && userLoaded)) {
+      return renderAuthStack();
+    }
+    if (!(registered || deleteAccountLoading)) {
+      return renderRegistrationStack({ user });
+    }
+    return renderMainStack({ subscription, userType, driver, vendor });
+  };
+
+  const initialRouteName = authToken
+    ? userLoaded
+      ? "Home"
+      : "EditProfile"
+    : "Welcome";
 
   return (
     <Stack.Navigator
-      screenOptions={{
-        headerBackTitleVisible: false,
-        headerShown: false,
-        headerTintColor: colors.primary,
-        headerTitleStyle: [
-          { fontFamily: typography.secondary.semiBold, color: colors.text },
-          $fontSizeStyles.lg,
-        ],
-        navigationBarColor: colors.background,
-        headerTitle: "",
-        headerTransparent: true,
-        headerStyle: { backgroundColor: colors.background },
-        headerShadowVisible: false,
-        animation: Platform.select<StackAnimationTypes>({
-          android: "fade_from_bottom",
-          default: "default",
-        }),
-        animationDuration: 100,
-      }}
-      initialRouteName={
-        authToken ? (userLoaded ? "Home" : "EditProfile") : "Welcome"
-      }
+      screenOptions={screenOptions}
+      initialRouteName={initialRouteName}
     >
-      {!!authToken && userLoaded
-        ? registered || deleteAccountLoading
-          ? renderMainStack()
-          : renderRegistrationStack()
-        : renderAuthStack()}
+      {renderStack()}
     </Stack.Navigator>
   );
 };
@@ -110,10 +134,15 @@ export const AppNavigator = (props: NavigationProps) => {
       {...props}
     >
       <PortalHost>
-        <AppStack />
+        <AlertProvider>
+          <PortalHost>
+            <AppStack />
+          </PortalHost>
+        </AlertProvider>
       </PortalHost>
       <FirebaseMessaging />
       <UserTypeManager />
+      <DataLoadingManager />
     </NavigationContainer>
   );
 };
