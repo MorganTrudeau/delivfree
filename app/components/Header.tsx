@@ -251,7 +251,9 @@ function HeaderAction(props: HeaderActionProps) {
 
   const content = tx ? translate(tx, txOptions) : text;
 
-  if (ActionComponent) return ActionComponent;
+  if (ActionComponent) {
+    return ActionComponent;
+  }
 
   if (content) {
     return (

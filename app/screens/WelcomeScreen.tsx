@@ -5,7 +5,13 @@ import { AppStackScreenProps } from "../navigators";
 import { colors, spacing } from "../theme";
 import { logAnalytics } from "app/services/firebase/analytics";
 import FastImage from "react-native-fast-image";
-import { SAFE_AREA_EDGES } from "app/components/styles";
+import {
+  $flex,
+  MAX_CONTAINER_WIDTH,
+  SAFE_AREA_EDGES,
+} from "app/components/styles";
+import { Card } from "app/components/Card";
+import { useDimensions } from "app/hooks/useDimensions";
 
 const IMAGE_WIDTH = Math.min(400, Dimensions.get("window").width * 0.85);
 const IMAGE_HEIGHT = IMAGE_WIDTH * (838 / 2200);
@@ -13,6 +19,9 @@ const IMAGE_HEIGHT = IMAGE_WIDTH * (838 / 2200);
 interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> {}
 
 export const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
+  const { width } = useDimensions();
+  const largeScreenLayout = width > MAX_CONTAINER_WIDTH;
+
   const onSignUp = () => {
     logAnalytics("welcome_signup");
     navigation.navigate("SignUp");
@@ -28,30 +37,35 @@ export const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
       backgroundColor={colors.background}
       preset="scroll"
       style={$container}
-      contentContainerStyle={$content}
+      contentContainerStyle={[
+        $content,
+        largeScreenLayout && { justifyContent: "center" },
+      ]}
       safeAreaEdges={SAFE_AREA_EDGES}
     >
-      <View style={$topContainer}>
-        <FastImage
-          source={require("../../assets/images/app-logo-tagline.png")}
-          style={{
-            height: IMAGE_HEIGHT,
-            width: IMAGE_WIDTH,
-          }}
-          resizeMode="contain"
-        />
-      </View>
+      <Card smallStyle={$flex}>
+        <View style={$topContainer}>
+          <FastImage
+            source={require("../../assets/images/app-logo-tagline.png")}
+            style={{
+              height: IMAGE_HEIGHT,
+              width: IMAGE_WIDTH,
+            }}
+            resizeMode="contain"
+          />
+        </View>
 
-      <View style={$bottomContainer}>
-        <Button
-          testID="sign-up-button"
-          preset="filled"
-          text="Sign Up"
-          style={$signUpButton}
-          onPress={onSignUp}
-        />
-        <Button testID="log-in-button" text="Log In" onPress={onLogIn} />
-      </View>
+        <View style={$bottomContainer}>
+          <Button
+            testID="sign-up-button"
+            preset="filled"
+            text="Sign Up"
+            style={$signUpButton}
+            onPress={onSignUp}
+          />
+          <Button testID="log-in-button" text="Log In" onPress={onLogIn} />
+        </View>
+      </Card>
     </Screen>
   );
 };

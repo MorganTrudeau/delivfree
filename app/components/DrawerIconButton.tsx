@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Pressable, PressableProps, ViewStyle } from "react-native";
+import { Pressable, PressableProps, View, ViewStyle } from "react-native";
 import Animated, {
   interpolate,
   interpolateColor,
@@ -43,7 +43,7 @@ export function DrawerIconButton(props: PressableProps) {
     return {
       transform: [{ translateX }],
     };
-  }, [inset]);
+  }, [inset, progress]);
 
   const animatedTopBarStyles = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
@@ -63,7 +63,7 @@ export function DrawerIconButton(props: PressableProps) {
       width,
       transform: [{ rotate: `${rotate}deg` }],
     };
-  });
+  }, [progress]);
 
   const animatedMiddleBarStyles = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
@@ -77,7 +77,7 @@ export function DrawerIconButton(props: PressableProps) {
       backgroundColor,
       width,
     };
-  });
+  }, [progress]);
 
   const animatedBottomBarStyles = useAnimatedStyle(() => {
     const marginTop = interpolate(progress.value, [0, 1], [4, 2]);
@@ -97,7 +97,7 @@ export function DrawerIconButton(props: PressableProps) {
       marginTop,
       transform: [{ rotate: `${rotate}deg` }],
     };
-  });
+  }, [progress]);
 
   useEffect(() => {
     progress.value = withTiming(open ? 1 : 0);

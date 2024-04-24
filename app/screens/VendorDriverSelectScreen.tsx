@@ -1,5 +1,6 @@
 import { Button, Screen, Text } from "app/components";
 import { Card } from "app/components/Card";
+import { $containerPadding } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
 import { spacing } from "app/theme";
 import React from "react";
@@ -19,7 +20,7 @@ export const VendorDriverSelectScreen = (
     }
   };
   return (
-    <Screen preset="scroll">
+    <Screen preset="scroll" contentContainerStyle={$containerPadding}>
       <Card>
         <Text preset="heading">What is your role?</Text>
         <Text style={$message}>

@@ -7,19 +7,32 @@ import React from "react";
 const Stack = getStackNavigator();
 
 export const renderVendorMainStack = ({
-  subscription,
+  vendorSubscription,
   vendor,
 }: {
-  subscription: Stripe.Subscription | null | undefined;
+  vendorSubscription: Stripe.Subscription | null | undefined;
   vendor: Vendor | null | undefined;
 }) => {
-  if (!vendor) {
+  if (vendorSubscription === undefined) {
     return <Stack.Screen name="Loading" component={Screens.LoadingScreen} />;
   }
 
+  if (vendor?.registration?.status !== "approved") {
+    return (
+      <Stack.Screen
+        name="VendorRegistration"
+        component={Screens.EditVendorProfileScreen}
+        options={{
+          headerShown: true,
+          headerTransparent: false,
+        }}
+      />
+    );
+  }
+
   if (
-    !subscription ||
-    !["active", "incomplete"].includes(subscription.status)
+    !vendorSubscription ||
+    !["active", "incomplete"].includes(vendorSubscription.status)
   ) {
     return (
       <Stack.Screen

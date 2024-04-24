@@ -26,6 +26,8 @@ export type AppStackParamList = {
   Drivers: undefined;
   Loading: undefined;
   DriverCode: undefined;
+  DriverRegistration: undefined;
+  VendorRegistration: undefined;
 };
 
 const _stack = createNativeStackNavigator<AppStackParamList>();

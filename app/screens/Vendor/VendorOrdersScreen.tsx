@@ -1,4 +1,4 @@
-import { loadOrders } from "app/apis/orders";
+import { listenToOrders } from "app/apis/orders";
 import { Icon, Screen, Text } from "app/components";
 import { ButtonSmall } from "app/components/ButtonSmall";
 import { Drawer } from "app/components/Drawer";
@@ -6,9 +6,10 @@ import { ModalRef } from "app/components/Modal/CenterModal";
 import { CreateOrderModal } from "app/components/Orders/CreateOrder";
 import { OrdersList } from "app/components/Orders/OrdersList";
 import { RestaurantLocationSelect } from "app/components/RestaurantLocation/RestaurantLocationSelect";
+import { ScreenHeader } from "app/components/ScreenHeader";
 import { $containerPadding, $row, $screen } from "app/components/styles";
 import { useAlert } from "app/hooks";
-import { useDataLoading } from "app/hooks/useDataLoading";
+import { useDataListener } from "app/hooks/useDataLoading";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { spacing } from "app/theme";
@@ -21,19 +22,24 @@ interface VendorOrdersScreenProps extends AppStackScreenProps<"Orders"> {}
 export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
   const Alert = useAlert();
 
-  const restaurantId = useAppSelector(
-    (state) => state.vendor.data?.id as string
-  );
+  const vendorId = useAppSelector((state) => state.vendor.data?.id as string);
 
   const [selectedOrder, setSelectedOrder] = useState<Order>();
   const [restaurantLocationId, setRestaurantLocationId] = useState("");
 
+  console.log({ vendorId, restaurantLocationId });
+
   const handleLoadOrders = useCallback(
-    (limit) => loadOrders(restaurantId, restaurantLocationId, limit),
-    [restaurantId, restaurantLocationId]
+    (limit: number, onData: (orders: Order[]) => void) => {
+      if (!(vendorId && restaurantLocationId)) {
+        return () => {};
+      }
+      return listenToOrders(vendorId, restaurantLocationId, limit, onData);
+    },
+    [vendorId, restaurantLocationId]
   );
 
-  const { data, loadData, reload } = useDataLoading<Order>(
+  const { data, loadData } = useDataListener<Order>(
     handleLoadOrders,
     restaurantLocationId
   );
@@ -57,7 +63,6 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
     createOrderModal.current?.open();
   };
   const closeCreateOrder = () => {
-    reload();
     createOrderModal.current?.close();
   };
   const onCreateOrderClose = () => {
@@ -76,15 +81,11 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
         style={$screen}
         contentContainerStyle={$containerPadding}
       >
-        <View style={[$row, { justifyContent: "space-between" }]}>
-          <Text preset="heading">Orders</Text>
-          <ButtonSmall
-            LeftAccessory={PlusIcon}
-            text={"Create Order"}
-            preset="filled"
-            onPress={createOrder}
-          />
-        </View>
+        <ScreenHeader
+          buttonTitle="Create Order"
+          onButtonPress={createOrder}
+          title="Orders"
+        />
         <RestaurantLocationSelect
           selectedLocationId={restaurantLocationId}
           onSelect={handleRestaurantLocationSelect}
@@ -92,7 +93,6 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
         />
         <OrdersList
           orders={data}
-          style={$list}
           loadOrders={loadData}
           onOrderPress={onOrderPress}
         />
@@ -108,10 +108,7 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
   );
 };
 
-const $list: ViewStyle = {
-  marginTop: spacing.md,
-};
 const $restaurantLocationSelect: ViewStyle = {
   alignSelf: "flex-start",
-  marginTop: spacing.sm,
+  marginBottom: spacing.sm,
 };

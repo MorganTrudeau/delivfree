@@ -25,6 +25,7 @@ import customers from "./reducers/customers";
 import restaurantLocations from "./reducers/restaurantLocations";
 import subscription from "./reducers/subscription";
 import driver from "./reducers/driver";
+import vendorDrivers from "./reducers/vendorDrivers";
 
 const persistConfig = {
   key: "2",
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
   customers,
   restaurantLocations,
   subscription,
+  vendorDrivers,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

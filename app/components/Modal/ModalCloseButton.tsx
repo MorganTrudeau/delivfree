@@ -6,11 +6,13 @@ import { sizing } from "app/theme/sizing";
 
 export const ModalCloseButton = ({
   onPress,
+  style,
 }: {
   onPress: (() => void) | undefined;
+  style?: ViewStyle;
 }) => {
   return (
-    <Pressable onPress={onPress} style={$style} hitSlop={spacing.sm}>
+    <Pressable onPress={onPress} style={[$style, style]} hitSlop={spacing.sm}>
       <Icon icon="close" size={sizing.md} />
     </Pressable>
   );

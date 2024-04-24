@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 const PAGE_SIZE = 15;
 
-export const useDataLoading = <T>(
-  query: (limit: number) => Promise<T[]>,
+export const useDataListener = <T>(
+  query: (limit: number, onData: (data: T[]) => void) => () => void,
   cacheKey: string
 ) => {
   const cache = useRef(getDataCache());
@@ -11,20 +11,16 @@ export const useDataLoading = <T>(
   const [data, setData] = useState<T[]>(cache.current.listCache[cacheKey]);
 
   const page = useRef(0);
+  const unsubscribeListener = useRef<() => void>(() => {});
 
   const loadData = useCallback(async () => {
     page.current = page.current + 1;
     const limit = page.current * PAGE_SIZE;
-    const _data = await query(limit);
-    setData(_data);
-    cache.current.updateCache(cacheKey, _data);
-  }, [query, cacheKey]);
 
-  const reload = useCallback(async () => {
-    const limit = page.current * PAGE_SIZE;
-    const _data = await query(limit);
-    setData(_data);
-    cache.current.updateCache(cacheKey, _data);
+    unsubscribeListener.current = query(limit, (_data) => {
+      setData(_data);
+      cache.current.updateCache(cacheKey, _data);
+    });
   }, [query, cacheKey]);
 
   useEffect(() => {
@@ -32,7 +28,7 @@ export const useDataLoading = <T>(
     loadData();
   }, [loadData, cacheKey]);
 
-  return { data, loadData, reload };
+  return { data, loadData };
 };
 
 let _dataCache: DataCache<any>;

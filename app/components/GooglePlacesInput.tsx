@@ -30,7 +30,7 @@ const GooglePlacesInput = ({ onPress }: Props) => {
 };
 const requestUrl = {
   useOnPlatform: "all" as const,
-  url: "http://127.0.0.1:5001/delivfree-app/us-central1/googlePlaces",
+  url: "https://us-central1-delivfree-app.cloudfunctions.net/googlePlaces",
 };
 const query = {
   key: API_KEY,

@@ -19,6 +19,8 @@ import {
 import { DrawerIconButton } from "./DrawerIconButton";
 import { Header, HeaderProps } from "./Header";
 import { LogoHeader } from "./LogoHeader";
+import { useDimensions } from "app/hooks/useDimensions";
+import { LARGE_SCREEN } from "./styles";
 
 interface BaseScreenProps {
   HeaderTitle?: React.ReactNode;
@@ -206,6 +208,8 @@ function ScreenWithScrolling(props: ScreenProps) {
         ScrollViewProps?.contentContainerStyle,
         contentContainerStyle,
       ]}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
     >
       {children}
     </ScrollView>
@@ -213,6 +217,8 @@ function ScreenWithScrolling(props: ScreenProps) {
 }
 
 export function Screen(props: ScreenProps) {
+  const { width } = useDimensions();
+  const largeScreenLayout = width > LARGE_SCREEN;
   const {
     backgroundColor = colors.background,
     safeAreaEdges,
@@ -233,7 +239,7 @@ export function Screen(props: ScreenProps) {
         backgroundColor={colors.background}
         {...StatusBarProps}
       />
-      {inDrawer && Platform.OS !== "web" && (
+      {inDrawer && !largeScreenLayout && (
         <Header
           LeftActionComponent={<DrawerIconButton />}
           title={title}

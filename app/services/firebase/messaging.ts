@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import messaging from "@react-native-firebase/messaging";
 import { Platform } from "react-native";
 import PushNotification, { Importance } from "react-native-push-notification";
@@ -12,9 +12,11 @@ import {
 } from "../../utils/notifications";
 import { requestNotifications } from "react-native-permissions";
 import firestore from "@react-native-firebase/firestore";
-import { getDeviceId } from "react-native-device-info";
+import { getDeviceId, getUniqueId } from "react-native-device-info";
 import { colors } from "app/theme";
 import { useAppSelector } from "app/redux/store";
+import { isWebNotificationsSupported } from "app/utils/general";
+import { LocalWebNotificationContext } from "app/context/LocalWebNotificationContext";
 
 export const LOCAL_NOTIFICATION_CHANNEL = "local_notifications";
 
@@ -26,6 +28,8 @@ export const FirebaseMessaging = () => {
   const unsubscribeBackground = useRef<() => void>();
   const unsubscribeToken = useRef<() => void>();
   const recentMessages = useRef(new Set<string>());
+
+  const localWebNotification = useContext(LocalWebNotificationContext);
 
   // Called once on app first mount
   // Register device for remote notifications
@@ -43,6 +47,11 @@ export const FirebaseMessaging = () => {
   }, [authToken]);
 
   const handleMessagingLifecycle = async () => {
+    if (Platform.OS === "web") {
+      const isSupported = await isWebNotificationsSupported();
+      if (!isSupported) return;
+    }
+
     if (authToken) {
       initiateMessaging();
     } else {
@@ -92,8 +101,8 @@ export const FirebaseMessaging = () => {
     }
   };
 
-  const registerToken = (deviceToken: string) => {
-    const deviceId = getDeviceId();
+  const registerToken = async (deviceToken: string) => {
+    const deviceId = Platform.OS === "web" ? "web" : await getUniqueId();
     if (!deviceToken) {
       return;
     }
@@ -172,21 +181,31 @@ export const FirebaseMessaging = () => {
       return;
     }
 
-    // Subscribe to foreground message tapped event
-    PushNotification.configure({
-      // @ts-ignore
-      onNotification: (notification: DeviceNotification) => {
-        const linkMessage: AppMessage = formatDeviceNotification(notification);
-        if (
-          linkMessage.data?.localNotification ||
-          (notification.foreground && notification.userInteraction)
-        ) {
+    if (Platform.OS === "web") {
+      localWebNotification.configure({
+        onNotification: (notification: FCMMessage) => {
+          const linkMessage: AppMessage = formatFCMMessage(notification);
           handleMessage(linkMessage);
-        }
-        notification.finish(PushNotificationIOS.FetchResult.NoData);
-      },
-      popInitialNotification: false,
-    });
+        },
+      });
+    } else {
+      // Subscribe to foreground message tapped event
+      PushNotification.configure({
+        // @ts-ignore
+        onNotification: (notification: DeviceNotification) => {
+          const linkMessage: AppMessage =
+            formatDeviceNotification(notification);
+          if (
+            linkMessage.data?.localNotification ||
+            (notification.foreground && notification.userInteraction)
+          ) {
+            handleMessage(linkMessage);
+          }
+          notification.finish(PushNotificationIOS.FetchResult.NoData);
+        },
+        popInitialNotification: false,
+      });
+    }
   };
 
   // Display local notification
@@ -219,14 +238,18 @@ export const FirebaseMessaging = () => {
       return;
     }
 
-    PushNotification.localNotification({
-      channelId: LOCAL_NOTIFICATION_CHANNEL,
-      title,
-      message,
-      userInfo: { ...data, id, localNotification: true },
-      smallIcon: "ic_notification",
-      color: colors.palette.primary600,
-    });
+    if (Platform.OS === "web") {
+      localWebNotification.localNotification(remoteMessage);
+    } else {
+      PushNotification.localNotification({
+        channelId: LOCAL_NOTIFICATION_CHANNEL,
+        title,
+        message,
+        userInfo: { ...data, id, localNotification: true },
+        smallIcon: "ic_notification",
+        color: colors.palette.primary600,
+      });
+    }
   };
 
   const subscribeToBackgroundNotifications = () => {

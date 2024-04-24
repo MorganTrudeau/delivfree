@@ -4,22 +4,30 @@ import { resetAppState } from "../resetAppState";
 import { Stripe } from "stripe";
 
 export interface SubscriptionState {
-  data: Stripe.Subscription | null;
+  vendorSubscription: Stripe.Subscription | null | undefined;
+  driverSubscription: Stripe.Subscription | null | undefined;
 }
 
 const initialState: SubscriptionState = {
-  data: null,
+  vendorSubscription: undefined,
+  driverSubscription: undefined,
 };
 
 export const subscriptionSlice = createSlice({
   name: "subscription",
   initialState,
   reducers: {
-    setSubscription: (
+    setVendorSubscription: (
       state,
       action: PayloadAction<Stripe.Subscription | null>
     ) => {
-      state.data = action.payload;
+      state.vendorSubscription = action.payload;
+    },
+    setDriverSubscription: (
+      state,
+      action: PayloadAction<Stripe.Subscription | null>
+    ) => {
+      state.driverSubscription = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -28,6 +36,7 @@ export const subscriptionSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setSubscription } = subscriptionSlice.actions;
+export const { setVendorSubscription, setDriverSubscription } =
+  subscriptionSlice.actions;
 
 export default subscriptionSlice.reducer;

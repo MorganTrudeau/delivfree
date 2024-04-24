@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { Driver, Vendor } from "delivfree";
+import { Driver } from "delivfree";
 import { resetAppState } from "../resetAppState";
 
 export interface DriverState {

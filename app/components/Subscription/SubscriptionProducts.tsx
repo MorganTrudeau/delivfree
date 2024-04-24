@@ -8,13 +8,13 @@ import { Text } from "../Text";
 import { Button } from "../Button";
 
 interface Props {
-  subscription: Stripe.Subscription | null;
-  editable?: boolean;
+  subscription: Stripe.Subscription | null | undefined;
+  referenceSubscription?: Stripe.Subscription | null;
 }
 
 export const SubscriptionProducts = ({
   subscription,
-  editable = true,
+  referenceSubscription,
 }: Props) => {
   const [{ loading, error }, setLoadingState] = useState({
     loading: false,
@@ -26,7 +26,7 @@ export const SubscriptionProducts = ({
     surgeProduct: Stripe.Product | undefined;
   }>({ fullTimeProduct: undefined, surgeProduct: undefined });
 
-  const loadSubscriptions = async () => {
+  const loadProducts = async () => {
     try {
       setLoadingState({ loading: true, error: false });
       const res = await functions().httpsCallable("fetchProducts")({
@@ -55,7 +55,7 @@ export const SubscriptionProducts = ({
   };
 
   useEffect(() => {
-    loadSubscriptions();
+    loadProducts();
   }, []);
 
   return (
@@ -71,8 +71,8 @@ export const SubscriptionProducts = ({
         <SubscriptionSelect
           fullTimeProduct={fullTimeProduct}
           surgeProduct={surgeProduct}
-          editable={editable}
           subscription={subscription}
+          referenceSubscription={referenceSubscription}
         />
       )}
     </>

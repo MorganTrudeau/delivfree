@@ -50,10 +50,11 @@ export const CreateOrder = ({
       amount: "",
       tip: "",
       customer: "",
-      date: moment().toString(),
+      date: moment().valueOf(),
       status: "in-progress",
       vendor: vendorId,
       restaurantLocation: restaurantLocationId,
+      driver: null,
     }
   );
 

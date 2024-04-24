@@ -6,11 +6,13 @@ import { Driver, Vendor } from "functions/src/types";
 const Stack = getStackNavigator();
 
 export const renderDriverMainStack = ({
-  subscription,
+  vendorSubscription,
+  driverSubscription,
   driver,
   vendor,
 }: {
-  subscription: Stripe.Subscription | null | undefined;
+  vendorSubscription: Stripe.Subscription | null | undefined;
+  driverSubscription: Stripe.Subscription | null | undefined;
   driver: Driver | null | undefined;
   vendor: Vendor | null | undefined;
 }) => {
@@ -24,13 +26,24 @@ export const renderDriverMainStack = ({
     );
   }
 
+  if (driver.registration.status !== "approved") {
+    <Stack.Screen
+      name="DriverRegistration"
+      component={Screens.EditDriverProfileScreen}
+      options={{
+        headerShown: true,
+        headerTransparent: false,
+      }}
+    />;
+  }
+
   if (
-    !subscription ||
-    !["active", "incomplete"].includes(subscription.status)
+    !driverSubscription ||
+    !["active", "incomplete"].includes(driverSubscription.status)
   ) {
     return (
       <Stack.Screen
-        name="Subscription"
+        name="StartSubscription"
         component={Screens.DriverSubscriptionScreen}
         initialParams={{ locked: true }}
       />
@@ -39,14 +52,8 @@ export const renderDriverMainStack = ({
 
   return (
     <>
-      <Stack.Screen name="Home" component={Screens.VendorHomeScreen} />
-      <Stack.Screen name="Orders" component={Screens.VendorOrdersScreen} />
-      <Stack.Screen name="Profile" component={Screens.VendorProfileScreen} />
-      <Stack.Screen
-        name="Locations"
-        component={Screens.VendorLocationsScreen}
-      />
-      <Stack.Screen name="Drivers" component={Screens.VendorDriversScreen} />
+      <Stack.Screen name="Orders" component={Screens.DriverOrdersScreen} />
+      <Stack.Screen name="Profile" component={Screens.DriverProfileScreen} />
       <Stack.Screen
         name="Subscription"
         component={Screens.DriverSubscriptionScreen}

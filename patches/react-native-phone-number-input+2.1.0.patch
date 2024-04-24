@@ -1,0 +1,23 @@
+diff --git a/node_modules/react-native-phone-number-input/lib/styles.js b/node_modules/react-native-phone-number-input/lib/styles.js
+index 1789ce7..a218cf7 100644
+--- a/node_modules/react-native-phone-number-input/lib/styles.js
++++ b/node_modules/react-native-phone-number-input/lib/styles.js
+@@ -10,8 +10,6 @@ function hp(percentage) {
+ }
+ const styles = StyleSheet.create({
+   container: {
+-    width: wp(80),
+-    backgroundColor: 'white',
+     flexDirection: 'row',
+   },
+   flagButtonView: {
+@@ -41,9 +39,6 @@ const styles = StyleSheet.create({
+   },
+   textContainer: {
+     flex: 1,
+-    backgroundColor: '#F8F9F9',
+-    paddingHorizontal: wp(4),
+-    paddingVertical: hp(2),
+     textAlign: 'left',
+     flexDirection: 'row',
+     alignItems: 'center',

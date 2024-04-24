@@ -12,10 +12,13 @@ import {
 import { ImageStyle } from "react-native-fast-image";
 import { Edge } from "react-native-safe-area-context";
 
-const LARGE_SCREEN = false; // Dimensions.get("window").width > 700;
+export const LARGE_SCREEN = 1000;
+
+export const WEB_NOTIFICATION_HEIGHT = 80;
+export const WEB_NOTIFICATION_WIDTH = 350;
 
 export const scaleSize = (size: number) => {
-  return LARGE_SCREEN ? size + 3 : size;
+  return size;
 };
 
 export const NO_TOP_BOTTOM_SAFE_AREA_EDGES: Edge[] = [
@@ -132,6 +135,14 @@ export const $shadow: ViewStyle = {
   shadowOffset: { width: 0, height: 0 },
   shadowRadius: 4,
   shadowColor: "#000",
+  shadowOpacity: 0.2,
+  elevation: 3,
+};
+
+export const $shadowWhite: ViewStyle = {
+  shadowOffset: { width: 0, height: 0 },
+  shadowRadius: 4,
+  shadowColor: "#fff",
   shadowOpacity: 0.2,
   elevation: 3,
 };

@@ -1,13 +1,5 @@
 module.exports = function () {
-  let dotEnv = {};
-
-  if (process.env.APP === "consumer") {
-    dotEnv = require("dotenv").config({ path: "./.env.consumer" });
-  } else if (process.env.APP === "vendor") {
-    dotEnv = require("dotenv").config({ path: "./.env.vendor" });
-  } else if (process.env.APP === "admin") {
-    dotEnv = require("dotenv").config({ path: "./.env.admin" });
-  }
+  let dotEnv = require("dotenv").config({ path: process.env.ENVFILE });
 
   const envVarsToRemove = [];
 

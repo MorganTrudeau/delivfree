@@ -16,6 +16,7 @@ import { TouchableOpacity } from "react-native";
 import { persistor, store } from "./redux/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import LocalWebNotificationProvider from "app/context/LocalWebNotificationContext";
 
 // Use a local emulator in development
 import functions from "@react-native-firebase/functions";
@@ -32,6 +33,9 @@ TouchableOpacity.defaultProps = {
   activeOpacity: 0.9,
 };
 
+console.log(__DEV__);
+console.log(process.env.REACT_NATIVE_APP);
+
 /**
  * This is the root component of our app.
  */
@@ -46,8 +50,10 @@ function App() {
             <SafeAreaProvider>
               <ErrorBoundary catchErrors={Config.catchErrors}>
                 <ToastProvider>
-                  <AppNavigator />
-                  <FirebaseAuth />
+                  <LocalWebNotificationProvider>
+                    <AppNavigator />
+                    <FirebaseAuth />
+                  </LocalWebNotificationProvider>
                 </ToastProvider>
               </ErrorBoundary>
             </SafeAreaProvider>

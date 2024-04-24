@@ -28,3 +28,5 @@ export * from "./Vendor/VendorDriversScreen";
 // Driver
 export * from "./Driver/DriverCodeScreen";
 export * from "./Driver/DriverSubscriptionScreen";
+export * from "./Driver/DriverProfileScreen";
+export * from "./Driver/DriverOrdersScreen";

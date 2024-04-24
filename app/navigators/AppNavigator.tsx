@@ -19,7 +19,8 @@ import { isUserRegistered } from "app/utils/user";
 import { UserTypeManager } from "app/services/UserTypeManager";
 import { Host as PortalHost } from "react-native-portalize";
 import AlertProvider from "app/components/Alert/AlertContext";
-import DataLoadingManager from "app/services/DataLoadingManager";
+import { DataLoadingManager } from "app/services/DataLoadingManager";
+import ToastProvider from "app/components/Toast/ToastContext";
 
 export type NavigationProp = AppStackScreenProps<
   keyof AppStackParamList
@@ -64,7 +65,8 @@ const AppStack = () => {
     authToken,
     userLoaded,
     deleteAccountLoading,
-    subscription,
+    vendorSubscription,
+    driverSubscription,
     userType,
   } = useAppSelector((state) => ({
     user: state.user.user,
@@ -73,11 +75,12 @@ const AppStack = () => {
     deleteAccountLoading: state.user.deleteAccountLoading,
     vendor: state.vendor.data,
     driver: state.driver.data,
-    subscription: state.subscription.data,
+    vendorSubscription: state.subscription.vendorSubscription,
+    driverSubscription: state.subscription.driverSubscription,
     userType: state.appConfig.userType,
   }));
 
-  const registered = isUserRegistered(user, vendor, driver);
+  const registered = isUserRegistered(user);
 
   const renderStack = () => {
     if (!(authToken && userLoaded)) {
@@ -86,7 +89,13 @@ const AppStack = () => {
     if (!(registered || deleteAccountLoading)) {
       return renderRegistrationStack({ user });
     }
-    return renderMainStack({ subscription, userType, driver, vendor });
+    return renderMainStack({
+      vendorSubscription,
+      driverSubscription,
+      userType,
+      driver,
+      vendor,
+    });
   };
 
   const initialRouteName = authToken
@@ -110,7 +119,10 @@ export interface NavigationProps
     React.ComponentProps<typeof NavigationContainer<AppStackParamList>>
   > {}
 
-const onReady = () => setTimeout(() => RNBootSplash.hide({ fade: true }), 10);
+const onReadyMobile = () =>
+  setTimeout(() => RNBootSplash.hide({ fade: true }), 10);
+const onReadyWeb = undefined;
+const onReady = Platform.select({ web: onReadyWeb, default: onReadyMobile });
 
 export const AppNavigator = (props: NavigationProps) => {
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName));
@@ -134,11 +146,13 @@ export const AppNavigator = (props: NavigationProps) => {
       {...props}
     >
       <PortalHost>
-        <AlertProvider>
-          <PortalHost>
-            <AppStack />
-          </PortalHost>
-        </AlertProvider>
+        <ToastProvider>
+          <AlertProvider>
+            <PortalHost>
+              <AppStack />
+            </PortalHost>
+          </AlertProvider>
+        </ToastProvider>
       </PortalHost>
       <FirebaseMessaging />
       <UserTypeManager />

@@ -10,13 +10,17 @@ import { Card } from "app/components/Card";
 import {
   $borderedArea,
   $containerPadding,
+  $flex,
   $row,
   MAX_CONTAINER_WIDTH,
 } from "app/components/styles";
 import { AppLogo } from "app/components/AppLogo";
 import { LogoutButton } from "app/components/LogoutButton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const DriverCodeScreen = () => {
+  const insets = useSafeAreaInsets();
+
   const driver = useAppSelector((state) => state.driver.data as Driver);
 
   const [code, setCode] = useState();
@@ -67,56 +71,65 @@ export const DriverCodeScreen = () => {
 
   return (
     <Screen contentContainerStyle={$containerPadding}>
-      <Card>
-        <AppLogo
-          style={{ marginBottom: spacing.lg, alignSelf: "center" }}
-          height={50}
-        />
-        <Text preset="heading" style={{ marginBottom: spacing.sm }}>
-          Get Hired
-        </Text>
-        <View style={[$borderedArea, { backgroundColor: colors.background }]}>
-          <Text preset="subheading" style={{ marginBottom: spacing.xs }}>
-            Instructions
+      <View style={$flex}>
+        <Card>
+          <AppLogo
+            style={{ marginBottom: spacing.lg, alignSelf: "center" }}
+            height={50}
+          />
+          <Text preset="heading" style={{ marginBottom: spacing.sm }}>
+            Get Hired
           </Text>
-          <Text preset="formLabel">Being hired by a vendor?</Text>
-          <Text>Provide your Driver Code to the vendor hiring you.</Text>
-          <Text preset="formLabel" style={{ marginTop: spacing.sm }}>
-            Being hired by a driver?
-          </Text>
-          <Text>Provide your Driver Code to the driver hiring you.</Text>
-        </View>
+          <View style={[$borderedArea, { backgroundColor: colors.background }]}>
+            <Text preset="subheading" style={{ marginBottom: spacing.xs }}>
+              Instructions
+            </Text>
+            <Text preset="formLabel">Being hired by a vendor?</Text>
+            <Text>Provide your Driver Code to the vendor hiring you.</Text>
+            <Text preset="formLabel" style={{ marginTop: spacing.sm }}>
+              Being hired by a driver?
+            </Text>
+            <Text>Provide your Driver Code to the driver hiring you.</Text>
+          </View>
 
-        <View
-          style={[
-            $borderedArea,
-            {
-              alignItems: "flex-start",
-              alignSelf: "flex-start",
-              marginTop: spacing.lg,
-            },
-          ]}
-        >
-          <View style={$row}>
-            <Text preset="subheading">Driver Code</Text>
-            {!code && (
-              <ActivityIndicator
-                color={colors.primary}
-                style={{ marginLeft: spacing.xs }}
-              />
+          <View
+            style={[
+              $borderedArea,
+              {
+                alignItems: "flex-start",
+                alignSelf: "flex-start",
+                marginTop: spacing.lg,
+              },
+            ]}
+          >
+            <View style={$row}>
+              <Text preset="subheading">Driver Code</Text>
+              {!code && (
+                <ActivityIndicator
+                  color={colors.primary}
+                  style={{ marginLeft: spacing.xs }}
+                />
+              )}
+            </View>
+            {!!code && (
+              <Text
+                preset="heading"
+                allowFontScaling={false}
+                style={{ fontSize: 50, marginTop: spacing.xxs, lineHeight: 60 }}
+              >
+                {code}
+              </Text>
             )}
           </View>
-          {!!code && (
-            <Text
-              preset="heading"
-              style={{ fontSize: 50, marginTop: spacing.xxs }}
-            >
-              {code}
-            </Text>
-          )}
-        </View>
-      </Card>
-      <LogoutButton style={{ alignSelf: "center", marginTop: spacing.md }} />
+        </Card>
+      </View>
+      <LogoutButton
+        style={{
+          alignSelf: "center",
+          marginTop: spacing.md,
+          marginBottom: insets.bottom,
+        }}
+      />
     </Screen>
   );
 };

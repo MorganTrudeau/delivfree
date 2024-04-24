@@ -136,6 +136,7 @@ const ModalChild = ({
           bounces={false}
           keyboardShouldPersistTaps={"handled"}
           style={styles.scrollStyle}
+          showsVerticalScrollIndicator={false}
         >
           {children}
         </ScrollView>

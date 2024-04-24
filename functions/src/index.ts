@@ -11,23 +11,30 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as express from "express";
 import axios from "axios";
-import { Driver } from "./types";
+import { Driver, Order } from "./types";
+import { buildMessagePayload, sendNotifications } from "./utils/notifications";
 
 admin.initializeApp();
 
 const googlePlacesApi = express();
 
-console.log("HI");
+const domain = "https://app.delivfree.com";
 
 googlePlacesApi.get("*", async (req, res) => {
   console.log(req.path, req.query);
-  const data = await axios.get(
-    `https://maps.googleapis.com/maps/api${req.path}`,
-    {
-      params: req.query,
-    }
-  );
-  res.json(data.data);
+  try {
+    const data = await axios.get(
+      `https://maps.googleapis.com/maps/api${req.path}`,
+      {
+        params: req.query,
+      }
+    );
+    console.log(data);
+    res.json(data.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
 });
 
 export const googlePlaces = functions.https.onRequest(googlePlacesApi);
@@ -70,5 +77,29 @@ export const addDriver = functions.https.onCall(
     return true;
   }
 );
+
+export const onOrderCreated = functions.firestore
+  .document("Orders/{orderId}")
+  .onCreate(async (doc) => {
+    const order = doc.data() as Order;
+    const driverSnap = await admin
+      .firestore()
+      .collection("Drivers")
+      .where("vendors", "array-contains", order.vendor)
+      .get();
+    const userIds = driverSnap.docs.map((doc) => (doc.data() as Driver).user);
+    const notification = {
+      title: "New Order",
+      body: `View and claim the order.`,
+    };
+    const data = {
+      orderId: order.id,
+      type: "order_created",
+    };
+    const collapseKey = "orderCreated";
+    const link = `https://${domain}?route=orders`;
+    const payload = buildMessagePayload(notification, data, collapseKey, link);
+    return sendNotifications(userIds, payload);
+  });
 
 export * from "./apis/stripe";

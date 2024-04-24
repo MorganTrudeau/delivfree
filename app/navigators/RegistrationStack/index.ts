@@ -9,9 +9,9 @@ export const renderRegistrationStack = ({
 }: {
   user: User | null | undefined;
 }) => {
-  if (Config.APP === "VENDOR") {
+  if (Config.REACT_NATIVE_APP === "VENDOR") {
     return renderVendorRegistrationStack({ user });
-  } else if (Config.APP === "ADMIN") {
+  } else if (Config.REACT_NATIVE_APP === "ADMIN") {
     return renderAdminRegistrationStack();
   } else {
     return renderConsumerRegistrationStack();

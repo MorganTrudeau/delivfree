@@ -1,6 +1,11 @@
 const path = require("path");
 const webpack = require("webpack");
 const createExpoWebpackConfigAsync = require("@expo/webpack-config");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const Dotenv = require("dotenv-webpack");
 
 const appDirectory = path.resolve(__dirname);
 const { presets, plugins, env } = require(`${appDirectory}/babel.config.js`);
@@ -11,14 +16,15 @@ const dotEnv = getWebpackEnv();
 const compileNodeModules = [
   // Add every react-native package that needs compiling
   "delivfree",
+  "react-native-google-places-autocomplete",
 ].map((moduleName) => path.resolve(appDirectory, `node_modules/${moduleName}`));
 
 const babelLoaderConfiguration = {
   test: /\.(js|ts|tsx)$/,
   // Add every directory that needs to be compiled by Babel during the build.
   include: [
-    // path.resolve(__dirname, "App.js"), // Entry to your application
-    // path.resolve(__dirname, "app"),
+    path.resolve(__dirname, "index.web.js"), // Entry to your application
+    path.resolve(__dirname, "app"),
     ...compileNodeModules,
   ],
   use: {
@@ -117,24 +123,25 @@ const alias = {
 // Expo CLI will await this method so you can optionally return a promise.
 module.exports = async function (env, argv) {
   const mode = process.env.MODE || "development";
-  const config = await createExpoWebpackConfigAsync({ ...env, mode }, argv);
+  const config = await createExpoWebpackConfigAsync(
+    {
+      ...env,
+      mode,
+    },
+    argv
+  );
 
   config.entry = ["babel-polyfill", path.join(__dirname, "index.web.js")];
-  // If you want to add a new alias to the config.
-
-  Object.entries(alias).forEach(([library, libPath]) => {
-    config.resolve.alias[library] = libPath;
-  });
-
-  // Maybe you want to turn off compression in dev mode.
-  if (config.mode === "development") {
-    config.devServer.compress = false;
-  }
-
+  // config.optimization.minimize = config.mode === "production";
+  config.output = {
+    path: path.resolve(appDirectory, "dist"),
+    publicPath: "/",
+    filename: "chunk.[name].[contenthash].js",
+    chunkFilename: "chunk.[name].[contenthash].js",
+  };
   config.module.rules = [
     ...config.module.rules,
     babelLoaderConfiguration,
-    // imageLoaderConfiguration,
     svgLoaderConfiguration,
     {
       test: /\.(js|jsx)$/,
@@ -144,39 +151,51 @@ module.exports = async function (env, argv) {
     },
   ];
 
-  const definePluginIndex = config.plugins.findIndex((plugin) => {
-    return plugin instanceof webpack.DefinePlugin;
-  });
-  const definePlugin = new webpack.DefinePlugin({
-    __DEV__: JSON.stringify(mode === "development"),
-    "process.env": JSON.stringify(dotEnv),
+  Object.entries(alias).forEach(([library, libPath]) => {
+    config.resolve.alias[library] = libPath;
   });
 
-  if (definePluginIndex === -1) {
-    config.plugins.push(definePlugin);
-  } else {
-    config.plugins[definePluginIndex] = definePlugin;
+  if (config.mode === "development") {
+    config.devServer.compress = false;
   }
 
-  // module: {
-  //   rules: [
-  //     babelLoaderConfiguration,
-  //     imageLoaderConfiguration,
-  //     svgLoaderConfiguration,
-  //     {
-  //       test: /\.(js|jsx)$/,
-  //       resolve: {
-  //         fullySpecified: false,
-  //       },
-  //     },
-  //   ],
-  // },
+  // const definePluginIndex = config.plugins.findIndex((plugin) => {
+  //   return plugin instanceof webpack.DefinePlugin;
+  // });
 
-  // Or prevent minimizing the bundle when you build.
-  // if (config.mode === "production") {
-  //   config.optimization.minimize = false
+  // const definePlugin = new webpack.DefinePlugin({
+  //   __DEV__: JSON.stringify(mode === "development"),
+  //   "process.env": JSON.stringify({
+  //     ...process.env,
+  //     NODE_ENV: process.env.MODE,
+  //   }),
+  // });
+
+  // if (definePluginIndex === -1) {
+  //   config.plugins.push(definePlugin);
+  // } else {
+  //   config.plugins[definePluginIndex] = definePlugin;
   // }
 
-  // Finally return the new config for the CLI to use.
+  const plugins = [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "public",
+        },
+      ],
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, "index.html"),
+    }),
+  ];
+
+  if (config.mode === "production") {
+    // const prodPlugins = [new BundleAnalyzerPlugin()];
+    // plugins.push(...prodPlugins);
+  }
+
+  config.plugins.push(...plugins);
+
   return config;
 };

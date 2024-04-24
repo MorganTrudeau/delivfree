@@ -4,10 +4,12 @@ import { UserType } from "functions/src/types";
 
 export interface AppConfigState {
   userType: UserType | undefined;
+  webNotificationsEnabled: boolean;
 }
 
 const initialState: AppConfigState = {
   userType: undefined,
+  webNotificationsEnabled: false,
 };
 
 export const appConfigSlice = createSlice({
@@ -17,10 +19,14 @@ export const appConfigSlice = createSlice({
     setUserType: (state, action: PayloadAction<UserType>) => {
       state.userType = action.payload;
     },
+    setWebNotificationsEnabled: (state, action: PayloadAction<boolean>) => {
+      state.webNotificationsEnabled = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setUserType } = appConfigSlice.actions;
+export const { setUserType, setWebNotificationsEnabled } =
+  appConfigSlice.actions;
 
 export default appConfigSlice.reducer;

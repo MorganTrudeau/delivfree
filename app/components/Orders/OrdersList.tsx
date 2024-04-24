@@ -1,87 +1,82 @@
-import React, { useCallback, useEffect } from "react";
-import { Order, OrderStatus } from "delivfree";
-import { FlatList, Pressable, StyleProp, View, ViewStyle } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Customer, ModalRef, Order, OrderStatus } from "delivfree";
+import { FlatList, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
-import moment from "moment";
-import { localizeCurrency } from "app/utils/general";
 import { colors, spacing } from "app/theme";
 import { useAppSelector } from "app/redux/store";
+import { updateOrder } from "app/apis/orders";
+import { OrderItemMobile } from "./OrderItemMobile";
+import { Props as OrderItemProps } from "./OrderItem";
+import { HEADERS, getHeaderWidth } from "app/utils/orders";
+import { $flex, LARGE_SCREEN } from "../styles";
+import { useDimensions } from "app/hooks/useDimensions";
+import { OrderItemWeb } from "./OrderItemWeb";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { CustomerDetailModal } from "../Customers/CustomerDetailModal";
 
 interface Props {
   orders: Order[];
-  style?: StyleProp<ViewStyle>;
   loadOrders: () => void;
   onOrderPress: (order: Order) => void;
 }
 
-const HEADERS = [
-  "Amount",
-  "Tip",
-  "Description",
-  "Customer",
-  "Date",
-  "Status",
-] as const;
+export const OrdersList = ({ orders, loadOrders, onOrderPress }: Props) => {
+  const insets = useSafeAreaInsets();
+  const dimensions = useDimensions();
+  const largeScreenLayout = dimensions.width > LARGE_SCREEN;
 
-const getHeaderWidth = (header: (typeof HEADERS)[number]) => {
-  return undefined;
-  switch (header) {
-    case "Amount":
-      140;
-    case "Tip":
-      return 140;
-    case "Customer":
-      return undefined;
-    case "Date":
-      return 200;
-    case "Description":
-      return undefined;
-    case "Status":
-      return 150;
-    default:
-      return 200;
-  }
-};
+  const userType = useAppSelector((state) => state.appConfig.userType);
 
-const getStatusColor = (status: OrderStatus) => {
-  switch (status) {
-    case "incomplete":
-      return colors.error;
-    case "canceled":
-      return colors.palette.shade500;
-    case "complete":
-      return colors.success;
-    case "in-progress":
-      return colors.palette.accent500;
-  }
-};
-
-const getStatusText = (status: OrderStatus) => {
-  switch (status) {
-    case "incomplete":
-      return "Incomplete";
-    case "canceled":
-      return "Cancelled";
-    case "complete":
-      return "Complete";
-    case "in-progress":
-      return "In progress";
-  }
-};
-
-export const OrdersList = ({
-  orders,
-  style,
-  loadOrders,
-  onOrderPress,
-}: Props) => {
   useEffect(() => {
     loadOrders();
   }, []);
 
+  const customerDetailModal = useRef<ModalRef>(null);
+
   const customers = useAppSelector((state) => state.customers.data);
+  const driver = useAppSelector((state) => state.driver.data);
+  const vendorDrivers = useAppSelector((state) => state.vendorDrivers.data);
+  const driverId = driver?.id;
+
+  const [claimLoading, setClaimLoading] = useState("");
+  const [viewCustomer, setViewCustomer] = useState<Customer>();
+
+  const claimOrder = useCallback(
+    async (orderId: string) => {
+      try {
+        if (!driverId) {
+          throw "missing driver";
+        }
+        setClaimLoading(orderId);
+        await updateOrder(orderId, { driver: driverId });
+        setClaimLoading("");
+      } catch (error) {
+        setClaimLoading("");
+        console.log("Failed to claim order", error);
+      }
+    },
+    [driverId]
+  );
+
+  const updateOrderStatus = useCallback(
+    async (orderId: string, status: OrderStatus) => {
+      try {
+        await updateOrder(orderId, { status });
+      } catch (error) {
+        console.log("Failed to change status", error);
+      }
+    },
+    []
+  );
+
+  const handleCustomerDetailModalClose = () => {
+    setViewCustomer(undefined);
+  };
 
   const renderHeader = () => {
+    if (!largeScreenLayout) {
+      return null;
+    }
     return (
       <View style={$header}>
         {HEADERS.map((header) => (
@@ -98,57 +93,35 @@ export const OrdersList = ({
     );
   };
 
-  const renderItem = useCallback(({ item: order }: { item: Order }) => {
-    return (
-      <Pressable
-        key={order.id}
-        style={$listRow}
-        onPress={() => onOrderPress(order)}
-      >
-        <View style={[$tableCell, { maxWidth: getHeaderWidth("Amount") }]}>
-          <Text preset="subheading" size="sm">
-            {localizeCurrency(Number(order.amount), "USD")}
-          </Text>
-        </View>
-        <View style={[$tableCell, { maxWidth: getHeaderWidth("Tip") }]}>
-          <Text>{localizeCurrency(Number(order.tip), "USD")}</Text>
-        </View>
-        <View style={[$tableCell, { maxWidth: getHeaderWidth("Description") }]}>
-          <Text numberOfLines={1} ellipsizeMode="tail">
-            {order.description}
-          </Text>
-        </View>
-        <View style={[$tableCell, { maxWidth: getHeaderWidth("Customer") }]}>
-          <Text numberOfLines={1} ellipsizeMode="tail">
-            {customers[order.customer].name}
-          </Text>
-        </View>
-        <View style={[$tableCell, { maxWidth: getHeaderWidth("Date") }]}>
-          <Text numberOfLines={1} ellipsizeMode="tail">
-            {moment(order.date).format("MMM Do, h:mma")}
-          </Text>
-        </View>
-        <View
-          style={[
-            $tableCell,
-            {
-              maxWidth: getHeaderWidth("Status"),
-              flexDirection: "row",
-              alignItems: "center",
-            },
-          ]}
-        >
-          <View
-            style={[
-              $statusBubble,
-              { backgroundColor: getStatusColor(order.status) },
-            ]}
-          />
-          <Text>{getStatusText(order.status)}</Text>
-        </View>
-      </Pressable>
-    );
-  }, []);
+  const renderItem = useCallback(
+    ({ item: order }: { item: Order }) => {
+      const props: OrderItemProps = {
+        order: order,
+        claimLoading: claimLoading === order.id,
+        userType: userType,
+        onOrderPress: onOrderPress,
+        customer: customers[order.customer],
+        claimOrder: claimOrder,
+        driverId: driverId,
+        changeOrderStatus: updateOrderStatus,
+        driverName: order.driver
+          ? `${vendorDrivers[order.driver]?.firstName} ${
+              vendorDrivers[order.driver]?.lastName
+            }`
+          : "Unassigned",
+        onViewCustomer: (customer: Customer) => {
+          setViewCustomer(customer);
+          customerDetailModal.current?.open();
+        },
+      };
+      return largeScreenLayout ? (
+        <OrderItemWeb {...props} />
+      ) : (
+        <OrderItemMobile {...props} />
+      );
+    },
+    [claimLoading, userType, onOrderPress, claimOrder, largeScreenLayout]
+  );
 
   const renderEmptyComponent = useCallback(
     () => (
@@ -160,15 +133,22 @@ export const OrdersList = ({
   );
 
   return (
-    <View style={style}>
+    <>
       {renderHeader()}
       <FlatList
         data={orders}
         renderItem={renderItem}
         onEndReached={loadOrders}
         ListEmptyComponent={renderEmptyComponent}
+        contentContainerStyle={[$content, { paddingBottom: insets.bottom }]}
+        style={$flex}
       />
-    </View>
+      <CustomerDetailModal
+        ref={customerDetailModal}
+        customer={viewCustomer}
+        onDismiss={handleCustomerDetailModalClose}
+      />
+    </>
   );
 };
 
@@ -182,23 +162,9 @@ const $header: ViewStyle = {
   borderBottomColor: colors.borderLight,
 };
 
-const $listRow: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  paddingVertical: spacing.xs,
-  borderBottomWidth: 1,
-  borderBottomColor: colors.borderLight,
-};
-
 const $tableCell: ViewStyle = {
   flex: 1,
   paddingEnd: spacing.md,
 };
 
-const STATUS_BUBBLE_SIZE = 15;
-const $statusBubble: ViewStyle = {
-  height: STATUS_BUBBLE_SIZE,
-  width: STATUS_BUBBLE_SIZE,
-  borderRadius: STATUS_BUBBLE_SIZE / 2,
-  marginRight: spacing.xs,
-};
+const $content: ViewStyle = { flexGrow: 1 };

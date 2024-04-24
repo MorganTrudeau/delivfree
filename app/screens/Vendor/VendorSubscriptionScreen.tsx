@@ -17,9 +17,9 @@ export const VendorSubscriptionScreen = ({
   route,
   navigation,
 }: VendorSubscriptionScreenProps) => {
-  const userType = useAppSelector((state) => state.appConfig.userType);
-
-  const subscription = useAppSelector((state) => state.subscription.data);
+  const subscription = useAppSelector(
+    (state) => state.subscription.vendorSubscription
+  );
 
   if (route.params?.locked) {
     return (
@@ -33,10 +33,7 @@ export const VendorSubscriptionScreen = ({
           <Text preset="heading" style={{ marginBottom: spacing.md }}>
             Set your orders
           </Text>
-          <SubscriptionProducts
-            editable={userType !== "driver"}
-            subscription={subscription}
-          />
+          <SubscriptionProducts subscription={subscription} />
         </Card>
         <LogoutButton style={{ alignSelf: "center", marginTop: spacing.md }} />
       </Screen>
@@ -52,10 +49,7 @@ export const VendorSubscriptionScreen = ({
       >
         <Text preset="heading">Subscription</Text>
         <Card style={{ marginTop: spacing.md, alignSelf: "flex-start" }}>
-          <SubscriptionProducts
-            editable={userType !== "driver"}
-            subscription={subscription}
-          />
+          <SubscriptionProducts subscription={subscription} />
         </Card>
       </Screen>
     </Drawer>

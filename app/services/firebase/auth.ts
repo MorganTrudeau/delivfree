@@ -1,6 +1,10 @@
 import auth from "@react-native-firebase/auth";
 import { useEffect, useRef } from "react";
-import { setAnonymous, setAuthToken } from "app/redux/reducers/auth";
+import {
+  setAnonymous,
+  setAuthToken,
+  setAuthUser,
+} from "app/redux/reducers/auth";
 import { setUser } from "app/redux/reducers/user";
 import { useAppDispatch } from "app/redux/store";
 import { getListenersManager } from "app/utils/ListenersManager";
@@ -33,6 +37,13 @@ export const FirebaseAuth = () => {
           authToken.current = user.uid;
           loginCrashlytics(user.uid);
           dispatch(setAuthToken(user.uid));
+          dispatch(
+            setAuthUser({
+              email: user.email,
+              uid: user.uid,
+              emailVerified: user.emailVerified,
+            })
+          );
           dispatch(setAnonymous(user.isAnonymous));
           listenToUser(user.uid, (user) => {
             dispatch(setUser(user));

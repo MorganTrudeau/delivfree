@@ -18,7 +18,7 @@ const Toast = ({ text, visible, topOffset }: Props) => {
       style={[
         $toast,
         {
-          top: topOffset || 20 + insets.top,
+          bottom: topOffset || 20 + insets.bottom,
         },
       ]}
     >

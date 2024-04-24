@@ -1,14 +1,19 @@
+import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface AuthState {
   authToken: string | undefined;
+  user:
+    | Pick<FirebaseAuthTypes.User, "email" | "uid" | "emailVerified">
+    | undefined;
   isAnonymous: boolean;
   previousAuthToken: string | undefined;
 }
 
 const initialState: AuthState = {
   authToken: undefined,
+  user: undefined,
   isAnonymous: false,
   previousAuthToken: undefined,
 };
@@ -26,10 +31,16 @@ export const authSlice = createSlice({
     setAnonymous: (state, action: PayloadAction<boolean>) => {
       state.isAnonymous = action.payload;
     },
+    setAuthUser: (
+      state,
+      action: PayloadAction<AuthState["user"] | undefined>
+    ) => {
+      state.user = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setAuthToken, setAnonymous } = authSlice.actions;
+export const { setAuthToken, setAnonymous, setAuthUser } = authSlice.actions;
 
 export default authSlice.reducer;

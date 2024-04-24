@@ -4,6 +4,7 @@ import { Drawer } from "app/components/Drawer";
 import { ModalRef } from "app/components/Modal/CenterModal";
 import { ManageRestaurantLocationModal } from "app/components/RestaurantLocation/ManageRestaurantLocation";
 import RestaurantsList from "app/components/RestaurantsList";
+import { ScreenHeader } from "app/components/ScreenHeader";
 import { $containerPadding, $row, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
@@ -58,15 +59,11 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
         style={$screen}
         contentContainerStyle={$containerPadding}
       >
-        <View style={[$row, { justifyContent: "space-between" }]}>
-          <Text preset="heading">Locations</Text>
-          <ButtonSmall
-            LeftAccessory={PlusIcon}
-            text={"Add Location"}
-            preset="filled"
-            onPress={createLocation}
-          />
-        </View>
+        <ScreenHeader
+          buttonTitle="Add Location"
+          onButtonPress={createLocation}
+          title="Locations"
+        />
         <RestaurantsList
           restaurants={restaurantLocationList}
           style={$list}
@@ -89,6 +86,6 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
 
 const $list: ViewStyle = { marginHorizontal: -spacing.md };
 const $listContent: ViewStyle = {
-  paddingVertical: spacing.md,
+  paddingBottom: spacing.md,
   paddingHorizontal: spacing.md * 2,
 };

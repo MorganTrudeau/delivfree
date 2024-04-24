@@ -21,6 +21,7 @@ import { logAnalytics } from "app/services/firebase/analytics";
 import { NO_TOP_BOTTOM_SAFE_AREA_EDGES } from "app/components/styles";
 import { Card } from "app/components/Card";
 import { useAlert } from "app/hooks";
+import { getAppType } from "app/utils/general";
 
 interface SignUpScreenProps extends AppStackScreenProps<"SignUp"> {}
 
@@ -156,18 +157,21 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
           RightAccessory={SignUpLoading}
         />
 
-        <Text preset="formLabel" style={$guestAccountTitle}>
-          Don't want to create an account?
-        </Text>
-
-        <Button
-          testID="login-button"
-          text="Continue as guest"
-          style={$tapButton}
-          preset="default"
-          onPress={continueAsGuest}
-          RightAccessory={GuestLoading}
-        />
+        {getAppType() === "CONSUMER" && (
+          <>
+            <Text preset="formLabel" style={$guestAccountTitle}>
+              Don't want to create an account?
+            </Text>
+            <Button
+              testID="login-button"
+              text="Continue as guest"
+              style={$tapButton}
+              preset="default"
+              onPress={continueAsGuest}
+              RightAccessory={GuestLoading}
+            />
+          </>
+        )}
 
         {/* <Pressable onPress={() => _props.navigation.navigate("Login")}>
         <Text style={$loginMessage}>

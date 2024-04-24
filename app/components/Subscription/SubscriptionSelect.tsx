@@ -22,12 +22,13 @@ import functions from "@react-native-firebase/functions";
 import { useAppSelector } from "app/redux/store";
 import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
 import { AppLogo } from "../AppLogo";
+import { useAlert } from "app/hooks";
 
 interface Props {
   fullTimeProduct: Stripe.Product;
   surgeProduct: Stripe.Product;
-  editable: boolean;
-  subscription: Stripe.Subscription | null;
+  subscription: Stripe.Subscription | null | undefined;
+  referenceSubscription?: Stripe.Subscription | null;
 }
 
 const FULL_TIME_ORDERS = 24;
@@ -36,23 +37,28 @@ const SURGE_ORDERS = 12;
 export const SubscriptionSelect = ({
   fullTimeProduct,
   surgeProduct,
-  editable,
   subscription,
+  referenceSubscription,
 }: Props) => {
+  const Alert = useAlert();
+
   const updateSuccessModal = useRef<ModalRef>(null);
 
   const vendor = useAppSelector((state) => state.vendor.data);
+  const driver = useAppSelector((state) => state.driver.data);
+  const userType = useAppSelector((state) => state.appConfig.userType);
+  const user = useAppSelector((state) => state.auth.user);
 
   const fullTimeSubscriptionItem = useMemo(
     () =>
-      subscription?.items.data.find(
+      (referenceSubscription || subscription)?.items.data.find(
         (i) => i.price.product === "prod_PvqVStGqKEDOhB"
       ),
-    [subscription]
+    [referenceSubscription, subscription]
   );
   const surgeSubscriptionItem = useMemo(
     () =>
-      subscription?.items.data.find(
+      (referenceSubscription || subscription)?.items.data.find(
         (i) => i.price.product === "prod_PwIMdMjpdkX6BU"
       ),
     [subscription]
@@ -67,6 +73,10 @@ export const SubscriptionSelect = ({
     surgeSubscriptionItem ? surgeSubscriptionItem.quantity || 0 : 0
   );
 
+  const subscriptionChanged =
+    surgeQuantity !== surgeSubscriptionItem?.quantity ||
+    fullTimeQuantity !== fullTimeSubscriptionItem?.quantity;
+
   useEffect(() => {
     const subscription = Dimensions.addEventListener("change", ({ window }) => {
       setWidth(window.width);
@@ -76,6 +86,18 @@ export const SubscriptionSelect = ({
 
   const handlePayment = async () => {
     try {
+      const metadata: { [key: string]: string } = {};
+
+      if (userType === "driver" && driver?.id) {
+        metadata.driver = driver.id;
+      } else if (userType === "vendor" && vendor?.id) {
+        metadata.vendor = vendor.id;
+      } else {
+        throw "missing required parameter";
+      }
+
+      setSubscriptionUpdating(true);
+
       if (subscription && subscription.status !== "canceled") {
         const items: Stripe.SubscriptionUpdateParams["items"] = [
           {
@@ -95,14 +117,13 @@ export const SubscriptionSelect = ({
           cancel_at_period_end: false,
           proration_behavior: "create_prorations",
           cancellation_details: {},
+          metadata,
         };
-        setSubscriptionUpdating(true);
         await functions().httpsCallable("updateSubscription")({
           id: subscription.id,
           params,
         });
         updateSuccessModal.current?.open();
-        setSubscriptionUpdating(false);
       } else {
         const lineItems = [
           {
@@ -117,20 +138,25 @@ export const SubscriptionSelect = ({
             quantity: surgeQuantity,
           });
         }
+
+        const params = {
+          line_items: lineItems,
+          subscription_data: { metadata },
+          success_url: "http://localhost:8080", // @todo change
+          mode: "subscription",
+          customer_email: user?.email,
+        };
         const data = await functions().httpsCallable("createCheckoutSession")({
-          params: {
-            line_items: lineItems,
-            subscription_data: { metadata: { vendor: vendor?.id } },
-            success_url: "http://localhost:8080",
-            mode: "subscription",
-          },
+          params,
         });
         Linking.openURL(data.data.url);
         console.log(data.data);
       }
+      setSubscriptionUpdating(false);
     } catch (error) {
       setSubscriptionUpdating(false);
       console.log("Failed to create payment link", error);
+      Alert.alert("Something went wrong", "Please try that again.");
     }
   };
 
@@ -201,7 +227,7 @@ export const SubscriptionSelect = ({
           {fullTimeQuantity * FULL_TIME_ORDERS} Orders a day &{" "}
           {fullTimeQuantity} Driver{fullTimeQuantity !== 1 ? "s" : ""}
         </Text>
-        {editable && (
+        {!referenceSubscription && (
           <QuantitySelector
             disableDecrease={fullTimeQuantity === 1}
             changeQuantity={(n) => setFullTimeQuantity((q) => q + n)}
@@ -228,7 +254,7 @@ export const SubscriptionSelect = ({
         <Text preset="bold" size={"lg"} style={{ marginTop: spacing.sm }}>
           {surgeQuantity * SURGE_ORDERS} Extra orders
         </Text>
-        {editable && (
+        {!referenceSubscription && (
           <QuantitySelector
             disableDecrease={surgeQuantity === 0}
             changeQuantity={(n) => setSurgeQuantity((q) => q + n)}
@@ -236,19 +262,21 @@ export const SubscriptionSelect = ({
           />
         )}
       </View>
-      <Button
-        preset="filled"
-        text={
-          subscription && subscription.status !== "canceled"
-            ? "Update Subscription"
-            : editable
-            ? "Confirm Orders"
-            : "Subscribe"
-        }
-        style={$button}
-        onPress={handlePayment}
-        RightAccessory={SubscriptionUpdating}
-      />
+      {(!referenceSubscription || !subscription) && (
+        <Button
+          preset={subscriptionChanged ? "filled" : "default"}
+          text={
+            subscription && subscription.status !== "canceled"
+              ? "Update Subscription"
+              : !referenceSubscription
+              ? "Confirm Orders"
+              : "Subscribe"
+          }
+          style={$button}
+          onPress={handlePayment}
+          RightAccessory={SubscriptionUpdating}
+        />
+      )}
       <ReanimatedCenterModal ref={updateSuccessModal}>
         <View style={{ padding: spacing.md, alignItems: "center" }}>
           <AppLogo height={40} style={{ marginBottom: spacing.sm }} />
@@ -306,6 +334,7 @@ const $item: ViewStyle = {
   borderRadius: borderRadius.md,
   paddingHorizontal: spacing.md,
   paddingVertical: spacing.md,
+  width: "100%",
 };
 const $quantityButtonText: TextStyle = { marginHorizontal: spacing.xxs };
 const $quantityButton: ViewStyle = {

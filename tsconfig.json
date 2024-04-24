@@ -4,21 +4,28 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "jsx": "react-native",
-    "module": "es2015",
+    "target": "es5" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */,
+    "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
     "moduleResolution": "node",
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": false,
     "sourceMap": true,
-    "target": "esnext",
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "baseUrl": "./",
-    "strict": true,
+    "strict": true
   },
   "exclude": ["node_modules", "functions"],
-  "include": ["index.js", "app", "test", "*.js", "*.ts", "*.tsx", "test/server.test.ts"],
-  "extends": "expo/tsconfig.base"
+  "include": [
+    "index.js",
+    "app",
+    "test",
+    "*.js",
+    "*.ts",
+    "*.tsx",
+    "test/server.test.ts"
+  ]
 }

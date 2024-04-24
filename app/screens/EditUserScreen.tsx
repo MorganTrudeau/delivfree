@@ -8,12 +8,11 @@ import {
   TextStyle,
   ViewStyle,
 } from "react-native";
-import { User } from "delivfree";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { createUser, updateUser } from "app/apis/user";
 import { useAlert } from "app/hooks";
-import { getAppType } from "app/utils/general";
 import { Card } from "app/components/Card";
+import { LogoutButton } from "app/components/LogoutButton";
 
 export const EditUserScreen = () => {
   const Alert = useAlert();

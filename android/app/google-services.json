@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1012298016071",
-    "project_id": "delivfree-dev",
-    "storage_bucket": "delivfree-dev.appspot.com"
+    "project_number": "406179880402",
+    "project_id": "delivfree-app",
+    "storage_bucket": "delivfree-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1012298016071:android:2d2e5654ef34124823d862",
+        "mobilesdk_app_id": "1:406179880402:android:86233492c51ccdd0297c0b",
         "android_client_info": {
           "package_name": "com.delivfree.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBBt_9wBXGaMne8RGettMKSJe9Ec6XecTI"
+          "current_key": "AIzaSyAKK9SQ2i7BmDm15rRq4rXZMEEQETRTCnA"
         }
       ],
       "services": {

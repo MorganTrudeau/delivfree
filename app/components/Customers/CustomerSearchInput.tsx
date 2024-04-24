@@ -22,6 +22,9 @@ import { Button } from "../Button";
 import { generateUid } from "app/utils/general";
 import { useAppSelector } from "app/redux/store";
 import { TextField } from "../TextField";
+import { AddressSearchModal } from "../AddressSearchModal";
+import { AddressSearchField } from "../AddressSearchField";
+import { PhoneNumberInput } from "../PhoneNumberInput";
 
 interface Props {
   onCustomerSelect: (customer: Customer) => void;
@@ -39,6 +42,7 @@ export const CustomerSearchInput = ({
   restaurantLocation,
 }: Props) => {
   const Alert = useAlert();
+  const addressSearchModal = useRef<ModalRef>(null);
 
   const [containerHeight, setContainerHeight] = useState(0);
   const onLayout = ({
@@ -69,13 +73,14 @@ export const CustomerSearchInput = ({
   const [newCustomer, setNewCustomer] = useState<Customer>({
     id: generateUid(),
     name: "",
-    address: "",
+    location: { address: "", latitude: 0, longitude: 0, geohash: "" },
+    callingCode: "+1",
     phoneNumber: "",
     vendor: vendor?.id || "",
     restaurantLocation,
   });
   const newCustomerComplete =
-    newCustomer.address && newCustomer.phoneNumber && newCustomer.name;
+    newCustomer.location.address && newCustomer.phoneNumber && newCustomer.name;
 
   const onChangeText = async (phoneNumber: string) => {
     setState({ phoneNumber, loading: true, customers: [], searching: true });
@@ -159,7 +164,7 @@ export const CustomerSearchInput = ({
                 >
                   <Text>{customer.name}</Text>
                   <Text size={"xs"} style={{ color: colors.textDim }}>
-                    {customer.address}
+                    {customer.location.address}
                   </Text>
                 </Pressable>
               );
@@ -181,7 +186,7 @@ export const CustomerSearchInput = ({
       <ReanimatedCenterModal ref={addCustomerModal}>
         <View style={$modalContent}>
           <Text preset="subheading">Add customer</Text>
-          <TextField
+          <PhoneNumberInput
             placeholder="Phone number"
             label="Phone number"
             value={newCustomer.phoneNumber}
@@ -189,6 +194,9 @@ export const CustomerSearchInput = ({
             onChangeText={(phoneNumber) =>
               setNewCustomer((c) => ({ ...c, phoneNumber }))
             }
+            onChangeCallingCode={(callingCode) => {
+              setNewCustomer((c) => ({ ...c, callingCode }));
+            }}
           />
           <TextField
             placeholder="Name"
@@ -197,13 +205,10 @@ export const CustomerSearchInput = ({
             value={newCustomer.name}
             onChangeText={(name) => setNewCustomer((c) => ({ ...c, name }))}
           />
-          <TextField
-            placeholder="Address"
-            label="Address"
-            containerStyle={$input}
-            value={newCustomer.address}
-            onChangeText={(address) =>
-              setNewCustomer((c) => ({ ...c, address }))
+          <AddressSearchField
+            location={newCustomer.location}
+            onLocationSelect={(location) =>
+              setNewCustomer((c) => ({ ...c, location }))
             }
           />
           <Button

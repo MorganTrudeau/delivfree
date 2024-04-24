@@ -46,7 +46,16 @@ const VendorItems = [
   { text: "Settings", route: "Settings" },
 ];
 
-const DriverItems = [];
+const DriverItems = [
+  { text: "Orders", route: "Orders" },
+  { text: "Subscription", route: "Subscription" },
+  { text: "Profile", route: "Profile" },
+  {
+    text: "Rate App",
+    include: () => Platform.OS !== "web",
+  },
+  { text: "Settings", route: "Settings" },
+];
 
 export const DrawerContent = ({
   navigation,

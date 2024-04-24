@@ -1,6 +1,7 @@
 import { createUser, updateUser } from "app/apis/user";
 import { Button, Icon, Screen, Text, TextField } from "app/components";
 import { Card } from "app/components/Card";
+import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { TextInput } from "app/components/TextInput";
 import { $borderedArea, $row } from "app/components/styles";
 import { useAlert } from "app/hooks";
@@ -37,8 +38,10 @@ export const EditVendorProfileScreen = () => {
     firstName: vendor?.firstName || user?.firstName || "",
     lastName: vendor?.lastName || user?.lastName || "",
     businessName: vendor?.businessName || "",
+    callingCode: vendor?.callingCode || "+1",
     phoneNumber: vendor?.phoneNumber || "",
     registration: { status: "pending" },
+    users: [authToken],
   });
 
   const fieldsComplete = useMemo(
@@ -123,15 +126,17 @@ export const EditVendorProfileScreen = () => {
           value={vendorState.businessName}
           onSubmitEditing={() => phoneNumberInput.current?.focus()}
         />
-        <TextField
+        <PhoneNumberInput
           placeholder="Phone number"
           label="Phone number"
+          containerStyle={$input}
+          value={vendorState.phoneNumber}
           onChangeText={(phoneNumber) =>
             setVendorState((v) => ({ ...v, phoneNumber }))
           }
-          containerStyle={$input}
-          ref={phoneNumberInput}
-          value={vendorState.phoneNumber}
+          onChangeCallingCode={(callingCode) => {
+            setVendorState((v) => ({ ...v, callingCode }));
+          }}
         />
         {!vendor?.registration ? (
           <Button
@@ -162,7 +167,8 @@ export const EditVendorProfileScreen = () => {
               </View>
             ) : (
               <Text>
-                Please wait while we review your registration submission.
+                Please wait while we review your registration submission. This
+                will take 5-7 business days.
               </Text>
             )}
           </View>

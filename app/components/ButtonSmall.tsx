@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { colors, spacing, typography } from "../theme";
 import { Text, TextProps } from "./Text";
+import { borderRadius } from "app/theme/borderRadius";
 
 type Presets = keyof typeof $viewPresets;
 
@@ -143,7 +144,7 @@ export function ButtonSmall(props: ButtonSmallProps) {
 const $baseViewStyle: ViewStyle = {
   borderRadius: 4,
   overflow: "hidden",
-  minHeight: 45,
+  paddingVertical: spacing.xs,
   paddingHorizontal: spacing.sm,
   backgroundColor: colors.palette.neutral800,
   alignItems: "center",
@@ -152,7 +153,7 @@ const $baseViewStyle: ViewStyle = {
 };
 
 const $baseTextStyle: TextStyle = {
-  fontSize: 16,
+  fontSize: 15,
   lineHeight: 20,
   fontFamily: typography.primary.medium,
   textAlign: "center",
@@ -170,7 +171,7 @@ const $viewPresets = {
     {
       borderWidth: 1,
       borderColor: colors.palette.primary200,
-      backgroundColor: colors.palette.neutral200,
+      backgroundColor: colors.background,
     },
   ] as StyleProp<ViewStyle>,
 

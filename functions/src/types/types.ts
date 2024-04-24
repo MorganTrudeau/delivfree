@@ -28,6 +28,7 @@ export type RestaurantLocation = {
   id: string;
   keywords: string[];
   vendor: string;
+  callingCode: string;
   phoneNumber: string;
   name: string;
   menuLink: string;
@@ -39,16 +40,20 @@ export type Vendor = {
   firstName: string;
   lastName: string;
   businessName: string;
+  callingCode: string;
   phoneNumber: string;
   registration: {
     status: "pending" | "approved" | "declined";
     message?: string;
   };
+  users: string[];
 };
 export type Driver = {
   id: string;
+  user: string;
   firstName: string;
   lastName: string;
+  callingCode: string;
   phoneNumber: string;
   registration: {
     status: "pending" | "approved" | "declined";
@@ -59,6 +64,7 @@ export type Driver = {
 };
 export type OrderStatus =
   | "in-progress"
+  | "arrived"
   | "complete"
   | "incomplete"
   | "canceled";
@@ -69,15 +75,17 @@ export type Order = {
   tip: string;
   description: string;
   status: OrderStatus;
-  date: string;
+  date: number;
   vendor: string;
   restaurantLocation: string;
+  driver: null | string;
 };
 export type Customer = {
   id: string;
   name: string;
+  callingCode: string;
   phoneNumber: string;
-  address: string;
+  location: Location;
   vendor: string;
   restaurantLocation: string;
 };

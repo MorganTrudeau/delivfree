@@ -5,25 +5,34 @@ import { renderAdminMainStack } from "./AdminMainStack";
 import { Stripe } from "stripe";
 import { Driver, UserType, Vendor } from "functions/src/types";
 import { renderDriverMainStack } from "./DriverMainStack";
+import { getAppType } from "app/utils/general";
 
 export const renderMainStack = ({
-  subscription,
+  vendorSubscription,
+  driverSubscription,
   userType,
   driver,
   vendor,
 }: {
-  subscription: Stripe.Subscription | null | undefined;
+  vendorSubscription: Stripe.Subscription | null | undefined;
+  driverSubscription: Stripe.Subscription | null | undefined;
   userType: UserType | null | undefined;
   driver: Driver | null | undefined;
   vendor: Vendor | null | undefined;
 }) => {
-  if (Config.APP === "VENDOR") {
+  const appType = getAppType();
+  if (appType === "VENDOR") {
     if (userType === "driver") {
-      return renderDriverMainStack({ subscription, driver, vendor });
+      return renderDriverMainStack({
+        vendorSubscription,
+        driverSubscription,
+        driver,
+        vendor,
+      });
     } else {
-      return renderVendorMainStack({ subscription, vendor });
+      return renderVendorMainStack({ vendorSubscription, vendor });
     }
-  } else if (Config.APP === "ADMIN") {
+  } else if (appType === "ADMIN") {
     return renderAdminMainStack();
   } else {
     return renderConsumerMainStack();

@@ -1,5 +1,5 @@
 import { useAppSelector } from "app/redux/store";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   LayoutChangeEvent,
   Pressable,
@@ -36,10 +36,15 @@ export const RestaurantLocationSelect = ({
     (state) => state.restaurantLocations.data
   );
 
-  const [layout, setLayout] =
-    useState<LayoutChangeEvent["nativeEvent"]["layout"]>();
+  const buttonRef = useRef<View>(null);
+
+  const [layout, setLayout] = useState<
+    LayoutChangeEvent["nativeEvent"]["layout"] & { top: number; left: number }
+  >();
   const onLayout = ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
-    setLayout(layout);
+    buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      setLayout({ ...layout, top: pageY, left: pageX });
+    });
   };
 
   const openAnimation = useSharedValue(0);
@@ -80,7 +85,13 @@ export const RestaurantLocationSelect = ({
 
   return (
     <View style={[{ zIndex: 999 }, style]}>
-      <Pressable onPress={toggleOpen} style={$button} onLayout={onLayout}>
+      <Pressable
+        onPress={toggleOpen}
+        style={$button}
+        onLayout={onLayout}
+        ref={buttonRef}
+        collapsable={false}
+      >
         {selectedLocation ? (
           <>
             <Text preset="semibold">{selectedLocation.name}</Text>
@@ -108,9 +119,9 @@ export const RestaurantLocationSelect = ({
               animatedStyle,
               {
                 // @ts-ignore
-                top: layout?.top + layout?.height + spacing.sm,
+                top: (layout?.top || 0) + (layout?.height || 0) + spacing.sm,
                 // @ts-ignore
-                left: layout?.left,
+                left: layout?.left || 0,
               },
             ]}
             pointerEvents={open ? "auto" : "none"}

@@ -1,6 +1,6 @@
 {
   "name": "delivfreeapp",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "private": true,
   "main": "index.js",
   "scripts": {
@@ -29,13 +29,15 @@
     "expo:android": "expo start --android",
     "expo:ios": "expo start --ios",
     "expo:web": "expo start --web",
-    "build:consumer": "rm -rf dist/ && MODE=production APP=consumer  GENERATE_SOURCEMAP=false webpack --mode=production --config webpack.config.js",
-    "build:vendor": "rm -rf dist/ && MODE=production APP=vendor  GENERATE_SOURCEMAP=false webpack --mode=production --config webpack.config.js",
-    "build:admin": "rm -rf dist/ && MODE=production APP=admin  GENERATE_SOURCEMAP=false webpack --mode=production --config webpack.config.js",
-    "host": "firebase deploy --only hosting",
-    "web:consumer": "MODE=development APP=consumer GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
-    "web:vendor": "MODE=development APP=vendor GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
-    "web:admin": "MODE=development APP=admin GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js"
+    "build:consumer": "rm -rf dist/ && MODE=production ENVFILE=.env.consumer GENERATE_SOURCEMAP=false webpack --mode=production --config webpack.config.js",
+    "build:vendor": "rm -rf dist/ && MODE=production ENVFILE=.env.vendor GENERATE_SOURCEMAP=false webpack --mode=production --config webpack.config.js",
+    "build:admin": "rm -rf dist/ && MODE=production ENVFILE=.env.admin GENERATE_SOURCEMAP=false webpack --mode=production --config webpack.config.js",
+    "host:consumer": "firebase deploy --only hosting:consumer",
+    "host:vendor": "firebase deploy --only hosting:vendor",
+    "host:admin": "firebase deploy --only hosting:admin",
+    "web:consumer": "MODE=development ENVFILE=.env.consumer GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
+    "web:vendor": "MODE=development ENVFILE=.env.vendor GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
+    "web:admin": "MODE=development ENVFILE=.env.admin GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js"
   },
   "overrides": {
     "react-error-overlay": "6.0.9"
@@ -50,7 +52,6 @@
   "dependencies": {
     "@bugsnag/react-native": "^7.20.2",
     "@expo-google-fonts/poppins": "^0.2.3",
-    "@expo/webpack-config": "^19.0.0",
     "@gorhom/bottom-sheet": "^4.4.7",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-community/clipboard": "^1.5.1",
@@ -135,6 +136,7 @@
     "@babel/preset-react": "^7.24.1",
     "@babel/runtime": "^7.20.0",
     "@bugsnag/source-maps": "^2.3.1",
+    "@expo/webpack-config": "^19.0.1",
     "@react-native-community/cli-platform-ios": "^11.3.5",
     "@react-native/metro-config": "^0.72.7",
     "@svgr/webpack": "^8.0.1",
@@ -154,6 +156,7 @@
     "babel-plugin-root-import": "^6.6.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "babel-polyfill": "^6.26.0",
+    "dotenv-webpack": "^8.1.0",
     "eslint": "8.17.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-config-standard": "17.0.0",
@@ -186,8 +189,8 @@
     "regenerator-runtime": "^0.13.4",
     "ts-jest": "29",
     "typescript": "^5.1.3",
-    "webpack": "^5.58.2",
-    "webpack-bundle-analyzer": "^4.5.0",
+    "webpack": "^5.91.0",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^4.9.0",
     "webpack-dev-server": "^4.3.1"
   },

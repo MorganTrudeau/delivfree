@@ -2,14 +2,13 @@ import { Screen, Text } from "app/components";
 import { Drawer } from "app/components/Drawer";
 import { $containerPadding, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { spacing } from "app/theme";
 import { Card } from "app/components/Card";
 import { AppLogo } from "app/components/AppLogo";
 import { SubscriptionProducts } from "app/components/Subscription/SubscriptionProducts";
 import { LogoutButton } from "app/components/LogoutButton";
 import { useAppSelector } from "app/redux/store";
-import Stripe from "stripe";
 
 interface VendorSubscriptionScreenProps
   extends AppStackScreenProps<"Subscription" | "StartSubscription"> {}
@@ -18,15 +17,12 @@ export const DriverSubscriptionScreen = ({
   route,
   navigation,
 }: VendorSubscriptionScreenProps) => {
-  const userType = useAppSelector((state) => state.appConfig.userType);
-
-  const subscription = useAppSelector((state) => state.subscription.data);
-  const vendor = useAppSelector((state) => state.vendor.data);
-
-  const [vendorSubscription, setVendorSubscription] =
-    useState<Stripe.Subscription>();
-
-  useEffect(() => {}, []);
+  const vendorSubscription = useAppSelector(
+    (state) => state.subscription.vendorSubscription
+  );
+  const driverSubscription = useAppSelector(
+    (state) => state.subscription.driverSubscription
+  );
 
   if (route.params?.locked) {
     return (
@@ -41,8 +37,8 @@ export const DriverSubscriptionScreen = ({
             Subscription
           </Text>
           <SubscriptionProducts
-            editable={userType !== "driver"}
-            subscription={subscription}
+            subscription={driverSubscription}
+            referenceSubscription={vendorSubscription}
           />
         </Card>
         <LogoutButton style={{ alignSelf: "center", marginTop: spacing.md }} />
@@ -56,12 +52,13 @@ export const DriverSubscriptionScreen = ({
         preset="fixed"
         style={$screen}
         contentContainerStyle={$containerPadding}
+        inDrawer
       >
         <Text preset="heading">Subscription</Text>
         <Card style={{ marginTop: spacing.md, alignSelf: "flex-start" }}>
           <SubscriptionProducts
-            editable={userType !== "driver"}
-            subscription={subscription}
+            subscription={driverSubscription}
+            referenceSubscription={vendorSubscription}
           />
         </Card>
       </Screen>

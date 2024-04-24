@@ -1,7 +1,36 @@
 import Config from "react-native-config";
 import { avatarColors } from "../theme";
+import { Linking, Platform } from "react-native";
+import messaging from "@react-native-firebase/messaging";
 
-export const getAppType = () => Config.APP as "CONSUMER" | "VENDOR" | "ADMIN";
+export const getAppType = () => Config.REACT_NATIVE_APP as "CONSUMER" | "VENDOR" | "ADMIN";
+
+export const navigateToAddress = (
+  latitude: number,
+  longitude: number,
+  address: string
+) => {
+  const scheme = Platform.select({
+    ios: "maps://0,0?q=",
+    android: "geo:0,0?q=",
+  });
+  const latLng = `${latitude},${longitude}`;
+  const label = "Custom Label";
+  const url = Platform.select({
+    ios: `${scheme}${label}@${latLng}`,
+    android: `${scheme}${latLng}(${label})`,
+    default: `https://www.google.com/maps/place/${address}/`,
+  });
+  return Linking.openURL(url);
+};
+
+export const isWebNotificationsSupported = () => {
+  if (Platform.OS !== "web") {
+    return false;
+  }
+  // @ts-ignore
+  return messaging.isSupported();
+};
 
 export const arrayDiff = <T>(
   arrA: Array<T>,

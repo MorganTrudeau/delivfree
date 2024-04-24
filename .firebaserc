@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "delivfree-app"
-  }
+  },
+  "targets": {
+    "delivfree-app": {
+      "hosting": {
+        "vendor": [
+          "delivfree-vendor"
+        ],
+        "consumer": [
+          "delivfree-consumer"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

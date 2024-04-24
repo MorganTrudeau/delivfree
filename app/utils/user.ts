@@ -27,21 +27,14 @@ export const getAvatarColor = async (avatar: string) => {
     : "";
 };
 
-export const isUserRegistered = (
-  user: User | null | undefined,
-  vendor: Vendor | null | undefined,
-  driver: Driver | null | undefined
-) => {
+export const isUserRegistered = (user: User | null | undefined) => {
   if (!user || !(user.firstName && user.lastName)) {
     return false;
   }
-  if (Config.APP === "ADMIN") {
+  if (Config.REACT_NATIVE_APP === "ADMIN") {
     return !!user.admin;
-  } else if (Config.APP === "VENDOR") {
-    return (
-      (!!user.vendor?.ids && vendor?.registration?.status === "approved") ||
-      (!!user.driver?.id && driver?.registration?.status === "approved")
-    );
+  } else if (Config.REACT_NATIVE_APP === "VENDOR") {
+    return !!user.vendor?.ids || !!user.driver?.id;
   }
   return !!user.consumer;
 };

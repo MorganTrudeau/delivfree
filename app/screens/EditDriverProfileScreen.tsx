@@ -1,6 +1,7 @@
 import { createUser, updateUser } from "app/apis/user";
 import { Button, Icon, Screen, Text, TextField } from "app/components";
 import { Card } from "app/components/Card";
+import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { TextInput } from "app/components/TextInput";
 import { $borderedArea, $row } from "app/components/styles";
 import { useAlert } from "app/hooks";
@@ -37,10 +38,12 @@ export const EditDriverProfileScreen = () => {
     id: generateUid(),
     firstName: driver?.firstName || "",
     lastName: driver?.lastName || "",
+    callingCode: driver?.callingCode || "+1",
     phoneNumber: driver?.phoneNumber || "",
     registration: { status: "pending" },
     vendors: [],
     parentDrivers: {},
+    user: authToken,
   });
 
   const updateState = (key: keyof Driver) => (val: string) => {
@@ -111,9 +114,10 @@ export const EditDriverProfileScreen = () => {
           containerStyle={$input}
           onSubmitEditing={() => phoneNumberInput.current?.focus()}
         />
-        <TextField
+        <PhoneNumberInput
           ref={phoneNumberInput}
           onChangeText={updateState("phoneNumber")}
+          onChangeCallingCode={updateState("callingCode")}
           placeholder="Phone number"
           label="Phone number"
           value={driverState.phoneNumber}
@@ -148,7 +152,8 @@ export const EditDriverProfileScreen = () => {
               </View>
             ) : (
               <Text>
-                Please wait while we review your registration submission.
+                Please wait while we review your registration submission. This
+                will take 5-7 business days.
               </Text>
             )}
           </View>

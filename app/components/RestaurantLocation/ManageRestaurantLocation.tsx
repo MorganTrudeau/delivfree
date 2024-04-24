@@ -30,6 +30,7 @@ import { Icon } from "../Icon";
 import { Button } from "../Button";
 import { addRestaurantLocation } from "app/apis/restaurants";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
+import { PhoneNumberInput } from "../PhoneNumberInput";
 
 interface Props {
   editLocation?: RestaurantLocation | null;
@@ -60,6 +61,7 @@ export const ManageRestaurantLocation = ({
           cuisines: [],
           keywords: [],
           vendor,
+          callingCode: "+1",
           phoneNumber: "",
           name: "",
           menuLink: "",
@@ -201,10 +203,11 @@ export const ManageRestaurantLocation = ({
         containerStyle={$inputContainer}
         value={locationState.name}
       />
-      <TextField
+      <PhoneNumberInput
         label={"Phone number"}
         placeholder={"Phone number"}
         onChangeText={updateStateValue("phoneNumber")}
+        onChangeCallingCode={updateStateValue("callingCode")}
         containerStyle={$inputContainer}
         value={locationState.phoneNumber}
       />
