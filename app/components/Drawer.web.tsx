@@ -4,9 +4,11 @@ import React, {
   createContext,
   MutableRefObject,
   useState,
+  useEffect,
 } from "react";
 import {
   Pressable,
+  StyleProp,
   StyleSheet,
   View,
   ViewProps,
@@ -23,6 +25,8 @@ import Animated, {
 import { useDimensions } from "app/hooks/useDimensions";
 import { LARGE_SCREEN } from "./styles";
 import { Icon } from "./Icon";
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export const DrawerContext = createContext({
   drawerRef: { current: null } as MutableRefObject<{
@@ -44,6 +48,12 @@ export const Drawer = ({
 
   const [open, setOpen] = useState(false);
   const openAnimation = useSharedValue(0);
+
+  useEffect(() => {
+    if (largeScreenLayout && open) {
+      closeDrawer();
+    }
+  }, [open, largeScreenLayout]);
 
   const openDrawer = () => {
     openAnimation.value = withTiming(1);
@@ -73,9 +83,22 @@ export const Drawer = ({
     [openAnimation, drawerWidth, largeScreenLayout]
   );
 
+  const backdropStyle = useAnimatedStyle(
+    () => ({ opacity: openAnimation.value }),
+    [openAnimation]
+  );
+
+  const childrenAnimation = useAnimatedStyle(() => ({
+    flex: 1,
+    overflow: "hidden",
+    transform: [
+      { translateX: interpolate(openAnimation.value, [0, 1], [0, 100]) },
+    ],
+  }));
+
   return (
     <DrawerContext.Provider value={{ drawerRef, open }}>
-      <View style={$row}>
+      <View style={[$row, { overflow: "hidden" }]}>
         <Animated.View
           style={[
             $drawerContentWrapper,
@@ -116,11 +139,11 @@ export const Drawer = ({
             )}
           </View>
         </Animated.View>
-        {children}
-        {open && !largeScreenLayout && (
-          <Pressable
+        <Animated.View style={childrenAnimation}>{children}</Animated.View>
+        {!largeScreenLayout && (
+          <AnimatedPressable
             onPress={closeDrawer}
-            style={StyleSheet.absoluteFill}
+            style={[$backdrop, backdropStyle]}
             pointerEvents={open ? "auto" : "none"}
           />
         )}
@@ -151,3 +174,7 @@ const $fixedDrawerContentContainer: ViewStyle = {
   backgroundColor: colors.surface,
   zIndex: 1000,
 };
+const $backdrop: StyleProp<ViewStyle> = [
+  StyleSheet.absoluteFill,
+  { backgroundColor: colors.palette.overlay20 },
+];

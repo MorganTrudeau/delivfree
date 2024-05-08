@@ -38,6 +38,7 @@ export const EditDriverProfileScreen = () => {
     id: generateUid(),
     firstName: driver?.firstName || "",
     lastName: driver?.lastName || "",
+    callingCountry: driver?.callingCountry || "CA",
     callingCode: driver?.callingCode || "+1",
     phoneNumber: driver?.phoneNumber || "",
     registration: { status: "pending" },
@@ -117,11 +118,14 @@ export const EditDriverProfileScreen = () => {
         <PhoneNumberInput
           ref={phoneNumberInput}
           onChangeText={updateState("phoneNumber")}
-          onChangeCallingCode={updateState("callingCode")}
+          onChangeCallingCode={(callingCode, callingCountry) => {
+            setDriverState((s) => ({ ...s, callingCode, callingCountry }));
+          }}
           placeholder="Phone number"
           label="Phone number"
           value={driverState.phoneNumber}
           containerStyle={$input}
+          callingCountry={driverState.callingCountry}
         />
         {!driver?.registration ? (
           <Button

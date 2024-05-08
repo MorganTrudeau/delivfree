@@ -35,6 +35,9 @@ const AddDriver = ({ onClose }: Props) => {
 
   const addDriver = async () => {
     try {
+      if (!code) {
+        return;
+      }
       setAddLoading(true);
       const driverCodeSnap = await firestore()
         .collection("DriverCodes")
@@ -96,7 +99,7 @@ const AddDriver = ({ onClose }: Props) => {
     <View style={$content}>
       <Text preset="subheading">Add Driver</Text>
       <Text style={$message}>
-        Ask your driver for his Driver Code and enter it here to link them to
+        Ask your driver for their Driver Code and enter it here to link them to
         your company.
       </Text>
       <TextField

@@ -105,12 +105,18 @@ export const SubscriptionSelect = ({
             quantity: fullTimeQuantity,
             id: fullTimeSubscriptionItem?.id,
           },
-          {
-            id: surgeSubscriptionItem?.id,
+        ];
+
+        if (surgeQuantity || surgeSubscriptionItem) {
+          const surgeItem: Stripe.SubscriptionUpdateParams.Item = {
             price: (surgeProduct.default_price as Stripe.Price).id,
             quantity: surgeQuantity,
-          },
-        ];
+          };
+          if (surgeSubscriptionItem) {
+            surgeItem.id = surgeSubscriptionItem.id;
+          }
+          items.push(surgeItem);
+        }
 
         const params: Stripe.SubscriptionUpdateParams = {
           items,
@@ -139,12 +145,14 @@ export const SubscriptionSelect = ({
           });
         }
 
-        const params = {
+        const params: Stripe.Checkout.SessionCreateParams = {
           line_items: lineItems,
           subscription_data: { metadata },
-          success_url: "http://localhost:8080", // @todo change
+          success_url: __DEV__
+            ? "http://localhost:8080"
+            : "https://delivfree-vendor.web.app/", // @todo change
           mode: "subscription",
-          customer_email: user?.email,
+          customer_email: user?.email || undefined,
         };
         const data = await functions().httpsCallable("createCheckoutSession")({
           params,

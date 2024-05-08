@@ -31,6 +31,7 @@ export const VendorDriversScreen = (props: VendorLocationsScreenProps) => {
         preset="fixed"
         style={$screen}
         contentContainerStyle={$containerPadding}
+        inDrawer
       >
         <ScreenHeader
           title="Drivers"

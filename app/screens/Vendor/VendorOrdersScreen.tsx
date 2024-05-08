@@ -68,18 +68,13 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
   const onCreateOrderClose = () => {
     setSelectedOrder(undefined);
   };
-  const PlusIcon = useMemo(
-    () =>
-      ({ style }) =>
-        <Icon icon="plus" color={"#fff"} style={style} />,
-    []
-  );
   return (
     <Drawer navigation={props.navigation}>
       <Screen
         preset="fixed"
         style={$screen}
         contentContainerStyle={$containerPadding}
+        inDrawer
       >
         <ScreenHeader
           buttonTitle="Create Order"

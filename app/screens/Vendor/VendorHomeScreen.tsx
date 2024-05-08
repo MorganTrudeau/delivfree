@@ -1,15 +1,22 @@
 import { Icon, Screen, Text } from "app/components";
 import { LineChart } from "app/components/Charts/LineChart";
 import { Drawer } from "app/components/Drawer";
-import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
+import {
+  $containerPadding,
+  $flex,
+  $row,
+  $screen,
+  LARGE_SCREEN,
+} from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
-import { colors, spacing, typography } from "app/theme";
+import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
 import { sizing } from "app/theme/sizing";
 import { localizeCurrency } from "app/utils/general";
 import moment from "moment";
-import React, { useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import { View, useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
@@ -35,7 +42,9 @@ const customerSales = [
 const DATE_FORMAT = "MMM Do";
 
 export const VendorHomeScreen = (props: HomeScreenProps) => {
+  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const largeScreenLayout = width > LARGE_SCREEN;
 
   const grossVolumeToday = useMemo(() => {
     return localizeCurrency(
@@ -114,14 +123,18 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
       <Screen
         preset={"scroll"}
         style={$screen}
-        contentContainerStyle={$containerPadding}
+        contentContainerStyle={[
+          $containerPadding,
+          { paddingBottom: insets.bottom + spacing.sm },
+        ]}
+        inDrawer
       >
         <Text preset="heading">Today</Text>
         <View style={{ paddingVertical: spacing.md }}>
           <Text>Gross volume</Text>
           <Text preset="subheading">{grossVolumeToday}</Text>
           <LineChart
-            width={Math.min(1000, width * 0.8)}
+            width={Math.min(1000, width * (largeScreenLayout ? 0.8 : 1))}
             height={300}
             data={{
               labels: ["12:00am", "", "", "", "", "11.59pm"],
@@ -140,16 +153,16 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
         <View
           style={{
             paddingVertical: spacing.md,
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: spacing.xl,
+            flexDirection: largeScreenLayout ? "row" : undefined,
+            flexWrap: largeScreenLayout ? "wrap" : undefined,
+            gap: largeScreenLayout ? spacing.xl : undefined,
           }}
         >
           <View>
             <Text>Gross volume</Text>
             <Text preset="subheading">{grossVolumeOverview}</Text>
             <LineChart
-              width={Math.min(450, width * 0.35)}
+              width={Math.min(450, width * (largeScreenLayout ? 0.35 : 1))}
               height={300}
               data={{
                 labels: overviewLabels,
@@ -168,7 +181,9 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
             <View
               style={{
                 paddingVertical: spacing.sm,
-                width: Math.min(450, width * 0.35),
+                width: largeScreenLayout
+                  ? Math.min(450, width * 0.35)
+                  : undefined,
                 height: 300,
               }}
             >

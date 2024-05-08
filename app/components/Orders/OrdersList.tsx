@@ -13,6 +13,7 @@ import { useDimensions } from "app/hooks/useDimensions";
 import { OrderItemWeb } from "./OrderItemWeb";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CustomerDetailModal } from "../Customers/CustomerDetailModal";
+import { EmptyList } from "../EmptyList";
 
 interface Props {
   orders: Order[];
@@ -124,11 +125,7 @@ export const OrdersList = ({ orders, loadOrders, onOrderPress }: Props) => {
   );
 
   const renderEmptyComponent = useCallback(
-    () => (
-      <Text preset="bold" style={{ margin: spacing.md, alignSelf: "center" }}>
-        No orders for this location
-      </Text>
-    ),
+    () => <EmptyList title="No orders for this location" />,
     []
   );
 

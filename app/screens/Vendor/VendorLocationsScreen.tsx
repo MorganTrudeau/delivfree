@@ -11,7 +11,7 @@ import { useAppSelector } from "app/redux/store";
 import { spacing } from "app/theme";
 import { RestaurantLocation } from "delivfree";
 import React, { useMemo, useRef, useState } from "react";
-import { View, ViewStyle } from "react-native";
+import { Platform, View, ViewStyle } from "react-native";
 
 interface VendorLocationsScreenProps extends AppStackScreenProps<"Locations"> {}
 
@@ -58,6 +58,7 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
         preset="fixed"
         style={$screen}
         contentContainerStyle={$containerPadding}
+        inDrawer
       >
         <ScreenHeader
           buttonTitle="Add Location"
@@ -86,6 +87,10 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
 
 const $list: ViewStyle = { marginHorizontal: -spacing.md };
 const $listContent: ViewStyle = {
+  paddingTop: spacing.sm,
   paddingBottom: spacing.md,
-  paddingHorizontal: spacing.md * 2,
+  paddingHorizontal: Platform.select({
+    web: spacing.md * 2,
+    default: spacing.md,
+  }),
 };

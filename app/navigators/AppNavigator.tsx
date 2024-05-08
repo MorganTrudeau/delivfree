@@ -21,6 +21,9 @@ import { Host as PortalHost } from "react-native-portalize";
 import AlertProvider from "app/components/Alert/AlertContext";
 import { DataLoadingManager } from "app/services/DataLoadingManager";
 import ToastProvider from "app/components/Toast/ToastContext";
+import { getAppType } from "app/utils/general";
+
+console.log("APP_TYPE", getAppType());
 
 export type NavigationProp = AppStackScreenProps<
   keyof AppStackParamList

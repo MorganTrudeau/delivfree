@@ -23,6 +23,44 @@
           "other_platform_oauth_client": []
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406179880402:android:61128a9af8b84caa297c0b",
+        "android_client_info": {
+          "package_name": "com.delivfree.consumer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKK9SQ2i7BmDm15rRq4rXZMEEQETRTCnA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406179880402:android:bc9c9a6a5d922206297c0b",
+        "android_client_info": {
+          "package_name": "com.delivfree.vendor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKK9SQ2i7BmDm15rRq4rXZMEEQETRTCnA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
     }
   ],
   "configuration_version": "1"

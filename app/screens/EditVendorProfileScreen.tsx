@@ -39,6 +39,7 @@ export const EditVendorProfileScreen = () => {
     lastName: vendor?.lastName || user?.lastName || "",
     businessName: vendor?.businessName || "",
     callingCode: vendor?.callingCode || "+1",
+    callingCountry: vendor?.callingCountry || "CA",
     phoneNumber: vendor?.phoneNumber || "",
     registration: { status: "pending" },
     users: [authToken],
@@ -134,9 +135,10 @@ export const EditVendorProfileScreen = () => {
           onChangeText={(phoneNumber) =>
             setVendorState((v) => ({ ...v, phoneNumber }))
           }
-          onChangeCallingCode={(callingCode) => {
-            setVendorState((v) => ({ ...v, callingCode }));
+          onChangeCallingCode={(callingCode, callingCountry) => {
+            setVendorState((v) => ({ ...v, callingCode, callingCountry }));
           }}
+          callingCountry={vendorState.callingCountry}
         />
         {!vendor?.registration ? (
           <Button

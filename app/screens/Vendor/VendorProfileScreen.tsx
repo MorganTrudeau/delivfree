@@ -69,6 +69,7 @@ export const VendorProfileScreen = (props: VendorProfileScreenProps) => {
         style={$screen}
         contentContainerStyle={$containerPadding}
         headerProps={headerProps}
+        inDrawer
       >
         <View style={$row}>
           <Text preset="heading" style={$flex}>

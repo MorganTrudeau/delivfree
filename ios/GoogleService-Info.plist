@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.delivfree.app</string>
+	<string>com.delivfree.consumer</string>
 	<key>PROJECT_ID</key>
 	<string>delivfree-app</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:406179880402:ios:e5d39c8e9086cd7f297c0b</string>
+	<string>1:406179880402:ios:c7d290486eaf685b297c0b</string>
 </dict>
 </plist>

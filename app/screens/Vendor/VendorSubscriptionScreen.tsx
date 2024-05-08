@@ -46,6 +46,7 @@ export const VendorSubscriptionScreen = ({
         preset="fixed"
         style={$screen}
         contentContainerStyle={$containerPadding}
+        inDrawer
       >
         <Text preset="heading">Subscription</Text>
         <Card style={{ marginTop: spacing.md, alignSelf: "flex-start" }}>

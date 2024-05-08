@@ -35,6 +35,10 @@ export const RestaurantLocationSelect = ({
   const restaurantLocations = useAppSelector(
     (state) => state.restaurantLocations.data
   );
+  const restaurantLocationsList = useMemo(
+    () => Object.values(restaurantLocations),
+    [restaurantLocations]
+  );
 
   const buttonRef = useRef<View>(null);
 
@@ -51,14 +55,12 @@ export const RestaurantLocationSelect = ({
 
   const [open, setOpen] = useState(false);
   const toggleOpen = () => {
+    if (!restaurantLocationsList.length && !open) {
+      return;
+    }
     openAnimation.value = withTiming(open ? 0 : 1);
     setOpen(!open);
   };
-
-  const restaurantLocationsList = useMemo(
-    () => Object.values(restaurantLocations),
-    [restaurantLocations]
-  );
 
   const animatedStyle = useAnimatedStyle(
     () => ({

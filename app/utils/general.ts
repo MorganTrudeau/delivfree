@@ -3,7 +3,10 @@ import { avatarColors } from "../theme";
 import { Linking, Platform } from "react-native";
 import messaging from "@react-native-firebase/messaging";
 
-export const getAppType = () => Config.REACT_NATIVE_APP as "CONSUMER" | "VENDOR" | "ADMIN";
+export const getAppType = () => {
+  console.log("Config", Config);
+  return Config.REACT_NATIVE_APP as "CONSUMER" | "VENDOR" | "ADMIN";
+};
 
 export const navigateToAddress = (
   latitude: number,

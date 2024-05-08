@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   Pressable,
   StyleSheet,
+  TextInput,
   View,
   ViewStyle,
 } from "react-native";
@@ -24,7 +25,7 @@ import {
 import { useAlert, useUploadImage } from "app/hooks";
 import firestore from "@react-native-firebase/firestore";
 import FastImage from "react-native-fast-image";
-import { chooseImage, cropImage } from "app/utils/media";
+import { chooseImage } from "app/utils/media";
 import { AddressSearchModal } from "../AddressSearchModal";
 import { Icon } from "../Icon";
 import { Button } from "../Button";
@@ -44,6 +45,9 @@ export const ManageRestaurantLocation = ({
   onClose,
 }: Props) => {
   const addressSearch = useRef<ModalRef>(null);
+  const phoneNumberInput = useRef<TextInput>(null);
+  const menuLinkInput = useRef<TextInput>(null);
+  const orderLinkInput = useRef<TextInput>(null);
 
   const Alert = useAlert();
 
@@ -61,6 +65,7 @@ export const ManageRestaurantLocation = ({
           cuisines: [],
           keywords: [],
           vendor,
+          callingCountry: "CA",
           callingCode: "+1",
           phoneNumber: "",
           name: "",
@@ -202,14 +207,19 @@ export const ManageRestaurantLocation = ({
         onChangeText={updateStateValue("name")}
         containerStyle={$inputContainer}
         value={locationState.name}
+        onSubmitEditing={() => phoneNumberInput.current?.focus()}
       />
       <PhoneNumberInput
+        ref={phoneNumberInput}
         label={"Phone number"}
         placeholder={"Phone number"}
         onChangeText={updateStateValue("phoneNumber")}
-        onChangeCallingCode={updateStateValue("callingCode")}
+        onChangeCallingCode={(callingCode, callingCountry) => {
+          setLocationState((s) => ({ ...s, callingCode, callingCountry }));
+        }}
         containerStyle={$inputContainer}
         value={locationState.phoneNumber}
+        callingCountry={locationState.callingCountry}
       />
       <Text
         preset="formLabel"
@@ -224,18 +234,22 @@ export const ManageRestaurantLocation = ({
         placeholder="Select cuisines"
       />
       <TextField
+        ref={menuLinkInput}
         label={"Menu link"}
         placeholder={"Menu link"}
         onChangeText={updateStateValue("menuLink")}
         containerStyle={$inputContainer}
         value={locationState.menuLink}
+        onSubmitEditing={() => orderLinkInput.current?.focus()}
       />
       <TextField
+        ref={orderLinkInput}
         label={"Online order link"}
         placeholder={"Online order link"}
         onChangeText={updateStateValue("orderLink")}
         containerStyle={$inputContainer}
         value={locationState.orderLink}
+        onSubmitEditing={() => addressSearch.current?.open()}
       />
       <Text
         preset="formLabel"

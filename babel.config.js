@@ -30,16 +30,7 @@ module.exports = {
       plugins: ["transform-remove-console"],
     },
     development: {
-      presets: [
-        [
-          "@babel/preset-react",
-          {
-            importSource: "@welldone-software/why-did-you-render",
-            runtime: "automatic",
-            development: true,
-          },
-        ],
-      ],
+      presets: ["@babel/preset-react"],
     },
   },
   plugins,

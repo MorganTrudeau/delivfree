@@ -1,7 +1,11 @@
 import { defineString } from "firebase-functions/params";
-import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import Stripe from "stripe";
+import {
+  CallableRequest,
+  onCall,
+  onRequest,
+} from "firebase-functions/v2/https";
 
 const apiKey = defineString("STRIPE_SECRET_KEY");
 const signingSecret = defineString("STRIPE_SIGNING_SECRET");
@@ -15,43 +19,55 @@ const getStripe = () => {
   return _stripe;
 };
 
-export const createSubscription = functions.https.onCall(
-  async (data: { params: Stripe.SubscriptionCreateParams }) => {
-    return await getStripe().subscriptions.create(data.params);
+export const createSubscription = onCall(
+  async (
+    data: CallableRequest<{ params: Stripe.SubscriptionCreateParams }>
+  ) => {
+    return await getStripe().subscriptions.create(data.data.params);
   }
 );
 
-export const updateSubscription = functions.https.onCall(
-  async (data: { id: string; params: Stripe.SubscriptionUpdateParams }) => {
-    return await getStripe().subscriptions.update(data.id, data.params);
+export const updateSubscription = onCall(
+  async (
+    data: CallableRequest<{
+      id: string;
+      params: Stripe.SubscriptionUpdateParams;
+    }>
+  ) => {
+    return await getStripe().subscriptions.update(
+      data.data.id,
+      data.data.params
+    );
   }
 );
 
-export const fetchSubscriptions = functions.https.onCall(
-  async (data: { params: Stripe.SubscriptionListParams }) => {
-    return await getStripe().subscriptions.list(data.params);
+export const fetchSubscriptions = onCall(
+  async (data: CallableRequest<{ params: Stripe.SubscriptionListParams }>) => {
+    return await getStripe().subscriptions.list(data.data.params);
   }
 );
 
-export const fetchProducts = functions.https.onCall(
-  async (data: { params: Stripe.ProductListParams }) => {
-    return await getStripe().products.list(data.params);
+export const fetchProducts = onCall(
+  async (data: CallableRequest<{ params: Stripe.ProductListParams }>) => {
+    return await getStripe().products.list(data.data.params);
   }
 );
 
-export const createCheckoutSession = functions.https.onCall(
-  async (data: { params: Stripe.Checkout.SessionCreateParams }) => {
-    return await getStripe().checkout.sessions.create(data.params);
+export const createCheckoutSession = onCall(
+  async (
+    data: CallableRequest<{ params: Stripe.Checkout.SessionCreateParams }>
+  ) => {
+    return await getStripe().checkout.sessions.create(data.data.params);
   }
 );
 
-export const loadCheckoutSession = functions.https.onCall(
-  async (data: { id: string }) => {
-    return await getStripe().checkout.sessions.retrieve(data.id);
+export const loadCheckoutSession = onCall(
+  async (data: CallableRequest<{ id: string }>) => {
+    return await getStripe().checkout.sessions.retrieve(data.data.id);
   }
 );
 
-export const stripeWebhook = functions.https.onRequest(async (req, res) => {
+export const stripeWebhook = onRequest(async (req, res) => {
   try {
     const sig = req.headers["stripe-signature"] as string;
 

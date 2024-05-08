@@ -8,6 +8,7 @@ import { DriverItemMobile } from "./DriverItemMobile";
 import { DriverItemWeb } from "./DriverItemWeb";
 import { Props as DriverItemProps } from "./DriverItem";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { EmptyList } from "../EmptyList";
 
 interface Props extends Partial<FlatListProps<Driver>> {
   drivers: Driver[];
@@ -30,6 +31,11 @@ export const DriversList = ({ drivers, ...rest }: Props) => {
     [largeScreenLayout]
   );
 
+  const renderListEmpty = useCallback(
+    () => <EmptyList title="You have not hired any drivers" />,
+    []
+  );
+
   return (
     <>
       {largeScreenLayout && <TableHeaders headers={headers} />}
@@ -38,6 +44,7 @@ export const DriversList = ({ drivers, ...rest }: Props) => {
         renderItem={renderItem}
         style={$flex}
         contentContainerStyle={[$content, { paddingBottom: insets.bottom }]}
+        ListEmptyComponent={renderListEmpty}
         {...rest}
       />
     </>

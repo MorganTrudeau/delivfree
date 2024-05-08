@@ -4,16 +4,28 @@ import { $input } from "./styles";
 import { Text } from "./Text";
 import { colors, spacing } from "app/theme";
 import { TextInput, TextStyle, View, ViewStyle } from "react-native";
+import { CountryCode } from "functions/src/types";
 
 interface Props extends PhoneInputProps {
   label: string;
   containerStyle?: ViewStyle;
-  onChangeCallingCode?: (callingCode: string) => void;
+  onChangeCallingCode?: (
+    callingCode: string,
+    callingCountry: CountryCode
+  ) => void;
+  callingCountry: CountryCode;
 }
 
 export const PhoneNumberInput = forwardRef<TextInput, Props>(
   function PhoneNumberInput(
-    { label, containerStyle, onChangeCallingCode, onChangeCountry, ...rest },
+    {
+      label,
+      containerStyle,
+      onChangeCallingCode,
+      onChangeCountry,
+      callingCountry,
+      ...rest
+    },
     ref
   ) {
     return (
@@ -61,13 +73,13 @@ export const PhoneNumberInput = forwardRef<TextInput, Props>(
             color: colors.text,
           }}
           disableArrowIcon
-          defaultCode="CA"
+          defaultCode={callingCountry || "CA"}
           onChangeCountry={(country) => {
             if (onChangeCountry) {
               onChangeCountry(country);
             }
             if (onChangeCallingCode) {
-              onChangeCallingCode(`+${country.callingCode[0]}`);
+              onChangeCallingCode(`+${country.callingCode[0]}`, country.cca2);
             }
           }}
           {...rest}

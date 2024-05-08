@@ -13,5 +13,5 @@ const firebaseConfig = {
 
 export const initFirebase = () => {
   firebase.initializeApp(firebaseConfig);
-  functions().useEmulator("localhost", 5001);
+  // functions().useEmulator("localhost", 5001);
 };

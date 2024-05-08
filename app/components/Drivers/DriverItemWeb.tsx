@@ -1,5 +1,5 @@
 import { Props } from "./DriverItem";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { DataCell, TableCell } from "../TableCell";
 
 export const DriverItemWeb = ({ driver, onPress }: Props) => {

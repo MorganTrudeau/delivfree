@@ -9,7 +9,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { TextInput } from "../TextInput";
-import { Customer, Vendor } from "functions/src/types";
+import { CountryCode, Customer, Vendor } from "functions/src/types";
 import { useAlert, useDebounce } from "app/hooks";
 import firestore from "@react-native-firebase/firestore";
 import { colors, spacing } from "app/theme";
@@ -30,7 +30,6 @@ interface Props {
   onCustomerSelect: (customer: Customer) => void;
   style?: ViewStyle;
   initialPhoneNumber?: string;
-  validation?: (val: string) => boolean;
   restaurantLocation: string;
 }
 
@@ -38,7 +37,6 @@ export const CustomerSearchInput = ({
   initialPhoneNumber,
   onCustomerSelect,
   style,
-  validation,
   restaurantLocation,
 }: Props) => {
   const Alert = useAlert();
@@ -57,14 +55,21 @@ export const CustomerSearchInput = ({
 
   const vendor = useAppSelector((state) => state.vendor.data);
 
-  const [{ customers, loading, phoneNumber, searching }, setState] = useState<{
+  const [
+    { customers, loading, callingCountry, callingCode, phoneNumber, searching },
+    setState,
+  ] = useState<{
     customers: Customer[];
     loading: boolean;
+    callingCountry: CountryCode;
+    callingCode: string;
     phoneNumber: string;
     searching: boolean;
   }>({
     customers: [],
     loading: false,
+    callingCountry: "CA",
+    callingCode: "+1",
     phoneNumber: initialPhoneNumber || "",
     searching: !initialPhoneNumber,
   });
@@ -74,6 +79,7 @@ export const CustomerSearchInput = ({
     id: generateUid(),
     name: "",
     location: { address: "", latitude: 0, longitude: 0, geohash: "" },
+    callingCountry: "CA",
     callingCode: "+1",
     phoneNumber: "",
     vendor: vendor?.id || "",
@@ -83,17 +89,29 @@ export const CustomerSearchInput = ({
     newCustomer.location.address && newCustomer.phoneNumber && newCustomer.name;
 
   const onChangeText = async (phoneNumber: string) => {
-    setState({ phoneNumber, loading: true, customers: [], searching: true });
+    setState((s) => ({
+      ...s,
+      phoneNumber,
+      loading: true,
+      customers: [],
+      searching: true,
+    }));
     const customerSnapshot = await firestore()
       .collection("Customers")
       .where("restaurantLocation", "==", restaurantLocation)
-      .where("phoneNumber", ">=", phoneNumber)
-      .where("phoneNumber", "<", phoneNumber + "\uf8ff")
+      .where("phoneNumber", ">=", callingCode + phoneNumber)
+      .where("phoneNumber", "<", callingCode + phoneNumber + "\uf8ff")
       .get();
     const customers = customerSnapshot.docs.map(
       (doc) => doc.data() as Customer
     );
-    setState({ phoneNumber, loading: false, customers, searching: true });
+    setState((s) => ({
+      ...s,
+      phoneNumber,
+      loading: false,
+      customers,
+      searching: true,
+    }));
   };
 
   const handleAddCustomer = async () => {
@@ -113,7 +131,9 @@ export const CustomerSearchInput = ({
       addCustomerModal.current?.close();
       setAddCustomerLoading(false);
       setState({
+        callingCode: newCustomer.callingCode,
         phoneNumber: newCustomer.phoneNumber,
+        callingCountry: newCustomer.callingCountry,
         loading: false,
         customers,
         searching: false,
@@ -137,12 +157,15 @@ export const CustomerSearchInput = ({
 
   return (
     <View style={[$container, style]} onLayout={onLayout}>
-      <TextField
+      <PhoneNumberInput
         label="Customer phone number"
         placeholder="Customer phone number"
         onChangeText={onChangeText}
+        onChangeCallingCode={(callingCode, callingCountry) => {
+          setState((s) => ({ ...s, callingCode, callingCountry }));
+        }}
         value={phoneNumber}
-        validation={validation}
+        callingCountry={callingCountry}
       />
       {!!phoneNumber && searching && (
         <View style={[$customerPanel, { top: containerHeight + spacing.sm }]}>
@@ -154,7 +177,9 @@ export const CustomerSearchInput = ({
                   key={`${customer.phoneNumber}-${index}`}
                   onPress={() => {
                     setState({
+                      callingCode: customer.callingCode,
                       phoneNumber: customer.phoneNumber,
+                      callingCountry: customer.callingCountry,
                       loading: false,
                       customers,
                       searching: false,
@@ -176,8 +201,15 @@ export const CustomerSearchInput = ({
             <ButtonSmall
               text="Add Customer"
               onPress={() => {
-                setNewCustomer((c) => ({ ...c, phoneNumber }));
-                addCustomerModal.current?.open();
+                setNewCustomer((c) => ({
+                  ...c,
+                  callingCode,
+                  callingCountry,
+                  phoneNumber,
+                }));
+                setTimeout(() => {
+                  addCustomerModal.current?.open();
+                }, 200);
               }}
             />
           )}
@@ -194,9 +226,10 @@ export const CustomerSearchInput = ({
             onChangeText={(phoneNumber) =>
               setNewCustomer((c) => ({ ...c, phoneNumber }))
             }
-            onChangeCallingCode={(callingCode) => {
-              setNewCustomer((c) => ({ ...c, callingCode }));
+            onChangeCallingCode={(callingCode, callingCountry) => {
+              setNewCustomer((c) => ({ ...c, callingCode, callingCountry }));
             }}
+            callingCountry={newCustomer.callingCountry}
           />
           <TextField
             placeholder="Name"

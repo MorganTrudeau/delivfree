@@ -1,5 +1,5 @@
 import { colors, spacing } from "app/theme";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   View,
   Pressable,
@@ -21,6 +21,7 @@ import { sizing } from "app/theme/sizing";
 import { Portal } from "react-native-portalize";
 import { borderRadius } from "app/theme/borderRadius";
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 interface Item<V> {
   label: string;
   value: V;
@@ -38,13 +39,27 @@ export const DropDownPicker = <V extends string>({
   selectedValues,
   placeholder = "Select",
 }: Props<V>) => {
-  const [open, setOpen] = useState(false);
+  const dropdown = useRef<View>(null);
+
+  const [{ open, top, left }, setDropdownState] = useState({
+    open: false,
+    top: 0,
+    left: 0,
+  });
 
   const openAnimation = useSharedValue(0);
 
   const toggleOpen = () => {
-    setOpen(!open);
-    openAnimation.value = withTiming(open ? 0 : 1);
+    if (open) {
+      setDropdownState((s) => ({ ...s, open: false }));
+      openAnimation.value = withTiming(0);
+    } else {
+      dropdown.current?.measure((x, y, width, height, pageX, pageY) => {
+        console.log(x, y, width, height, pageX, pageY);
+        setDropdownState({ left: pageX, top: pageY, open: true });
+        openAnimation.value = withTiming(1);
+      });
+    }
   };
 
   const buttonLabel = useMemo(
@@ -67,6 +82,11 @@ export const DropDownPicker = <V extends string>({
     [openAnimation]
   );
 
+  const backdropStyle = useAnimatedStyle(
+    () => ({ opacity: openAnimation.value }),
+    [openAnimation]
+  );
+
   const handleSelect = (val: V) => {
     if (selectedValues.includes(val)) {
       onSelect(selectedValues.filter((v) => v !== val));
@@ -85,6 +105,7 @@ export const DropDownPicker = <V extends string>({
   return (
     <View style={{ flex: 1 }}>
       <Pressable
+        ref={dropdown}
         onPress={toggleOpen}
         style={[$input, $row]}
         onLayout={handleLayout}
@@ -100,8 +121,8 @@ export const DropDownPicker = <V extends string>({
         <Icon icon={"chevron-down"} />
       </Pressable>
       <Portal>
-        <Pressable
-          style={StyleSheet.absoluteFill}
+        <AnimatedPressable
+          style={[$backdrop, backdropStyle]}
           onPress={toggleOpen}
           pointerEvents={open ? "auto" : "none"}
         />
@@ -116,9 +137,9 @@ export const DropDownPicker = <V extends string>({
               maxHeight: 200,
               position: "absolute",
               // @ts-ignore
-              top: layout?.top + layout?.height + spacing.sm,
+              top: top + (layout?.height || 0) + spacing.sm,
               // @ts-ignore
-              left: layout?.left,
+              left: left,
             },
           ]}
         >
@@ -146,7 +167,10 @@ export const DropDownPicker = <V extends string>({
   );
 };
 
-const $button: ViewStyle = {};
+const $backdrop: ViewStyle = {
+  ...StyleSheet.absoluteFillObject,
+  backgroundColor: colors.palette.overlay20,
+};
 const $picker: ViewStyle = {
   backgroundColor: colors.background,
   borderRadius: borderRadius.md,

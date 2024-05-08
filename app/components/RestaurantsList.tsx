@@ -5,6 +5,7 @@ import { spacing } from "app/theme";
 import { Text } from "./Text";
 import Animated from "react-native-reanimated";
 import RestaurantListItem from "./RestaurantListItem";
+import { EmptyList } from "./EmptyList";
 
 interface Props extends Partial<FlatListProps<RestaurantLocation>> {
   restaurants: RestaurantLocation[];
@@ -32,7 +33,7 @@ const RestaurantsList = ({
     [loadMore]
   );
   const renderListEmpty = useMemo(
-    () => <Text preset="bold">No restaurant locations found</Text>,
+    () => <EmptyList title="No restaurant locations found" />,
     []
   );
   return (

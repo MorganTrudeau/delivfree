@@ -13,7 +13,7 @@ export const LogoHeader = ({ style }: Props) => {
   const headerHeight = useHeaderHeight();
 
   const _style = useMemo(() => {
-    const height = headerHeight * 0.45;
+    const height = headerHeight * 0.4;
     const width = height * imageRatio;
     return [{ height, width }, style];
   }, [headerHeight, style]);
