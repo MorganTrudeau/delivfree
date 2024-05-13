@@ -1,7 +1,9 @@
 import * as Screens from "app/screens";
 import { getStackNavigator } from "../StackNavigator";
 import { Stripe } from "stripe";
-import { Driver, Vendor } from "functions/src/types";
+import { Driver, Vendor } from "delivfree";
+import React from "react";
+import { subscriptionsInSync } from "app/utils/subscriptions";
 
 const Stack = getStackNavigator();
 
@@ -39,7 +41,9 @@ export const renderDriverMainStack = ({
 
   if (
     !driverSubscription ||
-    !["active", "incomplete"].includes(driverSubscription.status)
+    !["active", "incomplete"].includes(driverSubscription.status) ||
+    (vendorSubscription &&
+      !subscriptionsInSync(vendorSubscription, driverSubscription))
   ) {
     return (
       <Stack.Screen

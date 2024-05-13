@@ -12,7 +12,7 @@ import { FirebaseAuth } from "./services/firebase/auth";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { $flex } from "./components/styles";
 import ToastProvider from "./components/Toast/ToastContext";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { persistor, store } from "./redux/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";

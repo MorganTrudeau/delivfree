@@ -15,6 +15,7 @@ import {
   TextStyle,
   ViewStyle,
   useWindowDimensions,
+  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon, IconTypes } from "../Icon";
@@ -23,7 +24,8 @@ import { Text } from "../Text";
 import { colors, spacing } from "app/theme";
 import { $borderBottom, $row, HORIZONTAL_SAFE_AREA_EDGES } from "../styles";
 import { SafeAreaView } from "../SafeAreaView";
-import { ModalRef } from "functions/src/types";
+import { ModalRef } from "delivfree";
+import ReanimatedCenterModal from "./CenterModal";
 
 export const OPTION_HEIGHT = 50;
 export const OPTION_ICON_SIZE = sizing.lg;
@@ -45,6 +47,7 @@ export type OptionModalItem = {
   textStyle?: StyleProp<TextStyle>;
   renderRightComponent?: () => React.ReactElement | null;
   stayOpenOnPress?: boolean;
+  selected?: boolean;
 };
 
 type OptionModalProps = {
@@ -52,18 +55,22 @@ type OptionModalProps = {
   onSelect?: (option: OptionModalItem) => void;
 };
 
-const OptionsModalWithoutRef = (
-  { options = [], onSelect }: OptionModalProps,
-  ref: Ref<ModalRef>
-) => {
+type PlatformModalProps = {
+  children: React.ReactNode;
+};
+
+const MobileOptionsModal = forwardRef<
+  ModalRef,
+  { children: React.ReactNode; optionsLength: number }
+>(function MobileOptionsModal({ children, optionsLength }, ref) {
   const insets = useSafeAreaInsets();
   const windowHeight = useWindowDimensions();
 
   const bottomSheet = useRef<BottomSheetRef>(null);
 
   const height = useMemo(
-    () => options.length * OPTION_HEIGHT + spacing.xs + insets.bottom + 24,
-    [options.length, insets.bottom]
+    () => optionsLength * OPTION_HEIGHT + spacing.xs + insets.bottom + 24,
+    [optionsLength, insets.bottom]
   );
 
   const snapPoints = useMemo(() => {
@@ -75,11 +82,43 @@ const OptionsModalWithoutRef = (
 
   useImperativeHandle(ref, () => ({ open, close }), [open, close]);
 
-  const handleSelect = async (option: OptionModalItem) => {
-    if (!option.stayOpenOnPress) {
-      close();
-    }
+  return (
+    <BottomSheet ref={bottomSheet} snapPoints={snapPoints}>
+      <SafeAreaView
+        style={{
+          paddingBottom: spacing.xs + insets.bottom,
+        }}
+        edges={HORIZONTAL_SAFE_AREA_EDGES}
+      >
+        {children}
+      </SafeAreaView>
+    </BottomSheet>
+  );
+});
 
+const WebOptionsModal = forwardRef<ModalRef, { children: React.ReactNode }>(
+  function WebOptionsModal({ children }, ref) {
+    return <ReanimatedCenterModal ref={ref}>{children}</ReanimatedCenterModal>;
+  }
+);
+
+const PlatformModal = Platform.select<
+  React.ForwardRefExoticComponent<
+    {
+      children: React.ReactNode;
+      optionsLength: number;
+    } & React.RefAttributes<ModalRef>
+  >
+>({
+  web: WebOptionsModal,
+  default: MobileOptionsModal,
+});
+
+const OptionsModalWithoutRef = (
+  { options = [], onSelect }: OptionModalProps,
+  ref: Ref<ModalRef>
+) => {
+  const handleSelect = async (option: OptionModalItem) => {
     if (typeof option.onConfirmation === "function") {
       try {
         const shouldContinue = await option.onConfirmation();
@@ -118,16 +157,9 @@ const OptionsModalWithoutRef = (
     );
 
   return (
-    <BottomSheet ref={bottomSheet} snapPoints={snapPoints}>
-      <SafeAreaView
-        style={{
-          paddingBottom: spacing.xs + insets.bottom,
-        }}
-        edges={HORIZONTAL_SAFE_AREA_EDGES}
-      >
-        {renderOptions()}
-      </SafeAreaView>
-    </BottomSheet>
+    <PlatformModal optionsLength={options.length} ref={ref}>
+      {renderOptions()}
+    </PlatformModal>
   );
 };
 
@@ -196,7 +228,10 @@ const $optionContainer: ViewStyle = {
   marginHorizontal: spacing.md,
   height: OPTION_HEIGHT,
 };
-const $optionTextContainer: ViewStyle = { flex: 1, paddingRight: spacing.lg };
+const $optionTextContainer: ViewStyle = {
+  flex: 1,
+  flexDirection: "row",
+};
 const $optionIconContainer: ViewStyle = {
   height: OPTION_HEIGHT - 1,
   width: OPTION_ICON_SIZE,
@@ -206,7 +241,7 @@ const $optionIconContainer: ViewStyle = {
 };
 const $optionText: TextStyle = {
   textAlign: "left",
-  flexShrink: 1,
+  flex: 1,
 };
 const $optionDescription: ViewStyle = { flexShrink: 1 };
 const $optionContent: ViewStyle = {

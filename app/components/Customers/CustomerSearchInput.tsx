@@ -8,9 +8,8 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { TextInput } from "../TextInput";
-import { CountryCode, Customer, Vendor } from "functions/src/types";
-import { useAlert, useDebounce } from "app/hooks";
+import { CountryCode, Customer } from "delivfree";
+import { useAlert } from "app/hooks";
 import firestore from "@react-native-firebase/firestore";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
@@ -22,9 +21,9 @@ import { Button } from "../Button";
 import { generateUid } from "app/utils/general";
 import { useAppSelector } from "app/redux/store";
 import { TextField } from "../TextField";
-import { AddressSearchModal } from "../AddressSearchModal";
 import { AddressSearchField } from "../AddressSearchField";
 import { PhoneNumberInput } from "../PhoneNumberInput";
+import PhoneInput from "react-native-phone-number-input";
 
 interface Props {
   onCustomerSelect: (customer: Customer) => void;
@@ -40,7 +39,7 @@ export const CustomerSearchInput = ({
   restaurantLocation,
 }: Props) => {
   const Alert = useAlert();
-  const addressSearchModal = useRef<ModalRef>(null);
+  const phoneNumberInput = useRef<PhoneInput>(null);
 
   const [containerHeight, setContainerHeight] = useState(0);
   const onLayout = ({
@@ -99,8 +98,8 @@ export const CustomerSearchInput = ({
     const customerSnapshot = await firestore()
       .collection("Customers")
       .where("restaurantLocation", "==", restaurantLocation)
-      .where("phoneNumber", ">=", callingCode + phoneNumber)
-      .where("phoneNumber", "<", callingCode + phoneNumber + "\uf8ff")
+      .where("phoneNumber", ">=", phoneNumber)
+      .where("phoneNumber", "<", phoneNumber + "\uf8ff")
       .get();
     const customers = customerSnapshot.docs.map(
       (doc) => doc.data() as Customer
@@ -138,6 +137,7 @@ export const CustomerSearchInput = ({
         customers,
         searching: false,
       });
+      phoneNumberInput.current?.setValue(newCustomer.phoneNumber);
     } catch (error) {
       setAddCustomerLoading(false);
       Alert.alert(
@@ -158,6 +158,7 @@ export const CustomerSearchInput = ({
   return (
     <View style={[$container, style]} onLayout={onLayout}>
       <PhoneNumberInput
+        ref={phoneNumberInput}
         label="Customer phone number"
         placeholder="Customer phone number"
         onChangeText={onChangeText}
@@ -171,27 +172,36 @@ export const CustomerSearchInput = ({
         <View style={[$customerPanel, { top: containerHeight + spacing.sm }]}>
           {loading && <ActivityIndicator />}
           {customers.length ? (
-            customers.map((customer, index) => {
+            customers.map((customer, index, arr) => {
               return (
-                <Pressable
-                  key={`${customer.phoneNumber}-${index}`}
-                  onPress={() => {
-                    setState({
-                      callingCode: customer.callingCode,
-                      phoneNumber: customer.phoneNumber,
-                      callingCountry: customer.callingCountry,
-                      loading: false,
-                      customers,
-                      searching: false,
-                    });
-                    onCustomerSelect(customer);
-                  }}
-                >
-                  <Text>{customer.name}</Text>
-                  <Text size={"xs"} style={{ color: colors.textDim }}>
-                    {customer.location.address}
-                  </Text>
-                </Pressable>
+                <>
+                  <Pressable
+                    key={`${customer.phoneNumber}-${index}`}
+                    onPress={() => {
+                      setState({
+                        callingCode: customer.callingCode,
+                        phoneNumber: customer.phoneNumber,
+                        callingCountry: customer.callingCountry,
+                        loading: false,
+                        customers,
+                        searching: false,
+                      });
+                      phoneNumberInput.current?.setValue(customer.phoneNumber);
+                      onCustomerSelect(customer);
+                    }}
+                  >
+                    <Text>{customer.name}</Text>
+                    <Text size={"xs"} style={{ color: colors.textDim }}>
+                      {customer.location.address}
+                    </Text>
+                  </Pressable>
+                  {index !== arr.length - 1 && (
+                    <View
+                      style={$separator}
+                      key={`separator-${customer.phoneNumber}-${index}`}
+                    />
+                  )}
+                </>
               );
             })
           ) : !loading ? (
@@ -271,6 +281,7 @@ const $customerPanel: StyleProp<ViewStyle> = [
   },
   $shadow,
 ];
+const $separator: ViewStyle = { height: spacing.sm };
 const $modalContent: ViewStyle = {
   backgroundColor: colors.background,
   padding: spacing.md,

@@ -1,4 +1,4 @@
-import { Driver } from "functions/src/types";
+import { Driver } from "delivfree";
 import firestore from "@react-native-firebase/firestore";
 
 export const updateDriver = (driverId: string, update: Partial<Driver>) => {

@@ -2,7 +2,7 @@ import React, { forwardRef } from "react";
 import ReanimatedCenterModal, { ModalRef } from "./Modal/CenterModal";
 import { View } from "react-native";
 import { LocationInput } from "./LocationInput";
-import { Location } from "functions/src/types";
+import { Location } from "delivfree";
 import { spacing } from "app/theme";
 import { MAX_CENTER_MODAL_WIDTH } from "./styles";
 import { Text } from "./Text";

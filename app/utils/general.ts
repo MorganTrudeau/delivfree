@@ -4,7 +4,6 @@ import { Linking, Platform } from "react-native";
 import messaging from "@react-native-firebase/messaging";
 
 export const getAppType = () => {
-  console.log("Config", Config);
   return Config.REACT_NATIVE_APP as "CONSUMER" | "VENDOR" | "ADMIN";
 };
 

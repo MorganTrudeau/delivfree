@@ -1,6 +1,6 @@
 import { useAdBanner } from "app/hooks/useAdBanner";
 import { borderRadius } from "app/theme/borderRadius";
-import { Cuisine } from "functions/src/types";
+import { Cuisine } from "delivfree";
 import React, { useMemo } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";

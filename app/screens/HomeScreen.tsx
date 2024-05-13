@@ -20,14 +20,14 @@ import { colors, spacing } from "app/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TextInput } from "app/components/TextInput";
 import { AppStackScreenProps } from "app/navigators";
-import { Cuisine, Vendor, RestaurantLocation } from "delivfree";
+import { Cuisine, RestaurantLocation } from "delivfree";
 import LocationModal from "app/components/Modal/LocationModal";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { useAppSelector } from "app/redux/store";
 import { useDebounce } from "app/hooks";
 import { fetchRestaurants } from "app/apis/restaurants";
 import { sizing } from "app/theme/sizing";
-import FastImage, { ImageStyle } from "react-native-fast-image";
+import { ImageStyle } from "react-native-fast-image";
 import { AdBanner } from "app/components/AdBanner";
 
 const isWeb = Platform.OS === "web";

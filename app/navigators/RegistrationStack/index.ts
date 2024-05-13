@@ -2,7 +2,7 @@ import Config from "react-native-config";
 import { renderVendorRegistrationStack } from "./VendorRegistrationStack";
 import { renderAdminRegistrationStack } from "./AdminRegistrationStack";
 import { renderConsumerRegistrationStack } from "./ConsumerRegistrationStack";
-import { User } from "functions/src/types";
+import { User } from "delivfree";
 
 export const renderRegistrationStack = ({
   user,

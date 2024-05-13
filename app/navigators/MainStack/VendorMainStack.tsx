@@ -1,7 +1,7 @@
 import * as Screens from "app/screens";
 import { getStackNavigator } from "../StackNavigator";
 import { Stripe } from "stripe";
-import { Vendor } from "functions/src/types";
+import { Vendor } from "delivfree";
 import React from "react";
 
 const Stack = getStackNavigator();

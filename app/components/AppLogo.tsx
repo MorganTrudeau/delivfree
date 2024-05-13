@@ -1,4 +1,3 @@
-import { useHeaderHeight } from "app/hooks";
 import React, { useMemo } from "react";
 import { StyleProp } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";

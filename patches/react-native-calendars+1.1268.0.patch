@@ -1,0 +1,121 @@
+diff --git a/node_modules/react-native-calendars/src/calendar/day/basic/index.js b/node_modules/react-native-calendars/src/calendar/day/basic/index.js
+index a308121..d048ac5 100644
+--- a/node_modules/react-native-calendars/src/calendar/day/basic/index.js
++++ b/node_modules/react-native-calendars/src/calendar/day/basic/index.js
+@@ -86,7 +86,7 @@ export default class BasicDay extends Component {
+         return this.props.markingType === Marking.markings.CUSTOM;
+     }
+     getContainerStyle() {
+-        const { customStyles, selectedColor } = this.marking;
++        const { customStyles, selectedColor, active, activeColor } = this.marking;
+         const style = [this.style.base];
+         if (this.isSelected()) {
+             style.push(this.style.selected);
+@@ -104,6 +104,13 @@ export default class BasicDay extends Component {
+             }
+             style.push(customStyles.container);
+         }
++        if (active) {
++            style.push({
++                borderWidth: 4,
++                borderColor: activeColor,
++                borderRadius: 30
++            });
++        }
+         return style;
+     }
+     getTextStyle() {
+diff --git a/node_modules/react-native-calendars/src/calendar/day/basic/style.js b/node_modules/react-native-calendars/src/calendar/day/basic/style.js
+index 7de44d8..e31239e 100644
+--- a/node_modules/react-native-calendars/src/calendar/day/basic/style.js
++++ b/node_modules/react-native-calendars/src/calendar/day/basic/style.js
+@@ -36,7 +36,8 @@ export default function styleConstructor(theme = {}) {
+             color: appStyle.todayTextColor
+         },
+         selectedText: {
+-            color: appStyle.selectedDayTextColor
++            color: appStyle.selectedDayTextColor,
++            fontWeight: appStyle.selectedDayFontWeight
+         },
+         disabledText: {
+             color: appStyle.textDisabledColor
+diff --git a/node_modules/react-native-calendars/src/calendar/day/index.js b/node_modules/react-native-calendars/src/calendar/day/index.js
+index 42a6176..2e120aa 100644
+--- a/node_modules/react-native-calendars/src/calendar/day/index.js
++++ b/node_modules/react-native-calendars/src/calendar/day/index.js
+@@ -79,14 +79,14 @@ export default class Day extends Component {
+         return markingType === 'period' ? PeriodDay : BasicDay;
+     }
+     render() {
+-        const { day, marking } = this.props;
++        const { day, marking, findDayValue } = this.props;
+         const date = xdateToData(day);
+         const isToday = dateutils_isToday(day);
+         const Component = this.getDayComponent();
+         const dayProps = omit(this.props, 'day');
+         const accessibilityLabel = this.getAccessibilityLabel(day, marking, isToday);
+         return (<Component {...dayProps} date={date} testID={`${SELECT_DATE_SLOT}-${date.dateString}`} accessibilityLabel={accessibilityLabel}>
+-        {formatNumbers(date ? day?.getDate() : day)}
++        {findDayValue ? findDayValue(day) : formatNumbers(date ? day?.getDate() : day)}
+       </Component>);
+     }
+ }
+diff --git a/node_modules/react-native-calendars/src/calendar/index.js b/node_modules/react-native-calendars/src/calendar/index.js
+index 82484ff..15c8282 100644
+--- a/node_modules/react-native-calendars/src/calendar/index.js
++++ b/node_modules/react-native-calendars/src/calendar/index.js
+@@ -149,16 +149,17 @@ class Calendar extends Component {
+       </View>);
+     });
+     renderDay(day, id) {
+-        const { hideExtraDays, markedDates } = this.props;
++        const { hideExtraDays, markedDates, findDayValue } = this.props;
+         const dayProps = extractComponentProps(Day, this.props);
+         if (!sameMonth(day, this.state.currentMonth) && hideExtraDays) {
+             return <View key={id} style={this.style.emptyDayContainer}/>;
+         }
+         return (<View style={this.style.dayContainer} key={id}>
+-        <Day {...dayProps} day={day} state={getState(day, this.state.currentMonth, this.props)} marking={markedDates?.[toMarkingFormat(day)]} onPress={this.pressDay} onLongPress={this.longPressDay}/>
++        <Day {...dayProps} findDayValue={findDayValue} day={day} state={getState(day, this.state.currentMonth, this.props)} marking={markedDates?.[toMarkingFormat(day)]} onPress={this.pressDay} onLongPress={this.longPressDay}/>
+       </View>);
+     }
+     renderWeek(days, id) {
++        const {weekStyle} = this.props;
+         const week = [];
+         days.forEach((day, id2) => {
+             week.push(this.renderDay(day, id2));
+@@ -166,7 +167,7 @@ class Calendar extends Component {
+         if (this.props.showWeekNumbers) {
+             week.unshift(this.renderWeekNumber(days[days.length - 1].getWeek()));
+         }
+-        return (<View style={this.style.week} key={id}>
++        return (<View style={[this.style.week, weekStyle]} key={id}>
+         {week}
+       </View>);
+     }
+diff --git a/node_modules/react-native-calendars/src/index.ts b/node_modules/react-native-calendars/src/index.ts
+index c7b1902..f4deac9 100644
+--- a/node_modules/react-native-calendars/src/index.ts
++++ b/node_modules/react-native-calendars/src/index.ts
+@@ -1,11 +1,11 @@
+ export {default as Calendar, CalendarProps} from './calendar';
+-export {default as CalendarList, CalendarListProps} from './calendar-list';
+-export {default as Agenda, AgendaProps} from './agenda';
+-export {default as ExpandableCalendar, ExpandableCalendarProps} from './expandableCalendar';
+-export {default as AgendaList, AgendaListProps} from './expandableCalendar/agendaList';
+-export {default as Timeline, TimelineProps} from './timeline/Timeline';
+-export {default as CalendarProvider, CalendarContextProviderProps} from './expandableCalendar/Context/Provider';
+-export {default as asCalendarConsumer} from './expandableCalendar/asCalendarConsumer';
+-export {default as WeekCalendar, WeekCalendarProps} from './expandableCalendar/WeekCalendar';
+-export {default as LocaleConfig} from 'xdate';
+-export {default as CalendarContext} from './expandableCalendar/Context';
++// export {default as CalendarList, CalendarListProps} from './calendar-list';
++// export {default as Agenda, AgendaProps} from './agenda';
++// export {default as ExpandableCalendar, ExpandableCalendarProps} from './expandableCalendar';
++// export {default as AgendaList, AgendaListProps} from './expandableCalendar/agendaList';
++// export {default as Timeline, TimelineProps} from './timeline/Timeline';
++// export {default as CalendarProvider, CalendarContextProviderProps} from './expandableCalendar/Context/Provider';
++// export {default as asCalendarConsumer} from './expandableCalendar/asCalendarConsumer';
++// export {default as WeekCalendar, WeekCalendarProps} from './expandableCalendar/WeekCalendar';
++// export {default as LocaleConfig} from 'xdate';
++// export {default as CalendarContext} from './expandableCalendar/Context';

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { FlatList, FlatListProps, ViewStyle } from "react-native";
-import { Driver } from "functions/src/types";
+import { Driver } from "delivfree";
 import { TableHeaders } from "../TableHeaders";
 import { useDimensions } from "app/hooks/useDimensions";
 import { $flex, LARGE_SCREEN } from "../styles";

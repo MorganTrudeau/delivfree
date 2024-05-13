@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { UserType } from "functions/src/types";
+import { UserType } from "delivfree";
 
 export interface AppConfigState {
   userType: UserType | undefined;

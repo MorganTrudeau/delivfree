@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Linking,
+  Platform,
   Pressable,
   StyleSheet,
   TextStyle,
@@ -23,6 +24,7 @@ import { useAppSelector } from "app/redux/store";
 import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
 import { AppLogo } from "../AppLogo";
 import { useAlert } from "app/hooks";
+import { FULL_TIME_ORDERS, SURGE_ORDERS, isFullTimeOrderItem, isSurgeOrderItem } from "app/utils/subscriptions";
 
 interface Props {
   fullTimeProduct: Stripe.Product;
@@ -31,8 +33,6 @@ interface Props {
   referenceSubscription?: Stripe.Subscription | null;
 }
 
-const FULL_TIME_ORDERS = 24;
-const SURGE_ORDERS = 12;
 
 export const SubscriptionSelect = ({
   fullTimeProduct,
@@ -52,14 +52,14 @@ export const SubscriptionSelect = ({
   const fullTimeSubscriptionItem = useMemo(
     () =>
       (referenceSubscription || subscription)?.items.data.find(
-        (i) => i.price.product === "prod_PvqVStGqKEDOhB"
+        isFullTimeOrderItem
       ),
     [referenceSubscription, subscription]
   );
   const surgeSubscriptionItem = useMemo(
     () =>
       (referenceSubscription || subscription)?.items.data.find(
-        (i) => i.price.product === "prod_PwIMdMjpdkX6BU"
+        isSurgeOrderItem
       ),
     [subscription]
   );
@@ -148,9 +148,12 @@ export const SubscriptionSelect = ({
         const params: Stripe.Checkout.SessionCreateParams = {
           line_items: lineItems,
           subscription_data: { metadata },
-          success_url: __DEV__
-            ? "http://localhost:8080"
-            : "https://delivfree-vendor.web.app/", // @todo change
+          success_url:
+            Platform.OS === "web"
+              ? __DEV__
+                ? "http://localhost:8080"
+                : "https://delivfree-vendor.web.app/"
+              : "delivfree://subscription", // @todo change
           mode: "subscription",
           customer_email: user?.email || undefined,
         };
@@ -272,6 +275,7 @@ export const SubscriptionSelect = ({
       </View>
       {(!referenceSubscription || !subscription) && (
         <Button
+          disabled={!subscriptionChanged}
           preset={subscriptionChanged ? "filled" : "default"}
           text={
             subscription && subscription.status !== "canceled"

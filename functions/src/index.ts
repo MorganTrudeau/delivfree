@@ -18,7 +18,10 @@ import {
   onCall,
   onRequest,
 } from "firebase-functions/v2/https";
-import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import {
+  onDocumentCreated,
+  onDocumentWritten,
+} from "firebase-functions/v2/firestore";
 import * as cors from "cors";
 
 const whitelistDomains = [/delivfree-vendor\.web\.app$/];
@@ -97,6 +100,7 @@ export const onOrderCreated = onDocumentCreated(
       return true;
     }
     const order = event.data.data() as Order;
+
     const driverSnap = await admin
       .firestore()
       .collection("Drivers")
@@ -114,7 +118,80 @@ export const onOrderCreated = onDocumentCreated(
     const collapseKey = "orderCreated";
     const link = `https://${domain}?route=orders`;
     const payload = buildMessagePayload(notification, data, collapseKey, link);
-    return sendNotifications(userIds, payload);
+    await sendNotifications(userIds, payload);
+
+    return true;
+  }
+);
+
+export const onOrderWritten = onDocumentWritten(
+  "Orders/{orderId}",
+  async (event) => {
+    if (!event.data) {
+      return true;
+    }
+    const orderBefore = event.data.before.data() as Order | undefined;
+    const orderAfter = event.data.after.data() as Order | undefined;
+
+    const vendor = orderBefore?.vendor || orderAfter?.vendor;
+    const date = orderBefore?.date || orderAfter?.date;
+    const customer = orderBefore?.customer || orderAfter?.customer;
+
+    if (!(vendor && date && customer)) {
+      return true;
+    }
+
+    var today = new Date(date);
+
+    var year = today.getFullYear();
+    var month = String(today.getMonth() + 1).padStart(2, "0");
+    var day = String(today.getDate()).padStart(2, "0");
+
+    var formattedDate = year + "-" + month + "-" + day;
+
+    const tip =
+      (orderAfter?.tip ? Number(orderAfter.tip) : 0) -
+      (orderBefore?.tip ? Number(orderBefore.tip) : 0);
+    const amount =
+      (orderAfter?.amount ? Number(orderAfter.amount) : 0) -
+      (orderBefore?.amount ? Number(orderBefore.amount) : 0);
+
+    const update: {
+      count?: admin.firestore.FieldValue;
+      tips: admin.firestore.FieldValue;
+      amount: admin.firestore.FieldValue;
+      customer: {
+        [id: string]: {
+          amount: admin.firestore.FieldValue;
+          tips: admin.firestore.FieldValue;
+        };
+      };
+    } = {
+      amount: admin.firestore.FieldValue.increment(amount),
+      tips: admin.firestore.FieldValue.increment(tip),
+      customer: {
+        [customer]: {
+          amount: admin.firestore.FieldValue.increment(amount),
+          tips: admin.firestore.FieldValue.increment(tip),
+        },
+      },
+    };
+
+    if (!orderBefore || !orderAfter) {
+      update.count = admin.firestore.FieldValue.increment(
+        !orderBefore ? 1 : -1
+      );
+    }
+
+    await admin
+      .firestore()
+      .collection("VendorOrderCount")
+      .doc(vendor)
+      .collection("OrderCount")
+      .doc(formattedDate)
+      .set(update, { merge: true });
+
+    return true;
   }
 );
 

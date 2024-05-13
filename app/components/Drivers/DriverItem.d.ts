@@ -1,4 +1,4 @@
-import { Driver } from "functions/src/types";
+import { Driver } from "delivfree";
 import React from "react";
 
 export interface Props {

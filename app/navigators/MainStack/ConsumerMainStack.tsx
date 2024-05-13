@@ -5,6 +5,7 @@ import { spacing } from "app/theme";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "app/components";
 import { LogoHeader } from "app/components/LogoHeader";
+import React from "react";
 
 const Stack = getStackNavigator();
 

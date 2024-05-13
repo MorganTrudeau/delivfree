@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Driver } from "functions/src/types";
+import { Driver } from "delivfree";
 import firestore from "@react-native-firebase/firestore";
 import { setDriver } from "../reducers/driver";
 import { setDrivers } from "../reducers/vendorDrivers";

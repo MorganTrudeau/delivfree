@@ -5,7 +5,7 @@ import {
   getStatusColor,
   getStatusText,
 } from "app/utils/orders";
-import { Order } from "functions/src/types";
+import { Order } from "delivfree";
 import { View, ViewStyle } from "react-native";
 import { Text } from "../Text";
 import moment from "moment";

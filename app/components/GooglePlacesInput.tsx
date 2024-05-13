@@ -7,6 +7,7 @@ import {
 } from "react-native-google-places-autocomplete";
 import { $input } from "./styles";
 import { colors } from "app/theme";
+import { EmptyList } from "./EmptyList";
 
 const API_KEY = "AIzaSyD0evHPMfgWWvkNA2E7ssT_zWFNZMnhp_M";
 

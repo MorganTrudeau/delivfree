@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Text } from "./Text";
 import { colors, spacing } from "app/theme";
-import { Location, ModalRef } from "functions/src/types";
+import { Location, ModalRef } from "delivfree";
 import { Pressable, ViewStyle } from "react-native";
 import { AddressSearchModal } from "./AddressSearchModal";
 import { $input } from "./styles";

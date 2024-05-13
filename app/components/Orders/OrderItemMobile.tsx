@@ -1,5 +1,5 @@
 import { colors, spacing } from "app/theme";
-import { OrderStatus } from "functions/src/types";
+import { OrderStatus } from "delivfree";
 import { Pressable, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
 import { ButtonSmall } from "../ButtonSmall";
@@ -8,6 +8,7 @@ import { localizeCurrency } from "app/utils/general";
 import moment from "moment";
 import { Icon } from "../Icon";
 import { Props } from "./OrderItem";
+import React from "react";
 
 export const OrderItemMobile = ({
   order,

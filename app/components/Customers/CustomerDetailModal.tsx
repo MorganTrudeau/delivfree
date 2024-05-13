@@ -1,5 +1,5 @@
 import { spacing } from "app/theme";
-import { Customer } from "functions/src/types";
+import { Customer } from "delivfree";
 import React, { forwardRef } from "react";
 import { TextStyle, View, ViewStyle } from "react-native";
 import { Text } from "../Text";

@@ -1,9 +1,9 @@
 import { Screen, Text } from "app/components";
 import { useAppSelector } from "app/redux/store";
-import { Driver } from "functions/src/types";
+import { Driver } from "delivfree";
 import React, { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
-import { generatePin, generateUid } from "app/utils/general";
+import { generatePin } from "app/utils/general";
 import { ActivityIndicator, View } from "react-native";
 import { colors, spacing } from "app/theme";
 import { Card } from "app/components/Card";
@@ -12,7 +12,6 @@ import {
   $containerPadding,
   $flex,
   $row,
-  MAX_CONTAINER_WIDTH,
 } from "app/components/styles";
 import { AppLogo } from "app/components/AppLogo";
 import { LogoutButton } from "app/components/LogoutButton";

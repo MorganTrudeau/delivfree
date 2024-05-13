@@ -4,7 +4,7 @@ import { $input } from "./styles";
 import { Text } from "./Text";
 import { colors, spacing } from "app/theme";
 import { TextInput, TextStyle, View, ViewStyle } from "react-native";
-import { CountryCode } from "functions/src/types";
+import { CountryCode } from "delivfree";
 
 interface Props extends PhoneInputProps {
   label: string;
@@ -16,7 +16,7 @@ interface Props extends PhoneInputProps {
   callingCountry: CountryCode;
 }
 
-export const PhoneNumberInput = forwardRef<TextInput, Props>(
+export const PhoneNumberInput = forwardRef<PhoneInput, Props>(
   function PhoneNumberInput(
     {
       label,

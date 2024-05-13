@@ -5,7 +5,7 @@ import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
-import { Vendor } from "functions/src/types";
+import { Vendor } from "delivfree";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,

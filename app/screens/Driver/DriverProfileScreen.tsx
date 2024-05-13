@@ -6,7 +6,7 @@ import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
-import { Driver, Vendor } from "functions/src/types";
+import { Driver, Vendor } from "delivfree";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -70,6 +70,7 @@ export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
         style={$screen}
         contentContainerStyle={$containerPadding}
         headerProps={headerProps}
+        inDrawer
       >
         <View style={$row}>
           <Text preset="heading" style={$flex}>

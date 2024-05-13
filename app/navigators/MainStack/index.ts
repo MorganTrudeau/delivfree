@@ -3,7 +3,7 @@ import { renderConsumerMainStack } from "./ConsumerMainStack";
 import { renderVendorMainStack } from "./VendorMainStack";
 import { renderAdminMainStack } from "./AdminMainStack";
 import { Stripe } from "stripe";
-import { Driver, UserType, Vendor } from "functions/src/types";
+import { Driver, UserType, Vendor } from "delivfree";
 import { renderDriverMainStack } from "./DriverMainStack";
 import { getAppType } from "app/utils/general";
 

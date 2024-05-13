@@ -4,7 +4,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ModalRef } from "functions/src/types";
+import { ModalRef } from "delivfree";
 import ReanimatedCenterModal from "./Modal/CenterModal";
 import { Linking, View, ViewStyle } from "react-native";
 import { LogoHeader } from "./LogoHeader";

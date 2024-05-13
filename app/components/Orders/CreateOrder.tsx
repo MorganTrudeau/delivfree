@@ -1,5 +1,5 @@
 import React, { forwardRef, useMemo, useRef, useState } from "react";
-import { Customer, Order } from "functions/src/types";
+import { Customer, Order } from "delivfree";
 import { generateUid, localizeCurrency } from "app/utils/general";
 import moment from "moment";
 import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
@@ -90,8 +90,8 @@ export const CreateOrder = ({
         .doc(order.id)
         .set({
           ...order,
-          amount: order.amount.replace("$", ""),
-          tip: order.tip.replace("$", ""),
+          amount: order.amount.replace(/[$,]/g, ""),
+          tip: order.tip.replace(/[$,]/g, ""),
         });
       setCreateLoading(false);
       onClose();
@@ -166,7 +166,6 @@ export const CreateOrder = ({
         }
         initialPhoneNumber={customer?.phoneNumber}
         style={$input}
-        validation={requiredInputValidation}
         restaurantLocation={restaurantLocationId}
       />
       <TextField
@@ -187,7 +186,8 @@ export const CreateOrder = ({
         ref={amountInput}
         onSubmitEditing={() => tipInput.current?.focus()}
         onFocus={() => {
-          let strippedValue = order.amount.replace("$", "");
+          let strippedValue = order.amount.replace(/[$,]/g, "");
+          console.log(strippedValue)
           if (!Number(strippedValue)) {
             strippedValue = "";
           }
@@ -204,7 +204,7 @@ export const CreateOrder = ({
         value={order.tip}
         onChangeText={(tip) => setOrder((o) => ({ ...o, tip }))}
         onFocus={() => {
-          let strippedValue = order.tip.replace("$", "");
+          let strippedValue = order.tip.replace(/[$,]/g, "");
           if (!Number(strippedValue)) {
             strippedValue = "";
           }

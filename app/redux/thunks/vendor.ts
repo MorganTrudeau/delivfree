@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Vendor } from "functions/src/types";
+import { Vendor } from "delivfree";
 import firestore from "@react-native-firebase/firestore";
 import { setVendor } from "../reducers/vendor";
 

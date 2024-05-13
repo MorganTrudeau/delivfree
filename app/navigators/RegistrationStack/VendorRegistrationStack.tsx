@@ -1,6 +1,7 @@
 import * as Screens from "app/screens";
 import { getStackNavigator } from "../StackNavigator";
-import { User } from "functions/src/types";
+import { User } from "delivfree";
+import React from "react";
 
 const Stack = getStackNavigator();
 

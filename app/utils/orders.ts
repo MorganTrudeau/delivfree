@@ -1,5 +1,5 @@
 import { colors } from "app/theme";
-import { OrderStatus } from "functions/src/types";
+import { OrderStatus } from "delivfree";
 
 export const HEADERS = [
   "Amount",

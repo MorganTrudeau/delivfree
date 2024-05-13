@@ -16,6 +16,7 @@ type Props = {
   onCancel: () => void;
   loading?: boolean;
   style?: ViewStyle;
+  confirmDisabled?: boolean;
 };
 
 export const ConfirmCancelButtons = ({
@@ -25,6 +26,7 @@ export const ConfirmCancelButtons = ({
   onCancel,
   loading,
   style,
+  confirmDisabled,
 }: Props) => {
   //   useKeyPress("Enter", onConfirm);
 
@@ -39,6 +41,7 @@ export const ConfirmCancelButtons = ({
         text={confirmTitle || "Confirm"}
         onPress={onConfirm}
         loading={loading}
+        disabled={confirmDisabled}
       />
     </View>
   );
@@ -50,15 +53,21 @@ const TextButton = ({
   style,
   loading,
   textStyle,
+  disabled,
 }: {
   text: string;
   onPress: () => void;
   style?: ViewStyle;
   loading?: boolean;
   textStyle?: TextStyle;
+  disabled?: boolean;
 }) => {
   return (
-    <Pressable onPress={onPress} style={[$textButton, style]}>
+    <Pressable
+      onPress={onPress}
+      style={[$textButton, style]}
+      disabled={disabled}
+    >
       <Text weight="medium" style={textStyle}>
         {text}
       </Text>

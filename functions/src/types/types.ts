@@ -1,5 +1,6 @@
 import { Cuisines } from "./enums";
 
+export type DateRange = { start: string; end: string };
 export type ModalRef = { open: () => void; close: () => void };
 export type UserType = "consumer" | "driver" | "vendor" | "admin";
 export type Location = {
@@ -83,6 +84,7 @@ export type Order = {
   restaurantLocation: string;
   driver: null | string;
 };
+export type OrderCount = { count: number };
 export type Customer = {
   id: string;
   name: string;

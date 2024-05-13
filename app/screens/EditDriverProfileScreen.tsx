@@ -2,7 +2,6 @@ import { createUser, updateUser } from "app/apis/user";
 import { Button, Icon, Screen, Text, TextField } from "app/components";
 import { Card } from "app/components/Card";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
-import { TextInput } from "app/components/TextInput";
 import { $borderedArea, $row } from "app/components/styles";
 import { useAlert } from "app/hooks";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
@@ -10,7 +9,7 @@ import { createDriver } from "app/redux/thunks/driver";
 import { colors, spacing } from "app/theme";
 import { sizing } from "app/theme/sizing";
 import { generateUid } from "app/utils/general";
-import { Driver, User } from "functions/src/types";
+import { Driver, User } from "delivfree";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -19,12 +18,13 @@ import {
   TextInput as RNInput,
   View,
 } from "react-native";
+import PhoneInput from "react-native-phone-number-input";
 
 export const EditDriverProfileScreen = () => {
   const Alert = useAlert();
 
   const lastNameInput = useRef<RNInput>(null);
-  const phoneNumberInput = useRef<RNInput>(null);
+  const phoneNumberInput = useRef<PhoneInput>(null);
 
   const authToken = useAppSelector((state) => state.auth.authToken as string);
   const user = useAppSelector((state) => state.user.user);
@@ -113,7 +113,6 @@ export const EditDriverProfileScreen = () => {
           label="Last name"
           value={driverState.lastName}
           containerStyle={$input}
-          onSubmitEditing={() => phoneNumberInput.current?.focus()}
         />
         <PhoneNumberInput
           ref={phoneNumberInput}

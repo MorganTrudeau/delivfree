@@ -16,7 +16,7 @@ import Animated, {
 import { Text } from "../Text";
 import { colors, spacing } from "app/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { RestaurantLocation } from "functions/src/types";
+import { RestaurantLocation } from "delivfree";
 import { borderRadius } from "app/theme/borderRadius";
 import { $shadow } from "../styles";
 import { Portal } from "react-native-portalize";

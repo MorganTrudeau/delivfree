@@ -1,0 +1,61 @@
+diff --git a/node_modules/react-native-chart-kit/dist/ProgressChart.js b/node_modules/react-native-chart-kit/dist/ProgressChart.js
+index b5221e0..852c527 100644
+--- a/node_modules/react-native-chart-kit/dist/ProgressChart.js
++++ b/node_modules/react-native-chart-kit/dist/ProgressChart.js
+@@ -46,7 +46,7 @@ var ProgressChart = /** @class */ (function (_super) {
+                 (Array.isArray(data) ? data.length : data.data.length)) *
+                 i +
+                 radius;
+-            return Pie({
++            var pie = Pie({
+                 r: r,
+                 R: r,
+                 center: [0, 0],
+@@ -55,6 +55,7 @@ var ProgressChart = /** @class */ (function (_super) {
+                     return x;
+                 }
+             });
++            return {...pie, empty: pieData === 0};
+         });
+         var pieBackgrounds = data.data.map(function (pieData, i) {
+             var r = ((height / 2 - 32) /
+@@ -116,6 +117,9 @@ var ProgressChart = /** @class */ (function (_super) {
+             </G>
+             <G>
+               {pies.map(function (pie, i) {
++                  if(pie.empty) {
++                      return null
++                  }
+             return (<Path key={Math.random()} strokeLinecap="round" strokeLinejoin="round" d={pie.curves[0].sector.path.print()} strokeWidth={strokeWidth} stroke={_this.props.withCustomBarColorFromData
+                 ? withColor(i)
+                 : _this.props.chartConfig.color((i / pies.length) * 0.5 + 0.5, i)}/>);
+diff --git a/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js b/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js
+index 1ac4227..0543bc6 100644
+--- a/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js
++++ b/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js
+@@ -94,7 +94,7 @@ var LineChart = /** @class */ (function (_super) {
+                     };
+                     output.push(<Circle key={Math.random()} cx={cx} cy={cy} fill={typeof getDotColor === "function"
+                         ? getDotColor(x, i)
+-                        : _this.getColor(dataset, 0.9)} onPress={onPress} {..._this.getPropsForDots(x, i)}/>, <Circle key={Math.random()} cx={cx} cy={cy} r="14" fill="#fff" fillOpacity={0} onPress={onPress}/>, renderDotContent({ x: cx, y: cy, index: i, indexData: x }));
++                        : _this.getColor(dataset, 0.9)} onPress={onPress} onMouseEnter={onPress} {..._this.getPropsForDots(x, i)}/>, <Circle key={Math.random()} cx={cx} cy={cy} r="14" fill="#fff" fillOpacity={0} onPress={onPress} onMouseEnter={onPress}/>, renderDotContent({ x: cx, y: cy, index: i, indexData: x }));
+                 });
+             });
+             return output;
+@@ -261,6 +261,7 @@ var LineChart = /** @class */ (function (_super) {
+         };
+         _this.renderLine = function (_a) {
+             var width = _a.width, height = _a.height, paddingRight = _a.paddingRight, paddingTop = _a.paddingTop, data = _a.data, linejoinType = _a.linejoinType;
++
+             if (_this.props.bezier) {
+                 return _this.renderBezierLine({
+                     data: data,
+@@ -379,7 +380,7 @@ var LineChart = /** @class */ (function (_super) {
+         var legendOffset = this.props.data.legend ? height * 0.15 : 0;
+         return (<View style={style}>
+         <Svg height={height + paddingBottom + legendOffset} width={width - margin * 2 - marginRight}>
+-          <Rect width="100%" height={height + legendOffset} rx={borderRadius} ry={borderRadius} fill="url(#backgroundGradient)" fillOpacity={transparent ? 0 : 1}/>
++          {/* <Rect width="100%" height={height + legendOffset} rx={borderRadius} ry={borderRadius} fill="url(#backgroundGradient)" fillOpacity={transparent ? 0 : 1}/> */}
+           {this.props.data.legend &&
+             this.renderLegend(config.width, legendOffset)}
+           <G x="0" y={legendOffset}>

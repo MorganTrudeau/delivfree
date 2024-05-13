@@ -1,5 +1,5 @@
 import firestore from "@react-native-firebase/firestore";
-import { Customer } from "functions/src/types";
+import { Customer } from "delivfree";
 
 export const listenToCustomers = (
   vendor: string,

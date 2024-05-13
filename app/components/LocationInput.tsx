@@ -1,7 +1,7 @@
 import React from "react";
 import GooglePlacesInput from "./GooglePlacesInput";
 import * as geofire from "geofire-common";
-import { Location } from "functions/src/types";
+import { Location } from "delivfree";
 import {
   GooglePlaceData,
   GooglePlaceDetail,

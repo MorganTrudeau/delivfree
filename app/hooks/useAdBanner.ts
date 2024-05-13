@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
-import { Cuisine } from "functions/src/types";
+import { Cuisine } from "delivfree";
 
 type AdType = "general" | "checkout" | Cuisine;
 type AdCache = {

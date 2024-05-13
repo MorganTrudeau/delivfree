@@ -10,7 +10,7 @@ import { shallowEqual } from "react-redux";
 import firestore from "@react-native-firebase/firestore";
 import { useAlert } from "app/hooks";
 import functions from "@react-native-firebase/functions";
-import { Vendor } from "functions/src/types";
+import { Vendor } from "delivfree";
 import { Icon } from "../Icon";
 
 interface Props {
