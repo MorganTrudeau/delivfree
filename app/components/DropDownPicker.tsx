@@ -55,7 +55,6 @@ export const DropDownPicker = <V extends string>({
       openAnimation.value = withTiming(0);
     } else {
       dropdown.current?.measure((x, y, width, height, pageX, pageY) => {
-        console.log(x, y, width, height, pageX, pageY);
         setDropdownState({ left: pageX, top: pageY, open: true });
         openAnimation.value = withTiming(1);
       });
@@ -98,7 +97,6 @@ export const DropDownPicker = <V extends string>({
   const [layout, setLayout] =
     useState<LayoutChangeEvent["nativeEvent"]["layout"]>();
   const handleLayout = (e: LayoutChangeEvent) => {
-    console.log(e.nativeEvent.layout);
     setLayout(e.nativeEvent.layout);
   };
 

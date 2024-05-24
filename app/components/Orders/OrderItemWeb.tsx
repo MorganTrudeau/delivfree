@@ -5,7 +5,6 @@ import {
   getStatusColor,
   getStatusText,
 } from "app/utils/orders";
-import { Order } from "delivfree";
 import { View, ViewStyle } from "react-native";
 import { Text } from "../Text";
 import moment from "moment";
@@ -19,6 +18,8 @@ export const OrderItemWeb = React.memo(function OrderItemWeb({
   customer,
   driverName,
 }: Props) {
+  const customerName = customer?.name;
+
   const dataCells: DataCell[] = useMemo(
     () => [
       {
@@ -30,7 +31,7 @@ export const OrderItemWeb = React.memo(function OrderItemWeb({
         maxWidth: getHeaderWidth("Tip"),
       },
       { text: order.description, maxWidth: getHeaderWidth("Description") },
-      { text: customer.name, maxWidth: getHeaderWidth("Customer") },
+      { text: customerName || "", maxWidth: getHeaderWidth("Customer") },
       {
         text: moment(order.date).format("MMM Do, h:mma"),
         maxWidth: getHeaderWidth("Date"),
@@ -61,8 +62,9 @@ export const OrderItemWeb = React.memo(function OrderItemWeb({
         maxWidth: getHeaderWidth("Status"),
       },
     ],
-    [order, customer.name]
+    [order, customerName]
   );
+
   return (
     <TableCell data={order} dataCells={dataCells} onPress={onOrderPress} />
   );

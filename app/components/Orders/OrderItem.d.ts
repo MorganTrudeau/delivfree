@@ -3,7 +3,7 @@ import React from "react";
 
 export type Props = {
   order: Order;
-  customer: Customer;
+  customer: Customer | undefined;
   claimLoading: boolean;
   userType: UserType | undefined;
   onOrderPress: (order: Order) => void;

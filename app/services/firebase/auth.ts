@@ -31,7 +31,6 @@ export const FirebaseAuth = () => {
 
   useEffect(() => {
     const listener = auth().onAuthStateChanged((user) => {
-      console.log("Firebase auth user: ", user);
       if (user) {
         if (authToken.current !== user.uid) {
           authToken.current = user.uid;

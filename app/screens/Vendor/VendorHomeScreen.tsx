@@ -126,7 +126,6 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
       const days = diff / 6;
 
       const sales: number[] = [];
-      overviewOrders.forEach((o) => console.log(moment(o.date).format()));
 
       while (!start.isAfter(overviewDateState.range.end, "day")) {
         const total = overviewOrders
@@ -276,29 +275,35 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
                 height: 300,
               }}
             >
-              {customerSales.map(({ customer, spend }) => {
-                return (
-                  <View
-                    key={customer.id}
-                    style={[
-                      $row,
-                      {
-                        paddingVertical: spacing.xxs,
-                        borderBottomWidth: 1,
-                        borderBottomColor: colors.border,
-                      },
-                    ]}
-                  >
-                    <View style={$flex}>
-                      <Text>{customer.name}</Text>
-                      <Text size="xs" style={{ color: colors.textDim }}>
-                        {customer.phoneNumber}
-                      </Text>
+              {customerSales.length > 0 ? (
+                customerSales.map(({ customer, spend }) => {
+                  return (
+                    <View
+                      key={customer.id}
+                      style={[
+                        $row,
+                        {
+                          paddingVertical: spacing.xxs,
+                          borderBottomWidth: 1,
+                          borderBottomColor: colors.border,
+                        },
+                      ]}
+                    >
+                      <View style={$flex}>
+                        <Text>{customer.name}</Text>
+                        <Text size="xs" style={{ color: colors.textDim }}>
+                          {customer.phoneNumber}
+                        </Text>
+                      </View>
+                      <Text>${spend.toFixed(2)}</Text>
                     </View>
-                    <Text>${spend.toFixed(2)}</Text>
-                  </View>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <View style={{ paddingVertical: spacing.xxs }}>
+                  <Text>No sales recorded</Text>
+                </View>
+              )}
             </View>
           </View>
         </View>

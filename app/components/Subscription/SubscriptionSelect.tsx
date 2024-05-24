@@ -24,7 +24,12 @@ import { useAppSelector } from "app/redux/store";
 import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
 import { AppLogo } from "../AppLogo";
 import { useAlert } from "app/hooks";
-import { FULL_TIME_ORDERS, SURGE_ORDERS, isFullTimeOrderItem, isSurgeOrderItem } from "app/utils/subscriptions";
+import {
+  FULL_TIME_ORDERS,
+  SURGE_ORDERS,
+  isFullTimeOrderItem,
+  isSurgeOrderItem,
+} from "app/utils/subscriptions";
 
 interface Props {
   fullTimeProduct: Stripe.Product;
@@ -32,7 +37,6 @@ interface Props {
   subscription: Stripe.Subscription | null | undefined;
   referenceSubscription?: Stripe.Subscription | null;
 }
-
 
 export const SubscriptionSelect = ({
   fullTimeProduct,
@@ -153,7 +157,7 @@ export const SubscriptionSelect = ({
               ? __DEV__
                 ? "http://localhost:8080"
                 : "https://delivfree-vendor.web.app/"
-              : "delivfree://subscription", // @todo change
+              : "https://mobileredirect-5vakg2iqja-uc.a.run.app", //"delivfree://subscription", // @todo change
           mode: "subscription",
           customer_email: user?.email || undefined,
         };
@@ -275,8 +279,10 @@ export const SubscriptionSelect = ({
       </View>
       {(!referenceSubscription || !subscription) && (
         <Button
-          disabled={!subscriptionChanged}
-          preset={subscriptionChanged ? "filled" : "default"}
+          disabled={!subscriptionChanged && !referenceSubscription}
+          preset={
+            subscriptionChanged || referenceSubscription ? "filled" : "default"
+          }
           text={
             subscription && subscription.status !== "canceled"
               ? "Update Subscription"

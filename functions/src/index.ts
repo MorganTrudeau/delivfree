@@ -57,6 +57,13 @@ export const googlePlaces = onRequest(
   googlePlacesApi
 );
 
+export const mobileRedirect = onRequest(
+  { cors: whitelistDomains },
+  (req, res) => {
+    res.redirect("delivfree://");
+  }
+);
+
 export const addDriver = onCall(
   async (
     request: CallableRequest<{

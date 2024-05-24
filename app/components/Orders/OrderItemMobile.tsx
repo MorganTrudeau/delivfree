@@ -73,11 +73,11 @@ export const OrderItemMobile = ({
           <Text size={"xxs"} style={{ color: colors.textDim }}>
             Customer
           </Text>
-          <Text style={$flex}>{customer.name}</Text>
+          <Text style={$flex}>{customer?.name}</Text>
         </View>
         <ButtonSmall
           text={"View Customer"}
-          onPress={() => onViewCustomer(customer)}
+          onPress={customer ? () => onViewCustomer(customer) : undefined}
         />
       </View>
 

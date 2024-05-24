@@ -33,9 +33,6 @@ TouchableOpacity.defaultProps = {
   activeOpacity: 0.9,
 };
 
-console.log(__DEV__);
-console.log(process.env.REACT_NATIVE_APP);
-
 /**
  * This is the root component of our app.
  */

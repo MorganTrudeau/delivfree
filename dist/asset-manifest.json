@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/chunk.main.04d77bf9fd1ae4fa4746.js",
-    "chunk.243.js": "/chunk.243.f72b05bf79ecc163b685.js",
+    "main.js": "/chunk.main.6ec246bfc08abf53c1fd.js",
+    "chunk.652.js": "/chunk.652.43a2bb209ad0baacaf18.js",
     "MaterialCommunityIcons.ttf": "/5d42b4e60858731e7b65.ttf",
     "pizza.jpg": "/097729fcae7e049f327e.jpg",
     "sushi.jpg": "/059666be1816495d79de.jpg",
@@ -61,7 +61,7 @@
     "meta.json": "/meta.json"
   },
   "entrypoints": [
-    "chunk.243.f72b05bf79ecc163b685.js",
-    "chunk.main.04d77bf9fd1ae4fa4746.js"
+    "chunk.652.43a2bb209ad0baacaf18.js",
+    "chunk.main.6ec246bfc08abf53c1fd.js"
   ]
 }

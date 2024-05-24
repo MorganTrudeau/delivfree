@@ -1,3 +1,27 @@
+diff --git a/node_modules/react-native-chart-kit/dist/AbstractChart.js b/node_modules/react-native-chart-kit/dist/AbstractChart.js
+index bb8b4cb..b2fc8f5 100644
+--- a/node_modules/react-native-chart-kit/dist/AbstractChart.js
++++ b/node_modules/react-native-chart-kit/dist/AbstractChart.js
+@@ -119,14 +119,17 @@ var AbstractChart = /** @class */ (function (_super) {
+             });
+         };
+         _this.renderVerticalLabels = function (_a) {
+-            var _b = _a.labels, labels = _b === void 0 ? [] : _b, width = _a.width, height = _a.height, paddingRight = _a.paddingRight, paddingTop = _a.paddingTop, _c = _a.horizontalOffset, horizontalOffset = _c === void 0 ? 0 : _c, _d = _a.stackedBar, stackedBar = _d === void 0 ? false : _d, _e = _a.verticalLabelRotation, verticalLabelRotation = _e === void 0 ? 0 : _e, _f = _a.formatXLabel, formatXLabel = _f === void 0 ? function (xLabel) { return xLabel; } : _f, _g = _a.verticalLabelsHeightPercentage, verticalLabelsHeightPercentage = _g === void 0 ? DEFAULT_X_LABELS_HEIGHT_PERCENTAGE : _g;
++            var _b = _a.labels, onlyShowEndLabels = _a.onlyShowEndLabels, labels = _b === void 0 ? [] : _b, width = _a.width, height = _a.height, paddingRight = _a.paddingRight, paddingTop = _a.paddingTop, _c = _a.horizontalOffset, horizontalOffset = _c === void 0 ? 0 : _c, _d = _a.stackedBar, stackedBar = _d === void 0 ? false : _d, _e = _a.verticalLabelRotation, verticalLabelRotation = _e === void 0 ? 0 : _e, _f = _a.formatXLabel, formatXLabel = _f === void 0 ? function (xLabel) { return xLabel; } : _f, _g = _a.verticalLabelsHeightPercentage, verticalLabelsHeightPercentage = _g === void 0 ? DEFAULT_X_LABELS_HEIGHT_PERCENTAGE : _g;
+             var _h = _this.props, _j = _h.xAxisLabel, xAxisLabel = _j === void 0 ? "" : _j, _k = _h.xLabelsOffset, xLabelsOffset = _k === void 0 ? 0 : _k, _l = _h.hidePointsAtIndex, hidePointsAtIndex = _l === void 0 ? [] : _l;
+             var fontSize = 12;
+             var fac = 1;
+             if (stackedBar) {
+                 fac = 0.71;
+             }
+-            return labels.map(function (label, i) {
++            return labels.map(function (label, i, arr) {
++                if(onlyShowEndLabels && i !== 0 && i !== arr.length -1) {
++                    return null;
++                }
+                 if (hidePointsAtIndex.includes(i)) {
+                     return null;
+                 }
 diff --git a/node_modules/react-native-chart-kit/dist/ProgressChart.js b/node_modules/react-native-chart-kit/dist/ProgressChart.js
 index b5221e0..852c527 100644
 --- a/node_modules/react-native-chart-kit/dist/ProgressChart.js
@@ -29,8 +53,21 @@ index b5221e0..852c527 100644
              return (<Path key={Math.random()} strokeLinecap="round" strokeLinejoin="round" d={pie.curves[0].sector.path.print()} strokeWidth={strokeWidth} stroke={_this.props.withCustomBarColorFromData
                  ? withColor(i)
                  : _this.props.chartConfig.color((i / pies.length) * 0.5 + 0.5, i)}/>);
+diff --git a/node_modules/react-native-chart-kit/dist/line-chart/LineChart.d.ts b/node_modules/react-native-chart-kit/dist/line-chart/LineChart.d.ts
+index e09cf18..63ac9e5 100644
+--- a/node_modules/react-native-chart-kit/dist/line-chart/LineChart.d.ts
++++ b/node_modules/react-native-chart-kit/dist/line-chart/LineChart.d.ts
+@@ -186,6 +186,8 @@ export interface LineChartProps extends AbstractChartProps {
+      * The number of horizontal lines
+      */
+     segments?: number;
++
++    onlyShowEndLabels?: boolean
+ }
+ declare type LineChartState = {
+     scrollableDotHorizontalOffset: Animated.Value;
 diff --git a/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js b/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js
-index 1ac4227..0543bc6 100644
+index 1ac4227..25ff85d 100644
 --- a/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js
 +++ b/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js
 @@ -94,7 +94,7 @@ var LineChart = /** @class */ (function (_super) {
@@ -50,6 +87,15 @@ index 1ac4227..0543bc6 100644
              if (_this.props.bezier) {
                  return _this.renderBezierLine({
                      data: data,
+@@ -361,7 +362,7 @@ var LineChart = /** @class */ (function (_super) {
+         return _this;
+     }
+     LineChart.prototype.render = function () {
+-        var _a = this.props, width = _a.width, height = _a.height, data = _a.data, _b = _a.withScrollableDot, withScrollableDot = _b === void 0 ? false : _b, _c = _a.withShadow, withShadow = _c === void 0 ? true : _c, _d = _a.withDots, withDots = _d === void 0 ? true : _d, _e = _a.withInnerLines, withInnerLines = _e === void 0 ? true : _e, _f = _a.withOuterLines, withOuterLines = _f === void 0 ? true : _f, _g = _a.withHorizontalLines, withHorizontalLines = _g === void 0 ? true : _g, _h = _a.withVerticalLines, withVerticalLines = _h === void 0 ? true : _h, _j = _a.withHorizontalLabels, withHorizontalLabels = _j === void 0 ? true : _j, _k = _a.withVerticalLabels, withVerticalLabels = _k === void 0 ? true : _k, _l = _a.style, style = _l === void 0 ? {} : _l, decorator = _a.decorator, onDataPointClick = _a.onDataPointClick, _m = _a.verticalLabelRotation, verticalLabelRotation = _m === void 0 ? 0 : _m, _o = _a.horizontalLabelRotation, horizontalLabelRotation = _o === void 0 ? 0 : _o, _p = _a.formatYLabel, formatYLabel = _p === void 0 ? function (yLabel) { return yLabel; } : _p, _q = _a.formatXLabel, formatXLabel = _q === void 0 ? function (xLabel) { return xLabel; } : _q, segments = _a.segments, _r = _a.transparent, transparent = _r === void 0 ? false : _r, chartConfig = _a.chartConfig;
++        var _a = this.props, onlyShowEndLabels = _a.onlyShowEndLabels, width = _a.width, height = _a.height, data = _a.data, _b = _a.withScrollableDot, withScrollableDot = _b === void 0 ? false : _b, _c = _a.withShadow, withShadow = _c === void 0 ? true : _c, _d = _a.withDots, withDots = _d === void 0 ? true : _d, _e = _a.withInnerLines, withInnerLines = _e === void 0 ? true : _e, _f = _a.withOuterLines, withOuterLines = _f === void 0 ? true : _f, _g = _a.withHorizontalLines, withHorizontalLines = _g === void 0 ? true : _g, _h = _a.withVerticalLines, withVerticalLines = _h === void 0 ? true : _h, _j = _a.withHorizontalLabels, withHorizontalLabels = _j === void 0 ? true : _j, _k = _a.withVerticalLabels, withVerticalLabels = _k === void 0 ? true : _k, _l = _a.style, style = _l === void 0 ? {} : _l, decorator = _a.decorator, onDataPointClick = _a.onDataPointClick, _m = _a.verticalLabelRotation, verticalLabelRotation = _m === void 0 ? 0 : _m, _o = _a.horizontalLabelRotation, horizontalLabelRotation = _o === void 0 ? 0 : _o, _p = _a.formatYLabel, formatYLabel = _p === void 0 ? function (yLabel) { return yLabel; } : _p, _q = _a.formatXLabel, formatXLabel = _q === void 0 ? function (xLabel) { return xLabel; } : _q, segments = _a.segments, _r = _a.transparent, transparent = _r === void 0 ? false : _r, chartConfig = _a.chartConfig;
+         var scrollableDotHorizontalOffset = this.state.scrollableDotHorizontalOffset;
+         var _s = data.labels, labels = _s === void 0 ? [] : _s;
+         var _t = style.borderRadius, borderRadius = _t === void 0 ? 0 : _t, _u = style.paddingTop, paddingTop = _u === void 0 ? 16 : _u, _v = style.paddingRight, paddingRight = _v === void 0 ? 64 : _v, _w = style.margin, margin = _w === void 0 ? 0 : _w, _x = style.marginRight, marginRight = _x === void 0 ? 0 : _x, _y = style.paddingBottom, paddingBottom = _y === void 0 ? 0 : _y;
 @@ -379,7 +380,7 @@ var LineChart = /** @class */ (function (_super) {
          var legendOffset = this.props.data.legend ? height * 0.15 : 0;
          return (<View style={style}>
@@ -59,3 +105,12 @@ index 1ac4227..0543bc6 100644
            {this.props.data.legend &&
              this.renderLegend(config.width, legendOffset)}
            <G x="0" y={legendOffset}>
+@@ -408,7 +409,7 @@ var LineChart = /** @class */ (function (_super) {
+             </G>
+             <G>
+               {withVerticalLabels &&
+-            this.renderVerticalLabels(__assign(__assign({}, config), { labels: labels, paddingTop: paddingTop, paddingRight: paddingRight, formatXLabel: formatXLabel }))}
++            this.renderVerticalLabels(__assign(__assign({}, config), { onlyShowEndLabels, labels: labels, paddingTop: paddingTop, paddingRight: paddingRight, formatXLabel: formatXLabel }))}
+             </G>
+             <G>
+               {this.renderLine(__assign(__assign(__assign({}, config), chartConfig), { paddingRight: paddingRight, paddingTop: paddingTop, data: data.datasets }))}
