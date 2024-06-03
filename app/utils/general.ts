@@ -2,9 +2,42 @@ import Config from "react-native-config";
 import { avatarColors } from "../theme";
 import { Linking, Platform } from "react-native";
 import messaging from "@react-native-firebase/messaging";
+import { AlertProps } from "app/components/Alert/AlertContext";
+import { translate } from "app/i18n";
+
+export const equalArrays = (
+  arr1: Array<string | number>,
+  arr2: Array<string | number>
+): boolean => {
+  // Check if lengths are the same
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  // Sort both arrays
+  let sortedArr1 = arr1.slice().sort();
+  let sortedArr2 = arr2.slice().sort();
+
+  // Compare sorted arrays
+  for (let i = 0; i < sortedArr1.length; i++) {
+    if (sortedArr1[i] !== sortedArr2[i]) {
+      return false;
+    }
+  }
+
+  return true;
+};
 
 export const getAppType = () => {
   return Config.REACT_NATIVE_APP as "CONSUMER" | "VENDOR" | "ADMIN";
+};
+
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.substring(1);
+};
+
+export const alertCommonError = (Alert: AlertProps) => {
+  return Alert.alert(translate("errors.heading"), translate("errors.common"));
 };
 
 export const navigateToAddress = (

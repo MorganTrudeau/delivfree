@@ -1,15 +1,20 @@
 import { createUser, updateUser } from "app/apis/user";
 import { Button, Icon, Screen, Text, TextField } from "app/components";
+import { AddressSearchModal } from "app/components/AddressSearchModal";
 import { Card } from "app/components/Card";
+import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
+import { LocationInput } from "app/components/LocationInput";
+import { ModalRef } from "app/components/Modal/CenterModal";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
-import { $borderedArea, $row } from "app/components/styles";
-import { useAlert } from "app/hooks";
+import { StatusIndicator } from "app/components/StatusIndicator";
+import { $borderedArea, $formLabel, $input, $row } from "app/components/styles";
+import { useAlert, useToast } from "app/hooks";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { createDriver } from "app/redux/thunks/driver";
 import { colors, spacing } from "app/theme";
 import { sizing } from "app/theme/sizing";
 import { generateUid } from "app/utils/general";
-import { Driver, User } from "delivfree";
+import { Driver, Status, User } from "delivfree";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,42 +22,60 @@ import {
   ViewStyle,
   TextInput as RNInput,
   View,
+  Pressable,
 } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
 
 export const EditDriverProfileScreen = () => {
   const Alert = useAlert();
+  const Toast = useToast();
 
   const lastNameInput = useRef<RNInput>(null);
   const phoneNumberInput = useRef<PhoneInput>(null);
+  const addressSearch = useRef<ModalRef>(null);
 
   const authToken = useAppSelector((state) => state.auth.authToken as string);
   const user = useAppSelector((state) => state.user.user);
-  const driver = useAppSelector((state) => state.driver.data);
+  const driver = useAppSelector((state) => state.driver.activeDriver);
 
   const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState(false);
 
-  const [driverState, setDriverState] = useState<Driver>({
-    id: generateUid(),
-    firstName: driver?.firstName || "",
-    lastName: driver?.lastName || "",
-    callingCountry: driver?.callingCountry || "CA",
-    callingCode: driver?.callingCode || "+1",
-    phoneNumber: driver?.phoneNumber || "",
-    registration: { status: "pending" },
-    vendors: [],
-    parentDrivers: {},
-    user: authToken,
-  });
+  const [driverState, setDriverState] = useState<Driver>(
+    driver || {
+      id: generateUid(),
+      firstName: "",
+      lastName: "",
+      callingCountry: "CA",
+      callingCode: "+1",
+      phoneNumber: "",
+      registration: { status: "pending", message: null },
+      vendors: [],
+      vendorLocations: [],
+      parentDrivers: {},
+      email: user?.email || "",
+      user: authToken,
+      updated: Date.now(),
+      location: { latitude: 0, longitude: 0, geohash: "", address: "" },
+      licenses: [],
+      pendingLicenses: [],
+      driversLicenseFront: "",
+      driversLicenseBack: "",
+    }
+  );
 
   const updateState = (key: keyof Driver) => (val: string) => {
     setDriverState((s) => ({ ...s, [key]: val }));
   };
 
   const fieldsComplete =
-    driverState.firstName && driverState.lastName && driverState.phoneNumber;
+    driverState.firstName &&
+    driverState.lastName &&
+    driverState.phoneNumber &&
+    driverState.email &&
+    driverState.driversLicenseFront &&
+    driverState.driversLicenseBack;
 
   const handleCreateDriver = useCallback(async () => {
     if (!fieldsComplete) {
@@ -61,11 +84,16 @@ export const EditDriverProfileScreen = () => {
         "Please complete all fields before continuing."
       );
     }
-    const newUser: Pick<User, "id" | "firstName" | "lastName" | "driver"> = {
+    const newUser: Pick<
+      User,
+      "id" | "firstName" | "lastName" | "email" | "driver" | "location"
+    > = {
       id: authToken,
       firstName: driverState.firstName,
       lastName: driverState.lastName,
+      email: driverState.email,
       driver: { id: driverState.id },
+      location: driverState.location,
     };
 
     try {
@@ -76,6 +104,7 @@ export const EditDriverProfileScreen = () => {
         await dispatch(createUser({ ...newUser, location: null }));
       }
       await dispatch(createDriver(driverState));
+      Toast.show("Driver profile sent for review");
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -101,7 +130,7 @@ export const EditDriverProfileScreen = () => {
           onChangeText={updateState("firstName")}
           placeholder="First name"
           label="First name"
-          containerStyle={$input}
+          containerStyle={$inputContainer}
           value={driverState.firstName}
           returnKeyType={"next"}
           onSubmitEditing={() => lastNameInput.current?.focus()}
@@ -112,8 +141,29 @@ export const EditDriverProfileScreen = () => {
           placeholder="Last name"
           label="Last name"
           value={driverState.lastName}
-          containerStyle={$input}
+          containerStyle={$inputContainer}
         />
+        <TextField
+          placeholder="Email"
+          label="Email"
+          containerStyle={$inputContainer}
+          value={driverState.email}
+          onChangeText={(email) => setDriverState((v) => ({ ...v, email }))}
+        />
+        <Text preset="formLabel" style={[$formLabel, $inputContainer]}>
+          Address
+        </Text>
+        <Pressable onPress={() => addressSearch.current?.open()} style={$input}>
+          <Text
+            style={
+              !driverState.location.address
+                ? { color: colors.textDim }
+                : undefined
+            }
+          >
+            {driverState.location.address || "Search Address"}
+          </Text>
+        </Pressable>
         <PhoneNumberInput
           ref={phoneNumberInput}
           onChangeText={updateState("phoneNumber")}
@@ -123,25 +173,27 @@ export const EditDriverProfileScreen = () => {
           placeholder="Phone number"
           label="Phone number"
           value={driverState.phoneNumber}
-          containerStyle={$input}
+          containerStyle={$inputContainer}
           callingCountry={driverState.callingCountry}
         />
-        {!driver?.registration ? (
-          <Button
-            preset={fieldsComplete ? "filled" : "default"}
-            style={$button}
-            text={"Continue"}
-            onPress={handleCreateDriver}
-            RightAccessory={Loading}
-          />
-        ) : (
+        <DriversLicenseUpload
+          frontImage={driverState.driversLicenseFront}
+          backImage={driverState.driversLicenseBack}
+          onFrontImageUploaded={updateState("driversLicenseFront")}
+          onBackImageUploaded={updateState("driversLicenseBack")}
+          style={$inputContainer}
+          driverId={driverState.id}
+        />
+
+        {driver?.registration && (
           <View style={[$borderedArea, { marginTop: spacing.lg }]}>
-            <Text>
-              <Text preset="subheading">Registration Status: </Text>
-              <Text size="lg">
-                {getRegistrationStatusText(driver.registration.status)}
-              </Text>
-            </Text>
+            <View style={[$row, { marginBottom: spacing.xxs }]}>
+              <Text preset="subheading">Registration Status</Text>
+              <StatusIndicator
+                status={driver.registration.status}
+                style={{ marginLeft: spacing.sm }}
+              />
+            </View>
             {!!driver.registration.message ? (
               <View style={$row}>
                 <Icon
@@ -161,25 +213,37 @@ export const EditDriverProfileScreen = () => {
             )}
           </View>
         )}
+
+        <Button
+          preset={fieldsComplete ? "filled" : "default"}
+          style={$button}
+          text={driver ? "Edit driver profile" : "Continue"}
+          onPress={handleCreateDriver}
+          RightAccessory={Loading}
+        />
       </Card>
+
+      <AddressSearchModal
+        ref={addressSearch}
+        onLocationSelected={(location) => {
+          addressSearch.current?.close();
+          setDriverState((s) => ({
+            ...s,
+            location: {
+              address: location.address,
+              latitude: location.latitude,
+              longitude: location.longitude,
+              geohash: location.geohash,
+            },
+          }));
+        }}
+        shortenAddress={false}
+      />
     </Screen>
   );
 };
 
-const getRegistrationStatusText = (
-  status: Driver["registration"]["status"]
-) => {
-  switch (status) {
-    case "approved":
-      return "Approved";
-    case "declined":
-      return "Declined";
-    case "pending":
-      return "Pending";
-  }
-};
-
-const $screen = { padding: spacing.md };
+const $screen = { padding: spacing.md, flexGrow: 1 };
 const $header: TextStyle = { marginBottom: spacing.lg, alignSelf: "center" };
-const $input: ViewStyle = { marginTop: spacing.sm };
+const $inputContainer: ViewStyle = { marginTop: spacing.sm };
 const $button = { marginTop: spacing.lg };

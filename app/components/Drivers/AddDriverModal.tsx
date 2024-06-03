@@ -23,8 +23,8 @@ const AddDriver = ({ onClose }: Props) => {
   const { userType, driver, vendor } = useAppSelector(
     (state) => ({
       userType: state.appConfig.userType,
-      driver: state.driver.data,
-      vendor: state.vendor.data as Vendor,
+      driver: state.driver.activeDriver,
+      vendor: state.vendor.activeVendor as Vendor,
     }),
     shallowEqual
   );

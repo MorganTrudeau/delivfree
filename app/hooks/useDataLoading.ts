@@ -2,43 +2,44 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 const PAGE_SIZE = 15;
 
-export const useDataListener = <T>(
+export const useDataListener = <T extends { id: string }>(
   query: (limit: number, onData: (data: T[]) => void) => () => void,
-  cacheKey: string
+  cache?: DataCache<T>,
+  cacheKey: string = "cache-key"
 ) => {
-  const cache = useRef(getDataCache());
-
-  const [data, setData] = useState<T[]>(cache.current.listCache[cacheKey]);
+  const [data, setData] = useState<T[]>(cache?.listCache[cacheKey] || []);
 
   const page = useRef(0);
-  const unsubscribeListener = useRef<() => void>(() => {});
+  const lastPage = useRef(false);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(() => {
+    if (lastPage.current) {
+      return;
+    }
     page.current = page.current + 1;
     const limit = page.current * PAGE_SIZE;
-
-    unsubscribeListener.current = query(limit, (_data) => {
+    return query(limit, (_data) => {
+      const length = _data.length;
+      const rem = length % PAGE_SIZE;
+      if (length === 0 || (rem > 0 && rem < PAGE_SIZE)) {
+        lastPage.current = true;
+      }
       setData(_data);
-      cache.current.updateCache(cacheKey, _data);
+      cache?.updateCache(cacheKey, _data);
     });
   }, [query, cacheKey]);
 
   useEffect(() => {
-    setData(cache.current.listCache[cacheKey]);
-    loadData();
+    lastPage.current = false;
+    page.current = 0;
+    setData(cache?.listCache[cacheKey] || []);
+    return loadData();
   }, [loadData, cacheKey]);
 
   return { data, loadData };
 };
 
-let _dataCache: DataCache<any>;
-export const getDataCache = () => {
-  if (!_dataCache) {
-    _dataCache = new DataCache();
-  }
-  return _dataCache;
-};
-class DataCache<T extends { id: string }> {
+export class DataCache<T extends { id: string }> {
   cache: { [id: string]: T } = {};
   listCache: { [id: string]: T[] } = {};
   updateCache = (id: string, data: T[]) => {

@@ -30,10 +30,10 @@ export const TableCell = <T,>({ data, dataCells, onPress }: Props<T>) => {
               dataCell.renderData()
             ) : (
               <Text
-                preset="subheading"
                 size="sm"
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                preset={index === 0 ? "semibold" : "default"}
               >
                 {dataCell.text}
               </Text>

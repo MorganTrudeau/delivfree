@@ -13,7 +13,6 @@ import {
   ScrollView,
   StyleProp,
   StyleSheet,
-  TouchableWithoutFeedback,
   View,
   ViewProps,
   ViewStyle,
@@ -32,6 +31,7 @@ type Props = {
   onDismiss?: () => void;
   modalStyle?: ViewStyle;
   contentStyle?: ViewStyle;
+  backdropStyle?: ViewStyle;
 };
 export type ModalRef = {
   open: () => void;
@@ -40,7 +40,14 @@ export type ModalRef = {
 
 const ReanimatedCenterModal = forwardRef<ModalRef, Props>(
   function ReanimatedCenterModal(
-    { tapToClose = true, children, onDismiss, modalStyle, contentStyle },
+    {
+      tapToClose = true,
+      children,
+      onDismiss,
+      modalStyle,
+      contentStyle,
+      backdropStyle,
+    },
     ref
   ) {
     const { height } = useWindowDimensions();
@@ -93,7 +100,11 @@ const ReanimatedCenterModal = forwardRef<ModalRef, Props>(
         <Animated.View style={style} pointerEvents={visible ? "auto" : "none"}>
           {hideContent && !visible ? null : (
             <>
-              <Backdrop enabled={tapToClose} onPress={close} />
+              <Backdrop
+                enabled={tapToClose}
+                onPress={close}
+                style={backdropStyle}
+              />
               <View style={styles.childWrapper} pointerEvents="box-none">
                 <ModalChild maxHeight={height * 0.9} style={contentStyle}>
                   {children}
@@ -170,7 +181,7 @@ const backdropStyles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     left: 0,
-    padding: spacing.md,
+    padding: spacing.sm,
     position: "absolute",
     right: 0,
     top: 0,

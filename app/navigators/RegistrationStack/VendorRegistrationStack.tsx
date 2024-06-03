@@ -2,6 +2,7 @@ import * as Screens from "app/screens";
 import { getStackNavigator } from "../StackNavigator";
 import { User } from "delivfree";
 import React from "react";
+import { LogoHeader } from "app/components/LogoHeader";
 
 const Stack = getStackNavigator();
 
@@ -30,6 +31,7 @@ export const renderVendorRegistrationStack = ({
           options={{
             headerShown: true,
             headerTransparent: false,
+            headerTitle: LogoHeader,
           }}
         />
       )}
@@ -40,6 +42,7 @@ export const renderVendorRegistrationStack = ({
           options={{
             headerShown: true,
             headerTransparent: false,
+            headerTitle: LogoHeader,
           }}
         />
       )}

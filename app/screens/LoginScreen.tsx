@@ -21,6 +21,8 @@ import { firebaseAuthErrorToMessage } from "app/utils/firebase";
 import { NO_TOP_BOTTOM_SAFE_AREA_EDGES } from "app/components/styles";
 import { Card } from "app/components/Card";
 import { useAlert } from "app/hooks";
+import { getAppType } from "app/utils/general";
+import functions from "@react-native-firebase/functions";
 
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
@@ -41,7 +43,18 @@ export const LoginScreen = (_props: LoginScreenProps) => {
       if (!(trimmedEmail && trimmedPassword)) {
         return;
       }
+
       setLoading(true);
+
+      if (getAppType() === "ADMIN") {
+        const res = await functions().httpsCallable("isAdmin")({
+          email: trimmedEmail,
+        });
+        if (!res.data) {
+          return Alert.alert("No access", "You are not an admin user.");
+        }
+      }
+
       await auth().signInWithEmailAndPassword(trimmedEmail, trimmedPassword);
     } catch (error) {
       console.log(error);

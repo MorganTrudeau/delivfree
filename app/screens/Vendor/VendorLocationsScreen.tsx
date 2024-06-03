@@ -1,33 +1,28 @@
-import { Icon, Screen, Text } from "app/components";
-import { ButtonSmall } from "app/components/ButtonSmall";
+import { Screen } from "app/components";
 import { Drawer } from "app/components/Drawer";
 import { ModalRef } from "app/components/Modal/CenterModal";
-import { ManageRestaurantLocationModal } from "app/components/RestaurantLocation/ManageRestaurantLocation";
-import RestaurantsList from "app/components/RestaurantsList";
+import { ManageVendorLocationModal } from "app/components/VendorLocation/ManageVendorLocation";
 import { ScreenHeader } from "app/components/ScreenHeader";
+import { VendorLocationsList } from "app/components/VendorLocations/VendorLocationsList";
 import { $containerPadding, $row, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
-import { spacing } from "app/theme";
-import { RestaurantLocation } from "delivfree";
-import React, { useMemo, useRef, useState } from "react";
-import { Platform, View, ViewStyle } from "react-native";
+import { VendorLocation } from "delivfree";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 
 interface VendorLocationsScreenProps extends AppStackScreenProps<"Locations"> {}
 
 export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
   const manageLocationModal = useRef<ModalRef>(null);
 
-  const vendorId = useAppSelector((state) => state.vendor.data?.id);
-  const restaurantLocations = useAppSelector(
-    (state) => state.restaurantLocations.data
-  );
-  const restaurantLocationList = useMemo(
-    () => Object.values(restaurantLocations),
-    [restaurantLocations]
+  const vendorId = useAppSelector((state) => state.vendor.activeVendor?.id);
+  const vendorLocations = useAppSelector((state) => state.vendorLocations.data);
+  const vendorLocationList = useMemo(
+    () => Object.values(vendorLocations),
+    [vendorLocations]
   );
 
-  const [editLocation, setEditLocation] = useState<RestaurantLocation>();
+  const [editLocation, setEditLocation] = useState<VendorLocation>();
 
   const createLocation = () => {
     manageLocationModal.current?.open();
@@ -36,21 +31,14 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
     manageLocationModal.current?.close();
   };
 
-  const handleEditLocation = (location: RestaurantLocation) => {
+  const handleEditLocation = useCallback((location: VendorLocation) => {
     setEditLocation(location);
     manageLocationModal.current?.open();
-  };
+  }, []);
 
   const onLocationModalClose = () => {
     setEditLocation(undefined);
   };
-
-  const PlusIcon = useMemo(
-    () =>
-      ({ style }) =>
-        <Icon icon="plus" color={"#fff"} style={style} />,
-    []
-  );
 
   return (
     <Drawer navigation={props.navigation}>
@@ -65,14 +53,12 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
           onButtonPress={createLocation}
           title="Locations"
         />
-        <RestaurantsList
-          restaurants={restaurantLocationList}
-          style={$list}
-          contentContainerStyle={$listContent}
+        <VendorLocationsList
+          locations={vendorLocationList}
           onPress={handleEditLocation}
         />
         {!!vendorId && (
-          <ManageRestaurantLocationModal
+          <ManageVendorLocationModal
             ref={manageLocationModal}
             vendor={vendorId}
             onClose={closeManageLocation}
@@ -83,14 +69,4 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
       </Screen>
     </Drawer>
   );
-};
-
-const $list: ViewStyle = { marginHorizontal: -spacing.md };
-const $listContent: ViewStyle = {
-  paddingTop: spacing.sm,
-  paddingBottom: spacing.md,
-  paddingHorizontal: Platform.select({
-    web: spacing.md * 2,
-    default: spacing.md,
-  }),
 };

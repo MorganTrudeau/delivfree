@@ -7,6 +7,18 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "app/redux/store";
 import functions from "@react-native-firebase/functions";
 
+export const listenToUsers = (
+  limit: number,
+  onData: (users: User[]) => void
+) => {
+  let query = firestore().collection("Users").limit(limit);
+
+  return query.onSnapshot((snap) => {
+    const users = snap ? snap.docs.map((doc) => doc.data() as User) : [];
+    onData(users);
+  });
+};
+
 export const blockUser = (activeUserId: string, userId: string) => {
   return firestore()
     .collection("Users")

@@ -1,8 +1,10 @@
 import { updateDriver } from "app/apis/driver";
-import { updateVendor } from "app/apis/vendor";
+import { updateVendor } from "app/apis/vendors";
 import { HeaderProps, Icon, Screen, Text, TextField } from "app/components";
 import { Drawer } from "app/components/Drawer";
+import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
 import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
+import { useToast } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
@@ -19,7 +21,9 @@ import {
 interface DriverProfileScreenProps extends AppStackScreenProps<"Profile"> {}
 
 export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
-  const driver = useAppSelector((state) => state.driver.data as Driver);
+  const Toast = useToast();
+
+  const driver = useAppSelector((state) => state.driver.activeDriver as Driver);
 
   const [{ updates, isSaved }, setUpdates] = useState<{
     updates: Partial<Omit<Driver, "id">>;
@@ -27,7 +31,7 @@ export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
   }>({ updates: {}, isSaved: true });
   const [updating, setUpdating] = useState(false);
 
-  const updateValue = (key: keyof Vendor) => (val: string) => {
+  const updateValue = (key: keyof Driver) => (val: string) => {
     setUpdates((s) => ({
       isSaved: false,
       updates: { ...s.updates, [key]: val },
@@ -44,6 +48,7 @@ export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
       updateDriver(driver.id, updates);
       setUpdates((s) => ({ ...s, isSaved: true }));
       setUpdating(false);
+      Toast.show("Profile updated!");
     } catch (error) {
       setUpdating(false);
       console.log("Update vendor error", error);
@@ -111,6 +116,15 @@ export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
           containerStyle={$input}
           value={getValue("phoneNumber")}
           onChangeText={updateValue("phoneNumber")}
+        />
+        <DriversLicenseUpload
+          frontImage={driver.driversLicenseFront}
+          backImage={driver.driversLicenseBack}
+          onFrontImageUploaded={updateValue("driversLicenseFront")}
+          onBackImageUploaded={updateValue("driversLicenseBack")}
+          style={$input}
+          driverId={driver.id}
+          viewOnly
         />
       </Screen>
     </Drawer>

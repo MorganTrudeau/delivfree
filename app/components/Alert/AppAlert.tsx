@@ -20,6 +20,7 @@ type AppAlertButtonProps = {
   loading?: boolean;
   success?: boolean;
   successIcon?: IconTypes;
+  isPreferred?: boolean;
 };
 
 export const AppAlertButton = ({
@@ -29,17 +30,19 @@ export const AppAlertButton = ({
   loading,
   success,
   successIcon,
+  isPreferred,
 }: AppAlertButtonProps) => {
   const color = cancel ? colors.error : colors.text;
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={[$borderTop, $row, { padding: 15 }]}>
         <Text
+          preset={isPreferred ? "semibold" : "default"}
           style={{
-              color,
-              textAlign: "center",
-              flex: 1,
-            }}
+            color,
+            textAlign: "center",
+            flex: 1,
+          }}
         >
           {text}
         </Text>
@@ -115,6 +118,7 @@ const AlertContent = ({
           }}
           text={button.text}
           cancel={button.cancel || button.style === "destructive"}
+          isPreferred={button.isPreferred}
         />
       ))}
     </View>

@@ -52,7 +52,7 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
   const largeScreenLayout = width > LARGE_SCREEN;
 
   const customers = useAppSelector((state) => state.customers.data);
-  const vendor = useAppSelector((state) => state.vendor.data);
+  const vendor = useAppSelector((state) => state.vendor.activeVendor);
   const vendorId = vendor?.id;
 
   const [todaysOrders, setTodaysOrders] = useState<Order[]>([]);

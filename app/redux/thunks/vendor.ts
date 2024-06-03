@@ -1,7 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Vendor } from "delivfree";
+import { Status, Vendor } from "delivfree";
 import firestore from "@react-native-firebase/firestore";
-import { setVendor } from "../reducers/vendor";
+import { setActiveVendor, setVendor, setVendors } from "../reducers/vendor";
+import * as VendorApis from "../../apis/vendors";
 
 export const createVendor = createAsyncThunk(
   "vendors/createVendor",
@@ -11,12 +12,33 @@ export const createVendor = createAsyncThunk(
   }
 );
 
+export const listenToActiveVendor = createAsyncThunk(
+  "vendors/listenToVendor",
+  (vendorId: string, { dispatch }) => {
+    return VendorApis.listenToVendor(vendorId, (vendor) =>
+      dispatch(setActiveVendor(vendor))
+    );
+  }
+);
+
 export const listenToVendor = createAsyncThunk(
   "vendors/listenToVendor",
   (vendorId: string, { dispatch }) => {
-    return firestore()
-      .collection("Vendors")
-      .doc(vendorId)
-      .onSnapshot((doc) => dispatch(setVendor(doc.data() as Vendor)));
+    return VendorApis.listenToVendor(vendorId, (vendor) =>
+      dispatch(setVendor(vendor))
+    );
+  }
+);
+
+export const listenToVendors = createAsyncThunk(
+  "vendors/listenToVendor",
+  (
+    params: { limit?: number; status?: Status; ids?: string[] },
+    { dispatch }
+  ) => {
+    return VendorApis.listenToVendors(
+      (vendors) => dispatch(setVendors(vendors)),
+      params
+    );
   }
 );

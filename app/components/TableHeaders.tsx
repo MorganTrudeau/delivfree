@@ -3,13 +3,20 @@ import React from "react";
 import { View, ViewStyle } from "react-native";
 import { Text } from "./Text";
 
-interface Props {
-  headers: { title: string; maxWidth?: number }[];
+export interface TableHeader {
+  value?: string;
+  visible?: boolean;
+  title: string;
+  maxWidth?: number;
+}
+export interface Props {
+  headers: TableHeader[];
+  style?: ViewStyle;
 }
 
-export const TableHeaders = ({ headers }: Props) => {
+export const TableHeaders = ({ headers, style }: Props) => {
   return (
-    <View style={$header}>
+    <View style={[$header, style]}>
       {headers.map(({ title, maxWidth }) => (
         <View key={title} style={[$tableCell, { maxWidth }]}>
           <Text preset="subheading" size="xs">

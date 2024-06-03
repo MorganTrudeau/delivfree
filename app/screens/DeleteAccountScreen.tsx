@@ -1,6 +1,9 @@
 import { deleteAccount } from "app/apis/user";
 import { Button, Icon, Screen, Text } from "app/components";
-import { NO_TOP_BOTTOM_SAFE_AREA_EDGES } from "app/components/styles";
+import {
+  $containerPadding,
+  NO_TOP_BOTTOM_SAFE_AREA_EDGES,
+} from "app/components/styles";
 import { colors, spacing } from "app/theme";
 import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, TextStyle, ViewStyle } from "react-native";
@@ -8,8 +11,12 @@ import auth from "@react-native-firebase/auth";
 import { useAppDispatch } from "app/redux/store";
 import { setDeleteAccountLoading } from "app/redux/reducers/user";
 import { Card } from "app/components/Card";
+import { AppStackScreenProps } from "app/navigators";
+import { Drawer } from "app/components/Drawer";
 
-export const DeleteAccountScreen = () => {
+interface Props extends AppStackScreenProps<"DeleteAccount"> {}
+
+export const DeleteAccountScreen = ({ navigation }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -71,30 +78,34 @@ export const DeleteAccountScreen = () => {
   );
 
   return (
-    <Screen
-      safeAreaEdges={NO_TOP_BOTTOM_SAFE_AREA_EDGES}
-      preset="scroll"
-      contentContainerStyle={$screen}
-    >
-      <Card>
-        <Text preset="subheading" style={$title}>
-          Deleting your account
-        </Text>
-        <Text>
-          This will erase all your data and delete your account. You will no
-          longer be able to login and access your account. This cannot be
-          reversed.
-        </Text>
-        <Button
-          text="Delete account"
-          style={$button}
-          textStyle={$buttonText}
-          onPress={confirmDelete}
-          LeftAccessory={ButtonIcon}
-          RightAccessory={ButtonLoading}
-        />
-      </Card>
-    </Screen>
+    <Drawer navigation={navigation}>
+      <Screen
+        safeAreaEdges={NO_TOP_BOTTOM_SAFE_AREA_EDGES}
+        preset="scroll"
+        style={$screen}
+        contentContainerStyle={$containerPadding}
+        inDrawer
+      >
+        <Card>
+          <Text preset="subheading" style={$title}>
+            Deleting your account
+          </Text>
+          <Text>
+            This will erase all your data and delete your account. You will no
+            longer be able to login and access your account. This cannot be
+            reversed.
+          </Text>
+          <Button
+            text="Delete account"
+            style={$button}
+            textStyle={$buttonText}
+            onPress={confirmDelete}
+            LeftAccessory={ButtonIcon}
+            RightAccessory={ButtonLoading}
+          />
+        </Card>
+      </Screen>
+    </Drawer>
   );
 };
 

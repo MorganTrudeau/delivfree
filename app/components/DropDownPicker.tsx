@@ -20,6 +20,7 @@ import { Icon } from "./Icon";
 import { sizing } from "app/theme/sizing";
 import { Portal } from "react-native-portalize";
 import { borderRadius } from "app/theme/borderRadius";
+import { useDimensions } from "app/hooks/useDimensions";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 interface Item<V> {
@@ -29,8 +30,10 @@ interface Item<V> {
 interface Props<V> {
   items: Item<V>[];
   onSelect: (values: V[]) => void;
-  selectedValues: V[];
+  selectedValues?: V[];
   placeholder?: string;
+  singleSelect?: boolean;
+  containerStyle?: ViewStyle;
 }
 
 export const DropDownPicker = <V extends string>({
@@ -38,8 +41,12 @@ export const DropDownPicker = <V extends string>({
   onSelect,
   selectedValues,
   placeholder = "Select",
+  singleSelect,
+  containerStyle,
 }: Props<V>) => {
   const dropdown = useRef<View>(null);
+
+  const { height } = useDimensions();
 
   const [{ open, top, left }, setDropdownState] = useState({
     open: false,
@@ -49,21 +56,27 @@ export const DropDownPicker = <V extends string>({
 
   const openAnimation = useSharedValue(0);
 
+  const closeDropdown = () => {
+    setDropdownState((s) => ({ ...s, open: false }));
+    openAnimation.value = withTiming(0);
+  };
+  const openDropdown = () => {
+    dropdown.current?.measure((x, y, width, height, pageX, pageY) => {
+      setDropdownState({ left: pageX, top: pageY, open: true });
+      openAnimation.value = withTiming(1);
+    });
+  };
   const toggleOpen = () => {
     if (open) {
-      setDropdownState((s) => ({ ...s, open: false }));
-      openAnimation.value = withTiming(0);
+      closeDropdown();
     } else {
-      dropdown.current?.measure((x, y, width, height, pageX, pageY) => {
-        setDropdownState({ left: pageX, top: pageY, open: true });
-        openAnimation.value = withTiming(1);
-      });
+      openDropdown();
     }
   };
 
   const buttonLabel = useMemo(
     () =>
-      selectedValues.length
+      selectedValues?.length
         ? selectedValues
             .map((v) => items.find((i) => i.value === v)?.label)
             .join(", ")
@@ -87,10 +100,13 @@ export const DropDownPicker = <V extends string>({
   );
 
   const handleSelect = (val: V) => {
-    if (selectedValues.includes(val)) {
+    if (selectedValues?.includes(val)) {
       onSelect(selectedValues.filter((v) => v !== val));
     } else {
-      onSelect([...selectedValues, val]);
+      onSelect([...(selectedValues || []), val]);
+    }
+    if (singleSelect) {
+      closeDropdown();
     }
   };
 
@@ -101,7 +117,7 @@ export const DropDownPicker = <V extends string>({
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={containerStyle}>
       <Pressable
         ref={dropdown}
         onPress={toggleOpen}
@@ -111,7 +127,7 @@ export const DropDownPicker = <V extends string>({
         <Text
           style={{
             flex: 1,
-            color: selectedValues.length === 0 ? colors.textDim : undefined,
+            color: !selectedValues?.length ? colors.textDim : undefined,
           }}
         >
           {buttonLabel}
@@ -132,16 +148,19 @@ export const DropDownPicker = <V extends string>({
             animatedStyle,
             {
               width: layout?.width,
-              maxHeight: 200,
+              maxHeight: height / 3,
               position: "absolute",
-              // @ts-ignore
-              top: top + (layout?.height || 0) + spacing.sm,
-              // @ts-ignore
               left: left,
             },
+            top + (layout?.height || 0) > height / 2
+              ? { bottom: height - top + spacing.sm }
+              : { top: top + (layout?.height || 0) + spacing.sm },
           ]}
         >
-          <ScrollView style={{ maxHeight: 200 }}>
+          <ScrollView
+            style={{ maxHeight: height / 3 }}
+            showsVerticalScrollIndicator={false}
+          >
             {items.map((item, index, arr) => (
               <Pressable
                 key={item.value}
@@ -149,7 +168,7 @@ export const DropDownPicker = <V extends string>({
                 onPress={() => handleSelect(item.value)}
               >
                 <Text style={$flex}>{item.label}</Text>
-                {selectedValues.includes(item.value) && (
+                {selectedValues?.includes(item.value) && (
                   <Icon
                     icon={"check-circle"}
                     color={colors.primary}

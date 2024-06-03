@@ -20,7 +20,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export const DriverCodeScreen = () => {
   const insets = useSafeAreaInsets();
 
-  const driver = useAppSelector((state) => state.driver.data as Driver);
+  const driver = useAppSelector((state) => state.driver.activeDriver as Driver);
 
   const [code, setCode] = useState();
 

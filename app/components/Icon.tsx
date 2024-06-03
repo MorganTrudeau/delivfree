@@ -14,7 +14,7 @@ import { sizing } from "app/theme/sizing";
 
 export type IconTypes = IconName | keyof typeof iconRegistry | undefined;
 
-interface IconProps extends TouchableOpacityProps {
+export interface IconProps extends TouchableOpacityProps {
   /**
    * The name of the icon
    */

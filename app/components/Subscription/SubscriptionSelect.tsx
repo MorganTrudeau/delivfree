@@ -26,10 +26,11 @@ import { AppLogo } from "../AppLogo";
 import { useAlert } from "app/hooks";
 import {
   FULL_TIME_ORDERS,
-  SURGE_ORDERS,
+  PART_TIME_ORDERS,
   isFullTimeOrderItem,
   isSurgeOrderItem,
 } from "app/utils/subscriptions";
+import { QuantitySelector } from "../QuantitySelector";
 
 interface Props {
   fullTimeProduct: Stripe.Product;
@@ -48,8 +49,8 @@ export const SubscriptionSelect = ({
 
   const updateSuccessModal = useRef<ModalRef>(null);
 
-  const vendor = useAppSelector((state) => state.vendor.data);
-  const driver = useAppSelector((state) => state.driver.data);
+  const vendor = useAppSelector((state) => state.vendor.activeVendor);
+  const driver = useAppSelector((state) => state.driver.activeDriver);
   const userType = useAppSelector((state) => state.appConfig.userType);
   const user = useAppSelector((state) => state.auth.user);
 
@@ -267,7 +268,7 @@ export const SubscriptionSelect = ({
         </View>
         {width <= 800 && renderSurgePrice()}
         <Text preset="bold" size={"lg"} style={{ marginTop: spacing.sm }}>
-          {surgeQuantity * SURGE_ORDERS} Extra orders
+          {surgeQuantity * PART_TIME_ORDERS} Extra orders
         </Text>
         {!referenceSubscription && (
           <QuantitySelector
@@ -312,40 +313,6 @@ export const SubscriptionSelect = ({
   );
 };
 
-const QuantitySelector = ({
-  changeQuantity,
-  disableDecrease,
-  style,
-}: {
-  changeQuantity: (change: number) => void;
-  disableDecrease?: boolean;
-  style?: ViewStyle;
-}) => {
-  return (
-    <View style={[$row, style]}>
-      <Pressable
-        disabled={disableDecrease}
-        style={[
-          $quantityButton,
-          { marginRight: spacing.xs, opacity: disableDecrease ? 0.5 : 1 },
-        ]}
-        onPress={() => changeQuantity(-1)}
-      >
-        <Icon icon="minus" />
-        <Text selectable={false} style={$quantityButtonText}>
-          Decrease
-        </Text>
-      </Pressable>
-      <Pressable style={$quantityButton} onPress={() => changeQuantity(1)}>
-        <Text selectable={false} style={$quantityButtonText}>
-          Increase
-        </Text>
-        <Icon icon="plus" />
-      </Pressable>
-    </View>
-  );
-};
-
 const $item: ViewStyle = {
   borderWidth: 1,
   borderColor: colors.border,
@@ -353,17 +320,6 @@ const $item: ViewStyle = {
   paddingHorizontal: spacing.md,
   paddingVertical: spacing.md,
   width: "100%",
-};
-const $quantityButtonText: TextStyle = { marginHorizontal: spacing.xxs };
-const $quantityButton: ViewStyle = {
-  borderRadius: borderRadius.md,
-  flexDirection: "row",
-  alignItems: "center",
-  backgroundColor: colors.surface,
-  borderWidth: StyleSheet.hairlineWidth,
-  borderColor: colors.border,
-  paddingHorizontal: spacing.xs,
-  paddingVertical: spacing.xs,
 };
 const $button: ViewStyle = {
   marginTop: spacing.lg,

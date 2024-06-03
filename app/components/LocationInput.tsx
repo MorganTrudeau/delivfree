@@ -1,7 +1,7 @@
 import React from "react";
 import GooglePlacesInput from "./GooglePlacesInput";
 import * as geofire from "geofire-common";
-import { Location } from "delivfree";
+import { GeoLocation } from "delivfree";
 import {
   GooglePlaceData,
   GooglePlaceDetail,
@@ -11,7 +11,7 @@ export const LocationInput = ({
   onLocationSelected,
   shortenAddress,
 }: {
-  onLocationSelected: (location: Location) => void;
+  onLocationSelected: (location: GeoLocation) => void;
   shortenAddress: boolean;
 }) => {
   const handlePress = (data: GooglePlaceData, detail: GooglePlaceDetail) => {

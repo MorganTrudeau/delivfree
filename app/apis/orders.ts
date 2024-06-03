@@ -6,7 +6,7 @@ import moment from "moment";
 
 export const listenToOrders = (
   vendor: string,
-  restaurantLocation: string,
+  vendorLocation: string,
   limit: number,
   onData: (order: Order[]) => void
 ) => {
@@ -14,7 +14,7 @@ export const listenToOrders = (
     .collection("Orders")
     .orderBy("date", "desc")
     .where("vendor", "==", vendor)
-    .where("restaurantLocation", "==", restaurantLocation)
+    .where("vendorLocation", "==", vendorLocation)
     .limit(limit)
     .onSnapshot((snap) => {
       if (snap) {
@@ -32,7 +32,7 @@ export const updateOrder = (orderId: string, update: Partial<Order>) => {
 export const loadOrders = async (
   params: {
     vendor: string;
-    restaurantLocation?: string;
+    vendorLocation?: string;
     limit?: number;
   },
   queries?: [
@@ -41,12 +41,12 @@ export const loadOrders = async (
     value: any
   ][]
 ) => {
-  const { vendor, restaurantLocation, limit } = params;
+  const { vendor, vendorLocation, limit } = params;
 
   let query = firestore().collection("Orders").where("vendor", "==", vendor);
 
-  if (restaurantLocation) {
-    query = query.where("restaurantLocation", "==", restaurantLocation);
+  if (vendorLocation) {
+    query = query.where("vendorLocation", "==", vendorLocation);
   }
 
   if (queries) {

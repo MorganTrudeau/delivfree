@@ -1,30 +1,57 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { Vendor } from "delivfree";
+import { License, Vendor } from "delivfree";
 import { resetAppState } from "../resetAppState";
 import { createVendor } from "../thunks/vendor";
 
 export interface VendorState {
-  data: Vendor | null;
+  data: { [id: string]: Vendor };
+  licenses: { [id: string]: License };
+  activeVendor: Vendor | null;
+  activeVendorLoaded: boolean;
+  licencesLoaded: boolean;
 }
 
 const initialState: VendorState = {
-  data: null,
+  data: {},
+  licenses: {},
+  activeVendor: null,
+  activeVendorLoaded: false,
+  licencesLoaded: false,
 };
 
 export const vendorSlice = createSlice({
   name: "vendor",
   initialState,
   reducers: {
-    setVendor: (state, action: PayloadAction<Vendor | null>) => {
+    setActiveVendor: (
+      state,
+      action: PayloadAction<Vendor | null | undefined>
+    ) => {
+      state.activeVendor = action.payload || null;
+      state.activeVendorLoaded = true;
+    },
+    setVendor: (state, action: PayloadAction<Vendor | null | undefined>) => {
+      if (action.payload) {
+        state.data = { ...state.data, [action.payload.id]: action.payload };
+      }
+    },
+    setVendors: (state, action: PayloadAction<{ [id: string]: Vendor }>) => {
       state.data = action.payload;
+    },
+    setVendorLicenses: (
+      state,
+      action: PayloadAction<{ [id: string]: License }>
+    ) => {
+      state.licenses = action.payload;
+      state.licencesLoaded = true;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(
       createVendor.fulfilled,
       (state, action: PayloadAction<Vendor>) => {
-        state.data = action.payload;
+        state.activeVendor = action.payload;
       }
     );
     builder.addCase(resetAppState, () => initialState);
@@ -32,6 +59,7 @@ export const vendorSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setVendor } = vendorSlice.actions;
+export const { setActiveVendor, setVendor, setVendors, setVendorLicenses } =
+  vendorSlice.actions;
 
 export default vendorSlice.reducer;

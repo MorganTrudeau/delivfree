@@ -3,25 +3,21 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
 import Config from "../config";
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities";
-import { colors, typography } from "app/theme";
+import { colors } from "app/theme";
 import { FirebaseMessaging } from "app/services/firebase/messaging";
-import { useAppSelector } from "app/redux/store";
 import RNBootSplash from "react-native-bootsplash";
-import { $fontSizeStyles } from "app/components";
 import { rateApp, shouldAskRating } from "app/utils/rate";
 import { Platform } from "react-native";
-import { StackAnimationTypes } from "react-native-screens";
-import { AppStackParamList, getStackNavigator } from "./StackNavigator";
-import { renderAuthStack } from "./AuthStack";
-import { renderMainStack } from "./MainStack";
-import { renderRegistrationStack } from "./RegistrationStack";
-import { isUserRegistered } from "app/utils/user";
+import { AppStackParamList, linkingConfigScreens } from "./StackNavigator";
 import { UserTypeManager } from "app/services/UserTypeManager";
 import { Host as PortalHost } from "react-native-portalize";
 import AlertProvider from "app/components/Alert/AlertContext";
 import { DataLoadingManager } from "app/services/DataLoadingManager";
 import ToastProvider from "app/components/Toast/ToastContext";
 import { getAppType } from "app/utils/general";
+import { AdminStack } from "./Stacks/AdminStack";
+import { VendorStack } from "./Stacks/VendorStack";
+import { ConsumerStack } from "./Stacks/ConsumerStack";
 
 export type NavigationProp = AppStackScreenProps<
   keyof AppStackParamList
@@ -36,83 +32,25 @@ const exitRoutes = Config.exitRoutes;
 export type AppStackScreenProps<T extends keyof AppStackParamList> =
   NativeStackScreenProps<AppStackParamList, T>;
 
-const Stack = getStackNavigator();
-
-const screenOptions = {
-  headerBackTitleVisible: false,
-  headerShown: false,
-  headerTintColor: colors.primary,
-  headerTitleStyle: [
-    { fontFamily: typography.secondary.semiBold, color: colors.text },
-    $fontSizeStyles.lg,
-  ],
-  navigationBarColor: colors.background,
-  headerTitle: "",
-  headerTransparent: true,
-  headerStyle: { backgroundColor: colors.background },
-  headerShadowVisible: false,
-  animation: Platform.select<StackAnimationTypes>({
-    android: "fade_from_bottom",
-    default: "default",
-  }),
-  animationDuration: 100,
-};
+const appType = getAppType();
 
 const AppStack = () => {
-  const {
-    user,
-    vendor,
-    driver,
-    authToken,
-    userLoaded,
-    deleteAccountLoading,
-    vendorSubscription,
-    driverSubscription,
-    userType,
-  } = useAppSelector((state) => ({
-    user: state.user.user,
-    userLoaded: state.user.loaded,
-    authToken: state.auth.authToken,
-    deleteAccountLoading: state.user.deleteAccountLoading,
-    vendor: state.vendor.data,
-    driver: state.driver.data,
-    vendorSubscription: state.subscription.vendorSubscription,
-    driverSubscription: state.subscription.driverSubscription,
-    userType: state.appConfig.userType,
-  }));
+  if (appType === "ADMIN") {
+    return <AdminStack />;
+  } else if (appType === "VENDOR") {
+    return <VendorStack />;
+  } else {
+    return <ConsumerStack />;
+  }
+};
 
-  const registered = isUserRegistered(user);
+const config = {
+  screens: linkingConfigScreens,
+};
 
-  const renderStack = () => {
-    if (!(authToken && userLoaded)) {
-      return renderAuthStack();
-    }
-    if (!(registered || deleteAccountLoading)) {
-      return renderRegistrationStack({ user });
-    }
-    return renderMainStack({
-      vendorSubscription,
-      driverSubscription,
-      userType,
-      driver,
-      vendor,
-    });
-  };
-
-  const initialRouteName = authToken
-    ? userLoaded
-      ? "Home"
-      : "EditProfile"
-    : "Welcome";
-
-  return (
-    <Stack.Navigator
-      screenOptions={screenOptions}
-      initialRouteName={initialRouteName}
-    >
-      {renderStack()}
-    </Stack.Navigator>
-  );
+const linking = {
+  prefixes: [],
+  config,
 };
 
 export interface NavigationProps
@@ -144,6 +82,7 @@ export const AppNavigator = (props: NavigationProps) => {
       ref={navigationRef}
       theme={Theme}
       onReady={onReady}
+      linking={linking}
       {...props}
     >
       <PortalHost>

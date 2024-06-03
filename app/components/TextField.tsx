@@ -25,6 +25,7 @@ import { colors, spacing, typography } from "../theme";
 import { $fontSizeStyles, Text, TextProps } from "./Text";
 import { borderRadius } from "app/theme/borderRadius";
 import NumberTextInput from "./NumberTextInput";
+import { $formLabel } from "./styles";
 
 export interface TextFieldAccessoryProps {
   style: StyleProp<any>;
@@ -200,7 +201,7 @@ export const TextField = forwardRef(function TextField(
 
   const $containerStyles = [$containerStyleOverride];
 
-  const $labelStyles = [$labelStyle, LabelTextProps?.style];
+  const $labelStyles = [$formLabel, LabelTextProps?.style];
 
   const $inputWrapperStyles = [
     $inputWrapperStyle,
@@ -299,10 +300,6 @@ export const TextField = forwardRef(function TextField(
     </TouchableOpacity>
   );
 });
-
-const $labelStyle: TextStyle = {
-  marginBottom: spacing.xxs,
-};
 
 const $inputWrapperStyle: ViewStyle = {
   flexDirection: "row",

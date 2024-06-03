@@ -35,7 +35,7 @@ export const OrdersList = ({ orders, loadOrders, onOrderPress }: Props) => {
   const customerDetailModal = useRef<ModalRef>(null);
 
   const customers = useAppSelector((state) => state.customers.data);
-  const driver = useAppSelector((state) => state.driver.data);
+  const driver = useAppSelector((state) => state.driver.activeDriver);
   const vendorDrivers = useAppSelector((state) => state.vendorDrivers.data);
   const driverId = driver?.id;
 

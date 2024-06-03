@@ -18,7 +18,6 @@ import DelayedView from "./DelayedView";
 import ColorPickerModal from "./Modal/ColorPickerModal";
 import OptionsModal, { OptionModalItem } from "./Modal/OptionsModal";
 import { sizing } from "app/theme/sizing";
-import { getAvatarColor } from "app/utils/user";
 
 export type AvatarUploadRef = {
   openOptions: () => void;
@@ -92,22 +91,10 @@ const AvatarUpload = forwardRef<AvatarUploadRef, Props>(function AvatarUpdate(
           userId: user.id,
         });
 
-        let color = "";
-
-        try {
-          color = await getAvatarColor(avatar);
-        } catch (error) {
-          console.log("Failed to pick color from image");
-        }
-
         const userUpdate: UserUpdate = {
           avatar,
           avatarRef: ref,
         };
-
-        if (color) {
-          userUpdate.color = color;
-        }
 
         onUserChange(userUpdate);
       }

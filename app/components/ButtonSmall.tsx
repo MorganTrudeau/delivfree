@@ -144,12 +144,13 @@ export function ButtonSmall(props: ButtonSmallProps) {
 const $baseViewStyle: ViewStyle = {
   borderRadius: 4,
   overflow: "hidden",
-  paddingVertical: spacing.xs,
+  paddingVertical: spacing.xxs,
   paddingHorizontal: spacing.sm,
   backgroundColor: colors.palette.neutral800,
   alignItems: "center",
   justifyContent: "center",
   flexDirection: "row",
+  minHeight: 40,
 };
 
 const $baseTextStyle: TextStyle = {
@@ -201,7 +202,7 @@ const $textPresets: Record<Presets, StyleProp<TextStyle>> = {
 };
 
 const $pressedViewPresets: Record<Presets, StyleProp<ViewStyle>> = {
-  default: { backgroundColor: colors.palette.neutral300 },
+  default: { backgroundColor: colors.palette.primary100 },
   filled: { backgroundColor: colors.palette.primary600 },
   reversed: { backgroundColor: colors.palette.neutral700 },
 };

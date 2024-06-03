@@ -1,4 +1,4 @@
-import { updateVendor } from "app/apis/vendor";
+import { updateVendor } from "app/apis/vendors";
 import { HeaderProps, Icon, Screen, Text, TextField } from "app/components";
 import { Drawer } from "app/components/Drawer";
 import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
@@ -18,7 +18,7 @@ import {
 interface VendorProfileScreenProps extends AppStackScreenProps<"Profile"> {}
 
 export const VendorProfileScreen = (props: VendorProfileScreenProps) => {
-  const vendor = useAppSelector((state) => state.vendor.data as Vendor);
+  const vendor = useAppSelector((state) => state.vendor.activeVendor as Vendor);
 
   const [{ updates, isSaved }, setUpdates] = useState<{
     updates: Partial<Omit<Vendor, "id">>;

@@ -2,7 +2,13 @@ import React, { forwardRef, useMemo, useState } from "react";
 import { BottomSheet, BottomSheetRef } from "./BottomSheet";
 import { Button } from "../Button";
 import { Text } from "../Text";
-import { ActivityIndicator, TextStyle, View, ViewStyle } from "react-native";
+import {
+  ActivityIndicator,
+  Platform,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native";
 import { spacing } from "app/theme";
 import { useGeoPosition } from "app/hooks/useGeoPosition";
 import * as Location from "expo-location";
@@ -28,37 +34,60 @@ const LocationContent = ({ onRequestClose }: Props) => {
   const [findingLocation, setFindingLocation] = useState(false);
   const [confirmingLocation, setConfirmingLocation] = useState(false);
   const [location, setLocation] = useState<User["location"]>(null);
-  const { watchLocation } = useGeoPosition();
+  const { watchLocation, getLocation } = useGeoPosition();
+
+  const processLocation = async (
+    location: {
+      position: {
+        latitude: number;
+        longitude: number;
+      };
+    } | null
+  ) => {
+    console.log(location);
+    if (!location) {
+      setFindingLocation(false);
+      return;
+    }
+    const {
+      position: { latitude, longitude },
+    } = location;
+    const geohash = geofire.geohashForLocation([latitude, longitude]);
+    try {
+      const response = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+      for (const item of response) {
+        const address = `${item.city}, ${item.isoCountryCode}`;
+        setLocation({ latitude, longitude, address, geohash });
+      }
+      setFindingLocation(false);
+    } catch (error) {
+      setFindingLocation(false);
+    }
+  };
 
   const findMyLocation = async () => {
     setFindingLocation(true);
+
+    if (Platform.OS === "web") {
+      const location = await getLocation();
+      return processLocation(location);
+    }
+
     const unsubscribe = await watchLocation(
       async (location) => {
-        console.log("LOCATION", location);
         if (!location) {
           setFindingLocation(false);
           return;
         }
         unsubscribe();
-        const {
-          position: { latitude, longitude },
-        } = location;
-        const geohash = geofire.geohashForLocation([latitude, longitude]);
-        try {
-          const response = await Location.reverseGeocodeAsync({
-            latitude,
-            longitude,
-          });
-          for (const item of response) {
-            const address = `${item.city}, ${item.isoCountryCode}`;
-            setLocation({ latitude, longitude, address, geohash });
-          }
-          setFindingLocation(false);
-        } catch (error) {
-          setFindingLocation(false);
-        }
+        return processLocation(location);
       },
-      () => {}
+      () => {
+        setFindingLocation(false);
+      }
     );
   };
 
@@ -103,7 +132,8 @@ const LocationContent = ({ onRequestClose }: Props) => {
       <Text preset={"subheading"} style={$heading}>
         Find restaurants in your area
       </Text>
-      {!!location?.address ? (
+
+      {!!location?.address && (
         <>
           <Text style={$address}>{location?.address}</Text>
           <Button
@@ -114,7 +144,9 @@ const LocationContent = ({ onRequestClose }: Props) => {
             RightAccessory={ConfirmLoading}
           />
         </>
-      ) : (
+      )}
+
+      {!location?.address && Platform.OS !== "web" && (
         <Button
           text={"Find my address"}
           preset={"filled"}
@@ -123,6 +155,7 @@ const LocationContent = ({ onRequestClose }: Props) => {
           RightAccessory={LocationLoading}
         />
       )}
+
       <Button
         text={"Enter my address"}
         style={$button}
@@ -132,6 +165,8 @@ const LocationContent = ({ onRequestClose }: Props) => {
   );
 };
 
+const snapPoints = ["45%"];
+
 const LocationModal = forwardRef<BottomSheetRef, Props>(function LocationModal(
   { onRequestClose },
   ref
@@ -140,7 +175,7 @@ const LocationModal = forwardRef<BottomSheetRef, Props>(function LocationModal(
   return (
     <BottomSheet
       ref={ref}
-      snapPoints={["45%"]}
+      snapPoints={snapPoints}
       enablePanDownToClose={!!activeUser.location}
     >
       <LocationContent onRequestClose={onRequestClose} />

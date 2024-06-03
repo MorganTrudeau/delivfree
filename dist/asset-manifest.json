@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/chunk.main.6ec246bfc08abf53c1fd.js",
-    "chunk.652.js": "/chunk.652.43a2bb209ad0baacaf18.js",
+    "main.js": "/chunk.main.0038d21779e597197f9f.js",
+    "chunk.892.js": "/chunk.892.37db2386e7cbda5aefdb.js",
     "MaterialCommunityIcons.ttf": "/5d42b4e60858731e7b65.ttf",
     "pizza.jpg": "/097729fcae7e049f327e.jpg",
     "sushi.jpg": "/059666be1816495d79de.jpg",
@@ -39,8 +39,8 @@
     "favicon/android-chrome-512x512.png": "/favicon/android-chrome-512x512.png",
     "app-logo-tagline.png": "/234124343c428af223ba.png",
     "delivfree-logo.png": "/b5ae7e7569f98114f9f6.png",
-    "app-logo-inline.png": "/2eb3b12e5c67117a34a3.png",
     "favicon/android-chrome-192x192.png": "/favicon/android-chrome-192x192.png",
+    "app-logo-inline.png": "/e1f99861e25787947f3d.png",
     "favicon.ico": "/favicon.ico",
     "favicon/favicon-32x32.png": "/favicon/favicon-32x32.png",
     "favicon/mstile-150x150.png": "/favicon/mstile-150x150.png",
@@ -61,7 +61,7 @@
     "meta.json": "/meta.json"
   },
   "entrypoints": [
-    "chunk.652.43a2bb209ad0baacaf18.js",
-    "chunk.main.6ec246bfc08abf53c1fd.js"
+    "chunk.892.37db2386e7cbda5aefdb.js",
+    "chunk.main.0038d21779e597197f9f.js"
   ]
 }

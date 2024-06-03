@@ -29,14 +29,14 @@ interface Props {
   onCustomerSelect: (customer: Customer) => void;
   style?: ViewStyle;
   initialPhoneNumber?: string;
-  restaurantLocation: string;
+  vendorLocation: string;
 }
 
 export const CustomerSearchInput = ({
   initialPhoneNumber,
   onCustomerSelect,
   style,
-  restaurantLocation,
+  vendorLocation,
 }: Props) => {
   const Alert = useAlert();
   const phoneNumberInput = useRef<PhoneInput>(null);
@@ -52,7 +52,7 @@ export const CustomerSearchInput = ({
 
   const addCustomerModal = useRef<ModalRef>(null);
 
-  const vendor = useAppSelector((state) => state.vendor.data);
+  const vendor = useAppSelector((state) => state.vendor.activeVendor);
 
   const [
     { customers, loading, callingCountry, callingCode, phoneNumber, searching },
@@ -82,7 +82,7 @@ export const CustomerSearchInput = ({
     callingCode: "+1",
     phoneNumber: "",
     vendor: vendor?.id || "",
-    restaurantLocation,
+    vendorLocation,
   });
   const newCustomerComplete =
     newCustomer.location.address && newCustomer.phoneNumber && newCustomer.name;
@@ -97,7 +97,7 @@ export const CustomerSearchInput = ({
     }));
     const customerSnapshot = await firestore()
       .collection("Customers")
-      .where("restaurantLocation", "==", restaurantLocation)
+      .where("vendorLocation", "==", vendorLocation)
       .where("phoneNumber", ">=", phoneNumber)
       .where("phoneNumber", "<", phoneNumber + "\uf8ff")
       .get();

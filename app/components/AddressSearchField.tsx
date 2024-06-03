@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Text } from "./Text";
 import { colors, spacing } from "app/theme";
-import { Location, ModalRef } from "delivfree";
+import { GeoLocation, ModalRef } from "delivfree";
 import { Pressable, ViewStyle } from "react-native";
 import { AddressSearchModal } from "./AddressSearchModal";
 import { $input } from "./styles";
@@ -10,8 +10,8 @@ export const AddressSearchField = ({
   location,
   onLocationSelect,
 }: {
-  location: Location;
-  onLocationSelect: (location: Location) => void;
+  location: GeoLocation;
+  onLocationSelect: (location: GeoLocation) => void;
 }) => {
   const addressSearchModal = useRef<ModalRef>(null);
   return (

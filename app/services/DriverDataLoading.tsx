@@ -1,15 +1,15 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { RootState } from "app/redux/store";
 import { listenToCustomers } from "app/redux/thunks/customers";
-import { listenToDriver, listenToVendorDrivers } from "app/redux/thunks/driver";
-import { listenToRestuarantLocations } from "app/redux/thunks/restaurantLocations";
-import {
-  listenToDriverSubscription,
-  listenToVendorSubscription,
-} from "app/redux/thunks/subscription";
-import { listenToVendor } from "app/redux/thunks/vendor";
-import { Component, ReactNode } from "react";
+import { listenToActiveDriver } from "app/redux/thunks/driver";
+import { listenToDriverLicenses } from "app/redux/thunks/licenses";
+import { listenToVendorLocations } from "app/redux/thunks/vendorLocations";
+import { listenToDriverSubscription } from "app/redux/thunks/subscription";
+import { listenToVendors } from "app/redux/thunks/vendor";
+import { Component } from "react";
 import { ConnectedProps, connect } from "react-redux";
+import { selectVendorLocationIdsFromLicenses } from "app/redux/reducers/driver";
+import { equalArrays } from "app/utils/general";
 
 interface Props extends ReduxProps {}
 
@@ -22,7 +22,7 @@ export class DriverDataLoading extends Component<Props> {
   };
 
   vendorSelected = (props: Props) => {
-    return props.driver?.vendors?.[0];
+    return props.vendorLocationIds.length;
   };
 
   unsubscribeListeners = (listenerSet: Set<() => void>) => {
@@ -36,6 +36,7 @@ export class DriverDataLoading extends Component<Props> {
 
   componentDidUpdate(prevProps: Props): void {
     if (!this.driverSelected(prevProps) && this.driverSelected(this.props)) {
+      this.unsubscribeListeners(this.driverListeners);
       this.listenToDriverData();
     } else if (
       this.driverSelected(prevProps) &&
@@ -44,7 +45,12 @@ export class DriverDataLoading extends Component<Props> {
       this.unsubscribeListeners(this.driverListeners);
     }
 
-    if (!this.vendorSelected(prevProps) && this.vendorSelected(this.props)) {
+    if (
+      this.vendorSelected(this.props) &&
+      (!this.vendorSelected(prevProps) ||
+        !equalArrays(this.props.vendorLocationIds, prevProps.vendorLocationIds))
+    ) {
+      this.unsubscribeListeners(this.vendorListeners);
       this.listenToVendorData();
     } else if (
       this.vendorSelected(prevProps) &&
@@ -62,46 +68,36 @@ export class DriverDataLoading extends Component<Props> {
     }
 
     const driverListener = await this.props
-      .listenToDriver(driverId)
+      .listenToActiveDriver(driverId)
       .then(unwrapResult);
     const driverSubscriptionListener = await this.props
       .listenToDriverSubscription(driverId)
       .then(unwrapResult);
+    const licensesListener = await this.props
+      .listenToDriverLicenses(driverId)
+      .then(unwrapResult);
 
     this.driverListeners.add(driverListener);
     this.driverListeners.add(driverSubscriptionListener);
+    this.driverListeners.add(licensesListener);
   };
 
   listenToVendorData = async () => {
-    const vendorId = this.props.driver?.vendors?.[0];
+    const vendorLocationsIds = this.props.vendorLocationIds;
 
-    console.log("LOAD VENDOR DATA", vendorId);
-
-    if (!vendorId) {
+    if (!vendorLocationsIds.length) {
       return;
     }
 
-    const vendorListener = await this.props
-      .listenToVendor(vendorId)
-      .then(unwrapResult);
-    const vendorSubscriptionListener = await this.props
-      .listenToVendorSubscription(vendorId)
-      .then(unwrapResult);
-    const restaurantLocationsListener = await this.props
-      .listenToRestuarantLocations(vendorId)
+    const vendorLocationsListener = await this.props
+      .listenToVendorLocations({ id: vendorLocationsIds })
       .then(unwrapResult);
     const customersListener = await this.props
-      .listenToCustomers(vendorId)
-      .then(unwrapResult);
-    const driversListener = await this.props
-      .listenToVendorDrivers(vendorId)
+      .listenToCustomers({ vendorLocation: vendorLocationsIds })
       .then(unwrapResult);
 
-    this.vendorListeners.add(vendorListener);
-    this.vendorListeners.add(vendorSubscriptionListener);
-    this.vendorListeners.add(restaurantLocationsListener);
+    this.vendorListeners.add(vendorLocationsListener);
     this.vendorListeners.add(customersListener);
-    this.vendorListeners.add(driversListener);
   };
 
   render() {
@@ -111,17 +107,17 @@ export class DriverDataLoading extends Component<Props> {
 
 const mapState = (state: RootState) => ({
   user: state.user.user,
-  driver: state.driver.data,
+  driver: state.driver.activeDriver,
+  vendorLocationIds: selectVendorLocationIdsFromLicenses(state),
 });
 
 const mapDispatch = {
-  listenToVendor,
-  listenToDriver,
-  listenToVendorSubscription,
+  listenToVendors,
+  listenToActiveDriver,
   listenToDriverSubscription,
-  listenToRestuarantLocations,
+  listenToVendorLocations,
   listenToCustomers,
-  listenToVendorDrivers,
+  listenToDriverLicenses,
 };
 
 const connector = connect(mapState, mapDispatch);

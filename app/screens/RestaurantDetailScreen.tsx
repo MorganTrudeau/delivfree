@@ -1,7 +1,7 @@
 import { Icon, IconTypes, Screen, Text } from "app/components";
 import { AdBanner } from "app/components/AdBanner";
 import { CheckoutPopUp, CheckoutPopUpRef } from "app/components/CheckoutPopUp";
-import { $flex, $screen, $shadow } from "app/components/styles";
+import { $flex, $screen, MAX_CONTENT_WIDTH } from "app/components/styles";
 import { getRestaurantCache } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
 import { colors, spacing } from "app/theme";
@@ -41,15 +41,12 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
   );
   const viewMenu = () => {
     checkoutPopUp.current?.open(restaurant.menuLink);
-    // Linking.openURL(restaurant.menuLink);
   };
   const orderOnline = () => {
     checkoutPopUp.current?.open(restaurant.orderLink);
-    // Linking.openURL(restaurant.orderLink);
   };
   const phoneRestaurant = () => {
     checkoutPopUp.current?.open(`tel:${restaurant.phoneNumber}`);
-    // Linking.openURL(`tel:${restaurant.phoneNumber}`);
   };
   const viewAddress = () => {
     const scheme = Platform.select({
@@ -65,29 +62,34 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
     });
     Linking.openURL(url);
   };
-  return (
-    <>
-      <Screen style={$screen} preset={"scroll"}>
+
+  const renderHeader = () => {
+    return (
+      <View style={$header}>
         <View style={$headerImage}>
           <FastImage
             source={{ uri: restaurant.image }}
             style={StyleSheet.absoluteFillObject}
           />
         </View>
-        <Text preset={"subheading"} style={$name} size={"xl"}>
+        <Text
+          preset={"subheading"}
+          style={$name}
+          size={Platform.select({ web: "xxl", default: "xl" })}
+        >
           {restaurant.name}
         </Text>
         <AdBanner type="checkout" style={$adBanner} />
-        {/* <View style={$freeDeliveryNotice}>
-          <Text size={"sm"} weight="semiBold">
-            FREE DELIVERY & ZERO ADDED FEES
-          </Text>
-          <Text size={"xs"}>
-            You are saving money on this order via DelivFree. The menu price is
-            all you pay!
-          </Text>
-        </View> */}
+      </View>
+    );
+  };
+
+  return (
+    <>
+      <Screen style={$flex} preset={"scroll"}>
+        {Platform.OS !== "web" && renderHeader()}
         <View style={$detailsContainer}>
+          {Platform.OS === "web" && renderHeader()}
           {!!restaurant.menuLink && (
             <DetailItem
               text={"View menu"}
@@ -143,9 +145,28 @@ const DetailItem = ({ icon, text, onPress }: DetailItemProps) => {
 
 const GRADIENT_COLORS = ["rgba(0,0,0,0.5)", "rgba(0,0,0,0)"];
 
-const $headerImage: ImageStyle = { width: "100%", aspectRatio: 2.8 };
-const $name: TextStyle = { textAlign: "center", marginTop: spacing.sm };
-const $detailsContainer: ViewStyle = { padding: spacing.md };
+const $header: ViewStyle = {
+  paddingBottom: Platform.select({ default: 0, web: spacing.md }),
+};
+const $headerImage: ImageStyle = Platform.select({
+  default: { width: "100%", aspectRatio: 2.8 },
+  web: {
+    aspectRatio: 4,
+    borderRadius: borderRadius.md,
+    width: "100%",
+    overflow: "hidden",
+  },
+});
+const $name: TextStyle = {
+  textAlign: Platform.select({ default: "center", web: "left" }),
+  marginTop: spacing.sm,
+};
+const $detailsContainer: ViewStyle = {
+  padding: spacing.md,
+  maxWidth: MAX_CONTENT_WIDTH,
+  width: "100%",
+  alignSelf: "center",
+};
 const $detailItem: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
@@ -154,18 +175,7 @@ const $detailItem: ViewStyle = {
   borderBottomColor: colors.border,
 };
 const $detailItemIcon: ViewStyle = { marginRight: spacing.sm };
-const $freeDeliveryNotice: ViewStyle = {
-  paddingHorizontal: spacing.md,
-  paddingVertical: spacing.sm,
-  marginHorizontal: spacing.md,
-  marginTop: spacing.md,
-  backgroundColor: colors.palette.neutral200,
-  borderRadius: borderRadius.md,
-  borderWidth: StyleSheet.hairlineWidth,
-  borderColor: colors.border,
-};
-
 const $adBanner: ViewStyle = {
-  paddingHorizontal: spacing.md,
+  paddingHorizontal: Platform.select({ default: spacing.md, web: 0 }),
   marginTop: spacing.md,
 };

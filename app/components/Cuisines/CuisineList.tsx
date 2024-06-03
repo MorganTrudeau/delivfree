@@ -14,13 +14,13 @@ import { borderRadius } from "app/theme/borderRadius";
 import { colors, spacing } from "app/theme";
 import { Text } from "../Text";
 import { data } from "../../utils/cuisines";
-import { Cuisine, Vendor, RestaurantLocation } from "delivfree";
+import { Cuisine, Vendor, VendorLocation } from "delivfree";
 import RestaurantListItem from "../RestaurantListItem";
 
-interface Props extends Partial<FlatListProps<Data | RestaurantLocation>> {
+interface Props extends Partial<FlatListProps<Data | VendorLocation>> {
   onCuisinePress: (cuisine: Cuisine) => void;
-  onRestaurantPress: (restaurant: RestaurantLocation) => void;
-  restaurants: RestaurantLocation[];
+  onRestaurantPress: (restaurant: VendorLocation) => void;
+  restaurants: VendorLocation[];
   showRestaurants: boolean;
 }
 
@@ -40,7 +40,7 @@ const CuisineList = ({
     ({ item }: { item: Data }) => {
       return (
         <Pressable onPress={() => onCuisinePress(item.cuisine)}>
-          <View style={$imageContainer}>
+          <View style={[$imageContainer, { maxWidth: 400 }]}>
             <FastImage source={item.image} style={$image} />
           </View>
           <Text preset={"subheading"} style={$title}>
@@ -52,7 +52,7 @@ const CuisineList = ({
     [onCuisinePress]
   );
   const renderRestaurant = useCallback(
-    ({ item }: { item: RestaurantLocation }) => {
+    ({ item }: { item: VendorLocation }) => {
       return (
         <RestaurantListItem restaurant={item} onPress={onRestaurantPress} />
       );
@@ -77,7 +77,7 @@ const CuisineList = ({
 
 export default CuisineList;
 
-const keyExtractor = (item: Data | RestaurantLocation) =>
+const keyExtractor = (item: Data | VendorLocation) =>
   "id" in item ? item.id : item.cuisine;
 
 const $list: ViewStyle = { flex: 1 };

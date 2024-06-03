@@ -1,7 +1,11 @@
 import { updateUser } from "app/apis/user";
 import { Icon, Screen } from "app/components";
 import GooglePlacesInput from "app/components/GooglePlacesInput";
-import { $containerPadding, $screen } from "app/components/styles";
+import {
+  $containerPadding,
+  $headerButton,
+  $screen,
+} from "app/components/styles";
 import { useAlert } from "app/hooks";
 import { translate } from "app/i18n";
 import { AppStackScreenProps } from "app/navigators";
@@ -12,6 +16,7 @@ import { GooglePlaceDetail } from "react-native-google-places-autocomplete";
 import * as geofire from "geofire-common";
 import { ActivityIndicator, Pressable } from "react-native";
 import { colors } from "app/theme";
+import { ScreenHeader } from "app/components/ScreenHeader";
 
 interface AddressSearchScreenProps
   extends AppStackScreenProps<"AddressSearch"> {}
@@ -63,9 +68,9 @@ export const AddressSearchScreen = ({
     navigation.setOptions({
       headerRight: () =>
         !(placesData || confirmingAddress) ? null : confirmingAddress ? (
-          <ActivityIndicator color={colors.primary} />
+          <ActivityIndicator color={colors.primary} style={$headerButton} />
         ) : (
-          <Pressable onPress={confirmAddress}>
+          <Pressable onPress={confirmAddress} style={$headerButton}>
             <Icon icon={"check-circle"} color={colors.primary} />
           </Pressable>
         ),
@@ -78,6 +83,7 @@ export const AddressSearchScreen = ({
       style={$screen}
       contentContainerStyle={$containerPadding}
     >
+      <ScreenHeader title="Enter your address" />
       <GooglePlacesInput
         onPress={(data, detail) => {
           console.log(detail.address_components);

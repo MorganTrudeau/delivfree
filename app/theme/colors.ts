@@ -12,7 +12,7 @@ const palette = {
   neutral900: "#000000",
 
   shade100: "#FFFFFF",
-  shade200: "#F4F2F1",
+  shade200: "#efebe9",
   shade300: "#D7CEC9",
   shade400: "#B6ACA6",
   shade500: "#978F8A",
@@ -21,14 +21,14 @@ const palette = {
   shade800: "#191015",
   shade900: "#000000",
 
-  primary100: "#f68d91",
+  primary100: "#fbd1d3",
   primary200: "#f4767b",
   primary300: "#f26065",
   primary400: "#f0494f",
   primary500: "#ee3239",
   primary600: "#ed1c24",
 
-  secondary100: "#DCDDE9",
+  secondary100: "#edeef4",
   secondary200: "#BCC0D6",
   secondary300: "#9196B9",
   secondary400: "#626894",
@@ -43,7 +43,8 @@ const palette = {
   angry100: "#e64b47",
   angry500: "#e01f1a",
 
-  success100: "#82CDB1",
+  success100: "#cbead6",
+  success500: "#82CDB1",
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
@@ -100,7 +101,7 @@ export const colors = {
   /**
    *
    */
-  success: palette.success100,
+  success: palette.success500,
   /**
    * Error messages.
    */

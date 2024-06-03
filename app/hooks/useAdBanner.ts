@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
 import { Cuisine } from "delivfree";
 
-type AdType = "general" | "checkout" | Cuisine;
-type AdCache = {
-  [Property in AdType]: { image: string; title: string; text: string };
+export type AdType = "general" | "checkout" | Cuisine;
+export type AdConfig = { image: string; title: string; text: string };
+export type AdCache = {
+  [Property in AdType]?: AdConfig;
 };
 
 export const useAdBanner = () => {
@@ -12,25 +13,24 @@ export const useAdBanner = () => {
     getAdBannerCache().getAdCache()
   );
 
-  const loadAds = async () => {
-    try {
-      const adSnap = await firestore().collection("AdBanners").get();
-      const _ads = adSnap.docs.reduce(
-        (acc, doc) => ({
-          ...acc,
-          [doc.id]: doc.data(),
-        }),
-        {} as AdCache
-      );
-      getAdBannerCache().setAdCache(_ads);
-      setAds(_ads);
-    } catch (error) {
-      console.log(error);
-    }
+  const loadAds = () => {
+    return firestore()
+      .collection("AdBanners")
+      .onSnapshot((adSnap) => {
+        const _ads = adSnap.docs.reduce(
+          (acc, doc) => ({
+            ...acc,
+            [doc.id]: doc.data(),
+          }),
+          {} as AdCache
+        );
+        getAdBannerCache().setAdCache(_ads);
+        setAds(_ads);
+      });
   };
 
   useEffect(() => {
-    loadAds();
+    return loadAds();
   }, []);
 
   return ads;

@@ -1,6 +1,5 @@
 import { Screen, Text } from "app/components";
 import { AdBanner } from "app/components/AdBanner";
-import AnimatedHeaderTitle from "app/components/AnimatedHeaderTitle";
 import RestaurantsList from "app/components/RestaurantsList";
 import {
   $image,
@@ -10,11 +9,11 @@ import {
 } from "app/components/styles";
 import { useRestaurantsLoading } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
-import { spacing } from "app/theme";
+import { colors, spacing } from "app/theme";
 import { getCuisineImage, getCuisineTitle } from "app/utils/cuisines";
-import { RestaurantLocation, Vendor } from "delivfree";
-import React, { useCallback, useEffect, useMemo } from "react";
-import { TextStyle, View, ViewStyle } from "react-native";
+import { VendorLocation } from "delivfree";
+import React, { useCallback, useMemo } from "react";
+import { ActivityIndicator, TextStyle, View, ViewStyle } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";
 import {
   useAnimatedScrollHandler,
@@ -32,35 +31,26 @@ export const RestaurantsScreen = ({
 
   const insets = useSafeAreaInsets();
 
-  const { restaurants, loadRestaurants } = useRestaurantsLoading(
+  const { restaurants, loadRestaurants, refreshRestaurants } = useRestaurantsLoading(
     route.params.cuisine
   );
+  const loaded = restaurants !== undefined;
 
   const scrollY = useSharedValue(0);
   const handleScroll = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
-  // useEffect(() => {
-  //   navigation.setOptions({
-  //     headerTitle: () => (
-  //       <AnimatedHeaderTitle
-  //         title={getCuisineTitle(cuisine)}
-  //         scrollY={scrollY}
-  //       />
-  //     ),
-  //   });
-  // }, [navigation, route.params.cuisine]);
 
   const listContent = useMemo(
     () => ({
       paddingBottom: spacing.sm + insets.bottom,
-      paddingHorizontal: spacing.md,
+      paddingHorizontal: spacing.lg,
     }),
     [insets.bottom]
   );
 
   const handleRestaurantPress = useCallback(
-    (restaurant: RestaurantLocation) =>
+    (restaurant: VendorLocation) =>
       navigation.navigate("RestaurantDetail", { restaurantId: restaurant.id }),
     [navigation]
   );
@@ -78,17 +68,20 @@ export const RestaurantsScreen = ({
   );
 
   const ListEmptyComponent = useMemo(
-    () => (
-      <View style={{ maxWidth: 400 }}>
-        <View style={$imageContainer}>
-          <FastImage source={getCuisineImage(cuisine)} style={$image} />
+    () =>
+      loaded ? (
+        <View style={{ maxWidth: 400 }}>
+          <View style={$imageContainer}>
+            <FastImage source={getCuisineImage(cuisine)} style={$image} />
+          </View>
+          <Text preset={"subheading"} style={$emptyText}>
+            Coming Soon in your area!
+          </Text>
         </View>
-        <Text preset={"subheading"} style={$emptyText}>
-          Coming Soon in your area!
-        </Text>
-      </View>
-    ),
-    []
+      ) : (
+        <ActivityIndicator color={colors.primary} />
+      ),
+    [loaded]
   );
 
   return (
@@ -99,6 +92,7 @@ export const RestaurantsScreen = ({
       <RestaurantsList
         restaurants={restaurants}
         loadMore={loadRestaurants}
+        onRefresh={refreshRestaurants}
         ListHeaderComponent={renderListHeader}
         contentContainerStyle={listContent}
         onScroll={handleScroll}

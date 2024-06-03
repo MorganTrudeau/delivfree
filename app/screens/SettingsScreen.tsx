@@ -1,19 +1,23 @@
 import React from "react";
 import { ListItem, Screen } from "app/components";
-import { Linking, ViewStyle } from "react-native";
+import { Linking } from "react-native";
 import auth from "@react-native-firebase/auth";
 import { AppStackScreenProps } from "app/navigators";
-import { spacing } from "app/theme";
 import {
   $borderBottom,
-  NO_TOP_BOTTOM_SAFE_AREA_EDGES,
+  $containerPadding,
+  $screen,
 } from "app/components/styles";
 import { useAlert } from "app/hooks";
+import { Drawer } from "app/components/Drawer";
+import { ScreenHeader } from "app/components/ScreenHeader";
 
 interface Props extends AppStackScreenProps<"Settings"> {}
 
-export const SettingsScreen = ({ navigation }: Props) => {
+export const SettingsScreen = ({ navigation, route }: Props) => {
   const Alert = useAlert();
+
+  const disableDrawer = route.params?.drawer === false;
 
   const confirmLogout = async () => {
     try {
@@ -49,37 +53,39 @@ export const SettingsScreen = ({ navigation }: Props) => {
   };
 
   return (
-    <Screen
-      preset="scroll"
-      contentContainerStyle={$content}
-      safeAreaEdges={NO_TOP_BOTTOM_SAFE_AREA_EDGES}
-    >
-      <ListItem
-        onPress={contactUs}
-        text="Contact Us"
-        leftIcon="email-fast-outline"
-        style={$borderBottom}
-      />
-      <ListItem
-        onPress={navigateToAbout}
-        text="About"
-        leftIcon="information-outline"
-        style={$borderBottom}
-      />
-      <ListItem
-        onPress={navigateToDeleteAccount}
-        text="Delete Account"
-        leftIcon="delete-forever-outline"
-        style={$borderBottom}
-      />
-      <ListItem
-        onPress={confirmLogout}
-        text="Logout"
-        style={$borderBottom}
-        leftIcon="logout-variant"
-      />
-    </Screen>
+    <Drawer navigation={navigation} disabled={disableDrawer}>
+      <Screen
+        preset="scroll"
+        style={$screen}
+        contentContainerStyle={$containerPadding}
+        inDrawer={!disableDrawer}
+      >
+        <ScreenHeader title="Settings" />
+        <ListItem
+          onPress={contactUs}
+          text="Contact Us"
+          leftIcon="email-fast-outline"
+          style={$borderBottom}
+        />
+        <ListItem
+          onPress={navigateToAbout}
+          text="About"
+          leftIcon="information-outline"
+          style={$borderBottom}
+        />
+        <ListItem
+          onPress={navigateToDeleteAccount}
+          text="Delete Account"
+          leftIcon="delete-forever-outline"
+          style={$borderBottom}
+        />
+        <ListItem
+          onPress={confirmLogout}
+          text="Logout"
+          style={$borderBottom}
+          leftIcon="logout-variant"
+        />
+      </Screen>
+    </Drawer>
   );
 };
-
-const $content: ViewStyle = { paddingHorizontal: spacing.md };

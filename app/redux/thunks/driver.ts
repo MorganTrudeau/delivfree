@@ -1,43 +1,40 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Driver } from "delivfree";
-import firestore from "@react-native-firebase/firestore";
-import { setDriver } from "../reducers/driver";
+import { setActiveDriver, setDriver } from "../reducers/driver";
 import { setDrivers } from "../reducers/vendorDrivers";
+import * as DriverApis from "../../apis/driver";
 
 export const createDriver = createAsyncThunk(
   "driver/createDriver",
   async (driver: Driver) => {
-    await firestore().collection("Drivers").doc(driver.id).set(driver);
+    await DriverApis.createDriver(driver);
     return driver;
+  }
+);
+
+export const listenToActiveDriver = createAsyncThunk(
+  "driver/listenToActiveDriver",
+  (driverId: string, { dispatch }) => {
+    return DriverApis.listenToDriver(driverId, (driver) =>
+      dispatch(setActiveDriver(driver))
+    );
   }
 );
 
 export const listenToDriver = createAsyncThunk(
   "driver/listenToDriver",
   (driverId: string, { dispatch }) => {
-    return firestore()
-      .collection("Drivers")
-      .doc(driverId)
-      .onSnapshot((doc) =>
-        dispatch(setDriver((doc?.data() || null) as Driver | null))
-      );
+    return DriverApis.listenToDriver(driverId, (driver) =>
+      dispatch(setDriver(driver))
+    );
   }
 );
 
-export const listenToVendorDrivers = createAsyncThunk(
-  "driver/listenToVendorDrivers",
-  (vendorId: string, { dispatch }) => {
-    return firestore()
-      .collection("Drivers")
-      .where("vendors", "array-contains", vendorId)
-      .onSnapshot((snap) => {
-        const drivers = snap
-          ? snap.docs.reduce(
-              (acc, doc) => ({ ...acc, [doc.id]: doc.data() as Driver }),
-              {} as { [id: string]: Driver }
-            )
-          : ({} as { [id: string]: Driver });
-        dispatch(setDrivers(drivers));
-      });
+export const listenToDrivers = createAsyncThunk(
+  "driver/listenToDrivers",
+  (params: DriverApis.DriversListenerParams, { dispatch }) => {
+    return DriverApis.listenToDrivers((drivers) => {
+      dispatch(setDrivers(drivers));
+    }, params);
   }
 );

@@ -2,11 +2,13 @@ import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+export type FirebaseUser = Pick<
+  FirebaseAuthTypes.User,
+  "email" | "uid" | "emailVerified"
+>;
 export interface AuthState {
   authToken: string | undefined;
-  user:
-    | Pick<FirebaseAuthTypes.User, "email" | "uid" | "emailVerified">
-    | undefined;
+  user: FirebaseUser | undefined;
   isAnonymous: boolean;
   previousAuthToken: string | undefined;
 }

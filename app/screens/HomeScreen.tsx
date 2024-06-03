@@ -20,17 +20,16 @@ import { colors, spacing } from "app/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TextInput } from "app/components/TextInput";
 import { AppStackScreenProps } from "app/navigators";
-import { Cuisine, RestaurantLocation } from "delivfree";
+import { Cuisine, VendorLocation } from "delivfree";
 import LocationModal from "app/components/Modal/LocationModal";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { useAppSelector } from "app/redux/store";
 import { useDebounce } from "app/hooks";
-import { fetchRestaurants } from "app/apis/restaurants";
+import { fetchVendorLocations } from "app/apis/vendorLocations";
 import { sizing } from "app/theme/sizing";
 import { ImageStyle } from "react-native-fast-image";
 import { AdBanner } from "app/components/AdBanner";
-
-const isWeb = Platform.OS === "web";
+import { useIsFocused } from "@react-navigation/native";
 
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
@@ -45,18 +44,20 @@ export const HomeScreen = (props: HomeScreenProps) => {
     []
   );
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    if (!activeUser?.location) {
+    if (isFocused && !activeUser?.location) {
       setTimeout(() => locationModal.current?.snapToIndex(0), 200);
     } else {
       locationModal.current?.close();
     }
-  }, [activeUser?.location]);
+  }, [activeUser?.location, isFocused]);
 
   const listContent = useMemo(
     () => ({
-      paddingTop: spacing.sm,
-      paddingHorizontal: spacing.md,
+      paddingTop: spacing.md,
+      paddingHorizontal: spacing.lg,
       paddingBottom: spacing.sm + insets.bottom,
     }),
     [insets.bottom]
@@ -70,7 +71,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
   );
 
   const navigateToRestaurant = useCallback(
-    (restaurant: RestaurantLocation) =>
+    (restaurant: VendorLocation) =>
       props.navigation.navigate("RestaurantDetail", {
         restaurantId: restaurant.id,
       }),
@@ -79,13 +80,13 @@ export const HomeScreen = (props: HomeScreenProps) => {
 
   const [search, setSearch] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
-  const [restaurants, setRestaurants] = useState<RestaurantLocation[]>([]);
+  const [restaurants, setRestaurants] = useState<VendorLocation[]>([]);
 
   const debounce = useDebounce(300);
 
   const searchRestaurants = debounce(async (query: string) => {
     setSearchLoading(true);
-    const _restaurants = await fetchRestaurants(
+    const _restaurants = await fetchVendorLocations(
       {
         latitude: activeUser?.location?.latitude as number,
         longitude: activeUser?.location?.longitude as number,
@@ -139,8 +140,6 @@ export const HomeScreen = (props: HomeScreenProps) => {
       <ActivityIndicator size={"small"} color={colors.text} />
     );
   }, [searchLoading, search]);
-
-  console.log("RESTAURANTS", restaurants);
 
   return (
     <Drawer navigation={props.navigation}>

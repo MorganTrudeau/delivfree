@@ -5,9 +5,10 @@ export const useDimensions = () => {
   const [dimensions, setDimensions] = useState(Dimensions.get("window"));
 
   useEffect(() => {
-    Dimensions.addEventListener("change", ({ window }) => {
+    const listener = Dimensions.addEventListener("change", ({ window }) => {
       setDimensions(window);
     });
+    return () => listener.remove();
   }, []);
 
   return dimensions;

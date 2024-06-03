@@ -44,33 +44,33 @@ const LocalWebNotificationProvider = ({
   const [onNotification, setOnNotification] =
     useState<(notification: FCMMessage) => void>();
   const [notifications, setNotifications] = useState<FCMMessage[]>([]);
-  const [askingPermission, setAskingPermission] = useState(false);
+  // const [askingPermission, setAskingPermission] = useState(false);
 
-  const handlePermissions = async () => {
-    const isSupported = await isWebNotificationsSupported();
+  // const handlePermissions = async () => {
+  //   const isSupported = await isWebNotificationsSupported();
 
-    if (!isSupported) {
-      return;
-    }
+  //   if (!isSupported) {
+  //     return;
+  //   }
 
-    const notificationPermission = getWebNotificationPermission();
+  //   const notificationPermission = getWebNotificationPermission();
 
-    if (notificationPermission === "granted") {
-      if (!webNotificationsEnabled) {
-        dispatch(setWebNotificationsEnabled(true));
-      }
-    } else if (notificationPermission === "default") {
-      if (!askingPermission) {
-        setAskingPermission(true);
-      }
-    }
-  };
+  //   if (notificationPermission === "granted") {
+  //     if (!webNotificationsEnabled) {
+  //       dispatch(setWebNotificationsEnabled(true));
+  //     }
+  //   } else if (notificationPermission === "default") {
+  //     if (!askingPermission) {
+  //       setAskingPermission(true);
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    if (authToken) {
-      handlePermissions();
-    }
-  }, [authToken]);
+  // useEffect(() => {
+  //   if (authToken) {
+  //     handlePermissions();
+  //   }
+  // }, [authToken]);
 
   const configure = (
     config: { onNotification?: (notification: FCMMessage) => void } = {}
@@ -104,28 +104,28 @@ const LocalWebNotificationProvider = ({
     setNotifications(() => []);
   };
 
-  const handleEnableNotifications = async () => {
-    try {
-      setAskingPermission(false);
-      await messaging().requestPermission();
-      if (getWebNotificationPermission() === "granted") {
-        dispatch(setWebNotificationsEnabled(true));
-      }
-    } catch (error) {
-      console.log("Enable notifications error", error);
-    }
-  };
+  // const handleEnableNotifications = async () => {
+  //   try {
+  //     setAskingPermission(false);
+  //     await messaging().requestPermission();
+  //     if (getWebNotificationPermission() === "granted") {
+  //       dispatch(setWebNotificationsEnabled(true));
+  //     }
+  //   } catch (error) {
+  //     console.log("Enable notifications error", error);
+  //   }
+  // };
 
-  const handleDisableNotifications = () => {
-    setAskingPermission(false);
-  };
+  // const handleDisableNotifications = () => {
+  //   setAskingPermission(false);
+  // };
 
   return (
     <LocalWebNotificationContext.Provider
       value={{ configure, localNotification }}
     >
       {children}
-      {askingPermission && (
+      {/* {askingPermission && (
         <AskMessagingPermission
           style={{
             position: "absolute",
@@ -135,7 +135,7 @@ const LocalWebNotificationProvider = ({
           onEnable={handleEnableNotifications}
           onCancel={handleDisableNotifications}
         />
-      )}
+      )} */}
       <LocalWebNotificationList
         notifications={notifications}
         notificationPress={handleNotificationPress}

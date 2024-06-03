@@ -58,7 +58,7 @@ const en = {
     },
   },
   errors: {
-    heading: "Oops had an error...",
+    heading: "Incomplete",
     invalidEmail: "Invalid email address.",
     auth_email_already_in_use:
       "Email address is already in use by another account.",

@@ -34,7 +34,6 @@ export const PhoneNumberInput = forwardRef<PhoneInput, Props>(
           <Text preset="formLabel" text={label} style={$labelStyle} />
         )}
         <PhoneInput
-          // @ts-ignore
           ref={ref}
           textInputStyle={$input}
           textInputProps={{

@@ -1,44 +1,32 @@
-import { listenToOrders } from "app/apis/orders";
 import { Screen } from "app/components";
 import { Drawer } from "app/components/Drawer";
 import { ModalRef } from "app/components/Modal/CenterModal";
 import { OrdersList } from "app/components/Orders/OrdersList";
-import { RestaurantLocationSelect } from "app/components/RestaurantLocation/RestaurantLocationSelect";
+import { VendorLocationSelect } from "app/components/VendorLocation/VendorLocationSelect";
 import { ScreenHeader } from "app/components/ScreenHeader";
-import { $containerPadding, $row, $screen } from "app/components/styles";
-import { useDataListener } from "app/hooks/useDataLoading";
+import { $containerPadding, $screen } from "app/components/styles";
+import { useOrderData } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { spacing } from "app/theme";
-import { Order, RestaurantLocation } from "delivfree";
-import React, { useCallback, useRef, useState } from "react";
+import { Order, VendorLocation } from "delivfree";
+import React, { useRef, useState } from "react";
 import { ViewStyle } from "react-native";
 
 interface DriverOrdersScreenProps extends AppStackScreenProps<"Orders"> {}
 
 export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
-  const vendorId = useAppSelector((state) => state.vendor.data?.id as string);
+  const vendor = useAppSelector(
+    (state) => state.vendor.activeVendor?.id as string
+  );
 
   const [selectedOrder, setSelectedOrder] = useState<Order>();
-  const [restaurantLocationId, setRestaurantLocationId] = useState("");
+  const [vendorLocation, setVendorLocation] = useState("");
 
-  const handleLoadOrders = useCallback(
-    (limit: number, onData: (orders: Order[]) => void) => {
-      if (!(vendorId && restaurantLocationId)) {
-        return () => {};
-      }
-      return listenToOrders(vendorId, restaurantLocationId, limit, onData);
-    },
-    [vendorId, restaurantLocationId]
-  );
+  const { data, loadData } = useOrderData(vendor, vendorLocation);
 
-  const { data, loadData } = useDataListener<Order>(
-    handleLoadOrders,
-    restaurantLocationId
-  );
-
-  const handleRestaurantLocationSelect = (location: RestaurantLocation) =>
-    setRestaurantLocationId(location.id);
+  const handleVendorLocationSelect = (location: VendorLocation) =>
+    setVendorLocation(location.id);
 
   const createOrderModal = useRef<ModalRef>(null);
 
@@ -55,10 +43,10 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
         inDrawer
       >
         <ScreenHeader title={"Orders"} />
-        <RestaurantLocationSelect
-          selectedLocationId={restaurantLocationId}
-          onSelect={handleRestaurantLocationSelect}
-          style={$restaurantLocationSelect}
+        <VendorLocationSelect
+          selectedLocationId={vendorLocation}
+          onSelect={handleVendorLocationSelect}
+          style={$vendorLocationSelect}
         />
         <OrdersList
           orders={data}
@@ -70,7 +58,7 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
   );
 };
 
-const $restaurantLocationSelect: ViewStyle = {
+const $vendorLocationSelect: ViewStyle = {
   alignSelf: "flex-start",
   marginBottom: spacing.sm,
 };

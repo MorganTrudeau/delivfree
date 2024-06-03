@@ -22,12 +22,18 @@ export const DrawerContext = createContext({
 export const Drawer = ({
   children,
   navigation,
+  disabled,
   ...rest
 }: Partial<DrawerLayoutProps> & {
   navigation: NavigationProp;
+  disabled?: boolean;
 }) => {
   const drawerRef = useRef<DrawerLayout>(null);
   const [open, setOpen] = useState(false);
+
+  if (disabled) {
+    return <>{children}</>;
+  }
 
   return (
     <DrawerContext.Provider value={{ drawerRef, open }}>

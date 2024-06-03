@@ -13,6 +13,7 @@ import { ImageStyle } from "react-native-fast-image";
 import { Edge } from "react-native-safe-area-context";
 
 export const LARGE_SCREEN = 1000;
+export const MAX_CONTENT_WIDTH = 1300;
 
 export const WEB_NOTIFICATION_HEIGHT = 80;
 export const WEB_NOTIFICATION_WIDTH = 350;
@@ -37,6 +38,8 @@ export const MAX_CENTER_MODAL_WIDTH = Platform.select({
 export const MAX_CONTAINER_WIDTH = Platform.select({ default: 700, web: 900 });
 export const LG_SCREEN = Dimensions.get("window").width > 700;
 
+export const isLargeScreen = (width: number) => width > LARGE_SCREEN;
+
 export const $card: ViewStyle = {
   padding: spacing.lg,
   shadowOffset: { width: 0, height: 0 },
@@ -60,7 +63,7 @@ export const $containerPadding: ViewStyle = {
 };
 export const $screen: ViewStyle = {
   flex: 1,
-  maxWidth: 1300,
+  maxWidth: MAX_CONTENT_WIDTH,
 };
 export const $screenHeading: TextStyle = {
   marginBottom: spacing.xl,
@@ -163,6 +166,14 @@ export const $borderBottom: ViewStyle = {
   borderBottomWidth: StyleSheet.hairlineWidth,
   borderBottomColor: colors.border,
 };
+export const $borderTopLight: ViewStyle = {
+  borderTopWidth: StyleSheet.hairlineWidth,
+  borderTopColor: colors.borderLight,
+};
+export const $borderBottomLight: ViewStyle = {
+  borderBottomWidth: StyleSheet.hairlineWidth,
+  borderBottomColor: colors.borderLight,
+};
 
 export const $emptyText: TextStyle = {
   color: colors.textDim,
@@ -222,7 +233,7 @@ export const $imageContainer: StyleProp<ViewStyle> = [
   {
     borderRadius: borderRadius.md,
     width: "100%",
-    maxWidth: 400,
+    // maxWidth: 400,
     aspectRatio: 2.8,
     backgroundColor: colors.background,
   },
@@ -241,4 +252,29 @@ export const $input: TextStyle = {
   // @ts-ignore
   outlineStyle: "none",
   borderColor: colors.border,
+};
+
+export const $adNoText: ImageStyle = {
+  width: "100%",
+  maxWidth: 500,
+  aspectRatio: 4,
+  borderRadius: borderRadius.md,
+};
+export const $adWithText: ImageStyle = {
+  width: "100%",
+  maxWidth: 500,
+  aspectRatio: 4,
+  borderTopRightRadius: borderRadius.md,
+  borderTopLeftRadius: borderRadius.md,
+  borderWidth: StyleSheet.hairlineWidth,
+  borderColor: colors.borderLight,
+  borderBottomWidth: 0,
+};
+
+export const $formLabel: TextStyle = {
+  marginBottom: spacing.xxs,
+};
+
+export const $headerButton: ViewStyle = {
+  marginHorizontal: Platform.select({ web: spacing.md, default: 0 }),
 };

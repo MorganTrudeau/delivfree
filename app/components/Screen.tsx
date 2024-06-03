@@ -20,7 +20,7 @@ import { DrawerIconButton } from "./DrawerIconButton";
 import { Header, HeaderProps } from "./Header";
 import { LogoHeader } from "./LogoHeader";
 import { useDimensions } from "app/hooks/useDimensions";
-import { LARGE_SCREEN } from "./styles";
+import { $flex, LARGE_SCREEN } from "./styles";
 
 interface BaseScreenProps {
   HeaderTitle?: React.ReactNode;
@@ -166,7 +166,9 @@ function ScreenWithoutScrolling(props: ScreenProps) {
   const { style, contentContainerStyle, children } = props;
   return (
     <View style={[$outerStyle, style]}>
-      <View style={[$innerStyle, contentContainerStyle]}>{children}</View>
+      <View style={[$innerStyle, $flex, contentContainerStyle]}>
+        {children}
+      </View>
     </View>
   );
 }

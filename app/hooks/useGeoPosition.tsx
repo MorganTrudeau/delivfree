@@ -2,7 +2,6 @@ import * as Location from "expo-location";
 import { useAlert } from "./useAlert";
 import { useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
-import { LocationPermission, usePermissions } from "./usePermissions";
 import { errorHasCode } from "app/utils/general";
 
 export const useGeoPosition = () => {
@@ -12,10 +11,7 @@ export const useGeoPosition = () => {
 
   const [findingLocation, setFindingLocation] = useState(false);
 
-  const { canUse } = usePermissions();
-
   const removeWatchSubscription = () => {
-    console.log("REMOVE", watchSubscription.current);
     watchSubscription.current && watchSubscription.current.remove();
   };
 
@@ -33,7 +29,9 @@ export const useGeoPosition = () => {
   ) => {
     removeWatchSubscription();
 
-    const hasPermission = await canUse(LocationPermission);
+    const permission = await Location.requestForegroundPermissionsAsync();
+
+    const hasPermission = permission.granted;
 
     if (hasPermission) {
       try {
@@ -71,7 +69,9 @@ export const useGeoPosition = () => {
   const getLocation = async (): Promise<{
     position: { latitude: number; longitude: number };
   } | null> => {
-    const hasPermission = await canUse(LocationPermission);
+    const permission = await Location.requestForegroundPermissionsAsync();
+
+    const hasPermission = permission.granted;
 
     if (hasPermission) {
       try {

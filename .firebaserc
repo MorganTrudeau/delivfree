@@ -10,6 +10,9 @@
         ],
         "consumer": [
           "delivfree-consumer"
+        ],
+        "admin": [
+          "delivfree-admin"
         ]
       }
     }

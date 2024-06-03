@@ -1,4 +1,4 @@
-import { RestaurantLocation } from "delivfree";
+import { VendorLocation } from "delivfree";
 import React, { useCallback, useMemo } from "react";
 import { View, ViewStyle, FlatListProps, RefreshControl } from "react-native";
 import { spacing } from "app/theme";
@@ -7,11 +7,11 @@ import Animated from "react-native-reanimated";
 import RestaurantListItem from "./RestaurantListItem";
 import { EmptyList } from "./EmptyList";
 
-interface Props extends Partial<FlatListProps<RestaurantLocation>> {
-  restaurants: RestaurantLocation[];
+interface Props extends Partial<FlatListProps<VendorLocation>> {
+  restaurants: VendorLocation[];
   loadMore?: () => void;
   refreshing?: boolean;
-  onPress?: (restaurant: RestaurantLocation) => void;
+  onPress?: (restaurant: VendorLocation) => void;
 }
 
 const RestaurantsList = ({
@@ -19,6 +19,7 @@ const RestaurantsList = ({
   loadMore,
   refreshing,
   onPress,
+  onRefresh,
   ...rest
 }: Props) => {
   const renderItem = useCallback(
@@ -29,8 +30,11 @@ const RestaurantsList = ({
   );
   const renderSeparator = useCallback(() => <View style={$separator} />, []);
   const Refresh = useMemo(
-    () => <RefreshControl onRefresh={loadMore} refreshing={!!refreshing} />,
-    [loadMore]
+    () =>
+      onRefresh ? (
+        <RefreshControl onRefresh={onRefresh} refreshing={!!refreshing} />
+      ) : undefined,
+    [onRefresh]
   );
   const renderListEmpty = useMemo(
     () => <EmptyList title="No restaurant locations found" />,

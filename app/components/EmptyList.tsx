@@ -9,14 +9,15 @@ interface Props {
 
 export const EmptyList = ({ title }: Props) => {
   return (
-    <Text preset="bold" style={$text}>
+    <Text preset="semibold" style={$text}>
       {title}
     </Text>
   );
 };
 
 const $text: TextStyle = {
-  margin: spacing.md,
+  marginHorizontal: spacing.md,
+  marginTop: spacing.md,
   textAlign: "center",
   alignSelf: "center",
 };

@@ -2,13 +2,13 @@ import React, { forwardRef } from "react";
 import ReanimatedCenterModal, { ModalRef } from "./Modal/CenterModal";
 import { View } from "react-native";
 import { LocationInput } from "./LocationInput";
-import { Location } from "delivfree";
+import { GeoLocation } from "delivfree";
 import { spacing } from "app/theme";
 import { MAX_CENTER_MODAL_WIDTH } from "./styles";
 import { Text } from "./Text";
 
 interface Props {
-  onLocationSelected: (location: Location) => void;
+  onLocationSelected: (location: GeoLocation) => void;
   shortenAddress: boolean;
 }
 

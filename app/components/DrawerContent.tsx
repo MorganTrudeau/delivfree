@@ -1,7 +1,6 @@
 import React, { FC, useMemo } from "react";
 import { FlatList, Platform, View, ViewStyle } from "react-native";
 import { ListItem } from "./ListItem";
-import { isRTL } from "app/i18n";
 import { colors, spacing } from "app/theme";
 import { NavigationProp } from "app/navigators";
 import { rateApp } from "app/utils/rate";
@@ -19,6 +18,7 @@ type DrawerItem = {
 };
 
 const ConsumerItems: DrawerItem[] = [
+  { text: "Home", route: "Home" },
   {
     text: "Sign up as a Vendor",
   },
@@ -32,11 +32,11 @@ const ConsumerItems: DrawerItem[] = [
   { text: "Settings", route: "Settings" },
 ];
 
-const VendorItems = [
+const VendorItems: DrawerItem[] = [
   { text: "Home", route: "Home" },
   { text: "Orders", route: "Orders" },
   { text: "Locations", route: "Locations" },
-  { text: "Drivers", route: "Drivers" },
+  { text: "Positions", route: "Positions" },
   { text: "Subscription", route: "Subscription" },
   { text: "Profile", route: "Profile" },
   {
@@ -46,7 +46,7 @@ const VendorItems = [
   { text: "Settings", route: "Settings" },
 ];
 
-const DriverItems = [
+const DriverItems: DrawerItem[] = [
   { text: "Orders", route: "Orders" },
   { text: "Subscription", route: "Subscription" },
   { text: "Profile", route: "Profile" },
@@ -54,6 +54,14 @@ const DriverItems = [
     text: "Rate App",
     include: () => Platform.OS !== "web",
   },
+  { text: "Settings", route: "Settings" },
+];
+
+const AdminItems: DrawerItem[] = [
+  { text: "Vendors", route: "Vendors" },
+  { text: "Drivers", route: "Drivers" },
+  { text: "Users", route: "Users" },
+  { text: "Ad Config", route: "AdConfig" },
   { text: "Settings", route: "Settings" },
 ];
 
@@ -74,6 +82,8 @@ export const DrawerContent = ({
         ? VendorItems
         : userType === "driver"
         ? DriverItems
+        : userType === "admin"
+        ? AdminItems
         : ConsumerItems,
     [userType]
   );
@@ -151,7 +161,6 @@ const DrawerItem: FC<DemoListItem> = ({
   onItemPress,
   activeRoute,
 }) => {
-  const icon = isRTL ? "caretLeft" : "caretRight";
   const isRateItem = item.text === "Rate App";
 
   return (
@@ -168,6 +177,7 @@ const DrawerItem: FC<DemoListItem> = ({
           rateApp(false);
         } else if (item.route) {
           onItemPress();
+          // @ts-ignore
           return navigation.navigate(item.route, item.params);
         }
       }}

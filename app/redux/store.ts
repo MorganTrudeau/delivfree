@@ -18,17 +18,16 @@ import {
   REGISTER,
 } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import reactotron from "app/services/reactotron/reactotron";
-import { Platform } from "react-native";
 import vendor from "./reducers/vendor";
 import customers from "./reducers/customers";
-import restaurantLocations from "./reducers/restaurantLocations";
+import vendorLocations from "./reducers/vendorLocations";
 import subscription from "./reducers/subscription";
 import driver from "./reducers/driver";
 import vendorDrivers from "./reducers/vendorDrivers";
+import positions from "./reducers/positions";
 
 const persistConfig = {
-  key: "2",
+  key: "4",
   storage: AsyncStorage,
   version: 0,
   tranforms: [userTransform],
@@ -41,17 +40,13 @@ const rootReducer = combineReducers({
   appConfig,
   vendor,
   customers,
-  restaurantLocations,
+  vendorLocations,
   subscription,
   vendorDrivers,
+  positions,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-const enhancers =
-  Platform.OS !== "web" && __DEV__ && reactotron.createEnhancer
-    ? [reactotron.createEnhancer()]
-    : undefined;
 
 // const enhancers =
 //   typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -63,7 +58,6 @@ const enhancers =
 export const store = configureStore({
   reducer: persistedReducer,
   devTools: process.env.NODE_ENV !== "production",
-  enhancers,
   middleware: getDefaultMiddleware({
     serializableCheck: {
       ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],

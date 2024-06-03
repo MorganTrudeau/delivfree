@@ -1,6 +1,6 @@
 import { useHeaderHeight } from "app/hooks";
 import React, { useMemo } from "react";
-import FastImage, { ImageStyle } from "react-native-fast-image";
+import { ImageStyle } from "react-native-fast-image";
 import { AppLogo } from "./AppLogo";
 
 const imageRatio = 2320 / 316;

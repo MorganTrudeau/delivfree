@@ -1,12 +1,14 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { RootState } from "app/redux/store";
 import { listenToCustomers } from "app/redux/thunks/customers";
-import { listenToVendorDrivers } from "app/redux/thunks/driver";
-import { listenToRestuarantLocations } from "app/redux/thunks/restaurantLocations";
+import { listenToPositions } from "app/redux/thunks/positions";
+import { listenToVendorLocations } from "app/redux/thunks/vendorLocations";
+import { fetchProducts } from "app/redux/thunks/stripe";
 import { listenToVendorSubscription } from "app/redux/thunks/subscription";
-import { listenToVendor } from "app/redux/thunks/vendor";
+import { listenToActiveVendor } from "app/redux/thunks/vendor";
 import { Component } from "react";
 import { ConnectedProps, connect } from "react-redux";
+import { listenToVendorLicenses } from "app/redux/thunks/licenses";
 
 interface Props extends ReduxProps {}
 
@@ -27,6 +29,7 @@ export class VendorDataLoading extends Component<Props> {
   };
 
   componentDidMount(): void {
+    this.props.fetchProducts();
     this.vendorLoaded(this.props) && this.listenToVendorData();
     this.vendorSelected(this.props) && this.listenToVendor();
   }
@@ -59,33 +62,38 @@ export class VendorDataLoading extends Component<Props> {
       return;
     }
     this.unsubscribeVendorListener = await this.props
-      .listenToVendor(vendorId)
+      .listenToActiveVendor(vendorId)
       .then(unwrapResult);
   };
 
   listenToVendorData = async () => {
     const { vendor } = this.props;
+
     if (!vendor) {
       return;
     }
 
     const customersListener = await this.props
-      .listenToCustomers(vendor.id)
+      .listenToCustomers({ vendor: vendor.id })
       .then(unwrapResult);
-    const restaurantLocationsListener = await this.props
-      .listenToRestuarantLocations(vendor.id)
+    const vendorLocationsListener = await this.props
+      .listenToVendorLocations({ vendor: vendor.id })
       .then(unwrapResult);
     const subscriptionListener = await this.props
       .listenToVendorSubscription(vendor.id)
       .then(unwrapResult);
-    const driversListener = await this.props
-      .listenToVendorDrivers(vendor.id)
+    const positionsListener = await this.props
+      .listenToPositions(vendor.id)
+      .then(unwrapResult);
+    const licensesListener = await this.props
+      .listenToVendorLicenses(vendor.id)
       .then(unwrapResult);
 
     this.vendorDataListeners.add(customersListener);
-    this.vendorDataListeners.add(restaurantLocationsListener);
+    this.vendorDataListeners.add(vendorLocationsListener);
     this.vendorDataListeners.add(subscriptionListener);
-    this.vendorDataListeners.add(driversListener);
+    this.vendorDataListeners.add(positionsListener);
+    this.vendorDataListeners.add(licensesListener);
   };
 
   render() {
@@ -94,17 +102,19 @@ export class VendorDataLoading extends Component<Props> {
 }
 
 const mapState = (state: RootState) => ({
-  vendor: state.vendor.data,
+  vendor: state.vendor.activeVendor,
   user: state.user.user,
-  driver: state.driver.data,
+  driver: state.driver.activeDriver,
 });
 
 const mapDispatch = {
-  listenToVendor,
+  listenToActiveVendor,
   listenToVendorSubscription,
-  listenToRestuarantLocations,
+  listenToVendorLicenses,
+  listenToVendorLocations,
   listenToCustomers,
-  listenToVendorDrivers,
+  listenToPositions,
+  fetchProducts,
 };
 
 const connector = connect(mapState, mapDispatch);

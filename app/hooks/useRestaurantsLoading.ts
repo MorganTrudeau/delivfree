@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import firestore from "@react-native-firebase/firestore";
-import { Cuisine, Vendor, RestaurantLocation } from "delivfree";
-import { fetchRestaurants } from "app/apis/restaurants";
+import { Cuisine, VendorLocation } from "delivfree";
+import { fetchVendorLocations } from "app/apis/vendorLocations";
 import { useAppSelector } from "app/redux/store";
 
 const PAGE_SIZE = 15;
@@ -11,7 +10,7 @@ export const useRestaurantsLoading = (cuisine: Cuisine) => {
 
   const activeUser = useAppSelector((state) => state.user.user);
 
-  const [restaurants, setRestaurants] = useState<RestaurantLocation[]>(
+  const [restaurants, setRestaurants] = useState<VendorLocation[]>(
     cache.current.listCache[cuisine]
   );
 
@@ -20,7 +19,7 @@ export const useRestaurantsLoading = (cuisine: Cuisine) => {
   const loadRestaurants = useCallback(async () => {
     page.current = page.current + 1;
     const limit = page.current * PAGE_SIZE;
-    const restaurants = await fetchRestaurants(
+    const restaurants = await fetchVendorLocations(
       {
         latitude: activeUser?.location?.latitude as number,
         longitude: activeUser?.location?.longitude as number,
@@ -31,12 +30,17 @@ export const useRestaurantsLoading = (cuisine: Cuisine) => {
     cache.current.updateCache(cuisine, restaurants);
   }, [cuisine]);
 
+  const refreshRestaurants = useCallback(() => {
+    page.current = 0;
+    loadRestaurants();
+  }, [loadRestaurants]);
+
   useEffect(() => {
     setRestaurants(cache.current.listCache[cuisine]);
     loadRestaurants();
   }, [loadRestaurants, cuisine]);
 
-  return { restaurants, loadRestaurants };
+  return { restaurants, loadRestaurants, refreshRestaurants };
 };
 
 let _restaurantCache: RestaurantCache;
@@ -47,9 +51,9 @@ export const getRestaurantCache = () => {
   return _restaurantCache;
 };
 class RestaurantCache {
-  cache: { [id: string]: RestaurantLocation } = {};
-  listCache: { [cuisine: string]: RestaurantLocation[] } = {};
-  updateCache = (cuisine: string, data: RestaurantLocation[]) => {
+  cache: { [id: string]: VendorLocation } = {};
+  listCache: { [cuisine: string]: VendorLocation[] } = {};
+  updateCache = (cuisine: string, data: VendorLocation[]) => {
     this.listCache[cuisine] = data;
     this.cache = {
       ...this.cache,

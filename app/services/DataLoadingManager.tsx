@@ -3,7 +3,7 @@ import React from "react";
 import DriverDataLoading from "./DriverDataLoading";
 import VendorDataLoading from "./VendorDataLoading";
 import { ConsumerDataLoading } from "./ConsumerDataLoading";
-import { AdminDataLoading } from "./AdminDataLoading";
+import AdminDataLoading from "./AdminDataLoading";
 
 export const DataLoadingManager = () => {
   const userType = useAppSelector((state) => state.appConfig.userType);

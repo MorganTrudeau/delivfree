@@ -3,7 +3,8 @@ import React, {
   Ref,
   forwardRef,
   useCallback,
-  useState,
+  useImperativeHandle,
+  useRef,
 } from "react";
 import { Portal } from "react-native-portalize";
 import GHMBottomSheet, {
@@ -11,9 +12,9 @@ import GHMBottomSheet, {
   BottomSheetBackdropProps,
   BottomSheetProps,
 } from "@gorhom/bottom-sheet";
-import { ViewStyle } from "react-native";
+import { Platform, ViewStyle } from "react-native";
 import { colors } from "app/theme";
-import { InteractionManagerView } from "../InteractionManagerView";
+import ReanimatedCenterModal, { ModalRef } from "./CenterModal";
 
 const snapPoints = ["92%"];
 
@@ -27,6 +28,7 @@ const BottomSheetWithoutRef = (
   { children, ...rest }: Props,
   ref: Ref<GHMBottomSheet>
 ) => {
+  console.log("MOVEI");
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop
@@ -54,13 +56,48 @@ const BottomSheetWithoutRef = (
         backgroundStyle={$backgroundStyle}
         {...rest}
       >
-        <InteractionManagerView>{children}</InteractionManagerView>
+        {children}
       </GHMBottomSheet>
     </Portal>
   );
 };
 
-export const BottomSheet = forwardRef(BottomSheetWithoutRef);
+const BottomSheetWeb = forwardRef<BottomSheetRef, Props>(
+  function BottomSheetWeb(props, ref) {
+    const modal = useRef<ModalRef>(null);
+
+    console.log("RENDER");
+
+    const open = () => {
+      modal.current?.open();
+    };
+    const close = () => modal.current?.close();
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        snapToIndex: open,
+        snapToPosition: open,
+        expand: open,
+        close: close,
+        collapse: close,
+        forceClose: close,
+      }),
+      []
+    );
+
+    return (
+      <ReanimatedCenterModal ref={modal}>
+        {props.children}
+      </ReanimatedCenterModal>
+    );
+  }
+);
+
+export const BottomSheet = Platform.select({
+  web: BottomSheetWeb,
+  default: forwardRef(BottomSheetWithoutRef),
+});
 
 const $backgroundStyle: ViewStyle = {
   backgroundColor: colors.background,

@@ -5,45 +5,48 @@ import { ModalRef } from "app/components/Modal/CenterModal";
 import { OrderCountAlert } from "app/components/OrderCountAlert";
 import { CreateOrderModal } from "app/components/Orders/CreateOrder";
 import { OrdersList } from "app/components/Orders/OrdersList";
-import { RestaurantLocationSelect } from "app/components/RestaurantLocation/RestaurantLocationSelect";
+import { VendorLocationSelect } from "app/components/VendorLocation/VendorLocationSelect";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import { $containerPadding, $screen } from "app/components/styles";
-import { useAlert } from "app/hooks";
-import { useDataListener } from "app/hooks/useDataLoading";
+import { useAlert, useOrderData } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
-import { useAppSelector } from "app/redux/store";
+import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { spacing } from "app/theme";
-import { Order, RestaurantLocation } from "delivfree";
-import React, { useCallback, useRef, useState } from "react";
+import { Order, VendorLocation } from "delivfree";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { ViewStyle } from "react-native";
+import driver from "app/redux/reducers/driver";
+import { listenToDrivers } from "app/redux/thunks/driver";
+import { useReduxListener } from "app/hooks/useReduxListener";
 
 interface VendorOrdersScreenProps extends AppStackScreenProps<"Orders"> {}
 
 export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
   const Alert = useAlert();
 
-  const vendorId = useAppSelector((state) => state.vendor.data?.id as string);
+  const dispatch = useAppDispatch();
+  const vendor = useAppSelector(
+    (state) => state.vendor.activeVendor?.id as string
+  );
+  const licenses = useAppSelector((state) => state.vendor.licenses);
 
   const [selectedOrder, setSelectedOrder] = useState<Order>();
-  const [restaurantLocationId, setRestaurantLocationId] = useState("");
+  const [vendorLocation, setVendorLocation] = useState("");
 
-  const handleLoadOrders = useCallback(
-    (limit: number, onData: (orders: Order[]) => void) => {
-      if (!(vendorId && restaurantLocationId)) {
-        return () => {};
-      }
-      return listenToOrders(vendorId, restaurantLocationId, limit, onData);
-    },
-    [vendorId, restaurantLocationId]
+  const vendorDrivers = useMemo(
+    () => Object.values(licenses).map((l) => l.driver),
+    [licenses]
   );
 
-  const { data, loadData } = useDataListener<Order>(
-    handleLoadOrders,
-    restaurantLocationId
-  );
+  const driverListener = useCallback(() => {
+    return dispatch(listenToDrivers({ id: vendorDrivers }));
+  }, [vendorDrivers]);
+  useReduxListener(driverListener);
 
-  const handleRestaurantLocationSelect = (location: RestaurantLocation) =>
-    setRestaurantLocationId(location.id);
+  const { data, loadData } = useOrderData(vendor, vendorLocation);
+
+  const handleVendorLocationSelect = (location: VendorLocation) =>
+    setVendorLocation(location.id);
 
   const createOrderModal = useRef<ModalRef>(null);
 
@@ -52,7 +55,7 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
     createOrderModal.current?.open();
   };
   const createOrder = () => {
-    if (!restaurantLocationId) {
+    if (!vendorLocation) {
       return Alert.alert(
         "Select a location",
         "Please select a restaurant location for your order."
@@ -80,10 +83,10 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
           title="Orders"
         />
         <OrderCountAlert style={$orderCount} />
-        <RestaurantLocationSelect
-          selectedLocationId={restaurantLocationId}
-          onSelect={handleRestaurantLocationSelect}
-          style={$restaurantLocationSelect}
+        <VendorLocationSelect
+          selectedLocationId={vendorLocation}
+          onSelect={handleVendorLocationSelect}
+          style={$vendorLocationSelect}
         />
         <OrdersList
           orders={data}
@@ -95,14 +98,14 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
           onClose={closeCreateOrder}
           editOrder={selectedOrder}
           onDismiss={onCreateOrderClose}
-          restaurantLocationId={restaurantLocationId}
+          vendorLocationId={vendorLocation}
         />
       </Screen>
     </Drawer>
   );
 };
 
-const $restaurantLocationSelect: ViewStyle = {
+const $vendorLocationSelect: ViewStyle = {
   alignSelf: "flex-start",
   marginBottom: spacing.sm,
 };

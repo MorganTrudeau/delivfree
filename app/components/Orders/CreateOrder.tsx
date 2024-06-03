@@ -17,29 +17,43 @@ import { useAppSelector } from "app/redux/store";
 import { Button } from "../Button";
 import firestore from "@react-native-firebase/firestore";
 import { TextField } from "../TextField";
-import { $row } from "../styles";
+import { $formLabel, $row } from "../styles";
 import { useAlert } from "app/hooks";
+import { shallowEqual } from "react-redux";
+import { DropDownPicker } from "../DropDownPicker";
 
 interface CreateOrderProps {
   onClose: () => void;
   editOrder?: Order;
-  restaurantLocationId: string;
+  vendorLocationId: string;
 }
 
 export const CreateOrder = ({
   onClose,
   editOrder,
-  restaurantLocationId,
+  vendorLocationId,
 }: CreateOrderProps) => {
   const Alert = useAlert();
 
   const amountInput = useRef<RNTextInput>(null);
   const tipInput = useRef<RNTextInput>(null);
 
-  const { customers, vendorId } = useAppSelector((state) => ({
-    customers: state.customers.data,
-    vendorId: state.vendor.data?.id as string,
-  }));
+  const { customers, vendorId, drivers } = useAppSelector(
+    (state) => ({
+      customers: state.customers.data,
+      vendorId: state.vendor.activeVendor?.id as string,
+      drivers: state.vendorDrivers.data,
+    }),
+    shallowEqual
+  );
+
+  const driverDropdownItems = useMemo(
+    () =>
+      Object.values(drivers)
+        .filter((d) => d.vendorLocations?.includes(vendorLocationId))
+        .map((d) => ({ value: d.id, label: d.firstName + " " + d.lastName })),
+    [drivers, vendorLocationId]
+  );
 
   const [createLoading, setCreateLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -53,7 +67,7 @@ export const CreateOrder = ({
       date: moment().valueOf(),
       status: "in-progress",
       vendor: vendorId,
-      restaurantLocation: restaurantLocationId,
+      vendorLocation: vendorLocationId,
       driver: null,
     }
   );
@@ -166,7 +180,7 @@ export const CreateOrder = ({
         }
         initialPhoneNumber={customer?.phoneNumber}
         style={$input}
-        restaurantLocation={restaurantLocationId}
+        vendorLocation={vendorLocationId}
       />
       <TextField
         label="Description"
@@ -187,7 +201,6 @@ export const CreateOrder = ({
         onSubmitEditing={() => tipInput.current?.focus()}
         onFocus={() => {
           let strippedValue = order.amount.replace(/[$,]/g, "");
-          console.log(strippedValue)
           if (!Number(strippedValue)) {
             strippedValue = "";
           }
@@ -213,6 +226,26 @@ export const CreateOrder = ({
         ref={tipInput}
         numberInput
       />
+      {!!driverDropdownItems.length && (
+        <>
+          <Text
+            preset="formLabel"
+            style={[$formLabel, { marginTop: spacing.sm }]}
+          >
+            Driver
+          </Text>
+          <DropDownPicker
+            items={driverDropdownItems}
+            onSelect={(values) =>
+              setOrder((o) => ({ ...o, driver: values[0] }))
+            }
+            selectedValues={order.driver ? [order.driver] : undefined}
+            placeholder={"Select driver (optional)"}
+            singleSelect
+          />
+        </>
+      )}
+
       <Button
         onPress={createOrder}
         text={editOrder ? "Update Order" : "Create Order"}

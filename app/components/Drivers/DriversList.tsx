@@ -1,9 +1,9 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { FlatList, FlatListProps, ViewStyle } from "react-native";
 import { Driver } from "delivfree";
-import { TableHeaders } from "../TableHeaders";
+import { TableHeader, TableHeaders } from "../TableHeaders";
 import { useDimensions } from "app/hooks/useDimensions";
-import { $flex, LARGE_SCREEN } from "../styles";
+import { $flex, isLargeScreen } from "../styles";
 import { DriverItemMobile } from "./DriverItemMobile";
 import { DriverItemWeb } from "./DriverItemWeb";
 import { Props as DriverItemProps } from "./DriverItem";
@@ -12,33 +12,56 @@ import { EmptyList } from "../EmptyList";
 
 interface Props extends Partial<FlatListProps<Driver>> {
   drivers: Driver[];
+  onPress?: (driver: Driver) => void;
+  showStatus?: boolean;
 }
 
-export const DriversList = ({ drivers, ...rest }: Props) => {
+export const DriversList = ({
+  drivers,
+  onPress,
+  showStatus,
+  ...rest
+}: Props) => {
   const insets = useSafeAreaInsets();
-  const dimensions = useDimensions();
-  const largeScreenLayout = dimensions.width > LARGE_SCREEN;
+  const { width } = useDimensions();
+  const largeScreen = isLargeScreen(width);
+
+  const headers = useMemo(() => {
+    const h: TableHeader[] = [{ title: "Name" }, { title: "Phone Number" }];
+
+    if (showStatus) {
+      h.push({ title: "Status" });
+    }
+
+    h.push({ title: "Updates", maxWidth: 100 });
+
+    return h;
+  }, [showStatus]);
 
   const renderItem = useCallback(
     ({ item }: { item: Driver }) => {
-      const props: DriverItemProps = { driver: item };
-      return largeScreenLayout ? (
+      const props: DriverItemProps = {
+        driver: item,
+        onPress: () => onPress && onPress(item),
+        showStatus,
+      };
+      return largeScreen ? (
         <DriverItemWeb {...props} />
       ) : (
         <DriverItemMobile {...props} />
       );
     },
-    [largeScreenLayout]
+    [largeScreen, onPress]
   );
 
   const renderListEmpty = useCallback(
-    () => <EmptyList title="You have not hired any drivers" />,
+    () => <EmptyList title="No drivers" />,
     []
   );
 
   return (
     <>
-      {largeScreenLayout && <TableHeaders headers={headers} />}
+      {largeScreen && <TableHeaders headers={headers} />}
       <FlatList
         data={drivers}
         renderItem={renderItem}
@@ -50,10 +73,5 @@ export const DriversList = ({ drivers, ...rest }: Props) => {
     </>
   );
 };
-
-const headers: { title: string }[] = [
-  { title: "Name" },
-  { title: "Phone Number" },
-];
 
 const $content: ViewStyle = { flexGrow: 1 };

@@ -13,23 +13,30 @@ import { createUser, updateUser } from "app/apis/user";
 import { useAlert } from "app/hooks";
 import { Card } from "app/components/Card";
 import { LogoutButton } from "app/components/LogoutButton";
+import { getAppType } from "app/utils/general";
+import { User } from "functions/src/types";
 
 export const EditUserScreen = () => {
   const Alert = useAlert();
 
   const lastNameInput = useRef<RNInput>(null);
+  const emailInput = useRef<RNInput>(null);
 
   const authToken = useAppSelector((state) => state.auth.authToken as string);
+  const firebaseUser = useAppSelector((state) => state.auth.user);
   const user = useAppSelector((state) => state.user.user);
   const dispatch = useAppDispatch();
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState(firebaseUser?.email || "");
 
   const onFirstNameSubmit = useCallback(
     () => lastNameInput.current?.focus(),
     []
   );
+
+  const onLastNameSubmit = useCallback(() => emailInput.current?.focus(), []);
 
   const handleCreateUser = useCallback(async () => {
     if (!(firstName && lastName)) {
@@ -38,12 +45,19 @@ export const EditUserScreen = () => {
         "Please enter your first and last name."
       );
     }
-    const newUser = {
+    const newUser: User = {
       id: authToken,
       firstName,
       lastName,
-      consumer: {},
+      email,
+      location: null,
     };
+
+    if (getAppType() === "ADMIN") {
+      newUser.admin = {};
+    } else {
+      newUser.consumer = {};
+    }
 
     try {
       setLoading(true);
@@ -76,7 +90,7 @@ export const EditUserScreen = () => {
         <TextInput
           onChangeText={setFirstName}
           placeholder="First Name"
-          style={$firstNameInput}
+          style={$input}
           value={firstName}
           returnKeyType={"next"}
           onSubmitEditing={onFirstNameSubmit}
@@ -86,6 +100,14 @@ export const EditUserScreen = () => {
           onChangeText={setLastName}
           placeholder="Last Name"
           value={lastName}
+          style={$input}
+          onSubmitEditing={onLastNameSubmit}
+        />
+        <TextInput
+          ref={emailInput}
+          onChangeText={setEmail}
+          placeholder="Email"
+          value={email}
           onSubmitEditing={handleCreateUser}
         />
         <Button
@@ -96,11 +118,12 @@ export const EditUserScreen = () => {
           RightAccessory={Loading}
         />
       </Card>
+      <LogoutButton style={{ marginTop: spacing.lg, alignSelf: "center" }} />
     </Screen>
   );
 };
 
 const $screen = { padding: spacing.md };
 const $header: TextStyle = { marginBottom: spacing.lg, alignSelf: "center" };
-const $firstNameInput: ViewStyle = { marginBottom: spacing.md };
+const $input: ViewStyle = { marginBottom: spacing.md };
 const $button = { marginTop: spacing.lg };

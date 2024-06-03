@@ -1,4 +1,4 @@
-import { Vendor, RestaurantLocation } from "delivfree";
+import { VendorLocation } from "delivfree";
 import React from "react";
 import { $image, $imageContainer } from "./styles";
 import { Pressable, View } from "react-native";
@@ -7,14 +7,14 @@ import { Text } from "./Text";
 import { spacing } from "app/theme";
 
 interface Props {
-  restaurant: RestaurantLocation;
-  onPress?: (restaurant: RestaurantLocation) => void;
+  restaurant: VendorLocation;
+  onPress?: (restaurant: VendorLocation) => void;
 }
 
 const RestaurantListItem = ({ restaurant, onPress }: Props) => {
   return (
     <Pressable onPress={() => onPress?.(restaurant)}>
-      <View style={$imageContainer}>
+      <View style={[$imageContainer, { maxWidth: 400 }]}>
         <FastImage source={{ uri: restaurant.image }} style={$image} />
       </View>
       <Text preset={"subheading"} style={$title}>

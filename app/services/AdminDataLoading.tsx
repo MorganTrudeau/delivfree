@@ -1,7 +1,9 @@
 import { Component } from "react";
 
-export class AdminDataLoading extends Component {
+class AdminDataLoading extends Component {
   render() {
     return null;
   }
 }
+
+export default AdminDataLoading;

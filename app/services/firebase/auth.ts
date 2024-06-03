@@ -14,7 +14,7 @@ import { logAnalytics } from "./analytics";
 import { listenToUser } from "app/apis/user";
 import { getAppType } from "app/utils/general";
 import { setVendor } from "app/redux/reducers/vendor";
-import { setDriver } from "app/redux/reducers/driver";
+import { setActiveDriver } from "app/redux/reducers/driver";
 
 export const FirebaseAuth = () => {
   const authToken = useRef<string>();
@@ -51,7 +51,7 @@ export const FirebaseAuth = () => {
                 dispatch(setVendor(null));
               }
               if (!user?.driver) {
-                dispatch(setDriver(null));
+                dispatch(setActiveDriver(null));
               }
             }
           });

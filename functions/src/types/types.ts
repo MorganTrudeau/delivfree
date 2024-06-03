@@ -1,9 +1,38 @@
 import { Cuisines } from "./enums";
 
+export type Status = "approved" | "denied" | "pending";
+export type License = {
+  id: string;
+  driver: string;
+  position: string;
+  vendor: string;
+  vendorLocation: string;
+  fullTimePositions: number;
+  partTimePositions: number;
+  status: Status;
+  statusMessage?: string | null;
+  updated: number;
+};
+export type Positions = {
+  id: string;
+  vendorLocation: string;
+  vendor: string;
+  maxFullTime: number;
+  maxPartTime: number;
+  filledFullTime: number;
+  filledPartTime: number;
+  hasOpenings: boolean;
+  licenses: string[];
+  status: Status;
+  updated: number;
+  latitude: number;
+  longitude: number;
+  geohash: string;
+};
 export type DateRange = { start: string; end: string };
 export type ModalRef = { open: () => void; close: () => void };
 export type UserType = "consumer" | "driver" | "vendor" | "admin";
-export type Location = {
+export type GeoLocation = {
   latitude: number;
   longitude: number;
   address: string;
@@ -13,14 +42,15 @@ export type User = {
   id: string;
   firstName: string;
   lastName: string;
-  location: Location | null;
+  location: GeoLocation | null;
+  email: string;
   consumer?: {};
   vendor?: { ids: string[] };
   driver?: { id: string };
   admin?: {};
 };
 export type Cuisine = (typeof Cuisines)[keyof typeof Cuisines];
-export type RestaurantLocation = {
+export type VendorLocation = {
   address: string;
   latitude: number;
   longitude: number;
@@ -36,6 +66,9 @@ export type RestaurantLocation = {
   menuLink: string;
   orderLink: string;
   image: string;
+  positions: string;
+  status: Status;
+  updated: number;
 };
 export type Vendor = {
   id: string;
@@ -45,11 +78,15 @@ export type Vendor = {
   callingCountry: CountryCode;
   callingCode: string;
   phoneNumber: string;
+  email: string;
   registration: {
-    status: "pending" | "approved" | "declined";
-    message?: string;
+    status: Status;
+    message: string | null;
   };
   users: string[];
+  updated: number;
+  pendingLocations: string[];
+  pendingPositions: string[];
 };
 export type Driver = {
   id: string;
@@ -58,13 +95,21 @@ export type Driver = {
   lastName: string;
   callingCountry: CountryCode;
   callingCode: string;
+  email: string;
   phoneNumber: string;
   registration: {
-    status: "pending" | "approved" | "declined";
-    message?: string;
+    status: Status;
+    message: string | null;
   };
+  driversLicenseFront: string;
+  driversLicenseBack: string;
   vendors: string[];
+  vendorLocations: string[];
+  licenses: string[];
   parentDrivers: { [vendorId: string]: string /* parent driver iD */ };
+  updated: number;
+  location: GeoLocation;
+  pendingLicenses: string[];
 };
 export type OrderStatus =
   | "in-progress"
@@ -81,7 +126,7 @@ export type Order = {
   status: OrderStatus;
   date: number;
   vendor: string;
-  restaurantLocation: string;
+  vendorLocation: string;
   driver: null | string;
 };
 export type OrderCount = { count: number };
@@ -91,9 +136,9 @@ export type Customer = {
   callingCountry: CountryCode;
   callingCode: string;
   phoneNumber: string;
-  location: Location;
+  location: GeoLocation;
   vendor: string;
-  restaurantLocation: string;
+  vendorLocation: string;
 };
 export type LatLng = { latitude: number; longitude: number };
 export type IconName =

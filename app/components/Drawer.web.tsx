@@ -39,9 +39,11 @@ export const DrawerContext = createContext({
 export const Drawer = ({
   children,
   navigation,
+  disabled,
 }: {
   children: ViewProps["children"];
   navigation: NavigationProp;
+  disabled?: boolean;
 }) => {
   const { width } = useDimensions();
   const largeScreenLayout = width > LARGE_SCREEN;
@@ -95,6 +97,10 @@ export const Drawer = ({
       { translateX: interpolate(openAnimation.value, [0, 1], [0, 100]) },
     ],
   }));
+
+  if (disabled) {
+    return <>{children}</>;
+  }
 
   return (
     <DrawerContext.Provider value={{ drawerRef, open }}>

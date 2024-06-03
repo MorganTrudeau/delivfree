@@ -1,6 +1,7 @@
 import { Button, Screen, Text } from "app/components";
 import { Card } from "app/components/Card";
-import { $containerPadding } from "app/components/styles";
+import { LogoutButton } from "app/components/LogoutButton";
+import { $containerPadding, $flex } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
 import { spacing } from "app/theme";
 import React from "react";
@@ -21,7 +22,7 @@ export const VendorDriverSelectScreen = (
   };
   return (
     <Screen preset="scroll" contentContainerStyle={$containerPadding}>
-      <Card>
+      <Card smallStyle={$flex}>
         <Text preset="heading">What is your role?</Text>
         <Text style={$message}>
           Choose whether you are registering as a Restaurant or a Driver.
@@ -37,6 +38,7 @@ export const VendorDriverSelectScreen = (
           style={$button}
         />
       </Card>
+      <LogoutButton style={{ marginTop: spacing.lg, alignSelf: "center" }} />
     </Screen>
   );
 };

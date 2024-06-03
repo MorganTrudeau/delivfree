@@ -12,6 +12,7 @@ import {
 } from "app/components/styles";
 import { Card } from "app/components/Card";
 import { useDimensions } from "app/hooks/useDimensions";
+import { getAppType } from "app/utils/general";
 
 const IMAGE_WIDTH = Math.min(400, Dimensions.get("window").width * 0.85);
 const IMAGE_HEIGHT = IMAGE_WIDTH * (838 / 2200);
@@ -56,13 +57,15 @@ export const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
         </View>
 
         <View style={$bottomContainer}>
-          <Button
-            testID="sign-up-button"
-            preset="filled"
-            text="Sign Up"
-            style={$signUpButton}
-            onPress={onSignUp}
-          />
+          {getAppType() !== "ADMIN" && (
+            <Button
+              testID="sign-up-button"
+              preset="filled"
+              text="Sign Up"
+              style={$signUpButton}
+              onPress={onSignUp}
+            />
+          )}
           <Button testID="log-in-button" text="Log In" onPress={onLogIn} />
         </View>
       </Card>
