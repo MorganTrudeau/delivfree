@@ -1,5 +1,51 @@
 import { Cuisines } from "./enums";
 
+// Menu builder
+export type Menu = {
+  id: string;
+  name: string;
+  active: boolean;
+  hours: {
+    times: "24-hours" | { start: string; end: string };
+    days: "every-day" | string[];
+  };
+  vendor: string;
+  vendorLocations: string[];
+};
+export type MenuCategory = {
+  id: string;
+  name: string;
+  menus: string[];
+  vendor: string;
+  order: { [menuId: string]: number };
+};
+export type MenuItemAttribute = "vegetarian" | "vegan" | "gluten-free";
+export type MenuItem = {
+  id: string;
+  image: string;
+  name: string;
+  categories: string[];
+  price: string;
+  energy: { cals: string; kj: string };
+  attributes: MenuItemAttribute[];
+  vendor: string;
+  order: { [categoryId: string]: number };
+};
+export type MenuCustomizationChoice = {
+  id: string;
+  name: string;
+  price: string;
+  vendor: string;
+};
+export type MenuCustomization = {
+  id: string;
+  choices: MenuCustomizationChoice[];
+  minChoices: number;
+  maxChoices: number;
+  items: string[];
+  vendor: string;
+};
+
 export type Status = "approved" | "denied" | "pending";
 export type License = {
   id: string;

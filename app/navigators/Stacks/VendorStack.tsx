@@ -201,6 +201,7 @@ export const VendorStack = () => {
     return (
       <>
         <Stack.Screen name="Home" component={Screens.VendorHomeScreen} />
+        <Stack.Screen name="Menus" component={Screens.VendorMenusScreen} />
         <Stack.Screen name="Orders" component={Screens.VendorOrdersScreen} />
         <Stack.Screen name="Profile" component={Screens.VendorProfileScreen} />
         <Stack.Screen

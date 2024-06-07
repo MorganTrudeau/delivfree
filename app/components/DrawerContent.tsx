@@ -34,6 +34,7 @@ const ConsumerItems: DrawerItem[] = [
 
 const VendorItems: DrawerItem[] = [
   { text: "Home", route: "Home" },
+  { text: "Menus", route: "Menus" },
   { text: "Orders", route: "Orders" },
   { text: "Locations", route: "Locations" },
   { text: "Positions", route: "Positions" },

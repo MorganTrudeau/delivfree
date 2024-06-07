@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import React, { ComponentType, useMemo } from "react";
 import {
   Pressable,
   PressableProps,
@@ -90,20 +90,14 @@ export function Button(props: ButtonProps) {
 
   const preset: Presets =
     props.preset && $viewPresets[props.preset] ? props.preset : "default";
-  function $viewStyle({ pressed }) {
-    return [
-      $viewPresets[preset],
-      $viewStyleOverride,
-      !!pressed && [$pressedViewPresets[preset], $pressedViewStyleOverride],
-    ];
-  }
-  function $textStyle({ pressed }) {
-    return [
-      $textPresets[preset],
-      $textStyleOverride,
-      !!pressed && [$pressedTextPresets[preset], $pressedTextStyleOverride],
-    ];
-  }
+  const $viewStyle: StyleProp<ViewStyle> = useMemo(
+    () => [$viewPresets[preset], $viewStyleOverride],
+    [$viewStyleOverride, preset]
+  );
+  const $textStyle: StyleProp<TextStyle> = useMemo(
+    () => [$textPresets[preset], $textStyleOverride],
+    [$textStyleOverride, preset]
+  );
 
   return (
     <Pressable style={$viewStyle} accessibilityRole="button" {...rest}>
@@ -113,12 +107,7 @@ export function Button(props: ButtonProps) {
             <LeftAccessory style={$leftAccessoryStyle} pressableState={state} />
           )}
 
-          <Text
-            tx={tx}
-            text={text}
-            txOptions={txOptions}
-            style={$textStyle(state)}
-          >
+          <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle}>
             {children}
           </Text>
 
@@ -183,16 +172,4 @@ const $textPresets: Record<Presets, StyleProp<TextStyle>> = {
   default: $baseTextStyle,
   filled: [$baseTextStyle, { color: colors.palette.neutral100 }],
   reversed: [$baseTextStyle, { color: colors.palette.neutral100 }],
-};
-
-const $pressedViewPresets: Record<Presets, StyleProp<ViewStyle>> = {
-  default: { backgroundColor: colors.palette.neutral400 },
-  filled: { backgroundColor: colors.palette.primary600 },
-  reversed: { backgroundColor: colors.palette.neutral700 },
-};
-
-const $pressedTextPresets: Record<Presets, StyleProp<TextStyle>> = {
-  default: { opacity: 0.9 },
-  filled: { opacity: 0.9 },
-  reversed: { opacity: 0.9 },
 };

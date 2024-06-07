@@ -52,7 +52,7 @@ export interface IconProps extends TouchableOpacityProps {
  *
  * - [Documentation and Examples](https://github.com/infinitered/ignite/blob/master/docs/Components-Icon.md)
  */
-export function Icon(props: IconProps) {
+export const Icon = React.memo((props: IconProps) => {
   const {
     icon,
     color = colors.text,
@@ -80,7 +80,7 @@ export function Icon(props: IconProps) {
       />
     </Pressable>
   );
-}
+});
 
 export const iconRegistry = {
   back: "arrow-left",

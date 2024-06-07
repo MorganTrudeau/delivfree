@@ -40,6 +40,7 @@ export type AppStackParamList = {
   AdConfig: undefined;
   PositionsSearch: undefined;
   Licenses: undefined;
+  Menus: { tab?: string };
 };
 
 export const linkingConfigScreens: {
@@ -56,6 +57,7 @@ export const linkingConfigScreens: {
   DriverDetail: "driver-detail",
   AdConfig: "ad-config",
   PositionsSearch: "positions-search",
+  Menus: "menus",
 };
 
 export const screenOptions = {

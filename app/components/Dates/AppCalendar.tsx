@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import moment, { MomentInput } from "moment";
-import { Calendar, CalendarProps } from "react-native-calendars";
+import { Calendar, type CalendarProps } from "react-native-calendars";
 import { Icon } from "../Icon";
 import { colors, spacing } from "app/theme";
 import { sizing } from "app/theme/sizing";

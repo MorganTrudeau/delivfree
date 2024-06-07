@@ -13,6 +13,7 @@ interface Props {
   onButtonPress?: () => void;
   RightAccessory?: ComponentType<ButtonSmallAccessoryProps>;
   hideIcon?: boolean;
+  style?: ViewStyle;
 }
 
 export const ScreenHeader = ({
@@ -21,6 +22,7 @@ export const ScreenHeader = ({
   onButtonPress,
   RightAccessory,
   hideIcon,
+  style,
 }: Props) => {
   const PlusIcon = useMemo(
     () =>
@@ -32,8 +34,10 @@ export const ScreenHeader = ({
     [hideIcon]
   );
 
+  const styles = useMemo(() => [$style, style], []);
+
   return (
-    <View style={$style}>
+    <View style={styles}>
       <Text preset="heading">{title}</Text>
       {!!(buttonTitle && onButtonPress) && (
         <ButtonSmall

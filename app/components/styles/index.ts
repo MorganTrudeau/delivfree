@@ -13,7 +13,7 @@ import { ImageStyle } from "react-native-fast-image";
 import { Edge } from "react-native-safe-area-context";
 
 export const LARGE_SCREEN = 1000;
-export const MAX_CONTENT_WIDTH = 1300;
+export const MAX_CONTENT_WIDTH = 1200;
 
 export const WEB_NOTIFICATION_HEIGHT = 80;
 export const WEB_NOTIFICATION_WIDTH = 350;
@@ -239,6 +239,7 @@ export const $imageContainer: StyleProp<ViewStyle> = [
   },
 ];
 
+export const $inputFormContainer: ViewStyle = { marginTop: spacing.sm };
 export const $input: TextStyle = {
   paddingHorizontal: spacing.xs,
   backgroundColor: colors.palette.neutral200,
@@ -277,4 +278,8 @@ export const $formLabel: TextStyle = {
 
 export const $headerButton: ViewStyle = {
   marginHorizontal: Platform.select({ web: spacing.md, default: 0 }),
+};
+
+export const $menusScreenHeader: ViewStyle = {
+  paddingTop: spacing.md,
 };

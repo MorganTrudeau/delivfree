@@ -30,6 +30,7 @@ export * from "./Vendor/VendorProfileScreen";
 export * from "./Vendor/VendorLocationsScreen";
 export * from "./Vendor/VendorDriversScreen";
 export * from "./Vendor/VendorPositionsScreen";
+export * from "./Vendor/VendorMenusScreen";
 
 // Driver
 export * from "./Driver/DriverCodeScreen";

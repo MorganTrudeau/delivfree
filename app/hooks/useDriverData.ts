@@ -19,7 +19,7 @@ export const useDriverData = (
           onData(Object.values(drivers));
           dispatch(setDrivers(drivers));
         },
-        { limit, vendor, status }
+        { limit, status }
       );
     },
     [vendor, status]

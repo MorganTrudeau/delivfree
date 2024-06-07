@@ -22,6 +22,8 @@ import LocalWebNotificationProvider from "app/context/LocalWebNotificationContex
 import functions from "@react-native-firebase/functions";
 import { isEmulatorSync } from "react-native-device-info";
 import PopoverProvider from "./components/Popover/PopoverContext";
+import { ListTabs } from "./components/Tabs";
+import { Text } from "./components";
 
 if (__DEV__ && isEmulatorSync()) {
   // If you are running on a physical device, replace http://localhost with the local ip of your PC. (http://192.168.x.x)

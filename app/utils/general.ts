@@ -4,6 +4,9 @@ import { Linking, Platform } from "react-native";
 import messaging from "@react-native-firebase/messaging";
 import { AlertProps } from "app/components/Alert/AlertContext";
 import { translate } from "app/i18n";
+import React from "react";
+
+export const typedMemo: <T>(c: T) => T = React.memo;
 
 export const equalArrays = (
   arr1: Array<string | number>,

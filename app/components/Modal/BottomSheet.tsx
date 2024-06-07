@@ -62,42 +62,7 @@ const BottomSheetWithoutRef = (
   );
 };
 
-const BottomSheetWeb = forwardRef<BottomSheetRef, Props>(
-  function BottomSheetWeb(props, ref) {
-    const modal = useRef<ModalRef>(null);
-
-    console.log("RENDER");
-
-    const open = () => {
-      modal.current?.open();
-    };
-    const close = () => modal.current?.close();
-
-    useImperativeHandle(
-      ref,
-      () => ({
-        snapToIndex: open,
-        snapToPosition: open,
-        expand: open,
-        close: close,
-        collapse: close,
-        forceClose: close,
-      }),
-      []
-    );
-
-    return (
-      <ReanimatedCenterModal ref={modal}>
-        {props.children}
-      </ReanimatedCenterModal>
-    );
-  }
-);
-
-export const BottomSheet = Platform.select({
-  web: BottomSheetWeb,
-  default: forwardRef(BottomSheetWithoutRef),
-});
+export const BottomSheet = forwardRef(BottomSheetWithoutRef);
 
 const $backgroundStyle: ViewStyle = {
   backgroundColor: colors.background,

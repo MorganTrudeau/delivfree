@@ -4,6 +4,7 @@ import {
   Image,
   ImageStyle,
   StyleProp,
+  StyleSheet,
   SwitchProps,
   TextInputProps,
   TextStyle,
@@ -209,6 +210,19 @@ export function Toggle(props: ToggleProps) {
     onPress?.(e);
   }
 
+  const renderHelper = () =>
+    !!(helper || helperTx) && (
+      <Text
+        preset="formHelper"
+        text={helper}
+        tx={helperTx}
+        txOptions={helperTxOptions}
+        size={"xs"}
+        {...HelperTextProps}
+        style={$helperStyles}
+      />
+    );
+
   return (
     <TouchableOpacity
       disabled={disabled}
@@ -221,7 +235,10 @@ export function Toggle(props: ToggleProps) {
     >
       <View style={$inputWrapperStyles}>
         {labelPosition === "left" && (
-          <FieldLabel {...props} labelPosition={labelPosition} />
+          <View style={$labelLeft}>
+            <FieldLabel {...props} labelPosition={labelPosition} />
+            {renderHelper()}
+          </View>
         )}
 
         <ToggleInput
@@ -236,20 +253,12 @@ export function Toggle(props: ToggleProps) {
         />
 
         {labelPosition === "right" && (
-          <FieldLabel {...props} labelPosition={labelPosition} />
+          <View style={$labelRight}>
+            <FieldLabel {...props} labelPosition={labelPosition} />
+            {renderHelper()}
+          </View>
         )}
       </View>
-
-      {!!(helper || helperTx) && (
-        <Text
-          preset="formHelper"
-          text={helper}
-          tx={helperTx}
-          txOptions={helperTxOptions}
-          {...HelperTextProps}
-          style={$helperStyles}
-        />
-      )}
     </TouchableOpacity>
   );
 }
@@ -280,20 +289,19 @@ function Checkbox(props: ToggleInputProps) {
   const outerBorderColor = [
     disabled && colors.palette.neutral400,
     status === "error" && colors.error,
-    !on && colors.palette.neutral800,
-    colors.palette.secondary500,
+    colors.border,
   ].filter(Boolean)[0] as string;
 
   const onBackgroundColor = [
     disabled && colors.transparent,
     status === "error" && colors.errorBackground,
-    colors.palette.secondary500,
+    colors.palette.primary600,
   ].filter(Boolean)[0] as string;
 
   const iconTintColor = [
     disabled && colors.palette.neutral600,
     status === "error" && colors.error,
-    colors.palette.accent100,
+    "#fff",
   ].filter(Boolean)[0] as string;
 
   return (
@@ -312,15 +320,11 @@ function Checkbox(props: ToggleInputProps) {
           useAnimatedStyle(() => ({ opacity: withTiming(on ? 1 : 0) }), [on]),
         ]}
       >
-        <Image
-          source={
-            checkboxIcon ? iconRegistry[checkboxIcon] : iconRegistry.check
-          }
-          style={[
-            $checkboxDetail,
-            { tintColor: iconTintColor },
-            $detailStyleOverride,
-          ]}
+        <Icon
+          icon={checkboxIcon ? iconRegistry[checkboxIcon] : iconRegistry.check}
+          size={16}
+          style={[$checkboxDetail, $detailStyleOverride]}
+          color={iconTintColor}
         />
       </Animated.View>
     </View>
@@ -572,8 +576,6 @@ function FieldLabel(props: BaseToggleProps) {
   const $labelStyle = [
     $label,
     status === "error" && { color: colors.error },
-    labelPosition === "right" && $labelRight,
-    labelPosition === "left" && $labelLeft,
     $labelStyleOverride,
     LabelTextProps?.style,
   ];
@@ -598,7 +600,8 @@ const $inputWrapper: ViewStyle = {
 const $inputOuterBase: ViewStyle = {
   height: 24,
   width: 24,
-  borderWidth: 2,
+  borderWidth: StyleSheet.hairlineWidth,
+  backgroundColor: colors.palette.neutral200,
   alignItems: "center",
   overflow: "hidden",
   flexGrow: 0,
@@ -624,11 +627,7 @@ const $checkboxInner: ViewStyle = {
   overflow: "hidden",
 };
 
-const $checkboxDetail: ImageStyle = {
-  width: 20,
-  height: 20,
-  resizeMode: "contain",
-};
+const $checkboxDetail: ImageStyle = {};
 
 const $radioInner: ViewStyle = {
   width: "100%",
@@ -662,20 +661,20 @@ const $switchDetail: SwitchToggleProps["inputDetailStyle"] = {
   height: 24,
 };
 
-const $helper: TextStyle = {
-  marginTop: spacing.xs,
-};
+const $helper: TextStyle = { color: colors.textDim };
 
 const $label: TextStyle = {
   flex: 1,
 };
 
 const $labelRight: TextStyle = {
-  marginStart: spacing.md,
+  marginStart: spacing.xs,
+  flex: 1,
 };
 
 const $labelLeft: TextStyle = {
-  marginEnd: spacing.md,
+  marginEnd: spacing.xs,
+  flex: 1,
 };
 
 const $switchAccessibility: TextStyle = {

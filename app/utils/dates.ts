@@ -1,7 +1,7 @@
 import { colors } from "app/theme";
 import { DateRange, MOMENT_DATE_FORMAT } from "delivfree";
 import moment from "moment";
-import { CalendarProps } from "react-native-calendars";
+import { type CalendarProps } from "react-native-calendars";
 
 export type DateFilter =
   | "today"
