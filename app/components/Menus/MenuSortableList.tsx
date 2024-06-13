@@ -4,6 +4,8 @@ import DraggableFlatList, {
   NestableDraggableFlatList,
   NestableScrollContainer,
   RenderItemParams,
+  ScaleDecorator,
+  ShadowDecorator,
 } from "react-native-draggable-flatlist";
 import { Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
@@ -14,12 +16,16 @@ import { TextInput } from "../TextInput";
 import Animated, {
   SharedValue,
   interpolate,
+  interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 import FastImage, { ImageStyle } from "react-native-fast-image";
 import { borderRadius } from "app/theme/borderRadius";
+import { ButtonSmall } from "../ButtonSmall";
+import { sizing } from "app/theme/sizing";
+import { useOnChange } from "app/hooks";
 
 interface MenuSection {
   category: MenuCategory;
@@ -30,6 +36,8 @@ interface Props {
   sections: MenuSection[];
   onCategoryOrderChange: (menu: string, order: string[]) => void;
   onItemOrderChange: (category: string, order: string[]) => void;
+  addItem: (category: string) => void;
+  addCategory: (menu: string) => void;
 }
 
 export const MenuSortableList = React.memo(function MenuSortableList({
@@ -37,20 +45,25 @@ export const MenuSortableList = React.memo(function MenuSortableList({
   sections,
   onCategoryOrderChange,
   onItemOrderChange,
+  addItem,
+  addCategory,
 }: Props) {
+  const [layoutKey, setLayoutKey] = useState(Math.random().toString());
+
   const renderCategory = useCallback(
     ({ item, drag, isActive }: RenderItemParams<MenuSection>) => {
       return (
         <DropdownSection
           section={item}
           drag={drag}
-          onItemOrderChange={(order, section) => {
-            onItemOrderChange(item.category.id, order);
-          }}
+          onItemOrderChange={onItemOrderChange}
+          addItem={addItem}
+          onExandedChange={() => setLayoutKey(Math.random().toString())}
+          isActive={isActive}
         />
       );
     },
-    []
+    [addItem, onItemOrderChange]
   );
 
   const keyExtractor = useCallback((item: MenuSection) => item.category.id, []);
@@ -65,14 +78,29 @@ export const MenuSortableList = React.memo(function MenuSortableList({
     [menu]
   );
 
+  const renderAddCategory = useCallback(() => {
+    return (
+      <View style={$categoryFooterInner}>
+        <ButtonSmall
+          text="New category"
+          leftIcon="plus"
+          onPress={() => addCategory(menu)}
+        />
+      </View>
+    );
+  }, [addCategory, menu]);
+
   return (
     <NestableScrollContainer>
+      {renderAddCategory()}
       <DraggableFlatList
         keyExtractor={keyExtractor}
         data={sections}
         renderItem={renderCategory}
         activationDistance={1}
         onDragEnd={handleDragEnd}
+        layoutKey={layoutKey}
+        // dragItemOverflow={true}
       />
     </NestableScrollContainer>
   );
@@ -83,12 +111,35 @@ const SectionHeader = ({
   drag,
   onToggleOpen,
   openAnimation,
+  expanded,
 }: {
   section: MenuSection;
   drag: () => void;
   onToggleOpen: () => void;
   openAnimation: SharedValue<number>;
+  expanded: boolean;
 }) => {
+  const activeAnimation = useSharedValue(0);
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      borderBottomColor: interpolateColor(
+        activeAnimation.value,
+        [0, 1],
+        [colors.border, "transparent"],
+        "HSV"
+      ),
+    }),
+    [activeAnimation]
+  );
+  const onPressIn = useCallback(() => {
+    if (!expanded) {
+      activeAnimation.value = withTiming(1, { duration: 100 });
+    }
+    drag();
+  }, [drag, expanded]);
+  const onPressOut = useCallback(() => {
+    activeAnimation.value = withTiming(0);
+  }, []);
   const chevronWrapperStyle = useAnimatedStyle(
     () => ({
       transform: [
@@ -98,9 +149,9 @@ const SectionHeader = ({
     [openAnimation]
   );
   return (
-    <Pressable style={$itemOuter} onPressIn={drag}>
+    <Pressable style={$itemOuter} onPressIn={onPressIn} onPressOut={onPressOut}>
       <Icon icon={"drag-vertical"} />
-      <View style={$itemInner}>
+      <Animated.View style={[$itemInner, animatedStyle]}>
         <View style={$flex}>
           <Text preset="semibold">{section.category.name}</Text>
           <Text size={"xs"} style={[$flex, { color: colors.textDim }]}>
@@ -110,7 +161,7 @@ const SectionHeader = ({
         <Animated.View style={chevronWrapperStyle}>
           <Icon icon="chevron-down" onPress={onToggleOpen} hitSlop={30} />
         </Animated.View>
-      </View>
+      </Animated.View>
     </Pressable>
   );
 };
@@ -119,11 +170,19 @@ const DropdownSection = React.memo(function DropdownSection({
   section,
   drag,
   onItemOrderChange,
+  addItem,
+  onExandedChange,
+  isActive,
 }: {
   section: MenuSection;
   drag: () => void;
-  onItemOrderChange: (order: string[], section: MenuSection) => void;
+  onItemOrderChange: (category: string, order: string[]) => void;
+  addItem: (category: string) => void;
+  onExandedChange: (expanded: boolean) => void;
+  isActive: boolean;
 }) {
+  const categoryId = section.category.id;
+
   const [open, setOpen] = useState(true);
   const openAnimation = useSharedValue(1);
 
@@ -131,29 +190,21 @@ const DropdownSection = React.memo(function DropdownSection({
     if (!open) {
       return;
     }
-    openAnimation.value = withTiming(
-      0,
-      {
-        duration: 100,
-      },
-      () => {
-        setOpen(false);
-      }
-    );
+    setOpen(false);
+    openAnimation.value = withTiming(0, {
+      duration: 100,
+    });
+    setTimeout(() => onExandedChange(false), 150);
   };
   const toggleOpen = () => {
     if (open) {
       return;
     }
-    openAnimation.value = withTiming(
-      1,
-      {
-        duration: 100,
-      },
-      () => {
-        setOpen(true);
-      }
-    );
+    setOpen(true);
+    openAnimation.value = withTiming(1, {
+      duration: 100,
+    });
+    setTimeout(() => onExandedChange(true), 150);
   };
   const toggleSection = () => {
     open ? toggleClosed() : toggleOpen();
@@ -162,69 +213,122 @@ const DropdownSection = React.memo(function DropdownSection({
     });
   };
 
+  const maxHeight = (section.items.length + 1) * ITEM_HEIGHT;
   const dropdownAnimatedStyle = useAnimatedStyle(
     () => ({
       overflow: "hidden",
-      height: interpolate(
-        openAnimation.value,
-        [0, 1],
-        [0, section.items.length * ITEM_HEIGHT]
-      ),
+      height: interpolate(openAnimation.value, [0, 1], [0, maxHeight]),
     }),
-    [openAnimation]
+    [openAnimation, maxHeight]
   );
 
   const renderItem = useCallback(
     ({ item, drag, isActive }: RenderItemParams<MenuItem>) => {
-      return <Item item={item} drag={drag} />;
+      return <Item item={item} drag={drag} isActive={isActive} />;
     },
     []
   );
 
   const keyExtractorItem = useCallback((item: MenuItem) => item.id, []);
 
-  const handleDragEnd = useCallback(({ data }) => {
-    onItemOrderChange(
-      data.map((d) => d.id),
-      { category: section.category, items: data }
+  const handleDragEnd = useCallback(
+    ({ data }) => {
+      onItemOrderChange(
+        categoryId,
+        data.map((d) => d.id)
+      );
+    },
+    [categoryId]
+  );
+
+  const renderFooter = useCallback(() => {
+    return (
+      <View style={$itemOuter}>
+        <View style={{ width: sizing.lg }} />
+        <View style={$itemsFooterInner}>
+          <ButtonSmall
+            text="New item"
+            leftIcon="plus"
+            onPress={() => addItem(categoryId)}
+          />
+        </View>
+      </View>
     );
-  }, []);
+  }, [addItem, categoryId]);
 
   return (
-    <>
-      <SectionHeader
-        section={section}
-        drag={drag}
-        onToggleOpen={toggleSection}
-        openAnimation={openAnimation}
-      />
-      <Animated.View style={dropdownAnimatedStyle}>
-        <NestableDraggableFlatList
-          keyExtractor={keyExtractorItem}
-          data={section.items}
-          renderItem={renderItem}
-          activationDistance={1}
-          onDragEnd={handleDragEnd}
+    <ShadowDecorator>
+      <View collapsable={false}>
+        <SectionHeader
+          section={section}
+          drag={drag}
+          onToggleOpen={toggleSection}
+          openAnimation={openAnimation}
+          expanded={open}
         />
-      </Animated.View>
-    </>
+        <Animated.View style={dropdownAnimatedStyle}>
+          <NestableDraggableFlatList
+            keyExtractor={keyExtractorItem}
+            data={section.items}
+            renderItem={renderItem}
+            activationDistance={1}
+            onDragEnd={handleDragEnd}
+            ListFooterComponent={renderFooter}
+            scrollEnabled={false}
+          />
+        </Animated.View>
+      </View>
+    </ShadowDecorator>
   );
 });
 
-const Item = ({ item, drag }: { item: MenuItem; drag: () => void }) => {
-  return (
-    <Pressable style={$itemOuter} onPressIn={drag}>
-      <Icon icon={"drag-vertical"} />
-      <View style={$itemInner}>
-        <FastImage source={{ uri: item.image }} style={$itemImage} />
-        <Text preset="semibold" style={$flex}>
-          {item.name}
-        </Text>
-        <TextInput value={item.price} />
-      </View>
-    </Pressable>
+const Item = React.memo(function Item({
+  item,
+  drag,
+  isActive,
+}: {
+  item: MenuItem;
+  drag: () => void;
+  isActive: boolean;
+}) {
+  const activeAnimation = useSharedValue(isActive ? 1 : 0);
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      borderBottomColor: interpolateColor(
+        activeAnimation.value,
+        [0, 1],
+        [colors.border, "transparent"],
+        "HSV"
+      ),
+    }),
+    [isActive]
   );
-};
+  const onPressIn = useCallback(() => {
+    activeAnimation.value = withTiming(1, { duration: 100 });
+    drag();
+  }, []);
+  const onPressOut = useCallback(() => {
+    activeAnimation.value = withTiming(0);
+  }, []);
+  return (
+    <ShadowDecorator>
+      <Pressable
+        style={$itemOuter}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+      >
+        <Icon icon={"drag-vertical"} />
+        <Animated.View style={[$itemInner, animatedStyle]}>
+          <FastImage source={{ uri: item.image }} style={$itemImage} />
+          <Text preset="semibold" style={$flex}>
+            {item.name}
+          </Text>
+          <TextInput value={item.price} />
+        </Animated.View>
+      </Pressable>
+    </ShadowDecorator>
+  );
+});
 
 const ITEM_HEIGHT = 70;
 const ITEM_IMAGE_SIZE = ITEM_HEIGHT - spacing.xs * 2;
@@ -249,4 +353,19 @@ const $itemImage: ImageStyle = {
   borderRadius: borderRadius.sm,
   backgroundColor: colors.borderLight,
   marginRight: spacing.sm,
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+const $itemsFooterInner: StyleProp<ViewStyle> = {
+  height: ITEM_HEIGHT,
+  justifyContent: "center",
+  alignItems: "flex-start",
+  marginLeft: spacing.xs,
+};
+
+const $categoryFooterInner: StyleProp<ViewStyle> = {
+  height: ITEM_HEIGHT,
+  justifyContent: "center",
+  alignItems: "flex-start",
 };

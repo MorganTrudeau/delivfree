@@ -104,87 +104,83 @@ export const DriverDetailScreen = (props: DriverDetailScreenProps) => {
 
   if (!driver) {
     return (
-      <Drawer navigation={props.navigation}>
-        <Screen
-          preset="scroll"
-          style={$screen}
-          contentContainerStyle={$containerPadding}
-          inDrawer
-        >
-          <ActivityIndicator
-            color={colors.primary}
-            style={{ margin: spacing.lg }}
-          />
-        </Screen>
-      </Drawer>
-    );
-  }
-
-  return (
-    <Drawer navigation={props.navigation}>
       <Screen
         preset="scroll"
         style={$screen}
         contentContainerStyle={$containerPadding}
         inDrawer
       >
-        <ScreenHeader title={driver.firstName + " " + driver.lastName} />
-
-        <Text preset={"semibold"} size={"xs"} style={{ marginBottom: 6 }}>
-          Account status
-        </Text>
-        <StatusPicker
-          status={driver.registration.status}
-          onPress={handleRegistrationStatusChange}
-          style={{ marginBottom: spacing.md }}
-        />
-
-        <DetailsHeader title={"Details"} />
-        <DetailItem title="First name" value={driver.firstName} />
-        <DetailItem title="Last name" value={driver.lastName} />
-        <DetailItem title="Email" value={driver.email} />
-        <DetailItem
-          title="Phone number"
-          value={driver.callingCode + " " + driver.phoneNumber}
-        />
-        <DriversLicenseUpload
-          frontImage={driver.driversLicenseFront}
-          backImage={driver.driversLicenseBack}
-          viewOnly
-          driverId={driverId}
-          titleProps={{
-            style: { marginTop: spacing.xxs, marginBottom: 2 },
-            preset: "semibold",
-            size: "xs",
-          }}
-        />
-
-        <DetailsHeader title={"Subscription"} style={$detailHeaderStyle} />
-        {subscription ? (
-          <SubscriptionInfo
-            subscription={subscription}
-            onPress={handleViewSubscription}
-          />
-        ) : (
-          <EmptyList title={"No subscription"} />
-        )}
-
-        <DetailsHeader title={"Licenses"} style={$detailHeaderStyle} />
-        <LicensesList
-          licenses={licenses}
-          vendorLocations={vendorLocations}
-          headerStyle={$listHeaderStyle}
-          onPress={handleLicensePress}
-          style={{ flexGrow: 0 }}
-        />
-        <LicenseDisplayModal
-          ref={licenseDisplayModal}
-          license={licenseDisplay}
-          onChange={handleLicenseDisplayChange}
-          editable={false}
+        <ActivityIndicator
+          color={colors.primary}
+          style={{ margin: spacing.lg }}
         />
       </Screen>
-    </Drawer>
+    );
+  }
+
+  return (
+    <Screen
+      preset="scroll"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader title={driver.firstName + " " + driver.lastName} />
+
+      <Text preset={"semibold"} size={"xs"} style={{ marginBottom: 6 }}>
+        Account status
+      </Text>
+      <StatusPicker
+        status={driver.registration.status}
+        onPress={handleRegistrationStatusChange}
+        style={{ marginBottom: spacing.md }}
+      />
+
+      <DetailsHeader title={"Details"} />
+      <DetailItem title="First name" value={driver.firstName} />
+      <DetailItem title="Last name" value={driver.lastName} />
+      <DetailItem title="Email" value={driver.email} />
+      <DetailItem
+        title="Phone number"
+        value={driver.callingCode + " " + driver.phoneNumber}
+      />
+      <DriversLicenseUpload
+        frontImage={driver.driversLicenseFront}
+        backImage={driver.driversLicenseBack}
+        viewOnly
+        driverId={driverId}
+        titleProps={{
+          style: { marginTop: spacing.xxs, marginBottom: 2 },
+          preset: "semibold",
+          size: "xs",
+        }}
+      />
+
+      <DetailsHeader title={"Subscription"} style={$detailHeaderStyle} />
+      {subscription ? (
+        <SubscriptionInfo
+          subscription={subscription}
+          onPress={handleViewSubscription}
+        />
+      ) : (
+        <EmptyList title={"No subscription"} />
+      )}
+
+      <DetailsHeader title={"Licenses"} style={$detailHeaderStyle} />
+      <LicensesList
+        licenses={licenses}
+        vendorLocations={vendorLocations}
+        headerStyle={$listHeaderStyle}
+        onPress={handleLicensePress}
+        style={{ flexGrow: 0 }}
+      />
+      <LicenseDisplayModal
+        ref={licenseDisplayModal}
+        license={licenseDisplay}
+        onChange={handleLicenseDisplayChange}
+        editable={false}
+      />
+    </Screen>
   );
 };
 

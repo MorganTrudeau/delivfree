@@ -1,14 +1,21 @@
+import { fetchVendorLocation } from "app/apis/vendorLocations";
 import { Icon, IconTypes, Screen, Text } from "app/components";
 import { AdBanner } from "app/components/AdBanner";
 import { CheckoutPopUp, CheckoutPopUpRef } from "app/components/CheckoutPopUp";
-import { $flex, $screen, MAX_CONTENT_WIDTH } from "app/components/styles";
+import { EmptyList } from "app/components/EmptyList";
+import { ConsumerMenuCategories } from "app/components/Menus/ConsumerMenu/ConsumerMenuCategories";
+import { MenuNames } from "app/components/Menus/Menu/MenuNames";
+import { $flex, MAX_CONTENT_WIDTH } from "app/components/styles";
 import { getRestaurantCache } from "app/hooks";
+import { useMenusLoading } from "app/hooks/useMenusLoading";
 import { AppStackScreenProps } from "app/navigators";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
+import { Menu, VendorLocation } from "delivfree/types";
 import { StatusBar } from "expo-status-bar";
-import React, { useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Linking,
   Platform,
   Pressable,
@@ -26,7 +33,23 @@ interface RestaurantsScreenProps
 
 export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
   const { restaurantId } = route.params;
-  const restaurant = useRef(getRestaurantCache().cache[restaurantId]).current;
+
+  const [restaurant, setRestaurant] = useState<VendorLocation | undefined>(
+    getRestaurantCache().cache[restaurantId]
+  );
+
+  useEffect(() => {
+    if (!restaurant) {
+      const load = async () => {
+        const data = await fetchVendorLocation(restaurantId);
+        if (data) {
+          setRestaurant(data);
+        }
+      };
+      load();
+    }
+  }, [restaurant]);
+
   const checkoutPopUp = useRef<CheckoutPopUpRef>(null);
   const insets = useSafeAreaInsets();
   const gradientStyles: ViewStyle = useMemo(
@@ -39,6 +62,68 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
     }),
     [insets.top]
   );
+
+  const vendor = restaurant?.vendor;
+
+  const { menus, menusLoaded, loadMenus } = useMenusLoading({
+    vendor,
+  });
+
+  console.log(vendor);
+
+  console.log(menus);
+
+  const firstMenuId = menus[0]?.id;
+
+  const [activeMenu, setActiveMenu] = useState<string>();
+
+  useEffect(() => {
+    if (vendor) {
+      loadMenus(false);
+    }
+  }, [vendor]);
+  useEffect(() => {
+    if (firstMenuId && !activeMenu) {
+      setActiveMenu(firstMenuId);
+    }
+  }, [firstMenuId, activeMenu]);
+
+  const handleMenuPress = (menu: Menu) => {
+    setActiveMenu(menu.id);
+  };
+
+  const renderHeader = () => {
+    if (!restaurant) {
+      return null;
+    }
+    return (
+      <View style={$header}>
+        <View style={$headerImage}>
+          <FastImage
+            source={{ uri: restaurant.image }}
+            style={StyleSheet.absoluteFillObject}
+          />
+        </View>
+        <Text
+          preset={"subheading"}
+          style={$name}
+          size={Platform.select({ web: "xxl", default: "xl" })}
+        >
+          {restaurant.name}
+        </Text>
+        <AdBanner type="checkout" style={$adBanner} />
+      </View>
+    );
+  };
+
+  if (!restaurant) {
+    return (
+      <View style={[$flex, { alignItems: "center", justifyContent: "center" }]}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    );
+  }
+
   const viewMenu = () => {
     checkoutPopUp.current?.open(restaurant.menuLink);
   };
@@ -63,34 +148,13 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
     Linking.openURL(url);
   };
 
-  const renderHeader = () => {
-    return (
-      <View style={$header}>
-        <View style={$headerImage}>
-          <FastImage
-            source={{ uri: restaurant.image }}
-            style={StyleSheet.absoluteFillObject}
-          />
-        </View>
-        <Text
-          preset={"subheading"}
-          style={$name}
-          size={Platform.select({ web: "xxl", default: "xl" })}
-        >
-          {restaurant.name}
-        </Text>
-        <AdBanner type="checkout" style={$adBanner} />
-      </View>
-    );
-  };
-
   return (
     <>
       <Screen style={$flex} preset={"scroll"}>
         {Platform.OS !== "web" && renderHeader()}
         <View style={$detailsContainer}>
           {Platform.OS === "web" && renderHeader()}
-          {!!restaurant.menuLink && (
+          {/* {!!restaurant.menuLink && (
             <DetailItem
               text={"View menu"}
               icon={"food-fork-drink"}
@@ -117,7 +181,21 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
               icon={"pin"}
               onPress={viewAddress}
             />
+          )} */}
+          <View style={{ height: spacing.sm }} />
+          {!menusLoaded && <ActivityIndicator color={colors.primary} />}
+          {menusLoaded && !menus.length && (
+            <EmptyList
+              title={"No menus available right now"}
+              icon={"silverware"}
+            />
           )}
+          <MenuNames
+            menus={menus}
+            onMenuPress={handleMenuPress}
+            activeMenu={activeMenu}
+          />
+          {!!activeMenu && <ConsumerMenuCategories menu={activeMenu} />}
         </View>
       </Screen>
       {Platform.OS === "ios" && insets.top > 0 && (

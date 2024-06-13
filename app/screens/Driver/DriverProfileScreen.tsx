@@ -69,65 +69,63 @@ export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
   );
 
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        headerProps={headerProps}
-        inDrawer
-      >
-        <View style={$row}>
-          <Text preset="heading" style={$flex}>
-            Profile
-          </Text>
-          {Platform.OS === "web" &&
-            !isSaved &&
-            (updating ? (
-              <ActivityIndicator color={colors.primary} />
-            ) : (
-              <Pressable onPress={handleUpdateVendor} style={$row}>
-                <Text>Save</Text>
-                <Icon
-                  icon="check-circle"
-                  color={colors.primary}
-                  style={{ marginLeft: spacing.xxs }}
-                />
-              </Pressable>
-            ))}
-        </View>
-        <TextField
-          placeholder="First name"
-          label="First name"
-          containerStyle={$input}
-          value={getValue("firstName")}
-          onChangeText={updateValue("firstName")}
-        />
-        <TextField
-          placeholder="Last name"
-          label="Last name"
-          containerStyle={$input}
-          value={getValue("lastName")}
-          onChangeText={updateValue("lastName")}
-        />
-        <TextField
-          placeholder="Phone number"
-          label="Phone number"
-          containerStyle={$input}
-          value={getValue("phoneNumber")}
-          onChangeText={updateValue("phoneNumber")}
-        />
-        <DriversLicenseUpload
-          frontImage={driver.driversLicenseFront}
-          backImage={driver.driversLicenseBack}
-          onFrontImageUploaded={updateValue("driversLicenseFront")}
-          onBackImageUploaded={updateValue("driversLicenseBack")}
-          style={$input}
-          driverId={driver.id}
-          viewOnly
-        />
-      </Screen>
-    </Drawer>
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      headerProps={headerProps}
+      inDrawer
+    >
+      <View style={$row}>
+        <Text preset="heading" style={$flex}>
+          Profile
+        </Text>
+        {Platform.OS === "web" &&
+          !isSaved &&
+          (updating ? (
+            <ActivityIndicator color={colors.primary} />
+          ) : (
+            <Pressable onPress={handleUpdateVendor} style={$row}>
+              <Text>Save</Text>
+              <Icon
+                icon="check-circle"
+                color={colors.primary}
+                style={{ marginLeft: spacing.xxs }}
+              />
+            </Pressable>
+          ))}
+      </View>
+      <TextField
+        placeholder="First name"
+        label="First name"
+        containerStyle={$input}
+        value={getValue("firstName")}
+        onChangeText={updateValue("firstName")}
+      />
+      <TextField
+        placeholder="Last name"
+        label="Last name"
+        containerStyle={$input}
+        value={getValue("lastName")}
+        onChangeText={updateValue("lastName")}
+      />
+      <TextField
+        placeholder="Phone number"
+        label="Phone number"
+        containerStyle={$input}
+        value={getValue("phoneNumber")}
+        onChangeText={updateValue("phoneNumber")}
+      />
+      <DriversLicenseUpload
+        frontImage={driver.driversLicenseFront}
+        backImage={driver.driversLicenseBack}
+        onFrontImageUploaded={updateValue("driversLicenseFront")}
+        onBackImageUploaded={updateValue("driversLicenseBack")}
+        style={$input}
+        driverId={driver.id}
+        viewOnly
+      />
+    </Screen>
   );
 };
 

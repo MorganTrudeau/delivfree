@@ -12,15 +12,13 @@ export const VendorSubscriptionScreen = ({
   navigation,
 }: VendorSubscriptionScreenProps) => {
   return (
-    <Drawer navigation={navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ManageVendorSubscription displayOnly={true} />
-      </Screen>
-    </Drawer>
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ManageVendorSubscription displayOnly={true} />
+    </Screen>
   );
 };

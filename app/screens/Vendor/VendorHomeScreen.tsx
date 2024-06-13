@@ -207,28 +207,55 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
   };
 
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset={"scroll"}
-        style={$screen}
-        contentContainerStyle={[
-          $containerPadding,
-          { paddingBottom: insets.bottom + spacing.sm },
-        ]}
-        inDrawer
+    <Screen
+      preset={"scroll"}
+      style={$screen}
+      contentContainerStyle={[
+        $containerPadding,
+        { paddingBottom: insets.bottom + spacing.sm },
+      ]}
+      inDrawer
+    >
+      <Text preset="heading">Today</Text>
+      <View style={{ paddingVertical: spacing.md }}>
+        <Text>Gross volume</Text>
+        <Text preset="subheading">{grossVolumeToday}</Text>
+        <LineChart
+          width={Math.min(1000, width * (largeScreenLayout ? 0.8 : 1))}
+          height={300}
+          data={{
+            labels: todaysLabels,
+            datasets: [
+              {
+                data: todaysSales,
+                color: () => colors.primary,
+              },
+            ],
+          }}
+        />
+      </View>
+
+      <Text preset="heading">Your Overview</Text>
+      {renderOverviewDateRangeSelect()}
+      <View
+        style={{
+          paddingVertical: spacing.md,
+          flexDirection: largeScreenLayout ? "row" : undefined,
+          flexWrap: largeScreenLayout ? "wrap" : undefined,
+          gap: largeScreenLayout ? spacing.xl : undefined,
+        }}
       >
-        <Text preset="heading">Today</Text>
-        <View style={{ paddingVertical: spacing.md }}>
+        <View>
           <Text>Gross volume</Text>
-          <Text preset="subheading">{grossVolumeToday}</Text>
+          <Text preset="subheading">{grossVolumeOverview}</Text>
           <LineChart
-            width={Math.min(1000, width * (largeScreenLayout ? 0.8 : 1))}
+            width={Math.min(450, width * (largeScreenLayout ? 0.35 : 1))}
             height={300}
             data={{
-              labels: todaysLabels,
+              labels: overviewLabels,
               datasets: [
                 {
-                  data: todaysSales,
+                  data: overviewSales,
                   color: () => colors.primary,
                 },
               ],
@@ -236,79 +263,50 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
           />
         </View>
 
-        <Text preset="heading">Your Overview</Text>
-        {renderOverviewDateRangeSelect()}
-        <View
-          style={{
-            paddingVertical: spacing.md,
-            flexDirection: largeScreenLayout ? "row" : undefined,
-            flexWrap: largeScreenLayout ? "wrap" : undefined,
-            gap: largeScreenLayout ? spacing.xl : undefined,
-          }}
-        >
-          <View>
-            <Text>Gross volume</Text>
-            <Text preset="subheading">{grossVolumeOverview}</Text>
-            <LineChart
-              width={Math.min(450, width * (largeScreenLayout ? 0.35 : 1))}
-              height={300}
-              data={{
-                labels: overviewLabels,
-                datasets: [
-                  {
-                    data: overviewSales,
-                    color: () => colors.primary,
-                  },
-                ],
-              }}
-            />
-          </View>
-
-          <View>
-            <Text>Top customers by spend</Text>
-            <View
-              style={{
-                paddingVertical: spacing.sm,
-                width: largeScreenLayout
-                  ? Math.min(450, width * 0.35)
-                  : undefined,
-                height: 300,
-              }}
-            >
-              {customerSales.length > 0 ? (
-                customerSales.map(({ customer, spend }) => {
-                  return (
-                    <View
-                      key={customer.id}
-                      style={[
-                        $row,
-                        {
-                          paddingVertical: spacing.xxs,
-                          borderBottomWidth: 1,
-                          borderBottomColor: colors.border,
-                        },
-                      ]}
-                    >
-                      <View style={$flex}>
-                        <Text>{customer.name}</Text>
-                        <Text size="xs" style={{ color: colors.textDim }}>
-                          {customer.phoneNumber}
-                        </Text>
-                      </View>
-                      <Text>${spend.toFixed(2)}</Text>
+        <View>
+          <Text>Top customers by spend</Text>
+          <View
+            style={{
+              paddingVertical: spacing.sm,
+              width: largeScreenLayout
+                ? Math.min(450, width * 0.35)
+                : undefined,
+              height: 300,
+            }}
+          >
+            {customerSales.length > 0 ? (
+              customerSales.map(({ customer, spend }) => {
+                return (
+                  <View
+                    key={customer.id}
+                    style={[
+                      $row,
+                      {
+                        paddingVertical: spacing.xxs,
+                        borderBottomWidth: 1,
+                        borderBottomColor: colors.border,
+                      },
+                    ]}
+                  >
+                    <View style={$flex}>
+                      <Text>{customer.name}</Text>
+                      <Text size="xs" style={{ color: colors.textDim }}>
+                        {customer.phoneNumber}
+                      </Text>
                     </View>
-                  );
-                })
-              ) : (
-                <View style={{ paddingVertical: spacing.xxs }}>
-                  <Text>No sales recorded</Text>
-                </View>
-              )}
-            </View>
+                    <Text>${spend.toFixed(2)}</Text>
+                  </View>
+                );
+              })
+            ) : (
+              <View style={{ paddingVertical: spacing.xxs }}>
+                <Text>No sales recorded</Text>
+              </View>
+            )}
           </View>
         </View>
-      </Screen>
-    </Drawer>
+      </View>
+    </Screen>
   );
 };
 

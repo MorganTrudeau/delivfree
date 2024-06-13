@@ -12,15 +12,13 @@ export const DriverSubscriptionScreen = ({
   navigation,
 }: VendorSubscriptionScreenProps) => {
   return (
-    <Drawer navigation={navigation}>
-      <Screen
-        preset="scroll"
-        style={{ flex: 1, maxWidth: undefined }}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ManageDriverSubscription displayOnly={true} />
-      </Screen>
-    </Drawer>
+    <Screen
+      preset="scroll"
+      style={{ flex: 1, maxWidth: undefined }}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ManageDriverSubscription displayOnly={true} />
+    </Screen>
   );
 };

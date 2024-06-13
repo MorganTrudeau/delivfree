@@ -62,7 +62,7 @@ const ReanimatedCenterModal = forwardRef<ModalRef, Props>(
       []
     );
     const close = useCallback(
-      () => setState({ visible: false, hideContent: false }),
+      () => setState((s) => ({ visible: false, hideContent: s.hideContent })),
       []
     );
 

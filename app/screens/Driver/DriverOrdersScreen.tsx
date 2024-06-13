@@ -35,26 +35,24 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
     createOrderModal.current?.open();
   };
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ScreenHeader title={"Orders"} />
-        <VendorLocationSelect
-          selectedLocationId={vendorLocation}
-          onSelect={handleVendorLocationSelect}
-          style={$vendorLocationSelect}
-        />
-        <OrdersList
-          orders={data}
-          loadOrders={loadData}
-          onOrderPress={onOrderPress}
-        />
-      </Screen>
-    </Drawer>
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader title={"Orders"} />
+      <VendorLocationSelect
+        selectedLocationId={vendorLocation}
+        onSelect={handleVendorLocationSelect}
+        style={$vendorLocationSelect}
+      />
+      <OrdersList
+        orders={data}
+        loadOrders={loadData}
+        onOrderPress={onOrderPress}
+      />
+    </Screen>
   );
 };
 

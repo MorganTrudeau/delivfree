@@ -3,7 +3,7 @@ import { Menu, MenuCategory } from "functions/src/types";
 import { TableHeader, TableHeaders } from "../../TableHeaders";
 import { ActivityIndicator, FlatList, Pressable } from "react-native";
 import { useDimensions } from "app/hooks/useDimensions";
-import { isLargeScreen } from "../../styles";
+import { $borderBottom, isLargeScreen } from "../../styles";
 import { DataCell, TableCell } from "../../TableCell";
 import { Text } from "../../Text";
 import { EmptyList } from "../../EmptyList";
@@ -49,7 +49,10 @@ export const MenuCategoriesList = ({
       }
 
       return (
-        <Pressable onPress={onPress ? () => onPress(item) : undefined}>
+        <Pressable
+          onPress={onPress ? () => onPress(item) : undefined}
+          style={[{ paddingVertical: spacing.sm }, $borderBottom]}
+        >
           <Text preset="subheading">{item.name}</Text>
           <Text>{menuNames}</Text>
         </Pressable>

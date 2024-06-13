@@ -17,11 +17,13 @@ export const QuantitySelector = ({
   disableDecrease,
   disableIncrease,
   style,
+  simplified,
 }: {
   changeQuantity: (change: number) => void;
   disableDecrease?: boolean;
   disableIncrease?: boolean;
   style?: ViewStyle;
+  simplified?: boolean;
 }) => {
   return (
     <View style={[$row, style]}>
@@ -34,18 +36,22 @@ export const QuantitySelector = ({
         onPress={() => changeQuantity(-1)}
       >
         <Icon icon="minus" />
-        <Text selectable={false} style={$quantityButtonText}>
-          Decrease
-        </Text>
+        {!simplified && (
+          <Text selectable={false} style={$quantityButtonText}>
+            Decrease
+          </Text>
+        )}
       </Pressable>
       <Pressable
         disabled={disableIncrease}
         style={[$quantityButton, { opacity: disableIncrease ? 0.5 : 1 }]}
         onPress={() => changeQuantity(1)}
       >
-        <Text selectable={false} style={$quantityButtonText}>
-          Increase
-        </Text>
+        {!simplified && (
+          <Text selectable={false} style={$quantityButtonText}>
+            Increase
+          </Text>
+        )}
         <Icon icon="plus" />
       </Pressable>
     </View>

@@ -10,7 +10,7 @@ interface Props {
   menus: Menu[];
   activeMenu?: string;
   onMenuPress: (menu: Menu) => void;
-  onAdd: () => void;
+  onAdd?: () => void;
   style?: ViewStyle;
 }
 export const MenuNames = React.memo(function MenuNames({
@@ -37,19 +37,23 @@ export const MenuNames = React.memo(function MenuNames({
           onPress={() => onMenuPress(menu)}
         />
       ))}
-      <Icon
-        icon={"plus-circle"}
-        size={35}
-        color={colors.palette.neutral800}
-        onPress={onAdd}
-      />
+      {onAdd && (
+        <Icon
+          icon={"plus-circle"}
+          size={35}
+          color={colors.palette.neutral800}
+          onPress={onAdd}
+        />
+      )}
     </View>
   );
 });
 
 const $button: ViewStyle = {
-  borderWidth: 0,
   marginRight: spacing.sm,
 };
 const $inactiveButton: ViewStyle = { backgroundColor: colors.palette.shade200 };
-const $activeButton: ViewStyle = { backgroundColor: colors.palette.neutral800 };
+const $activeButton: ViewStyle = {
+  backgroundColor: colors.palette.neutral800,
+  borderColor: colors.palette.neutral800,
+};

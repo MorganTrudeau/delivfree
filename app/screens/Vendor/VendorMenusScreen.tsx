@@ -1,4 +1,4 @@
-import { Screen, Text } from "app/components";
+import { Screen } from "app/components";
 import { Drawer } from "app/components/Drawer";
 import { MenuCategories } from "../../components/Menus/MenuCategory/MenuCategories";
 import { MenuItems } from "../../components/Menus/MenuItem/MenuItems";
@@ -10,6 +10,18 @@ import { useMenusLoading } from "app/hooks/useMenusLoading";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { ManageMenuModal } from "app/components/Menus/Menu/ManageMenuModal";
+import { ManageMenuCategoryModal } from "app/components/Menus/MenuCategory/ManageMenuCategoryModal";
+import { useEditModalControl } from "app/hooks/useEditModalControl";
+import { ManageMenuItemModal } from "app/components/Menus/MenuItem/ManageMenuItemModal";
+import {
+  Menu,
+  MenuCategory,
+  MenuCustomization,
+  MenuItem,
+} from "delivfree/types";
+import { MenuCustomizations } from "app/components/Menus/MenuCustomization/MenuCustomizations";
+import { ManageMenuCustomizationModal } from "app/components/Menus/MenuCustomization/ManageMenuCustomizationModal";
 
 type VendorMenusScreenProps = AppStackScreenProps<"Menus">;
 
@@ -43,12 +55,16 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
     items,
     loadItems,
     itemsLoaded,
+    customizations,
+    customizationsLoaded,
+    loadCustomizations,
   } = useMenusLoading();
 
   useEffect(() => {
     loadMenus();
     loadCategories();
     loadItems();
+    loadCustomizations();
   }, []);
 
   const renderTabView = () => {
@@ -59,22 +75,35 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
           menusLoaded={menusLoaded}
           categories={categories}
           categoriesLoaded={categoriesLoaded}
-          vendor={vendor}
           items={items}
           itemsLoaded={itemsLoaded}
+          onEditMenu={editMenu}
+          onAddMenu={addMenu}
+          onAddCategory={addCategory}
+          onEditCategory={editCategory}
+          onAddItem={addItem}
+          onEditItem={editItem}
         />
       );
     }
     if (activeTab === "menus") {
-      return <Menus menus={menus} menusLoaded={menusLoaded} vendor={vendor} />;
+      return (
+        <Menus
+          menus={menus}
+          menusLoaded={menusLoaded}
+          onEditMenu={editMenu}
+          onAddMenu={addMenu}
+        />
+      );
     }
     if (activeTab === "categories") {
       return (
         <MenuCategories
           menus={menus}
           categories={categories}
-          vendor={vendor}
-          loaded={menusLoaded}
+          onAdd={addCategory}
+          onEdit={editCategory}
+          loaded={categoriesLoaded}
         />
       );
     }
@@ -84,7 +113,19 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
           items={items}
           categories={categories}
           loaded={itemsLoaded}
-          vendor={vendor}
+          onAdd={addItem}
+          onEdit={editItem}
+        />
+      );
+    }
+    if (activeTab === "customizations") {
+      return (
+        <MenuCustomizations
+          customizations={customizations}
+          items={items}
+          onAdd={addCustomization}
+          onEdit={editCustomization}
+          loaded={customizationsLoaded}
         />
       );
     }
@@ -96,21 +137,95 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
     setActiveTab(tab.id);
   }, []);
 
+  const {
+    modalRef: editMenuModal,
+    onEdit: editMenu,
+    onAdd: addMenu,
+    closeModal: closeEditMenu,
+    onModalClose: onEditMenuClose,
+    itemEdit: menuEdit,
+  } = useEditModalControl<Menu, undefined>();
+
+  const {
+    modalRef: editCategoryModal,
+    onEdit: editCategory,
+    onAdd: addCategory,
+    closeModal: closeEditCategory,
+    onModalClose: onEditCategoryClose,
+    itemEdit: categoryEdit,
+    parent: categoryMenu,
+  } = useEditModalControl<MenuCategory, string>();
+
+  const {
+    modalRef: editItemModal,
+    onEdit: editItem,
+    onAdd: addItem,
+    closeModal: closeEditItem,
+    onModalClose: onEditItemClose,
+    itemEdit: itemEdit,
+    parent: itemCategory,
+  } = useEditModalControl<MenuItem, string>();
+
+  const {
+    modalRef: editCustomizationModal,
+    onEdit: editCustomization,
+    onAdd: addCustomization,
+    closeModal: closeEditCustomization,
+    onModalClose: onEditCustomizationClose,
+    itemEdit: customizationEdit,
+  } = useEditModalControl<MenuCustomization, string>();
+
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ListTabs
-          tabs={tabItems}
-          onTabPress={handleTabPress}
-          initialIndex={initialIndex}
-        />
-        {renderTabView()}
-      </Screen>
-    </Drawer>
+    <Screen
+      style={$screen}
+      contentContainerStyle={[$containerPadding, { minWidth: 550 }]}
+      inDrawer
+      preset="scroll"
+    >
+      <ListTabs
+        tabs={tabItems}
+        onTabPress={handleTabPress}
+        initialIndex={initialIndex}
+      />
+      {renderTabView()}
+      <ManageMenuModal
+        ref={editMenuModal}
+        vendor={vendor}
+        onClose={closeEditMenu}
+        menu={menuEdit}
+        onDismiss={onEditMenuClose}
+      />
+
+      <ManageMenuCategoryModal
+        ref={editCategoryModal}
+        menus={menus}
+        vendor={vendor}
+        category={categoryEdit}
+        categoryMenu={categoryMenu}
+        onClose={closeEditCategory}
+        onDismiss={onEditCategoryClose}
+      />
+
+      <ManageMenuItemModal
+        ref={editItemModal}
+        item={itemEdit}
+        itemCategory={itemCategory}
+        vendor={vendor}
+        categories={categories}
+        onClose={closeEditItem}
+        onDismiss={onEditItemClose}
+      />
+
+      <ManageMenuCustomizationModal
+        ref={editCustomizationModal}
+        customization={customizationEdit}
+        vendor={vendor}
+        onClose={closeEditCustomization}
+        onDismiss={onEditCustomizationClose}
+        items={items}
+        categories={categories}
+      />
+    </Screen>
   );
 };
 

@@ -153,7 +153,6 @@ export const TextField = forwardRef(function TextField(
     TextInputProps.value || TextInputProps.defaultValue || ""
   );
 
-  const [focused, setFocused] = useState();
   const [error, setError] = useState(false);
 
   const handleFocus = useCallback(
@@ -206,7 +205,10 @@ export const TextField = forwardRef(function TextField(
   const $inputWrapperStyles = [
     $inputWrapperStyle,
     error && { borderColor: colors.error },
-    TextInputProps.multiline && { minHeight: 112 },
+    TextInputProps.multiline && {
+      minHeight: 112,
+      paddingVertical: spacing.xxs,
+    },
     LeftAccessory && { paddingStart: 0 },
     RightAccessory && { paddingEnd: 0 },
     $inputWrapperStyleOverride,

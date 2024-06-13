@@ -25,12 +25,14 @@ import { AnimatedCircularProgress } from "react-native-circular-progress";
 interface ManageMenuProps {
   vendor: string;
   item?: MenuItem | null | undefined;
+  itemCategory?: string | null | undefined;
   categories: MenuCategory[];
   onClose: () => void;
 }
 
 const ManageMenuItem = ({
   item,
+  itemCategory,
   categories,
   vendor,
   onClose,
@@ -52,9 +54,10 @@ const ManageMenuItem = ({
           id: generateUid(),
           image: "",
           name: "",
+          description: "",
           price: "",
           vendor: vendor,
-          categories: [],
+          categories: itemCategory ? [itemCategory] : [],
           energy: {
             cals: "",
             kj: "",
@@ -151,6 +154,14 @@ const ManageMenuItem = ({
         onChangeText={updateState("name")}
         containerStyle={$inputFormContainer}
         value={state.name}
+      />
+      <TextField
+        placeholder="Description"
+        label="Description"
+        onChangeText={updateState("description")}
+        containerStyle={$inputFormContainer}
+        value={state.description}
+        multiline
       />
       <TextField
         placeholder="Price"

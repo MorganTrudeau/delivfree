@@ -142,27 +142,22 @@ export const HomeScreen = (props: HomeScreenProps) => {
   }, [searchLoading, search]);
 
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        safeAreaEdges={HORIZONTAL_SAFE_AREA_EDGES}
-        inDrawer
-        contentContainerStyle={$screen}
-      >
-        <CuisineList
-          contentContainerStyle={listContent}
-          onCuisinePress={navigateToCuisine}
-          onRestaurantPress={navigateToRestaurant}
-          ListHeaderComponent={ListHeader}
-          restaurants={restaurants}
-          showRestaurants={!!search}
-          ListEmptyComponent={EmptySearch}
-        />
-        <LocationModal
-          ref={locationModal}
-          onRequestClose={closeLocationModal}
-        />
-      </Screen>
-    </Drawer>
+    <Screen
+      safeAreaEdges={HORIZONTAL_SAFE_AREA_EDGES}
+      inDrawer
+      contentContainerStyle={$screen}
+    >
+      <CuisineList
+        contentContainerStyle={listContent}
+        onCuisinePress={navigateToCuisine}
+        onRestaurantPress={navigateToRestaurant}
+        ListHeaderComponent={ListHeader}
+        restaurants={restaurants}
+        showRestaurants={!!search}
+        ListEmptyComponent={EmptySearch}
+      />
+      <LocationModal ref={locationModal} onRequestClose={closeLocationModal} />
+    </Screen>
   );
 };
 

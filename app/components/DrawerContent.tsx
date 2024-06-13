@@ -9,6 +9,7 @@ import { useHeaderHeight } from "app/hooks";
 import FastImage from "react-native-fast-image";
 import { AppStackParamList } from "app/navigators/StackNavigator";
 import { useAppSelector } from "app/redux/store";
+import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
 
 type DrawerItem = {
   text: string;
@@ -70,7 +71,7 @@ export const DrawerContent = ({
   navigation,
   onItemPress,
 }: {
-  navigation: NavigationProp;
+  navigation: NavigationContainerRefWithCurrent<AppStackParamList>;
   onItemPress: () => void;
 }) => {
   const insets = useSafeAreaInsets();
@@ -90,8 +91,8 @@ export const DrawerContent = ({
   );
 
   const activeRoute = useMemo(() => {
-    const state = navigation.getState();
-    return state.routes[state.index].name;
+    const state = navigation.current?.getState();
+    return state?.routes[state.index].name;
   }, [navigation]);
 
   const renderListHeader = useMemo(
@@ -150,9 +151,9 @@ interface DemoListItem {
     RightComponent?: React.ReactElement;
   };
   index: number;
-  navigation: NavigationProp;
+  navigation: NavigationContainerRefWithCurrent<AppStackParamList>;
   onItemPress: () => void;
-  activeRoute: string;
+  activeRoute: string | undefined;
 }
 
 const DrawerItem: FC<DemoListItem> = ({
@@ -174,12 +175,12 @@ const DrawerItem: FC<DemoListItem> = ({
           : undefined
       }
       onPress={() => {
+        onItemPress();
         if (isRateItem) {
           rateApp(false);
         } else if (item.route) {
-          onItemPress();
           // @ts-ignore
-          return navigation.navigate(item.route, item.params);
+          navigation.current?.navigate(item.route, item.params);
         }
       }}
     />

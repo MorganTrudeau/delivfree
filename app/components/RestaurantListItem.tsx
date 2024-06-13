@@ -14,7 +14,7 @@ interface Props {
 const RestaurantListItem = ({ restaurant, onPress }: Props) => {
   return (
     <Pressable onPress={() => onPress?.(restaurant)}>
-      <View style={[$imageContainer, { maxWidth: 400 }]}>
+      <View style={[$imageContainer, { maxWidth: 500 }]}>
         <FastImage source={{ uri: restaurant.image }} style={$image} />
       </View>
       <Text preset={"subheading"} style={$title}>

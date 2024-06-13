@@ -25,6 +25,8 @@ import Animated, {
 import { useDimensions } from "app/hooks/useDimensions";
 import { LARGE_SCREEN } from "./styles";
 import { Icon } from "./Icon";
+import { AppStackParamList } from "app/navigators/StackNavigator";
+import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -42,11 +44,11 @@ export const Drawer = ({
   disabled,
 }: {
   children: ViewProps["children"];
-  navigation: NavigationProp;
+  navigation: NavigationContainerRefWithCurrent<AppStackParamList>;
   disabled?: boolean;
 }) => {
   const { width } = useDimensions();
-  const largeScreenLayout = width > LARGE_SCREEN;
+  const largeScreenLayout = false; //width > LARGE_SCREEN;
 
   const [open, setOpen] = useState(false);
   const openAnimation = useSharedValue(0);
@@ -125,9 +127,7 @@ export const Drawer = ({
             <DrawerContent
               navigation={navigation}
               onItemPress={() => {
-                setTimeout(() => {
-                  drawerRef.current?.closeDrawer();
-                }, 3000);
+                setTimeout(closeDrawer, 1);
               }}
             />
             {!largeScreenLayout && (

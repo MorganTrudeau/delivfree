@@ -1,9 +1,13 @@
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { $fontSizeStyles } from "app/components";
+import { DrawerIconButton } from "app/components/DrawerIconButton";
+import { LogoHeader } from "app/components/LogoHeader";
 import { colors, typography } from "app/theme";
 import { Cuisine } from "delivfree";
 import { Platform } from "react-native";
 import { StackAnimationTypes } from "react-native-screens";
+import { navigationRef } from "./navigationUtilities";
 
 export type AppStackParamList = {
   Welcome: undefined;
@@ -58,20 +62,24 @@ export const linkingConfigScreens: {
   AdConfig: "ad-config",
   PositionsSearch: "positions-search",
   Menus: "menus",
+  RestaurantDetail: "restaurant-menu",
 };
 
 export const screenOptions = {
   headerBackTitleVisible: false,
-  headerShown: false,
+  headerLeft: () => <DrawerIconButton />,
+  headerTitle: () => (
+    <LogoHeader onPress={() => navigationRef.current?.navigate("Home")} />
+  ),
   headerTintColor: colors.primary,
   headerTitleStyle: [
     { fontFamily: typography.secondary.semiBold, color: colors.text },
     $fontSizeStyles.lg,
   ],
   navigationBarColor: colors.background,
-  headerTitle: "",
-  headerTransparent: true,
-  headerStyle: { backgroundColor: colors.background },
+  headerStyle: {
+    backgroundColor: colors.background,
+  },
   headerShadowVisible: false,
   animation: Platform.select<StackAnimationTypes>({
     android: "fade_from_bottom",

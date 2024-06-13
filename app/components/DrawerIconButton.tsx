@@ -1,5 +1,11 @@
 import React, { useContext, useEffect } from "react";
-import { Pressable, PressableProps, View, ViewStyle } from "react-native";
+import {
+  Platform,
+  Pressable,
+  PressableProps,
+  View,
+  ViewStyle,
+} from "react-native";
 import Animated, {
   interpolate,
   interpolateColor,
@@ -100,7 +106,9 @@ export function DrawerIconButton(props: PressableProps) {
   }, [progress]);
 
   useEffect(() => {
-    progress.value = withTiming(open ? 1 : 0);
+    if (Platform.OS !== "web") {
+      progress.value = withTiming(open ? 1 : 0);
+    }
   }, [open, progress]);
 
   return (

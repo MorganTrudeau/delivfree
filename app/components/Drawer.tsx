@@ -13,6 +13,8 @@ import {
 import { Dimensions, Platform } from "react-native";
 import { DrawerContent } from "./DrawerContent";
 import { NavigationProp } from "app/navigators";
+import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
+import { AppStackParamList } from "app/navigators/StackNavigator";
 
 export const DrawerContext = createContext({
   drawerRef: { current: null } as MutableRefObject<DrawerLayout | null>,
@@ -25,7 +27,7 @@ export const Drawer = ({
   disabled,
   ...rest
 }: Partial<DrawerLayoutProps> & {
-  navigation: NavigationProp;
+  navigation: NavigationContainerRefWithCurrent<AppStackParamList>;
   disabled?: boolean;
 }) => {
   const drawerRef = useRef<DrawerLayout>(null);

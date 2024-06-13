@@ -10,6 +10,7 @@ import { Platform, Pressable } from "react-native";
 import { spacing } from "app/theme";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "app/components";
+import { DrawerIconButton } from "app/components/DrawerIconButton";
 
 const Stack = getStackNavigator();
 
@@ -30,17 +31,12 @@ export const ConsumerStack = () => {
   const renderMainStack = () => {
     return (
       <>
-        <Stack.Screen
-          name="Home"
-          component={Screens.HomeScreen}
-          options={{ headerTitle: LogoHeader }}
-        />
+        <Stack.Screen name="Home" component={Screens.HomeScreen} />
         <Stack.Screen
           name="AddressSearch"
           component={Screens.AddressSearchScreen}
           options={{
             headerTitle: "Address Search",
-            headerShown: true,
             headerTransparent: false,
           }}
         />
@@ -48,32 +44,32 @@ export const ConsumerStack = () => {
           name="Restaurants"
           component={Screens.RestaurantsScreen}
           options={{
-            headerShown: true,
             headerTransparent: false,
-            headerTitle: LogoHeader,
           }}
         />
         <Stack.Screen
           name="RestaurantDetail"
           component={Screens.RestaurantDetailScreen}
           options={{
-            headerShown: true,
             headerTransparent: Platform.OS !== "web",
             headerStyle: { backgroundColor: "transparent" },
-            headerLeft: (props) =>
-              props.canGoBack ? (
-                <Pressable
-                  style={{
-                    backgroundColor: "rgba(0,0,0,0.5)",
-                    borderRadius: 100,
-                    padding: spacing.xxs,
-                    marginLeft: Platform.OS === "web" ? spacing.md : 0,
-                  }}
-                  onPress={() => navigation.goBack()}
-                >
-                  <Icon icon={"arrow-left"} color={"#fff"} />
-                </Pressable>
-              ) : null,
+            headerLeft:
+              Platform.OS === "web"
+                ? () => <DrawerIconButton />
+                : (props) =>
+                    props.canGoBack ? (
+                      <Pressable
+                        style={{
+                          backgroundColor: "rgba(0,0,0,0.5)",
+                          borderRadius: 100,
+                          padding: spacing.xxs,
+                          marginLeft: Platform.OS === "web" ? spacing.md : 0,
+                        }}
+                        onPress={() => navigation.goBack()}
+                      >
+                        <Icon icon={"arrow-left"} color={"#fff"} />
+                      </Pressable>
+                    ) : null,
           }}
         />
         <Stack.Screen name="Settings" component={Screens.SettingsScreen} />

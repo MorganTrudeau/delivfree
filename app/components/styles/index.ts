@@ -158,6 +158,14 @@ export const $avatar: ImageStyle = {
   alignItems: "center",
 };
 
+export const $border = {
+  borderWidth: StyleSheet.hairlineWidth,
+  borderColor: colors.border,
+};
+export const $borderLight = {
+  borderWidth: StyleSheet.hairlineWidth,
+  borderColor: colors.borderLight,
+};
 export const $borderTop: ViewStyle = {
   borderTopWidth: StyleSheet.hairlineWidth,
   borderTopColor: colors.border,

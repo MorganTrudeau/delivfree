@@ -78,34 +78,32 @@ export const DeleteAccountScreen = ({ navigation }: Props) => {
   );
 
   return (
-    <Drawer navigation={navigation}>
-      <Screen
-        safeAreaEdges={NO_TOP_BOTTOM_SAFE_AREA_EDGES}
-        preset="scroll"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <Card>
-          <Text preset="subheading" style={$title}>
-            Deleting your account
-          </Text>
-          <Text>
-            This will erase all your data and delete your account. You will no
-            longer be able to login and access your account. This cannot be
-            reversed.
-          </Text>
-          <Button
-            text="Delete account"
-            style={$button}
-            textStyle={$buttonText}
-            onPress={confirmDelete}
-            LeftAccessory={ButtonIcon}
-            RightAccessory={ButtonLoading}
-          />
-        </Card>
-      </Screen>
-    </Drawer>
+    <Screen
+      safeAreaEdges={NO_TOP_BOTTOM_SAFE_AREA_EDGES}
+      preset="scroll"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <Card>
+        <Text preset="subheading" style={$title}>
+          Deleting your account
+        </Text>
+        <Text>
+          This will erase all your data and delete your account. You will no
+          longer be able to login and access your account. This cannot be
+          reversed.
+        </Text>
+        <Button
+          text="Delete account"
+          style={$button}
+          textStyle={$buttonText}
+          onPress={confirmDelete}
+          LeftAccessory={ButtonIcon}
+          RightAccessory={ButtonLoading}
+        />
+      </Card>
+    </Screen>
   );
 };
 

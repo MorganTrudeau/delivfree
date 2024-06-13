@@ -24,6 +24,7 @@ export type MenuItem = {
   id: string;
   image: string;
   name: string;
+  description: string;
   categories: string[];
   price: string;
   energy: { cals: string; kj: string };
@@ -40,8 +41,8 @@ export type MenuCustomizationChoice = {
 export type MenuCustomization = {
   id: string;
   choices: MenuCustomizationChoice[];
-  minChoices: number;
-  maxChoices: number;
+  minChoices: string;
+  maxChoices: string;
   items: string[];
   vendor: string;
 };

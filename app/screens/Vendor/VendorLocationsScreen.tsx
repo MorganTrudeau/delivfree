@@ -41,32 +41,30 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
   };
 
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ScreenHeader
-          buttonTitle="Add Location"
-          onButtonPress={createLocation}
-          title="Locations"
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader
+        buttonTitle="Add Location"
+        onButtonPress={createLocation}
+        title="Locations"
+      />
+      <VendorLocationsList
+        locations={vendorLocationList}
+        onPress={handleEditLocation}
+      />
+      {!!vendorId && (
+        <ManageVendorLocationModal
+          ref={manageLocationModal}
+          vendor={vendorId}
+          onClose={closeManageLocation}
+          onDismiss={onLocationModalClose}
+          editLocation={editLocation}
         />
-        <VendorLocationsList
-          locations={vendorLocationList}
-          onPress={handleEditLocation}
-        />
-        {!!vendorId && (
-          <ManageVendorLocationModal
-            ref={manageLocationModal}
-            vendor={vendorId}
-            onClose={closeManageLocation}
-            onDismiss={onLocationModalClose}
-            editLocation={editLocation}
-          />
-        )}
-      </Screen>
-    </Drawer>
+      )}
+    </Screen>
   );
 };

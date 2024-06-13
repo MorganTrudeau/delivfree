@@ -11,7 +11,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { colors } from "../theme";
+import { colors, spacing } from "../theme";
 import {
   ExtendedEdge,
   useSafeAreaInsetsStyle,
@@ -20,7 +20,7 @@ import { DrawerIconButton } from "./DrawerIconButton";
 import { Header, HeaderProps } from "./Header";
 import { LogoHeader } from "./LogoHeader";
 import { useDimensions } from "app/hooks/useDimensions";
-import { $flex, LARGE_SCREEN } from "./styles";
+import { $flex, LARGE_SCREEN, MAX_CONTENT_WIDTH } from "./styles";
 
 interface BaseScreenProps {
   HeaderTitle?: React.ReactNode;
@@ -241,23 +241,38 @@ export function Screen(props: ScreenProps) {
         backgroundColor={colors.background}
         {...StatusBarProps}
       />
-      {inDrawer && !largeScreenLayout && (
+
+      {/* {(!largeScreenLayout || !inDrawer) && (
         <Header
-          LeftActionComponent={<DrawerIconButton />}
+          LeftActionComponent={
+            inDrawer && !largeScreenLayout ? <DrawerIconButton /> : undefined
+          }
           title={title}
-          HeaderTitle={HeaderTitle || <LogoHeader />}
+          HeaderTitle={
+            HeaderTitle ||
+            (inDrawer && !largeScreenLayout ? <LogoHeader /> : undefined)
+          }
           {...headerProps}
         />
-      )}
+      )} */}
 
-      {isNonScrolling(props.preset) ? (
-        <ScreenWithoutScrolling {...props} />
-      ) : (
-        <ScreenWithScrolling {...props} />
-      )}
+      <View style={$wrapper}>
+        {isNonScrolling(props.preset) ? (
+          <ScreenWithoutScrolling {...props} />
+        ) : (
+          <ScreenWithScrolling {...props} />
+        )}
+      </View>
     </View>
   );
 }
+
+const $wrapper: ViewStyle = {
+  flex: 1,
+  maxWidth: MAX_CONTENT_WIDTH,
+  width: "100%",
+  alignSelf: "center",
+};
 
 const $containerStyle: ViewStyle = {
   flex: 1,

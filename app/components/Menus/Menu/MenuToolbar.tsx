@@ -1,5 +1,5 @@
-import React from "react";
-import { View } from "react-native";
+import React, { useMemo } from "react";
+import { ActivityIndicator, View } from "react-native";
 import { Icon } from "../../Icon";
 import { Text } from "../../Text";
 import { ButtonSmall } from "../../ButtonSmall";
@@ -12,12 +12,21 @@ export const MenuToolbar = React.memo(function MenuToolbar({
   onEditMenu,
   onSaveMenu,
   canSave,
+  saveLoading,
 }: {
   menu: Menu;
   onEditMenu: (_menu: Menu) => void;
   onSaveMenu: () => void;
   canSave: boolean;
+  saveLoading: boolean;
 }) {
+  const SaveLoading = useMemo(
+    () =>
+      saveLoading
+        ? ({ style }) => <ActivityIndicator color={"#fff"} style={style} />
+        : undefined,
+    [saveLoading]
+  );
   return (
     <View style={[$row, $borderBottom, { paddingVertical: spacing.sm }]}>
       <View style={[$row, $flex]}>
@@ -39,6 +48,7 @@ export const MenuToolbar = React.memo(function MenuToolbar({
         style={{ marginLeft: spacing.md }}
         onPress={onSaveMenu}
         preset={canSave ? "filled" : "default"}
+        RightAccessory={SaveLoading}
       />
     </View>
   );

@@ -53,39 +53,37 @@ export const SettingsScreen = ({ navigation, route }: Props) => {
   };
 
   return (
-    <Drawer navigation={navigation} disabled={disableDrawer}>
-      <Screen
-        preset="scroll"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer={!disableDrawer}
-      >
-        <ScreenHeader title="Settings" />
-        <ListItem
-          onPress={contactUs}
-          text="Contact Us"
-          leftIcon="email-fast-outline"
-          style={$borderBottom}
-        />
-        <ListItem
-          onPress={navigateToAbout}
-          text="About"
-          leftIcon="information-outline"
-          style={$borderBottom}
-        />
-        <ListItem
-          onPress={navigateToDeleteAccount}
-          text="Delete Account"
-          leftIcon="delete-forever-outline"
-          style={$borderBottom}
-        />
-        <ListItem
-          onPress={confirmLogout}
-          text="Logout"
-          style={$borderBottom}
-          leftIcon="logout-variant"
-        />
-      </Screen>
-    </Drawer>
+    <Screen
+      preset="scroll"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer={!disableDrawer}
+    >
+      <ScreenHeader title="Settings" />
+      <ListItem
+        onPress={contactUs}
+        text="Contact Us"
+        leftIcon="email-fast-outline"
+        style={$borderBottom}
+      />
+      <ListItem
+        onPress={navigateToAbout}
+        text="About"
+        leftIcon="information-outline"
+        style={$borderBottom}
+      />
+      <ListItem
+        onPress={navigateToDeleteAccount}
+        text="Delete Account"
+        leftIcon="delete-forever-outline"
+        style={$borderBottom}
+      />
+      <ListItem
+        onPress={confirmLogout}
+        text="Logout"
+        style={$borderBottom}
+        leftIcon="logout-variant"
+      />
+    </Screen>
   );
 };

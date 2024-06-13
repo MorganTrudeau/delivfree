@@ -32,21 +32,19 @@ export const VendorPositionsScreen = (props: VendorPositionsScreenProps) => {
   }, []);
 
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ScreenHeader title="Positions" />
-        <PositionsList
-          positions={positionsList}
-          vendorLocations={vendorLocations}
-          onPress={handlePositionsPress}
-        />
-        <PositionsSelectModal ref={positionsModal} positions={editPositions} />
-      </Screen>
-    </Drawer>
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader title="Positions" />
+      <PositionsList
+        positions={positionsList}
+        vendorLocations={vendorLocations}
+        onPress={handlePositionsPress}
+      />
+      <PositionsSelectModal ref={positionsModal} positions={editPositions} />
+    </Screen>
   );
 };

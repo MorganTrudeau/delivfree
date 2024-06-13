@@ -9,51 +9,31 @@ import { BottomSheetRef } from "../../Modal/BottomSheet";
 interface Props {
   categories: MenuCategory[];
   menus: Menu[];
-  vendor: string;
   loaded: boolean;
+  onAdd: () => void;
+  onEdit: (category: MenuCategory) => void;
 }
 
 export const MenuCategories = ({
   menus,
   categories,
-  vendor,
   loaded,
+  onAdd,
+  onEdit,
 }: Props) => {
-  const manageModal = useRef<BottomSheetRef>(null);
-
-  const [categoryEdit, setCategoryEdit] = useState<MenuCategory>();
-
-  const handleOpenCategory = useCallback(() => {
-    manageModal.current?.snapToIndex(0);
-  }, []);
-  const handleCloseManage = useCallback(() => {
-    manageModal.current?.close();
-  }, []);
-  const handleCategoryPress = (category: MenuCategory) => {
-    setCategoryEdit(category);
-    handleOpenCategory();
-  };
-
   return (
     <>
       <ScreenHeader
         title={"Categories"}
         buttonTitle={"New category"}
-        onButtonPress={handleOpenCategory}
+        onButtonPress={onAdd}
         style={$menusScreenHeader}
       />
       <MenuCategoriesList
         categories={categories}
         menus={menus}
-        onPress={handleCategoryPress}
+        onPress={onEdit}
         loaded={loaded}
-      />
-      <ManageMenuCategoryModal
-        ref={manageModal}
-        menus={menus}
-        vendor={vendor}
-        category={categoryEdit}
-        onClose={handleCloseManage}
       />
     </>
   );

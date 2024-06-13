@@ -9,12 +9,13 @@ import {
 } from "react-native";
 import { colors, spacing, typography } from "../theme";
 import { Text, TextProps } from "./Text";
+import { Icon, IconTypes } from "./Icon";
+import { borderRadius } from "app/theme/borderRadius";
 
 type Presets = keyof typeof $viewPresets;
 
 export interface ButtonAccessoryProps {
   style: StyleProp<any>;
-  pressableState: PressableStateCallbackType;
 }
 
 export interface ButtonProps extends PressableProps {
@@ -65,6 +66,9 @@ export interface ButtonProps extends PressableProps {
    * Children components.
    */
   children?: React.ReactNode;
+
+  leftIcon?: IconTypes;
+  rightIcon?: IconTypes;
 }
 
 /**
@@ -85,6 +89,8 @@ export function Button(props: ButtonProps) {
     children,
     RightAccessory,
     LeftAccessory,
+    leftIcon,
+    rightIcon,
     ...rest
   } = props;
 
@@ -99,33 +105,38 @@ export function Button(props: ButtonProps) {
     [$textStyleOverride, preset]
   );
 
+  const LeftIcon = useMemo(
+    () =>
+      leftIcon ? <Icon icon={leftIcon} style={$leftAccessoryStyle} /> : null,
+    [leftIcon]
+  );
+
+  const RightIcon = useMemo(
+    () =>
+      rightIcon ? <Icon icon={rightIcon} style={$rightAccessoryStyle} /> : null,
+    [rightIcon]
+  );
+
   return (
     <Pressable style={$viewStyle} accessibilityRole="button" {...rest}>
-      {(state) => (
-        <>
-          {!!LeftAccessory && (
-            <LeftAccessory style={$leftAccessoryStyle} pressableState={state} />
-          )}
+      {LeftIcon}
 
-          <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle}>
-            {children}
-          </Text>
+      {!!LeftAccessory && <LeftAccessory style={$leftAccessoryStyle} />}
 
-          {!!RightAccessory && (
-            <RightAccessory
-              style={$rightAccessoryStyle}
-              pressableState={state}
-            />
-          )}
-        </>
-      )}
+      <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle}>
+        {children}
+      </Text>
+
+      {!!RightAccessory && <RightAccessory style={$rightAccessoryStyle} />}
+
+      {RightIcon}
     </Pressable>
   );
 }
 
 const $baseViewStyle: ViewStyle = {
   minHeight: 56,
-  borderRadius: 4,
+  borderRadius: borderRadius.sm,
   justifyContent: "center",
   alignItems: "center",
   flexDirection: "row",

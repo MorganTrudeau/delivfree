@@ -1,25 +1,24 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { MenuNames } from "./Menu/MenuNames";
 import { Text } from "../Text";
 import { colors, spacing } from "app/theme";
-import { ManageMenuModal } from "./Menu/ManageMenuModal";
 import { Menu, MenuCategory, MenuItem } from "functions/src/types";
 import { $menusScreenHeader } from "../styles";
 import { MenuOverviewEmpty } from "./MenuOverviewEmpty";
 import { MenuToolbar } from "./Menu/MenuToolbar";
-import { BottomSheetRef } from "../Modal/BottomSheet";
 import { MenuSortableList } from "./MenuSortableList";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
+import { useAlert, useToast } from "app/hooks";
+import { saveCategoryOrder, saveItemOrder } from "app/apis/menus";
 
 interface Props {
-  vendor: string;
+  onEditMenu: (menu: Menu) => void;
+  onAddMenu: () => void;
+  onEditCategory: (category: MenuCategory) => void;
+  onAddCategory: (menu: string) => void;
+  onEditItem: (item: MenuItem) => void;
+  onAddItem: (category: string) => void;
   menus: Menu[];
   menusLoaded: boolean;
   categories: MenuCategory[];
@@ -29,50 +28,84 @@ interface Props {
 }
 
 export const MenuOverview = React.memo(function MenuOverview({
-  vendor,
+  onEditMenu,
+  onAddMenu,
   menus,
   menusLoaded,
   categories,
   categoriesLoaded,
   items,
   itemsLoaded,
+  onAddCategory,
+  onEditCategory,
+  onAddItem,
+  onEditItem,
 }: Props) {
-  const manageMenuModal = useRef<BottomSheetRef>(null);
-
-  const addMenu = useCallback(
-    () => manageMenuModal.current?.snapToIndex(0),
-    []
-  );
-  const closeAddMenu = useCallback(() => manageMenuModal.current?.close(), []);
+  const Alert = useAlert();
+  const Toast = useToast();
 
   const [categoryOrder, setCategoryOrder] = useState<{
-    [menu: string]: string[];
-  }>({});
-  const [itemOrder, setItemOrder] = useState<{
     [category: string]: string[];
   }>({});
+  const [itemOrder, setItemOrder] = useState<{ [category: string]: string[] }>(
+    {}
+  );
+  const handleItemOrderChange = useCallback(
+    (category: string, order: string[]) => {
+      setItemOrder((state) => ({ ...state, [category]: order }));
+    },
+    []
+  );
+  const handleCategoryOrderChange = useCallback(
+    (menu: string, order: string[]) => {
+      setCategoryOrder((state) => ({ ...state, [menu]: order }));
+    },
+    []
+  );
 
-  const [menuEdit, setEditMenu] = useState<Menu>();
+  const hasItemOrderChanges = useMemo(
+    () => !!Object.values(itemOrder).length,
+    [itemOrder]
+  );
+  const hasCategoryOrderChanges = useMemo(
+    () => !!Object.values(categoryOrder).length,
+    [categoryOrder]
+  );
+  const canSave = hasCategoryOrderChanges || hasItemOrderChanges;
+
   const [activeMenuId, setActiveMenuId] = useState("");
   const activeMenu = useMemo(
     () => menus.find((m) => m.id === activeMenuId),
     [menus, activeMenuId]
   );
 
-  const handleMenuPress = useCallback((menu: Menu) => {
-    setActiveMenuId(menu.id);
-  }, []);
-
-  const onManageMenuClose = useCallback(() => {
-    if (menuEdit) {
-      setEditMenu(undefined);
-    }
-  }, [menuEdit]);
-
-  const handleEditMenu = useCallback((menu: Menu) => {
-    setEditMenu(menu);
-    manageMenuModal.current?.snapToIndex(0);
-  }, []);
+  const handleMenuPress = useCallback(
+    async (menu: Menu) => {
+      if (canSave) {
+        const shouldContinue = await new Promise((resolve) =>
+          Alert.alert(
+            "Unsaved changes",
+            "Your changes will be lost by switching menus. Do you want to discard changes and switch menus?",
+            [
+              { text: "Cancel", onPress: () => resolve(false) },
+              { text: "Switch menus", onPress: () => resolve(true) },
+            ]
+          )
+        );
+        if (!shouldContinue) {
+          return;
+        }
+      }
+      setActiveMenuId(menu.id);
+      if (hasItemOrderChanges) {
+        setItemOrder({});
+      }
+      if (hasCategoryOrderChanges) {
+        setCategoryOrder({});
+      }
+    },
+    [hasItemOrderChanges, hasCategoryOrderChanges, canSave]
+  );
 
   const firstMenuId = menus[0]?.id;
 
@@ -90,7 +123,7 @@ export const MenuOverview = React.memo(function MenuOverview({
     const menuCategories = categories.filter((c) =>
       c.menus.includes(activeMenuId)
     );
-    const orderedCategories = categoryOrder[activeMenuId]
+    const orderedCategories = categoryOrder[activeMenuId]?.length
       ? reorder(menuCategories, categoryOrder[activeMenuId])
       : menuCategories.sort(
           (a, b) => a.order[activeMenuId] - b.order[activeMenuId]
@@ -102,7 +135,7 @@ export const MenuOverview = React.memo(function MenuOverview({
         const categoryItems = items.filter((i) =>
           i.categories.includes(category.id)
         );
-        const orderedItems = itemOrder[category.id]
+        const orderedItems = itemOrder[category.id]?.length
           ? reorder(categoryItems, itemOrder[category.id])
           : categoryItems.sort(
               (a, b) => a.order[category.id] - b.order[category.id]
@@ -111,19 +144,35 @@ export const MenuOverview = React.memo(function MenuOverview({
       }, [] as { category: MenuCategory; items: MenuItem[] }[]);
   }, [activeMenuId, categories, items, itemOrder, categoryOrder]);
 
-  const saveMenu = useCallback(async () => {}, []);
+  const saveMenu = useCallback(async () => {
+    if (!canSave) {
+      return;
+    }
+    if (hasCategoryOrderChanges) {
+      await saveCategoryOrder(categoryOrder);
+      setCategoryOrder({});
+    }
+    if (hasItemOrderChanges) {
+      await saveItemOrder(itemOrder);
+      setItemOrder({});
+    }
+    Toast.show("Menu saved!");
+  }, [
+    hasCategoryOrderChanges,
+    hasItemOrderChanges,
+    itemOrder,
+    categoryOrder,
+    canSave,
+  ]);
 
   const { exec: handleSaveMenu, loading: saveLoading } =
     useAsyncFunction(saveMenu);
-
-  const canSave =
-    !!categoryOrder[activeMenuId]?.length || !!itemOrder[activeMenuId]?.length;
 
   return (
     <View>
       <MenuNames
         menus={menus}
-        onAdd={addMenu}
+        onAdd={onAddMenu}
         activeMenu={activeMenuId}
         onMenuPress={handleMenuPress}
         style={$menuNames}
@@ -136,9 +185,10 @@ export const MenuOverview = React.memo(function MenuOverview({
       {activeMenu && (
         <MenuToolbar
           menu={activeMenu}
-          onEditMenu={handleEditMenu}
+          onEditMenu={onEditMenu}
           onSaveMenu={handleSaveMenu}
           canSave={canSave}
+          saveLoading={saveLoading}
         />
       )}
       {!menusLoaded && (
@@ -148,25 +198,18 @@ export const MenuOverview = React.memo(function MenuOverview({
         />
       )}
       {!menus.length && menusLoaded && (
-        <MenuOverviewEmpty onAddMenu={addMenu} />
+        <MenuOverviewEmpty onAddMenu={onAddMenu} />
       )}
-      <MenuSortableList
-        sections={menuSections}
-        onItemOrderChange={(category, order) => {
-          setItemOrder((s) => ({ ...s, [category]: order }));
-        }}
-        onCategoryOrderChange={(menu, order) => {
-          setCategoryOrder((s) => ({ ...s, [menu]: order }));
-        }}
-        menu={activeMenuId}
-      />
-      <ManageMenuModal
-        ref={manageMenuModal}
-        vendor={vendor}
-        onClose={closeAddMenu}
-        menu={menuEdit}
-        onDismiss={onManageMenuClose}
-      />
+      {menusLoaded && categoriesLoaded && itemsLoaded && (
+        <MenuSortableList
+          menu={activeMenuId}
+          sections={menuSections}
+          onItemOrderChange={handleItemOrderChange}
+          onCategoryOrderChange={handleCategoryOrderChange}
+          addCategory={onAddCategory}
+          addItem={onAddItem}
+        />
+      )}
     </View>
   );
 });

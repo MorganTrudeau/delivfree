@@ -19,19 +19,14 @@ export const DriverLicensesScreen = (props: DriverLicensesScreenProps) => {
   );
 
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ScreenHeader title={"Licenses"} />
-        <LicensesList
-          licenses={licensesList}
-          vendorLocations={vendorLocations}
-        />
-      </Screen>
-    </Drawer>
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader title={"Licenses"} />
+      <LicensesList licenses={licensesList} vendorLocations={vendorLocations} />
+    </Screen>
   );
 };

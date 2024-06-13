@@ -2,20 +2,19 @@ import React, { ComponentType, ReactNode, useMemo } from "react";
 import {
   Pressable,
   PressableProps,
-  PressableStateCallbackType,
   StyleProp,
   TextStyle,
   ViewStyle,
 } from "react-native";
 import { colors, spacing, typography } from "../theme";
 import { Text, TextProps } from "./Text";
+import { Icon, IconTypes } from "./Icon";
 import { borderRadius } from "app/theme/borderRadius";
 
 type Presets = keyof typeof $viewPresets;
 
 export interface ButtonSmallAccessoryProps {
   style: StyleProp<any>;
-  pressableState: PressableStateCallbackType;
 }
 
 export interface ButtonSmallProps extends PressableProps {
@@ -66,6 +65,9 @@ export interface ButtonSmallProps extends PressableProps {
    * Children components.
    */
   children?: React.ReactNode;
+
+  leftIcon?: IconTypes;
+  rightIcon?: IconTypes;
 }
 
 /**
@@ -86,6 +88,8 @@ export function ButtonSmall(props: ButtonSmallProps) {
     children,
     RightAccessory,
     LeftAccessory,
+    leftIcon,
+    rightIcon,
     ...rest
   } = props;
 
@@ -100,38 +104,42 @@ export function ButtonSmall(props: ButtonSmallProps) {
     [$textStyleOverride, preset]
   );
 
+  const LeftIcon = useMemo(
+    () =>
+      leftIcon ? <Icon icon={leftIcon} style={$leftAccessoryStyle} /> : null,
+    [leftIcon]
+  );
+
+  const RightIcon = useMemo(
+    () =>
+      rightIcon ? <Icon icon={rightIcon} style={$rightAccessoryStyle} /> : null,
+    [rightIcon]
+  );
+
   return (
     <Pressable style={$viewStyle} accessibilityRole="button" {...rest}>
-      {(state) => (
-        <>
-          {!!LeftAccessory &&
-            (typeof LeftAccessory === "function" ? (
-              <LeftAccessory
-                style={$leftAccessoryStyle}
-                pressableState={state}
-              />
-            ) : (
-              LeftAccessory
-            ))}
+      {LeftIcon}
 
-          <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle}>
-            {children}
-          </Text>
+      {!!LeftAccessory &&
+        (typeof LeftAccessory === "function" ? (
+          <LeftAccessory style={$leftAccessoryStyle} />
+        ) : (
+          LeftAccessory
+        ))}
 
-          {!!RightAccessory && (
-            <RightAccessory
-              style={$rightAccessoryStyle}
-              pressableState={state}
-            />
-          )}
-        </>
-      )}
+      <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle}>
+        {children}
+      </Text>
+
+      {!!RightAccessory && <RightAccessory style={$rightAccessoryStyle} />}
+
+      {RightIcon}
     </Pressable>
   );
 }
 
 const $baseViewStyle: ViewStyle = {
-  borderRadius: 4,
+  borderRadius: borderRadius.sm,
   overflow: "hidden",
   paddingVertical: spacing.xxs,
   paddingHorizontal: spacing.sm,
@@ -160,8 +168,8 @@ const $viewPresets = {
     $baseViewStyle,
     {
       borderWidth: 1,
-      borderColor: colors.palette.primary200,
-      backgroundColor: colors.background,
+      borderColor: colors.border,
+      backgroundColor: colors.palette.neutral300,
     },
   ] as StyleProp<ViewStyle>,
 

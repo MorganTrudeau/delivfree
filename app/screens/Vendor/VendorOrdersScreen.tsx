@@ -70,38 +70,36 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
     setSelectedOrder(undefined);
   };
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ScreenHeader
-          buttonTitle="Create Order"
-          onButtonPress={createOrder}
-          title="Orders"
-        />
-        <OrderCountAlert style={$orderCount} />
-        <VendorLocationSelect
-          selectedLocationId={vendorLocation}
-          onSelect={handleVendorLocationSelect}
-          style={$vendorLocationSelect}
-        />
-        <OrdersList
-          orders={data}
-          loadOrders={loadData}
-          onOrderPress={onOrderPress}
-        />
-        <CreateOrderModal
-          ref={createOrderModal}
-          onClose={closeCreateOrder}
-          editOrder={selectedOrder}
-          onDismiss={onCreateOrderClose}
-          vendorLocationId={vendorLocation}
-        />
-      </Screen>
-    </Drawer>
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader
+        buttonTitle="Create Order"
+        onButtonPress={createOrder}
+        title="Orders"
+      />
+      <OrderCountAlert style={$orderCount} />
+      <VendorLocationSelect
+        selectedLocationId={vendorLocation}
+        onSelect={handleVendorLocationSelect}
+        style={$vendorLocationSelect}
+      />
+      <OrdersList
+        orders={data}
+        loadOrders={loadData}
+        onOrderPress={onOrderPress}
+      />
+      <CreateOrderModal
+        ref={createOrderModal}
+        onClose={closeCreateOrder}
+        editOrder={selectedOrder}
+        onDismiss={onCreateOrderClose}
+        vendorLocationId={vendorLocation}
+      />
+    </Screen>
   );
 };
 

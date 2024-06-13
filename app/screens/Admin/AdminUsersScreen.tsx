@@ -20,21 +20,19 @@ export const AdminUsersScreen = (props: AdminUsersScreenProps) => {
   }, []);
 
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ScreenHeader title="Users" />
-        <UsersList
-          users={data}
-          onPress={handleUserPress}
-          onEndReached={loadData}
-          onEndReachedThreshold={0.2}
-        />
-      </Screen>
-    </Drawer>
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader title="Users" />
+      <UsersList
+        users={data}
+        onPress={handleUserPress}
+        onEndReached={loadData}
+        onEndReachedThreshold={0.2}
+      />
+    </Screen>
   );
 };

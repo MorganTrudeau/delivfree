@@ -2,21 +2,27 @@ import { useHeaderHeight } from "app/hooks";
 import React, { useMemo } from "react";
 import { ImageStyle } from "react-native-fast-image";
 import { AppLogo } from "./AppLogo";
+import { Pressable } from "react-native";
 
 const imageRatio = 2320 / 316;
 
 interface Props extends Object {
   style?: ImageStyle;
+  onPress?: () => void;
 }
 
-export const LogoHeader = ({ style }: Props) => {
+export const LogoHeader = ({ style, onPress }: Props) => {
   const headerHeight = useHeaderHeight();
 
   const _style = useMemo(() => {
     const height = headerHeight * 0.4;
     const width = height * imageRatio;
-    return [{ height, width }, style];
+    return { height, width };
   }, [headerHeight, style]);
 
-  return <AppLogo style={_style} height={headerHeight} />;
+  return (
+    <Pressable onPress={onPress} style={style}>
+      <AppLogo style={_style} height={headerHeight} />
+    </Pressable>
+  );
 };

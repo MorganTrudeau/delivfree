@@ -1,45 +1,43 @@
 import React, { useCallback, useMemo } from "react";
-import { Menu } from "functions/src/types";
+import { MenuCustomization, MenuItem } from "functions/src/types";
 import { TableHeader, TableHeaders } from "../../TableHeaders";
-import { ActivityIndicator, FlatList, Pressable, View } from "react-native";
+import { ActivityIndicator, FlatList, Pressable } from "react-native";
 import { useDimensions } from "app/hooks/useDimensions";
-import { $borderBottom, $row, isLargeScreen } from "../../styles";
+import { $borderBottom, isLargeScreen } from "../../styles";
 import { DataCell, TableCell } from "../../TableCell";
 import { Text } from "../../Text";
 import { EmptyList } from "../../EmptyList";
-import { Icon } from "../../Icon";
 import { colors, spacing } from "app/theme";
 
 interface Props {
-  data: Menu[];
-  onPress?: (data: Menu) => void;
+  customizations: MenuCustomization[];
+  items: MenuItem[];
+  onPress?: (data: MenuCustomization) => void;
   loaded: boolean;
 }
 
-export const MenusList = ({ data, onPress, loaded }: Props) => {
+export const MenuCustomizationsList = ({
+  customizations,
+  onPress,
+  loaded,
+}: Props) => {
   const { width } = useDimensions();
   const largeScreen = isLargeScreen(width);
 
   const headers = useMemo(() => {
-    const h: TableHeader[] = [{ title: "Name" }, { title: "Status" }];
+    const h: TableHeader[] = [{ title: "Name" }, { title: "Options" }];
     return h;
   }, []);
 
   const renderItem = useCallback(
-    ({ item }: { item: Menu }) => {
+    ({ item }: { item: MenuCustomization }) => {
+      const optionsNumberText = item.choices.length + " options";
+
       if (largeScreen) {
         const dataCells: DataCell[] = [
           { text: item.name },
           {
-            renderData: () => (
-              <View style={$row}>
-                <Icon
-                  icon={item.active ? "eye" : "eye-off"}
-                  style={{ marginRight: spacing.xs }}
-                />
-                <Text>{item.active ? "Visible" : "Hidden"}</Text>
-              </View>
-            ),
+            text: optionsNumberText,
           },
         ];
         return (
@@ -53,7 +51,7 @@ export const MenusList = ({ data, onPress, loaded }: Props) => {
           style={[{ paddingVertical: spacing.sm }, $borderBottom]}
         >
           <Text preset="subheading">{item.name}</Text>
-          <Text>{item.active}</Text>
+          <Text>{optionsNumberText}</Text>
         </Pressable>
       );
     },
@@ -62,7 +60,7 @@ export const MenusList = ({ data, onPress, loaded }: Props) => {
 
   const renderEmpty = useCallback(() => {
     return loaded ? (
-      <EmptyList title="No menus" />
+      <EmptyList title="No customizations" />
     ) : (
       <ActivityIndicator
         color={colors.primary}
@@ -75,7 +73,7 @@ export const MenusList = ({ data, onPress, loaded }: Props) => {
     <>
       {largeScreen && <TableHeaders headers={headers} />}
       <FlatList
-        data={data}
+        data={customizations}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
       />

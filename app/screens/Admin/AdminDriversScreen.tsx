@@ -23,33 +23,31 @@ export const AdminDriversScreen = (props: AdminDriversScreenProps) => {
   const { data, loadData } = useDriverData(dataParams);
 
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ScreenHeader title="Drivers" />
-        <View style={[$row, { paddingBottom: spacing.sm }]}>
-          <StatusFilter
-            activeFilter={dataParams.status}
-            onFilterPress={(filter) =>
-              setDataParams((d) => ({
-                ...d,
-                status: d.status === filter ? undefined : filter,
-              }))
-            }
-          />
-        </View>
-        <DriversList
-          drivers={data}
-          onPress={handleDriverPress}
-          onEndReached={loadData}
-          onEndReachedThreshold={0.2}
-          showStatus
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader title="Drivers" />
+      <View style={[$row, { paddingBottom: spacing.sm }]}>
+        <StatusFilter
+          activeFilter={dataParams.status}
+          onFilterPress={(filter) =>
+            setDataParams((d) => ({
+              ...d,
+              status: d.status === filter ? undefined : filter,
+            }))
+          }
         />
-      </Screen>
-    </Drawer>
+      </View>
+      <DriversList
+        drivers={data}
+        onPress={handleDriverPress}
+        onEndReached={loadData}
+        onEndReachedThreshold={0.2}
+        showStatus
+      />
+    </Screen>
   );
 };

@@ -16,12 +16,14 @@ import { Toggle } from "../../Toggle";
 interface ManageMenuProps {
   vendor: string;
   category?: MenuCategory | null | undefined;
+  categoryMenu?: string | null | undefined;
   menus: Menu[];
   onClose: () => void;
 }
 
 const ManageMenuCategory = ({
   category,
+  categoryMenu,
   menus,
   vendor,
   onClose,
@@ -35,7 +37,7 @@ const ManageMenuCategory = ({
           id: generateUid(),
           name: "",
           vendor: vendor,
-          menus: [],
+          menus: categoryMenu ? [categoryMenu] : [],
           order: {},
         }
   );

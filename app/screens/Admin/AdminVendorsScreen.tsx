@@ -23,32 +23,30 @@ export const AdminVendorsScreen = (props: AdminVendorsScreenProps) => {
   const { data, loadData } = useVendorData(dataParams);
 
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ScreenHeader title="Vendors" />
-        <View style={[$row, { paddingBottom: spacing.sm }]}>
-          <StatusFilter
-            activeFilter={dataParams.status}
-            onFilterPress={(filter) =>
-              setDataParams((d) => ({
-                ...d,
-                status: d.status === filter ? undefined : filter,
-              }))
-            }
-          />
-        </View>
-        <VendorsList
-          vendors={data}
-          onPress={handleVendorPress}
-          onEndReached={loadData}
-          onEndReachedThreshold={0.2}
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader title="Vendors" />
+      <View style={[$row, { paddingBottom: spacing.sm }]}>
+        <StatusFilter
+          activeFilter={dataParams.status}
+          onFilterPress={(filter) =>
+            setDataParams((d) => ({
+              ...d,
+              status: d.status === filter ? undefined : filter,
+            }))
+          }
         />
-      </Screen>
-    </Drawer>
+      </View>
+      <VendorsList
+        vendors={data}
+        onPress={handleVendorPress}
+        onEndReached={loadData}
+        onEndReachedThreshold={0.2}
+      />
+    </Screen>
   );
 };

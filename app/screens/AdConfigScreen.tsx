@@ -158,136 +158,134 @@ export const AdConfigScreen = ({ navigation }: AdConfigScreenProps) => {
   );
 
   return (
-    <Drawer navigation={navigation}>
-      <Screen
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        preset="scroll"
-      >
-        <ScreenHeader
-          title="Ad Config"
-          buttonTitle="Save changes"
-          onButtonPress={hasUnsavedChanges ? handleSaveAds : undefined}
-          RightAccessory={Loading}
-          hideIcon
+    <Screen
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      preset="scroll"
+    >
+      <ScreenHeader
+        title="Ad Config"
+        buttonTitle="Save changes"
+        onButtonPress={hasUnsavedChanges ? handleSaveAds : undefined}
+        RightAccessory={Loading}
+        hideIcon
+      />
+      <View style={$uploadSection}>
+        <Text preset="subheading" style={$heading}>
+          General Ad
+        </Text>
+        <ImageUpload
+          localImage={adUploads.general?.image}
+          uploadedImage={general?.image}
+          onLocalImagePicked={handleImagePicked("general")}
+          style={$uploadImage}
+          imageContainerStyle={$imageContainerStyle}
+          buttonHelpText={recommendedSizeHelpText}
         />
-        <View style={$uploadSection}>
-          <Text preset="subheading" style={$heading}>
-            General Ad
-          </Text>
-          <ImageUpload
-            localImage={adUploads.general?.image}
-            uploadedImage={general?.image}
-            onLocalImagePicked={handleImagePicked("general")}
-            style={$uploadImage}
-            imageContainerStyle={$imageContainerStyle}
-            buttonHelpText={recommendedSizeHelpText}
-          />
-          <TextField
-            placeholder="Ad title"
-            onChangeText={handleTitleChange("general")}
-            containerStyle={$input}
-            value={adUploads.general?.title || ads.general?.title}
-          />
-          <TextField
-            placeholder="Ad text"
-            onChangeText={handleTextChange("general")}
-            containerStyle={$input}
-            value={adUploads.general?.text || ads.general?.text}
-          />
-          {ads.general && (
-            <Pressable onPress={confirmDelete("general")}>
-              <Text style={{ color: colors.textDim }}>Delete ad</Text>
-            </Pressable>
-          )}
-        </View>
+        <TextField
+          placeholder="Ad title"
+          onChangeText={handleTitleChange("general")}
+          containerStyle={$input}
+          value={adUploads.general?.title || ads.general?.title}
+        />
+        <TextField
+          placeholder="Ad text"
+          onChangeText={handleTextChange("general")}
+          containerStyle={$input}
+          value={adUploads.general?.text || ads.general?.text}
+        />
+        {ads.general && (
+          <Pressable onPress={confirmDelete("general")}>
+            <Text style={{ color: colors.textDim }}>Delete ad</Text>
+          </Pressable>
+        )}
+      </View>
 
-        <View style={$uploadSection}>
-          <Text preset="subheading" style={$heading}>
-            Checkout Ad
-          </Text>
-          <ImageUpload
-            localImage={adUploads.checkout?.image}
-            uploadedImage={checkout?.image}
-            onLocalImagePicked={handleImagePicked("checkout")}
-            style={$uploadImage}
-            imageContainerStyle={$imageContainerStyle}
-            buttonHelpText={recommendedSizeHelpText}
-          />
-          <TextField
-            placeholder="Ad title"
-            onChangeText={handleTitleChange("checkout")}
-            containerStyle={$input}
-            value={adUploads.checkout?.title || ads.checkout?.title}
-          />
-          <TextField
-            placeholder="Ad text"
-            onChangeText={handleTextChange("checkout")}
-            containerStyle={$input}
-            value={adUploads.checkout?.text || ads.checkout?.text}
-          />
-          {ads.checkout && (
-            <Pressable onPress={confirmDelete("checkout")}>
-              <Text style={{ color: colors.textDim }}>Delete ad</Text>
-            </Pressable>
-          )}
-        </View>
+      <View style={$uploadSection}>
+        <Text preset="subheading" style={$heading}>
+          Checkout Ad
+        </Text>
+        <ImageUpload
+          localImage={adUploads.checkout?.image}
+          uploadedImage={checkout?.image}
+          onLocalImagePicked={handleImagePicked("checkout")}
+          style={$uploadImage}
+          imageContainerStyle={$imageContainerStyle}
+          buttonHelpText={recommendedSizeHelpText}
+        />
+        <TextField
+          placeholder="Ad title"
+          onChangeText={handleTitleChange("checkout")}
+          containerStyle={$input}
+          value={adUploads.checkout?.title || ads.checkout?.title}
+        />
+        <TextField
+          placeholder="Ad text"
+          onChangeText={handleTextChange("checkout")}
+          containerStyle={$input}
+          value={adUploads.checkout?.text || ads.checkout?.text}
+        />
+        {ads.checkout && (
+          <Pressable onPress={confirmDelete("checkout")}>
+            <Text style={{ color: colors.textDim }}>Delete ad</Text>
+          </Pressable>
+        )}
+      </View>
 
-        <View style={$uploadSection}>
-          <Text preset="subheading" style={$heading}>
-            Create cuisine Ad
-          </Text>
-          <DropDownPicker
-            items={pickerItems}
-            onSelect={onCuisineSelect}
-            placeholder="Choose cuisine"
-            singleSelect
-          />
-        </View>
+      <View style={$uploadSection}>
+        <Text preset="subheading" style={$heading}>
+          Create cuisine Ad
+        </Text>
+        <DropDownPicker
+          items={pickerItems}
+          onSelect={onCuisineSelect}
+          placeholder="Choose cuisine"
+          singleSelect
+        />
+      </View>
 
-        {typeof cuisineAds === "object" &&
-          Object.entries(cuisineAds).map(([cuisine, cuisineAd]) => {
-            const cuisineAdType = cuisine as AdType;
-            const title = getCuisineTitle(cuisine as Cuisine);
-            return (
-              <View style={$uploadSection}>
-                <Text preset="subheading" style={$heading}>
-                  {title} Ad
-                </Text>
-                <ImageUpload
-                  localImage={adUploads[cuisineAdType]?.image}
-                  uploadedImage={cuisineAd?.image}
-                  onLocalImagePicked={handleImagePicked(cuisineAdType)}
-                  style={$uploadImage}
-                  imageContainerStyle={$imageContainerStyle}
-                  buttonHelpText={recommendedSizeHelpText}
-                />
-                <TextField
-                  placeholder="Ad title"
-                  onChangeText={handleTitleChange(cuisineAdType)}
-                  containerStyle={$input}
-                  value={
-                    adUploads[cuisineAdType]?.title || ads[cuisineAdType]?.title
-                  }
-                />
-                <TextField
-                  placeholder="Ad text"
-                  onChangeText={handleTextChange(cuisineAdType)}
-                  containerStyle={$input}
-                  value={
-                    adUploads[cuisineAdType]?.text || ads[cuisineAdType]?.text
-                  }
-                />
-                {ads[cuisineAdType] && (
-                  <Pressable onPress={confirmDelete(cuisineAdType)}>
-                    <Text style={{ color: colors.textDim }}>Delete ad</Text>
-                  </Pressable>
-                )}
-              </View>
-            );
-          })}
-      </Screen>
-    </Drawer>
+      {typeof cuisineAds === "object" &&
+        Object.entries(cuisineAds).map(([cuisine, cuisineAd]) => {
+          const cuisineAdType = cuisine as AdType;
+          const title = getCuisineTitle(cuisine as Cuisine);
+          return (
+            <View style={$uploadSection}>
+              <Text preset="subheading" style={$heading}>
+                {title} Ad
+              </Text>
+              <ImageUpload
+                localImage={adUploads[cuisineAdType]?.image}
+                uploadedImage={cuisineAd?.image}
+                onLocalImagePicked={handleImagePicked(cuisineAdType)}
+                style={$uploadImage}
+                imageContainerStyle={$imageContainerStyle}
+                buttonHelpText={recommendedSizeHelpText}
+              />
+              <TextField
+                placeholder="Ad title"
+                onChangeText={handleTitleChange(cuisineAdType)}
+                containerStyle={$input}
+                value={
+                  adUploads[cuisineAdType]?.title || ads[cuisineAdType]?.title
+                }
+              />
+              <TextField
+                placeholder="Ad text"
+                onChangeText={handleTextChange(cuisineAdType)}
+                containerStyle={$input}
+                value={
+                  adUploads[cuisineAdType]?.text || ads[cuisineAdType]?.text
+                }
+              />
+              {ads[cuisineAdType] && (
+                <Pressable onPress={confirmDelete(cuisineAdType)}>
+                  <Text style={{ color: colors.textDim }}>Delete ad</Text>
+                </Pressable>
+              )}
+            </View>
+          );
+        })}
+    </Screen>
   );
 };
 

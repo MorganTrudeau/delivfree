@@ -26,21 +26,19 @@ export const VendorDriversScreen = (props: VendorLocationsScreenProps) => {
   };
 
   return (
-    <Drawer navigation={props.navigation}>
-      <Screen
-        preset="fixed"
-        style={$screen}
-        contentContainerStyle={$containerPadding}
-        inDrawer
-      >
-        <ScreenHeader
-          title="Drivers"
-          buttonTitle="Add Driver"
-          onButtonPress={addDriver}
-        />
-        <DriversList drivers={driversList} />
-        <AddDriverModal ref={addDriverModal} onClose={closeAddDriver} />
-      </Screen>
-    </Drawer>
+    <Screen
+      preset="fixed"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader
+        title="Drivers"
+        buttonTitle="Add Driver"
+        onButtonPress={addDriver}
+      />
+      <DriversList drivers={driversList} />
+      <AddDriverModal ref={addDriverModal} onClose={closeAddDriver} />
+    </Screen>
   );
 };

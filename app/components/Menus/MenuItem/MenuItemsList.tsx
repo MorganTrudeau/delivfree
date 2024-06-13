@@ -1,14 +1,16 @@
 import React, { useCallback, useMemo } from "react";
 import { MenuCategory, MenuItem } from "functions/src/types";
 import { TableHeader, TableHeaders } from "../../TableHeaders";
-import { ActivityIndicator, FlatList, Pressable } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, View } from "react-native";
 import { useDimensions } from "app/hooks/useDimensions";
-import { isLargeScreen } from "../../styles";
+import { $borderBottom, $row, isLargeScreen } from "../../styles";
 import { DataCell, TableCell } from "../../TableCell";
 import { Text } from "../../Text";
 import { EmptyList } from "../../EmptyList";
 import { localizeCurrency } from "app/utils/general";
 import { colors, spacing } from "app/theme";
+import FastImage from "react-native-fast-image";
+import { borderRadius } from "app/theme/borderRadius";
 
 interface Props {
   items: MenuItem[];
@@ -60,10 +62,25 @@ export const MenuItemsList = ({
       }
 
       return (
-        <Pressable onPress={onPress ? () => onPress(item) : undefined}>
-          <Text preset="subheading">{item.name}</Text>
-          <Text>{price}</Text>
-          <Text>{categoryNames}</Text>
+        <Pressable
+          onPress={onPress ? () => onPress(item) : undefined}
+          style={[{ paddingVertical: spacing.sm }, $row, $borderBottom]}
+        >
+          <FastImage
+            source={{ uri: item.image }}
+            style={{
+              height: 70,
+              aspectRatio: 1,
+              borderRadius: borderRadius.md,
+              backgroundColor: colors.surface,
+              marginRight: spacing.md,
+            }}
+          />
+          <View>
+            <Text preset="subheading">{item.name}</Text>
+            <Text>{price}</Text>
+            <Text>{categoryNames}</Text>
+          </View>
         </Pressable>
       );
     },

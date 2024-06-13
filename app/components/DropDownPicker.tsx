@@ -153,8 +153,8 @@ export const DropDownPicker = <V extends string>({
               left: left,
             },
             top + (layout?.height || 0) > height / 2
-              ? { bottom: height - top + spacing.sm }
-              : { top: top + (layout?.height || 0) + spacing.sm },
+              ? { bottom: height - top + spacing.xxs }
+              : { top: top + (layout?.height || 0) + spacing.xxs },
           ]}
         >
           <ScrollView
@@ -190,7 +190,7 @@ const $backdrop: ViewStyle = {
 };
 const $picker: ViewStyle = {
   backgroundColor: colors.background,
-  borderRadius: borderRadius.md,
+  borderRadius: borderRadius.sm,
 };
 const $pickerItem: ViewStyle = {
   paddingHorizontal: spacing.sm,

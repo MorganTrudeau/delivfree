@@ -2,7 +2,6 @@ import { VendorLocation } from "delivfree";
 import React, { useCallback, useMemo } from "react";
 import { View, ViewStyle, FlatListProps, RefreshControl } from "react-native";
 import { spacing } from "app/theme";
-import { Text } from "./Text";
 import Animated from "react-native-reanimated";
 import RestaurantListItem from "./RestaurantListItem";
 import { EmptyList } from "./EmptyList";

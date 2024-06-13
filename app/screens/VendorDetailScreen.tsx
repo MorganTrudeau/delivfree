@@ -162,114 +162,110 @@ export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
 
   if (!vendor) {
     return (
-      <Drawer navigation={props.navigation}>
-        <Screen
-          preset="scroll"
-          style={$screen}
-          contentContainerStyle={$containerPadding}
-          inDrawer
-        >
-          <ActivityIndicator
-            color={colors.primary}
-            style={{ margin: spacing.lg }}
-          />
-        </Screen>
-      </Drawer>
-    );
-  }
-
-  return (
-    <Drawer navigation={props.navigation}>
       <Screen
         preset="scroll"
         style={$screen}
         contentContainerStyle={$containerPadding}
         inDrawer
       >
-        <ScreenHeader title={vendor.businessName} />
-
-        <Text preset={"semibold"} size={"xs"} style={{ marginBottom: 6 }}>
-          Account status
-        </Text>
-        <StatusPicker
-          status={vendor.registration.status}
-          onPress={handleRegistrationStatusChange}
-          style={{ marginBottom: spacing.md }}
-        />
-
-        <DetailsHeader title={"Details"} />
-        <DetailItem title="Business name" value={vendor.businessName} />
-        <DetailItem title="First name" value={vendor.firstName} />
-        <DetailItem title="Last name" value={vendor.lastName} />
-        <DetailItem
-          title="Phone number"
-          value={vendor.callingCode + " " + vendor.phoneNumber}
-        />
-
-        <DetailsHeader title={"Subscription"} style={$detailHeaderStyle} />
-        {subscription ? (
-          <SubscriptionInfo
-            subscription={subscription}
-            onPress={handleViewSubscription}
-          />
-        ) : (
-          <EmptyList title={"No subscription"} />
-        )}
-
-        <DetailsHeader
-          title={"Locations"}
-          style={$detailHeaderStyle}
-          onAction={addLocation}
-          actionIcon="plus"
-        />
-        <VendorLocationsList
-          locations={vendorLocations}
-          headerStyle={$listHeaderStyle}
-          style={{ flexGrow: 0 }}
-          onPress={handleVendorLocationPress}
-        />
-
-        <DetailsHeader title={"Positions"} style={$detailHeaderStyle} />
-        <PositionsList
-          positions={positions}
-          vendorLocations={vendorLocationsCache}
-          headerStyle={$listHeaderStyle}
-          onPress={handlePositionsPress}
-          style={{ flexGrow: 0 }}
-        />
-
-        <DetailsHeader title={"Licenses"} style={$detailHeaderStyle} />
-        <LicensesList
-          licenses={licenses}
-          vendorLocations={vendorLocationsCache}
-          headerStyle={$listHeaderStyle}
-          onPress={handleLicensePress}
-          style={{ flexGrow: 0 }}
-          showDriver
-        />
-
-        <LicenseDisplayModal
-          ref={licenseDisplayModal}
-          license={licenseDisplay}
-          onChange={handleLicenseDisplayChange}
-          editable={false}
-        />
-
-        <ManageVendorLocationModal
-          vendor={vendorId}
-          ref={vendorLocationModal}
-          onClose={closeVendorLocationModal}
-          editLocation={editLocation}
-          onDismiss={() => setEditLocation(undefined)}
-        />
-
-        <PositionsSelectModal
-          ref={positionsModal}
-          positions={editPositions}
-          onDismiss={() => setEditPositions(undefined)}
+        <ActivityIndicator
+          color={colors.primary}
+          style={{ margin: spacing.lg }}
         />
       </Screen>
-    </Drawer>
+    );
+  }
+
+  return (
+    <Screen
+      preset="scroll"
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      inDrawer
+    >
+      <ScreenHeader title={vendor.businessName} />
+
+      <Text preset={"semibold"} size={"xs"} style={{ marginBottom: 6 }}>
+        Account status
+      </Text>
+      <StatusPicker
+        status={vendor.registration.status}
+        onPress={handleRegistrationStatusChange}
+        style={{ marginBottom: spacing.md }}
+      />
+
+      <DetailsHeader title={"Details"} />
+      <DetailItem title="Business name" value={vendor.businessName} />
+      <DetailItem title="First name" value={vendor.firstName} />
+      <DetailItem title="Last name" value={vendor.lastName} />
+      <DetailItem
+        title="Phone number"
+        value={vendor.callingCode + " " + vendor.phoneNumber}
+      />
+
+      <DetailsHeader title={"Subscription"} style={$detailHeaderStyle} />
+      {subscription ? (
+        <SubscriptionInfo
+          subscription={subscription}
+          onPress={handleViewSubscription}
+        />
+      ) : (
+        <EmptyList title={"No subscription"} />
+      )}
+
+      <DetailsHeader
+        title={"Locations"}
+        style={$detailHeaderStyle}
+        onAction={addLocation}
+        actionIcon="plus"
+      />
+      <VendorLocationsList
+        locations={vendorLocations}
+        headerStyle={$listHeaderStyle}
+        style={{ flexGrow: 0 }}
+        onPress={handleVendorLocationPress}
+      />
+
+      <DetailsHeader title={"Positions"} style={$detailHeaderStyle} />
+      <PositionsList
+        positions={positions}
+        vendorLocations={vendorLocationsCache}
+        headerStyle={$listHeaderStyle}
+        onPress={handlePositionsPress}
+        style={{ flexGrow: 0 }}
+      />
+
+      <DetailsHeader title={"Licenses"} style={$detailHeaderStyle} />
+      <LicensesList
+        licenses={licenses}
+        vendorLocations={vendorLocationsCache}
+        headerStyle={$listHeaderStyle}
+        onPress={handleLicensePress}
+        style={{ flexGrow: 0 }}
+        showDriver
+      />
+
+      <LicenseDisplayModal
+        ref={licenseDisplayModal}
+        license={licenseDisplay}
+        onChange={handleLicenseDisplayChange}
+        editable={false}
+      />
+
+      <ManageVendorLocationModal
+        vendor={vendorId}
+        ref={vendorLocationModal}
+        onClose={closeVendorLocationModal}
+        editLocation={editLocation}
+        onDismiss={() => setEditLocation(undefined)}
+      />
+
+      <PositionsSelectModal
+        ref={positionsModal}
+        positions={editPositions}
+        onDismiss={() => setEditPositions(undefined)}
+      />
+    </Screen>
   );
 };
 

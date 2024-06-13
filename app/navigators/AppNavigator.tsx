@@ -18,6 +18,7 @@ import { getAppType } from "app/utils/general";
 import { AdminStack } from "./Stacks/AdminStack";
 import { VendorStack } from "./Stacks/VendorStack";
 import { ConsumerStack } from "./Stacks/ConsumerStack";
+import { Drawer } from "app/components/Drawer";
 
 export type NavigationProp = AppStackScreenProps<
   keyof AppStackParamList
@@ -89,7 +90,9 @@ export const AppNavigator = (props: NavigationProps) => {
         <ToastProvider>
           <AlertProvider>
             <PortalHost>
-              <AppStack />
+              <Drawer navigation={navigationRef}>
+                <AppStack />
+              </Drawer>
             </PortalHost>
           </AlertProvider>
         </ToastProvider>

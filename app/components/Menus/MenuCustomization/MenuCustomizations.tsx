@@ -1,36 +1,36 @@
 import React from "react";
 import { View } from "react-native";
-import { MenuCategory, MenuItem } from "functions/src/types";
+import { MenuCustomization, MenuItem } from "functions/src/types";
 import { $menusScreenHeader } from "../../styles";
 import { ScreenHeader } from "../../ScreenHeader";
-import { MenuItemsList } from "./MenuItemsList";
+import { MenuCustomizationsList } from "./MenuCustomizationsList";
 
 interface Props {
+  customizations: MenuCustomization[];
   items: MenuItem[];
-  categories: MenuCategory[];
   loaded: boolean;
   onAdd: () => void;
-  onEdit: (item: MenuItem) => void;
+  onEdit: (item: MenuCustomization) => void;
 }
 
-export const MenuItems = ({
-  items,
+export const MenuCustomizations = ({
+  customizations,
   loaded,
-  categories,
+  items,
   onAdd,
   onEdit,
 }: Props) => {
   return (
     <View>
       <ScreenHeader
-        title={"Items"}
+        title={"Customizations"}
         style={$menusScreenHeader}
-        buttonTitle={"New item"}
+        buttonTitle={"New customization"}
         onButtonPress={onAdd}
       />
-      <MenuItemsList
+      <MenuCustomizationsList
+        customizations={customizations}
         items={items}
-        categories={categories}
         onPress={onEdit}
         loaded={loaded}
       />

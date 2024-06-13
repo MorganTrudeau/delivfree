@@ -6,6 +6,19 @@ import { AlertProps } from "app/components/Alert/AlertContext";
 import { translate } from "app/i18n";
 import React from "react";
 
+export const confirmDelete = (Alert: AlertProps) => {
+  return new Promise((resolve) => {
+    Alert.alert("Confirm delete", "Are you sure you want to delete?", [
+      { text: "Cancel", onPress: () => resolve(false) },
+      {
+        text: "Delete",
+        onPress: () => resolve(true),
+        style: "destructive",
+      },
+    ]);
+  });
+};
+
 export const typedMemo: <T>(c: T) => T = React.memo;
 
 export const equalArrays = (
