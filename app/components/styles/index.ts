@@ -66,8 +66,7 @@ export const $screen: ViewStyle = {
   maxWidth: MAX_CONTENT_WIDTH,
 };
 export const $screenHeading: TextStyle = {
-  marginBottom: spacing.xl,
-  textAlign: "center",
+  marginBottom: spacing.md,
 };
 
 export const $row: ViewStyle = {

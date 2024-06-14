@@ -91,6 +91,10 @@ export type User = {
   lastName: string;
   location: GeoLocation | null;
   email: string;
+  deliveryInstructions?: null | {
+    type: "meet-door" | "meet-outside" | "meet-lobby";
+    note: string;
+  };
   consumer?: {};
   vendor?: { ids: string[] };
   driver?: { id: string };

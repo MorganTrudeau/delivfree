@@ -34,21 +34,21 @@ interface RestaurantsScreenProps
 export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
   const { restaurantId } = route.params;
 
-  const [restaurant, setRestaurant] = useState<VendorLocation | undefined>(
-    getRestaurantCache().cache[restaurantId]
-  );
+  const [vendorLocation, setVendorLocation] = useState<
+    VendorLocation | undefined
+  >(getRestaurantCache().cache[restaurantId]);
 
   useEffect(() => {
-    if (!restaurant) {
+    if (!vendorLocation) {
       const load = async () => {
         const data = await fetchVendorLocation(restaurantId);
         if (data) {
-          setRestaurant(data);
+          setVendorLocation(data);
         }
       };
       load();
     }
-  }, [restaurant]);
+  }, [vendorLocation]);
 
   const checkoutPopUp = useRef<CheckoutPopUpRef>(null);
   const insets = useSafeAreaInsets();
@@ -63,17 +63,15 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
     [insets.top]
   );
 
-  const vendor = restaurant?.vendor;
+  const vendor = vendorLocation?.vendor;
 
   const { menus, menusLoaded, loadMenus } = useMenusLoading({
     vendor,
   });
 
-  console.log(vendor);
+  const filteredMenus = useMemo(() => menus.filter((m) => m.active), [menus]);
 
-  console.log(menus);
-
-  const firstMenuId = menus[0]?.id;
+  const firstMenuId = filteredMenus[0]?.id;
 
   const [activeMenu, setActiveMenu] = useState<string>();
 
@@ -93,14 +91,14 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
   };
 
   const renderHeader = () => {
-    if (!restaurant) {
+    if (!vendorLocation) {
       return null;
     }
     return (
       <View style={$header}>
         <View style={$headerImage}>
           <FastImage
-            source={{ uri: restaurant.image }}
+            source={{ uri: vendorLocation.image }}
             style={StyleSheet.absoluteFillObject}
           />
         </View>
@@ -109,14 +107,14 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
           style={$name}
           size={Platform.select({ web: "xxl", default: "xl" })}
         >
-          {restaurant.name}
+          {vendorLocation.name}
         </Text>
         <AdBanner type="checkout" style={$adBanner} />
       </View>
     );
   };
 
-  if (!restaurant) {
+  if (!vendorLocation) {
     return (
       <View style={[$flex, { alignItems: "center", justifyContent: "center" }]}>
         <ActivityIndicator color={colors.primary} />
@@ -125,25 +123,25 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
   }
 
   const viewMenu = () => {
-    checkoutPopUp.current?.open(restaurant.menuLink);
+    checkoutPopUp.current?.open(vendorLocation.menuLink);
   };
   const orderOnline = () => {
-    checkoutPopUp.current?.open(restaurant.orderLink);
+    checkoutPopUp.current?.open(vendorLocation.orderLink);
   };
   const phoneRestaurant = () => {
-    checkoutPopUp.current?.open(`tel:${restaurant.phoneNumber}`);
+    checkoutPopUp.current?.open(`tel:${vendorLocation.phoneNumber}`);
   };
   const viewAddress = () => {
     const scheme = Platform.select({
       ios: "maps://0,0?q=",
       android: "geo:0,0?q=",
     });
-    const latLng = `${restaurant.latitude},${restaurant.longitude}`;
+    const latLng = `${vendorLocation.latitude},${vendorLocation.longitude}`;
     const label = "Custom Label";
     const url = Platform.select({
       ios: `${scheme}${label}@${latLng}`,
       android: `${scheme}${latLng}(${label})`,
-      default: `https://www.google.com/maps/place/${restaurant.address}/`,
+      default: `https://www.google.com/maps/place/${vendorLocation.address}/`,
     });
     Linking.openURL(url);
   };
@@ -184,18 +182,24 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
           )} */}
           <View style={{ height: spacing.sm }} />
           {!menusLoaded && <ActivityIndicator color={colors.primary} />}
-          {menusLoaded && !menus.length && (
+          {menusLoaded && !filteredMenus.length && (
             <EmptyList
               title={"No menus available right now"}
               icon={"silverware"}
             />
           )}
           <MenuNames
-            menus={menus}
+            menus={filteredMenus}
             onMenuPress={handleMenuPress}
             activeMenu={activeMenu}
           />
-          {!!activeMenu && <ConsumerMenuCategories menu={activeMenu} />}
+          {!!activeMenu && vendorLocation && (
+            <ConsumerMenuCategories
+              menu={activeMenu}
+              vendor={vendorLocation.vendor}
+              vendorLocation={vendorLocation.id}
+            />
+          )}
         </View>
       </Screen>
       {Platform.OS === "ios" && insets.top > 0 && (

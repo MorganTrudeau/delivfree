@@ -7,9 +7,15 @@ import { ConsumerMenuItems } from "./ConsumerMenuItems";
 
 interface Props {
   menu: string;
+  vendor: string;
+  vendorLocation: string;
 }
 
-export const ConsumerMenuCategories = ({ menu }: Props) => {
+export const ConsumerMenuCategories = ({
+  menu,
+  vendor,
+  vendorLocation,
+}: Props) => {
   const { categories, categoriesLoaded, loadCategories } = useMenusLoading({
     menu,
   });
@@ -35,7 +41,11 @@ export const ConsumerMenuCategories = ({ menu }: Props) => {
             >
               {category.name}
             </Text>
-            <ConsumerMenuItems category={category.id} />
+            <ConsumerMenuItems
+              category={category.id}
+              vendor={vendor}
+              vendorLocation={vendorLocation}
+            />
           </View>
         );
       })}

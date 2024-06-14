@@ -6,6 +6,9 @@ import { AlertProps } from "app/components/Alert/AlertContext";
 import { translate } from "app/i18n";
 import React from "react";
 
+export const pluralFormat = (singleTerm: string, length: number) =>
+  `${singleTerm}${length !== 1 ? "s" : ""}`;
+
 export const confirmDelete = (Alert: AlertProps) => {
   return new Promise((resolve) => {
     Alert.alert("Confirm delete", "Are you sure you want to delete?", [

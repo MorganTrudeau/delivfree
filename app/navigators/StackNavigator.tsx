@@ -3,11 +3,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { $fontSizeStyles } from "app/components";
 import { DrawerIconButton } from "app/components/DrawerIconButton";
 import { LogoHeader } from "app/components/LogoHeader";
-import { colors, typography } from "app/theme";
+import { colors, spacing, typography } from "app/theme";
 import { Cuisine } from "delivfree";
-import { Platform } from "react-native";
+import { Platform, View } from "react-native";
 import { StackAnimationTypes } from "react-native-screens";
 import { navigationRef } from "./navigationUtilities";
+import { CheckoutCartTracker } from "app/components/CheckoutCart/CheckoutCartTracker";
 
 export type AppStackParamList = {
   Welcome: undefined;
@@ -45,6 +46,7 @@ export type AppStackParamList = {
   PositionsSearch: undefined;
   Licenses: undefined;
   Menus: { tab?: string };
+  Checkout: undefined;
 };
 
 export const linkingConfigScreens: {
@@ -63,11 +65,17 @@ export const linkingConfigScreens: {
   PositionsSearch: "positions-search",
   Menus: "menus",
   RestaurantDetail: "restaurant-menu",
+  Checkout: "checkout",
 };
 
 export const screenOptions = {
   headerBackTitleVisible: false,
   headerLeft: () => <DrawerIconButton />,
+  headerRight: () => (
+    <View style={{ paddingHorizontal: spacing.md }}>
+      <CheckoutCartTracker />
+    </View>
+  ),
   headerTitle: () => (
     <LogoHeader onPress={() => navigationRef.current?.navigate("Home")} />
   ),

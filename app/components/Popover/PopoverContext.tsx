@@ -116,7 +116,7 @@ const PopoverProvider = ({ children }: Props) => {
           left: measurement.pageX,
         };
       default:
-        return { postion: "absolute" };
+        return { position: "absolute" };
     }
   }, [popoverLayout, measurement, height, width, position]);
 
@@ -134,6 +134,7 @@ const PopoverProvider = ({ children }: Props) => {
           <Animated.View
             onLayout={!popoverLayout ? handlePopoverLayout : undefined}
             style={popoverStyle}
+            pointerEvents={"box-none"}
           >
             {renderPopover()}
           </Animated.View>

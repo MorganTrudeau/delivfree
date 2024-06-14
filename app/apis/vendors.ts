@@ -17,6 +17,11 @@ export const listenToVendor = (
     .onSnapshot((doc) => onData(doc.data() as Vendor | undefined));
 };
 
+export const fetchVendor = async (vendor: string) => {
+  const doc = await firestore().collection("Vendors").doc(vendor).get();
+  return doc.data() as Vendor | undefined;
+};
+
 export const listenToVendors = (
   onData: (vendors: { [id: string]: Vendor }) => void,
   params: { limit?: number; status?: Status; ids?: string[] } = {}

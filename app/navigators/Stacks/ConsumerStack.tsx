@@ -47,6 +47,7 @@ export const ConsumerStack = () => {
             headerTransparent: false,
           }}
         />
+        <Stack.Screen name="Checkout" component={Screens.CheckoutScreen} />
         <Stack.Screen
           name="RestaurantDetail"
           component={Screens.RestaurantDetailScreen}

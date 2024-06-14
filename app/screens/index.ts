@@ -16,6 +16,7 @@ export * from "./VendorDetailScreen";
 export * from "./DriverDetailScreen";
 export * from "./AdConfigScreen";
 export * from "./PositionsSearchScreen";
+export * from "./CheckoutScreen";
 
 // Vendor
 export * from "./EditDriverProfileScreen";

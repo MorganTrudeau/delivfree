@@ -11,9 +11,15 @@ import { useDimensions } from "app/hooks/useDimensions";
 
 interface Props {
   category: string;
+  vendor: string;
+  vendorLocation: string;
 }
 
-export const ConsumerMenuItems = ({ category }: Props) => {
+export const ConsumerMenuItems = ({
+  category,
+  vendor,
+  vendorLocation,
+}: Props) => {
   const itemSelectModal = useRef<ModalRef>(null);
 
   const { width } = useDimensions();
@@ -54,6 +60,8 @@ export const ConsumerMenuItems = ({ category }: Props) => {
         ref={itemSelectModal}
         item={selectedItem}
         onClose={() => itemSelectModal.current?.close()}
+        vendor={vendor}
+        vendorLocation={vendorLocation}
       />
     </View>
   );

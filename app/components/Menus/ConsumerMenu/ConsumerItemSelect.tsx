@@ -13,11 +13,19 @@ import {
   $row,
   isLargeScreen,
 } from "app/components/styles";
+import { useAlert } from "app/hooks";
 import { useDimensions } from "app/hooks/useDimensions";
 import { useMenusLoading } from "app/hooks/useMenusLoading";
+import {
+  CheckoutItem,
+  CheckoutItemCustomization,
+  addItemToCart,
+  startCart,
+} from "app/redux/reducers/checkoutCart";
+import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
-import { localizeCurrency } from "app/utils/general";
+import { generateUid, localizeCurrency } from "app/utils/general";
 import { MenuCustomizationChoice, MenuItem } from "delivfree/types";
 import React, { forwardRef, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
@@ -25,11 +33,25 @@ import FastImage, { ImageStyle } from "react-native-fast-image";
 
 interface Props {
   item: MenuItem;
+  vendor: string;
+  vendorLocation: string;
+  onClose: () => void;
 }
 
-const ConsumerItemSelect = ({ item }: Props) => {
+const ConsumerItemSelect = ({
+  vendor,
+  vendorLocation,
+  item,
+  onClose,
+}: Props) => {
+  const Alert = useAlert();
+
   const { width } = useDimensions();
   const largeScreen = isLargeScreen(width);
+
+  const cartOrder = useAppSelector((state) => state.checkoutCart.order);
+  const authToken = useAppSelector((state) => state.auth.authToken as string);
+  const dispatch = useAppDispatch();
 
   const { customizations, customizationsLoaded, loadCustomizations } =
     useMenusLoading({ item: item.id });
@@ -44,8 +66,8 @@ const ConsumerItemSelect = ({ item }: Props) => {
   const [customizationChoices, setCustomizationChoices] = useState<{
     [customizationId: string]: {
       choice: MenuCustomizationChoice;
-      quantity?: number;
-      text?: string;
+      quantity: number;
+      text: string;
     }[];
   }>({});
 
@@ -59,6 +81,59 @@ const ConsumerItemSelect = ({ item }: Props) => {
       }, 0)
     );
   }, [quantity, item.price, customizationChoices]);
+
+  const handleAddItemToCart = () => {
+    const checkoutItem: CheckoutItem = {
+      id: generateUid(),
+      item,
+      quantity,
+      customizations: Object.entries(customizationChoices).reduce(
+        (acc, [customization, choices]) => {
+          return [...acc, ...choices.map((c) => ({ ...c, customization }))];
+        },
+        [] as CheckoutItemCustomization[]
+      ),
+    };
+    if (cartOrder) {
+      if (
+        cartOrder.vendor === vendor &&
+        cartOrder.vendorLocation === vendorLocation
+      ) {
+        dispatch(addItemToCart(checkoutItem));
+      } else {
+        Alert.alert(
+          "Create new order?",
+          "Your cart has an order from a different restaurant. Create a new order for this restaurant?",
+          [
+            { text: "Cancel", onPress: () => {} },
+            {
+              text: "New order",
+              onPress: () => {
+                dispatch(
+                  startCart({
+                    customer: authToken,
+                    vendor,
+                    vendorLocation,
+                    items: [checkoutItem],
+                  })
+                );
+              },
+            },
+          ]
+        );
+      }
+    } else {
+      dispatch(
+        startCart({
+          customer: authToken,
+          vendor,
+          vendorLocation,
+          items: [checkoutItem],
+        })
+      );
+    }
+    onClose();
+  };
 
   return (
     <View style={[largeScreen && { flexDirection: "row" }]}>
@@ -111,13 +186,23 @@ const ConsumerItemSelect = ({ item }: Props) => {
                                 ...s,
                                 [customization.id]: [
                                   ...choices,
-                                  { choice, quantity: 1 },
+                                  {
+                                    choice,
+                                    quantity: 1,
+                                    text: "",
+                                  },
                                 ],
                               };
                             } else {
                               return {
                                 ...s,
-                                [customization.id]: [{ choice, quantity: 1 }],
+                                [customization.id]: [
+                                  {
+                                    choice,
+                                    quantity: 1,
+                                    text: "",
+                                  },
+                                ],
                               };
                             }
                           });
@@ -173,6 +258,7 @@ const ConsumerItemSelect = ({ item }: Props) => {
           )}`}
           preset="reversed"
           style={{ marginTop: spacing.md }}
+          onPress={handleAddItemToCart}
         />
       </View>
     </View>
@@ -183,7 +269,6 @@ export const ConsumerItemSelectModal = forwardRef<
   ModalRef,
   Omit<Props, "item"> & {
     item: MenuItem | null | undefined;
-    onClose: () => void;
   }
 >(function ConsumerItemSelectModal(props, ref) {
   return (
