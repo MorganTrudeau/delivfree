@@ -1,7 +1,12 @@
+import { updateUser } from "app/apis/user";
 import { Button, Icon, IconTypes, Screen, Text } from "app/components";
 import { Card } from "app/components/Card";
 import { CartItem } from "app/components/CheckoutCart/CartItem";
+import { DeliveryInstructionsModal } from "app/components/CheckoutCart/DeliveryInstructions";
 import { EmptyList } from "app/components/EmptyList";
+import { BottomSheetRef } from "app/components/Modal/BottomSheet";
+import { ModalRef } from "app/components/Modal/CenterModal";
+import LocationModal from "app/components/Modal/LocationModal";
 import {
   $borderBottom,
   $borderBottomLight,
@@ -20,8 +25,12 @@ import { CheckoutItem } from "app/redux/reducers/checkoutCart";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
 import { sizing } from "app/theme/sizing";
-import { calcCheckoutOrderSubtotal } from "app/utils/checkout";
+import {
+  calcCheckoutOrderSubtotal,
+  getDeliveryInstructionsTitle,
+} from "app/utils/checkout";
 import { localizeCurrency, pluralFormat } from "app/utils/general";
+import { User } from "delivfree/types";
 import React, { useMemo, useRef } from "react";
 import { Pressable, StyleProp, View, ViewStyle } from "react-native";
 import Animated, {
@@ -37,24 +46,18 @@ export const CheckoutScreen = (props: RestaurantsScreenProps) => {
   const { width } = useDimensions();
   const largeScreen = isLargeScreen(width);
 
+  const deliveryInstructionsModal = useRef<ModalRef>(null);
+  const locationModal = useRef<BottomSheetRef>(null);
+
   const cart = useAppSelector((state) => state.checkoutCart.order);
-  const user = useAppSelector((state) => state.user.user);
+  const user = useAppSelector((state) => state.user.user as User);
 
-  const handleEnterAddress = () => {};
+  const handleEnterAddress = () => {
+    locationModal.current?.snapToIndex(0);
+  };
 
-  const handleChangeDeliveryInstructions = () => {};
-
-  const getDeliveryInstructionsTitle = () => {
-    switch (user?.deliveryInstructions?.type) {
-      case "meet-door":
-        return "Meet at door";
-      case "meet-lobby":
-        return "Meet in lobby";
-      case "meet-outside":
-        return "Meet outside";
-      default:
-        return "Meet at door";
-    }
+  const handleChangeDeliveryInstructions = () => {
+    deliveryInstructionsModal.current?.open();
   };
 
   const subtotal = useMemo(
@@ -103,7 +106,9 @@ export const CheckoutScreen = (props: RestaurantsScreenProps) => {
 
                 <DetailItem
                   subtitle="Delivery instructions"
-                  title={getDeliveryInstructionsTitle()}
+                  title={getDeliveryInstructionsTitle(
+                    user?.deliveryInstructions?.type
+                  )}
                   icon="account-outline"
                   onPress={handleChangeDeliveryInstructions}
                   style={{ borderBottomWidth: 0 }}
@@ -151,6 +156,17 @@ export const CheckoutScreen = (props: RestaurantsScreenProps) => {
           </View>
         </>
       )}
+
+      <DeliveryInstructionsModal
+        user={user.id}
+        ref={deliveryInstructionsModal}
+        deliveryInstructions={user?.deliveryInstructions}
+        onClose={() => deliveryInstructionsModal.current?.close()}
+      />
+      <LocationModal
+        ref={locationModal}
+        onRequestClose={() => locationModal.current?.close()}
+      />
     </Screen>
   );
 };

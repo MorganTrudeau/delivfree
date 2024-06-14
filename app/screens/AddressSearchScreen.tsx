@@ -45,7 +45,8 @@ export const AddressSearchScreen = ({
         comp.types.includes("country")
       )?.short_name;
       console.log(placesData.address_components);
-      const address = `${city}, ${country}`;
+      placesData.formatted_address;
+      const address = placesData.formatted_address; //`${city}, ${country}`;
       const { lat, lng } = placesData.geometry.location;
       const geohash = geofire.geohashForLocation([lat, lng]);
       const location: User["location"] = {

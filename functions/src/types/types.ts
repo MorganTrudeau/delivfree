@@ -85,16 +85,21 @@ export type GeoLocation = {
   address: string;
   geohash: string;
 };
+export type DeliveryInstructionsType =
+  | "meet-door"
+  | "meet-outside"
+  | "meet-lobby";
+export type DeliveryInstructions = {
+  type: DeliveryInstructionsType;
+  note: string;
+};
 export type User = {
   id: string;
   firstName: string;
   lastName: string;
   location: GeoLocation | null;
   email: string;
-  deliveryInstructions?: null | {
-    type: "meet-door" | "meet-outside" | "meet-lobby";
-    note: string;
-  };
+  deliveryInstructions?: DeliveryInstructions | null;
   consumer?: {};
   vendor?: { ids: string[] };
   driver?: { id: string };
