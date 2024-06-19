@@ -19,6 +19,8 @@ import { AdminStack } from "./Stacks/AdminStack";
 import { VendorStack } from "./Stacks/VendorStack";
 import { ConsumerStack } from "./Stacks/ConsumerStack";
 import { Drawer } from "app/components/Drawer";
+import { DriverClockIn } from "app/components/Drivers/DriverClockIn";
+import { useAppSelector } from "app/redux/store";
 
 export type NavigationProp = AppStackScreenProps<
   keyof AppStackParamList
@@ -65,6 +67,8 @@ const onReadyWeb = undefined;
 const onReady = Platform.select({ web: onReadyWeb, default: onReadyMobile });
 
 export const AppNavigator = (props: NavigationProps) => {
+  const userType = useAppSelector((state) => state.appConfig.userType);
+
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName));
 
   useEffect(() => {
@@ -92,6 +96,7 @@ export const AppNavigator = (props: NavigationProps) => {
             <PortalHost>
               <Drawer navigation={navigationRef}>
                 <AppStack />
+                {userType === "driver" && <DriverClockIn />}
               </Drawer>
             </PortalHost>
           </AlertProvider>

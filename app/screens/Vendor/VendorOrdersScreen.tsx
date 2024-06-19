@@ -38,7 +38,7 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
   }, [vendorDrivers]);
   useReduxListener(driverListener);
 
-  const { data, loadData } = useOrderData(vendorLocation);
+  const { data, loadData } = useOrderData({ vendorLocation });
 
   const handleVendorLocationSelect = useCallback(
     (location: VendorLocation) => setVendorLocation(location.id),
@@ -51,20 +51,8 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
     setSelectedOrder(order);
     viewOrderModal.current?.snapToIndex(0);
   };
-  // const createOrder = () => {
-  //   if (!vendorLocation) {
-  //     return Alert.alert(
-  //       "Select a location",
-  //       "Please select a restaurant location for your order."
-  //     );
-  //   }
-  //   createOrderModal.current?.open();
-  // };
   const closeCreateOrder = () => {
     viewOrderModal.current?.close();
-  };
-  const onCreateOrderClose = () => {
-    setSelectedOrder(undefined);
   };
 
   const renderHeader = useCallback(

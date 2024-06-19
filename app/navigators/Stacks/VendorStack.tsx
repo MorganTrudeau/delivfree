@@ -8,6 +8,8 @@ import * as Screens from "app/screens";
 import { getPositionsFromSubscription } from "app/utils/subscriptions";
 import { getTotalPositions } from "app/utils/positions";
 import { DrawerIconButton } from "app/components/DrawerIconButton";
+import { LogoHeader } from "app/components/LogoHeader";
+import { shallowEqual } from "react-redux";
 
 const Stack = getStackNavigator();
 
@@ -30,25 +32,28 @@ export const VendorStack = () => {
     vendorLicensesLoaded,
     driverLicenses,
     driverLicensesLoaded,
-  } = useAppSelector((state) => ({
-    user: state.user.user,
-    userLoaded: state.user.loaded,
-    authToken: state.auth.authToken,
-    deleteAccountLoading: state.user.deleteAccountLoading,
-    vendor: state.vendor.activeVendor,
-    vendorLoaded: state.vendor.licencesLoaded,
-    driver: state.driver.activeDriver,
-    driverLoaded: state.driver.activeDriverLoaded,
-    vendorSubscription: state.subscription.vendorSubscription,
-    vendorSubscriptionLoaded: state.subscription.vendorSubscriptionLoaded,
-    driverSubscription: state.subscription.driverSubscription,
-    driverSubscriptionLoaded: state.subscription.driverSubscriptionLoaded,
-    userType: state.appConfig.userType,
-    vendorLicenses: state.vendor.licenses,
-    vendorLicensesLoaded: state.vendor.licencesLoaded,
-    driverLicenses: state.driver.licenses,
-    driverLicensesLoaded: state.driver.licensesLoaded,
-  }));
+  } = useAppSelector(
+    (state) => ({
+      user: state.user.user,
+      userLoaded: state.user.loaded,
+      authToken: state.auth.authToken,
+      deleteAccountLoading: state.user.deleteAccountLoading,
+      vendor: state.vendor.activeVendor,
+      vendorLoaded: state.vendor.licencesLoaded,
+      driver: state.driver.activeDriver,
+      driverLoaded: state.driver.activeDriverLoaded,
+      vendorSubscription: state.subscription.vendorSubscription,
+      vendorSubscriptionLoaded: state.subscription.vendorSubscriptionLoaded,
+      driverSubscription: state.subscription.driverSubscription,
+      driverSubscriptionLoaded: state.subscription.driverSubscriptionLoaded,
+      userType: state.appConfig.userType,
+      vendorLicenses: state.vendor.licenses,
+      vendorLicensesLoaded: state.vendor.licencesLoaded,
+      driverLicenses: state.driver.licenses,
+      driverLicensesLoaded: state.driver.licensesLoaded,
+    }),
+    shallowEqual
+  );
 
   const driverDataLoaded =
     driverLoaded && driverLicensesLoaded && driverSubscriptionLoaded;
@@ -77,13 +82,6 @@ export const VendorStack = () => {
       getTotalPositions(approvedLicenses);
     const { fullTime: subscribedFullTime, partTime: subscribedPartTime } =
       getPositionsFromSubscription(subscription);
-
-    console.log({
-      licensedFullTime,
-      licensedPartTime,
-      subscribedFullTime,
-      subscribedPartTime,
-    });
 
     return (
       ["active", "incomplete", "trialing"].includes(subscription.status) &&
@@ -121,6 +119,7 @@ export const VendorStack = () => {
           <Stack.Screen
             name="PositionsSearch"
             component={Screens.PositionsSearchScreen}
+            options={{ headerTitle: "", headerLeft: LogoHeader }}
           />
           <Stack.Screen
             name="DriverRegistration"

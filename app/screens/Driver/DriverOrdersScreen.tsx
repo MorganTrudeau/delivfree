@@ -10,42 +10,64 @@ import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { spacing } from "app/theme";
 import { Order, VendorLocation } from "delivfree";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { ViewStyle } from "react-native";
+import { BottomSheetRef } from "app/components/Modal/BottomSheet";
+import { ViewOrderModal } from "app/components/Orders/ViewOrder";
 
 interface DriverOrdersScreenProps extends AppStackScreenProps<"Orders"> {}
 
 export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
+  const viewOrderModal = useRef<BottomSheetRef>(null);
+
+  const driver = useAppSelector((state) => state.driver.activeDriver?.id);
+
   const [selectedOrder, setSelectedOrder] = useState<Order>();
   const [vendorLocation, setVendorLocation] = useState("");
 
-  const { data, loadData } = useOrderData(vendorLocation);
+  const { data, loadData } = useOrderData({ vendorLocation, driver });
 
   const handleVendorLocationSelect = (location: VendorLocation) =>
     setVendorLocation(location.id);
 
-  const createOrderModal = useRef<ModalRef>(null);
-
   const onOrderPress = (order: Order) => {
     setSelectedOrder(order);
-    createOrderModal.current?.open();
+    viewOrderModal.current?.snapToIndex(0);
   };
+  const closeCreateOrder = () => {
+    viewOrderModal.current?.close();
+  };
+
+  const renderHeader = useCallback(
+    () => (
+      <>
+        <ScreenHeader title={"Orders"} />
+        <VendorLocationSelect
+          selectedLocationId={vendorLocation}
+          onSelect={handleVendorLocationSelect}
+          style={$vendorLocationSelect}
+        />
+      </>
+    ),
+    [vendorLocation, handleVendorLocationSelect]
+  );
+
   return (
     <Screen
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
     >
-      <ScreenHeader title={"Orders"} />
-      <VendorLocationSelect
-        selectedLocationId={vendorLocation}
-        onSelect={handleVendorLocationSelect}
-        style={$vendorLocationSelect}
-      />
       <OrdersList
         orders={data}
         loadOrders={loadData}
         onOrderPress={onOrderPress}
+        ListHeaderComponent={renderHeader}
+      />
+      <ViewOrderModal
+        ref={viewOrderModal}
+        onClose={closeCreateOrder}
+        order={selectedOrder}
       />
     </Screen>
   );

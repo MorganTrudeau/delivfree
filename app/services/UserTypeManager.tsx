@@ -29,7 +29,7 @@ export const UserTypeManager = () => {
         newUserType = "vendor";
       }
     }
-    if (newUserType && newUserType !== userType) {
+    if (newUserType !== userType) {
       dispatch(setUserType(newUserType));
     }
   }, [user, userType]);

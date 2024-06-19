@@ -89,15 +89,22 @@ export const VendorLocationSelect = ({
   );
 
   const handleMount = async () => {
+    if (vendorLocationsList.length === 1) {
+      return onSelect(vendorLocationsList[0]);
+    }
     const lastSelected = await loadLastSelected();
     if (lastSelected && vendorLocations[lastSelected]) {
       onSelect(vendorLocations[lastSelected]);
     }
   };
 
+  const hasLocations = vendorLocationsList.length > 0;
+
   useEffect(() => {
-    handleMount();
-  }, []);
+    if (hasLocations) {
+      handleMount();
+    }
+  }, [hasLocations]);
 
   const selectedLocation = vendorLocations[selectedLocationId];
 

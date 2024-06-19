@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon, Screen, Text } from "../components";
 import { Pressable, View, ViewStyle } from "react-native";
 import {
+  $borderBottom,
   $flex,
   $flexGrow,
   $headerButton,
@@ -135,7 +136,7 @@ export const PositionsSearchScreen = ({ navigation }: Props) => {
             <Icon icon={"chevron-down"} />
           </Pressable>
         )}
-        <TextInput placeholder="Search" />
+        {/* <TextInput placeholder="Search" /> */}
       </View>
     );
   }, [userAddress]);
@@ -181,7 +182,12 @@ const LicenseApplications = () => {
     return null;
   }
   return (
-    <View style={{ marginBottom: spacing.md }}>
+    <View
+      style={[
+        $borderBottom,
+        { paddingBottom: spacing.md, marginBottom: spacing.md },
+      ]}
+    >
       <Text preset="subheading" style={{ marginBottom: spacing.xxs }}>
         License applications
       </Text>

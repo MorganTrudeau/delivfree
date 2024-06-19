@@ -16,7 +16,7 @@ export const appConfigSlice = createSlice({
   name: "appConfig",
   initialState,
   reducers: {
-    setUserType: (state, action: PayloadAction<UserType>) => {
+    setUserType: (state, action: PayloadAction<UserType | undefined>) => {
       state.userType = action.payload;
     },
     setWebNotificationsEnabled: (state, action: PayloadAction<boolean>) => {

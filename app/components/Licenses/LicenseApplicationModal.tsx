@@ -1,6 +1,6 @@
 import React, { forwardRef, useMemo, useState } from "react";
 import { License, Positions, VendorLocation } from "delivfree";
-import { ActivityIndicator, View, ViewStyle } from "react-native";
+import { ActivityIndicator, ScrollView, View, ViewStyle } from "react-native";
 import FastImage from "react-native-fast-image";
 import { $image, $imageContainer, $row } from "../styles";
 import { Text } from "../Text";
@@ -106,10 +106,11 @@ export const LicenseApplication = ({
   );
 
   return (
-    <View
-      style={{
+    <ScrollView
+      contentContainerStyle={{
         padding: smallScreenLayout ? spacing.md : spacing.lg,
         alignItems: "center",
+        flexGrow: 1,
       }}
     >
       <Text preset="heading" style={{ marginBottom: spacing.md }}>
@@ -201,12 +202,12 @@ export const LicenseApplication = ({
         style={{ marginTop: spacing.md, alignSelf: "stretch" }}
         RightAccessory={Loading}
       />
-    </View>
+    </ScrollView>
   );
 };
 
 const $selectorSection: ViewStyle = {
-  padding: spacing.xs,
+  padding: spacing.sm,
   borderWidth: 1,
   borderColor: colors.border,
   borderRadius: borderRadius.md,

@@ -175,7 +175,10 @@ export const EditDriverProfileScreen = () => {
         <Text preset="formLabel" style={[$formLabel, $inputContainer]}>
           Address
         </Text>
-        <Pressable onPress={() => addressSearch.current?.open()} style={$input}>
+        <Pressable
+          onPress={() => addressSearch.current?.open()}
+          style={[$input, { paddingVertical: spacing.xs }]}
+        >
           <Text
             style={
               !driverState.location.address

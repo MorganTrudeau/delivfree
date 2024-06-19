@@ -15,29 +15,44 @@ export const createPendingOrder = (checkoutSessionId: string, order: Order) => {
     .set(order);
 };
 
+export type OrderListenerParams = {
+  driver?: string;
+  vendorLocation?: string;
+  limit?: number;
+};
 export const listenToOrders = (
-  vendorLocation: string,
-  limit: number,
-  onData: (order: Order[]) => void
+  onData: (order: Order[]) => void,
+  params: OrderListenerParams = {}
 ) => {
-  return firestore()
-    .collection("Orders")
-    .orderBy("date", "desc")
-    .where("vendorLocation", "==", vendorLocation)
-    .limit(limit)
-    .onSnapshot(
-      (snap) => {
-        console.log("SNAP", snap, limit, vendorLocation);
-        if (snap) {
-          onData(snap.docs.map((doc) => doc.data() as Order));
-        } else {
-          onData([]);
-        }
-      },
-      (error) => {
-        console.log("Orders listener error", error);
+  const { driver, vendorLocation, limit } = params;
+
+  let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> =
+    firestore().collection("Orders").orderBy("date", "desc");
+
+  if (driver) {
+    query = query.where("driver", "==", driver);
+  }
+
+  if (vendorLocation) {
+    query = query.where("vendorLocation", "==", vendorLocation);
+  }
+
+  if (limit) {
+    query = query.limit(limit);
+  }
+
+  return query.onSnapshot(
+    (snap) => {
+      if (snap) {
+        onData(snap.docs.map((doc) => doc.data() as Order));
+      } else {
+        onData([]);
       }
-    );
+    },
+    (error) => {
+      console.log("Orders listener error", error);
+    }
+  );
 };
 
 export const updateOrder = (orderId: string, update: Partial<Order>) => {
