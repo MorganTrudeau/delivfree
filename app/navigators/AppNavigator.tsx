@@ -96,7 +96,6 @@ export const AppNavigator = (props: NavigationProps) => {
             <PortalHost>
               <Drawer navigation={navigationRef}>
                 <AppStack />
-                {userType === "driver" && <DriverClockIn />}
               </Drawer>
             </PortalHost>
           </AlertProvider>

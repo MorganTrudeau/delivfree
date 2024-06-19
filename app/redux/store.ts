@@ -26,6 +26,7 @@ import driver from "./reducers/driver";
 import vendorDrivers from "./reducers/vendorDrivers";
 import positions from "./reducers/positions";
 import checkoutCart from "./reducers/checkoutCart";
+import driverClockIn from "./reducers/driverClockIn";
 
 const persistConfig = {
   key: "4",
@@ -46,6 +47,7 @@ const rootReducer = combineReducers({
   vendorDrivers,
   positions,
   checkoutCart,
+  driverClockIn,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

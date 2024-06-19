@@ -153,6 +153,7 @@ export const DrawerContent = ({
 
   return (
     <FlatList<{ text: string; route?: keyof AppStackParamList; params?: any }>
+      key={userType}
       style={$drawer}
       contentContainerStyle={[
         $flatListContentContainer,

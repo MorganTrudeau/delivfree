@@ -1,5 +1,4 @@
 import { Screen } from "app/components";
-import { Drawer } from "app/components/Drawer";
 import { DriversList } from "app/components/Drivers/DriversList";
 import { StatusFilter } from "app/components/Filters/StatusFilter";
 import { ScreenHeader } from "app/components/ScreenHeader";
@@ -27,17 +26,15 @@ export const AdminDriversScreen = (props: AdminDriversScreenProps) => {
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      
     >
       <ScreenHeader title="Drivers" />
       <View style={[$row, { paddingBottom: spacing.sm }]}>
         <StatusFilter
           activeFilter={dataParams.status}
           onFilterPress={(filter) =>
-            setDataParams((d) => ({
-              ...d,
-              status: d.status === filter ? undefined : filter,
-            }))
+            setDataParams((d) =>
+              d.status === filter ? {} : { status: filter }
+            )
           }
         />
       </View>

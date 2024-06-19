@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Screen } from "app/components";
-import { Drawer } from "app/components/Drawer";
 import { StatusFilter } from "app/components/Filters/StatusFilter";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import { VendorsList } from "app/components/Vendors/VendorsList";
@@ -27,7 +26,6 @@ export const AdminVendorsScreen = (props: AdminVendorsScreenProps) => {
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      
     >
       <ScreenHeader title="Vendors" />
       <View style={[$row, { paddingBottom: spacing.sm }]}>

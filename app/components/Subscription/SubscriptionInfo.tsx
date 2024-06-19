@@ -10,6 +10,7 @@ import {
   getSubscriptionPrice,
 } from "app/utils/subscriptions";
 import moment from "moment";
+import { useDimensions } from "app/hooks/useDimensions";
 
 type Props = {
   subscription: Stripe.Subscription;
@@ -18,6 +19,9 @@ type Props = {
 };
 
 export const SubscriptionInfo = ({ subscription, style, onPress }: Props) => {
+  const { width } = useDimensions();
+  const largeScreenLayout = width > 350;
+
   const { fullTime, partTime } = useMemo(
     () => getPositionsFromSubscription(subscription),
     []
@@ -38,7 +42,11 @@ export const SubscriptionInfo = ({ subscription, style, onPress }: Props) => {
 
   return (
     <Pressable
-      style={[$row, { paddingVertical: spacing.xxs }, style]}
+      style={[
+        largeScreenLayout && $row,
+        { paddingVertical: spacing.xxs },
+        style,
+      ]}
       disabled={!onPress}
       onPress={onPress}
     >
@@ -49,7 +57,9 @@ export const SubscriptionInfo = ({ subscription, style, onPress }: Props) => {
             borderColor: getStatusBorderColor(subscription.status),
             borderWidth: 2,
             backgroundColor: getStatusBackgroundColor(subscription.status),
-            marginRight: spacing.sm,
+            marginRight: largeScreenLayout ? spacing.sm : 0,
+            marginBottom: largeScreenLayout ? 0 : spacing.xs,
+            alignSelf: largeScreenLayout ? "center" : "flex-start",
           },
         ]}
       >

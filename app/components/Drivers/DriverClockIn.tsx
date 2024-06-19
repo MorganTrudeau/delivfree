@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAppSelector } from "app/redux/store";
+import { useAppDispatch, useAppSelector } from "app/redux/store";
 import firestore from "@react-native-firebase/firestore";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -19,45 +19,14 @@ import { ModalRef } from "../Modal/CenterModal";
 import { VendorLocationSelectModal } from "../VendorLocation/VendorLocationSelectModal";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
-import { getTotalPositions } from "app/utils/positions";
-import { getPositionsFromSubscription } from "app/utils/subscriptions";
+import { setDriverClockInStatus } from "app/redux/reducers/driverClockIn";
 
 export const DriverClockIn = () => {
-  const { driverSubscription, driverLicenses, driver } = useAppSelector(
-    (state) => ({
-      driver: state.driver.activeDriver,
-      driverSubscription: state.subscription.driverSubscription,
-      driverLicenses: state.driver.licenses,
-    })
-  );
-
-  const approvedLicenses = useMemo(() => {
-    return Object.values(driverLicenses).filter((l) => l.status === "approved");
-  }, [driverLicenses]);
-
-  const subscriptionValid = useMemo(() => {
-    const subscription = driverSubscription;
-
-    if (!approvedLicenses.length || !subscription) {
-      return false;
-    }
-
-    const { fullTime: licensedFullTime, partTime: licensedPartTime } =
-      getTotalPositions(approvedLicenses);
-    const { fullTime: subscribedFullTime, partTime: subscribedPartTime } =
-      getPositionsFromSubscription(subscription);
-
-    return (
-      ["active", "incomplete", "trialing"].includes(subscription.status) &&
-      licensedFullTime === subscribedFullTime &&
-      licensedPartTime === subscribedPartTime
-    );
-  }, [approvedLicenses, driverSubscription]);
-
   const insets = useSafeAreaInsets();
 
   const locationSelect = useRef<ModalRef>(null);
 
+  const dispatch = useAppDispatch();
   const driverId = useAppSelector((state) => state.driver.activeDriver?.id);
   const vendorLocations = useAppSelector((state) => state.vendorLocations.data);
   const vendorLocationsList = useMemo(
@@ -65,22 +34,26 @@ export const DriverClockIn = () => {
     [vendorLocations]
   );
 
-  const [clockInStatus, setClockInStatus] = useState("out");
+  const clockInStatus = useAppSelector((state) => state.driverClockIn.data);
+
+  const activeVendorLocation = clockInStatus
+    ? vendorLocations[clockInStatus.vendorLocation]
+    : null;
 
   useEffect(() => {
     const loadClockInStatus = async () => {
-      const savedStatus = await getSavedClockInStatus();
-      if (savedStatus) {
-        setClockInStatus(savedStatus);
-      }
       if (driverId) {
         const remoteStatusDoc = await firestore()
           .collection("DriverClockIns")
           .doc(driverId)
           .get();
-        if (remoteStatusDoc.data()) {
-          setClockInStatus("in");
-        }
+        const remoteStatus = remoteStatusDoc.data() as
+          | {
+              vendorLocation: string;
+              date: number;
+            }
+          | undefined;
+        dispatch(setDriverClockInStatus(remoteStatus || null));
       }
     };
 
@@ -99,12 +72,9 @@ export const DriverClockIn = () => {
         .collection("DriverClockIns")
         .doc(driverId);
 
-      const newClockInStatus = clockInStatus === "in" ? "out" : "in";
-
-      await driverClockInDoc.set({ vendorLocation, date: Date.now() });
-
-      setClockInStatus(newClockInStatus);
-      saveClockInStatus(newClockInStatus);
+      const newClockInStatus = { vendorLocation, date: Date.now() };
+      await driverClockInDoc.set(newClockInStatus);
+      dispatch(setDriverClockInStatus(newClockInStatus));
     },
     [clockInStatus, driverId]
   );
@@ -118,10 +88,7 @@ export const DriverClockIn = () => {
       .doc(driverId);
     await driverClockInDoc.delete();
 
-    const newClockInStatus = clockInStatus === "in" ? "out" : "in";
-
-    setClockInStatus(newClockInStatus);
-    saveClockInStatus(newClockInStatus);
+    dispatch(setDriverClockInStatus(null));
   }, [driverId]);
 
   const { exec: handleClockIn, loading: clockInLoading } =
@@ -139,16 +106,6 @@ export const DriverClockIn = () => {
     []
   );
 
-  if (
-    !(
-      subscriptionValid &&
-      approvedLicenses.length &&
-      driver?.registration.status === "approved"
-    )
-  ) {
-    return null;
-  }
-
   return (
     <View
       style={[
@@ -161,16 +118,28 @@ export const DriverClockIn = () => {
         },
       ]}
     >
-      <Text preset="semibold" style={{ color: colors.white }}>
-        {clockInStatus === "in" ? "On the clock" : "Clock in to accept orders"}
-      </Text>
+      <View style={[$flex, { paddingRight: spacing.sm }]}>
+        <Text preset="semibold" style={{ color: colors.white, flexShrink: 1 }}>
+          {clockInStatus ? "On the clock" : "Off the clock"}
+        </Text>
+        {!!activeVendorLocation && (
+          <Text
+            size={"xs"}
+            style={{ color: colors.white, flexShrink: 1 }}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {activeVendorLocation.name}
+          </Text>
+        )}
+      </View>
       <ButtonSmall
         preset={"filled"}
         LeftAccessory={ClockIcon}
         RightAccessory={Loading}
-        text={clockInStatus === "in" ? "Clock out" : "Clock in"}
+        text={clockInStatus ? "Clock out" : "Clock in"}
         onPress={() => {
-          if (clockInStatus === "in") {
+          if (clockInStatus) {
             handleClockout();
           } else if (vendorLocationsList.length === 1) {
             handleClockIn(vendorLocationsList[0].id);
@@ -186,17 +155,4 @@ export const DriverClockIn = () => {
       />
     </View>
   );
-};
-
-const getSavedClockInStatus = () => {
-  return AsyncStorage.getItem("CLOCK_IN_STATUS");
-};
-
-const saveClockInStatus = (status: "in" | "out") => {
-  try {
-    return AsyncStorage.setItem("CLOCK_IN_STATUS", status);
-  } catch (error) {
-    console.log("Failed to save clock in status", error);
-    return null;
-  }
 };

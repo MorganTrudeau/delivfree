@@ -2,6 +2,7 @@ import { Order } from "delivfree";
 import { DataCache, useDataListener } from "./useDataLoading";
 import { useCallback } from "react";
 import { OrderListenerParams, listenToOrders } from "app/apis/orders";
+import { hasValidParams } from "./utils";
 
 const cache = new DataCache<Order>();
 
@@ -10,10 +11,7 @@ export const useOrderData = (params: Omit<OrderListenerParams, "limit">) => {
 
   const handleLoadOrders = useCallback(
     (limit: number, onData: (orders: Order[]) => void) => {
-      if (
-        (params.hasOwnProperty("vendorLocation") && !vendorLocation) ||
-        (params.hasOwnProperty("driver") && !driver)
-      ) {
+      if (!hasValidParams(params)) {
         return () => {};
       }
       return listenToOrders(onData, { vendorLocation, driver, limit });

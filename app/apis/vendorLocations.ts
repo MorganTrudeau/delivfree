@@ -130,15 +130,24 @@ export const fetchVendorLocations = async (
     }
   }
 
+  const vendorLocationIds = vendorLocations.map((v) => v.id);
   const vendorIds = vendorLocations.map((v) => v.vendor);
 
-  const [vendorDocs, menuSnaps] = await Promise.all([
+  const [vendorDocs, menuSnaps, activeDriverSnaps] = await Promise.all([
     Promise.all(
       vendorIds.map((id) => firestore().collection("Vendors").doc(id).get())
     ),
     Promise.all(
       vendorIds.map((id) =>
         firestore().collection("Menus").where("vendor", "==", id).get()
+      )
+    ),
+    Promise.all(
+      vendorLocationIds.map((id) =>
+        firestore()
+          .collection("DriverClockIns")
+          .where("vendorLocation", "==", id)
+          .get()
       )
     ),
   ]);
@@ -149,24 +158,36 @@ export const fetchVendorLocations = async (
   }, {} as { [vendor: string]: Vendor });
   const menus = menuSnaps.reduce((acc, menuSnap) => {
     const menus = menuSnap.docs.map((doc) => doc.data() as Menu);
-    if (!menus?.[0]?.vendor) {
+    if (!menus[0]?.vendor) {
       return acc;
     }
     const vendor = menus[0].vendor;
     return { ...acc, [vendor]: menus };
   }, {} as { [vendor: string]: Menu[] });
+  const activeDrivers = activeDriverSnaps.reduce((acc, driverSnap) => {
+    const drivers = driverSnap.docs.map(
+      (doc) => doc.data() as { vendorLocation: string; date: number }
+    );
+    const vendorLocation = drivers[0]?.vendorLocation;
+    if (!vendorLocation) {
+      return acc;
+    }
+    return { ...acc, [vendorLocation]: drivers };
+  }, {} as { [vendor: string]: { vendorLocation: string; date: number }[] });
 
   return vendorLocations
     .filter((location) => {
       const vendor = vendors[location.vendor];
-      const locationMenu = menus[location.vendor];
+      const locationMenus = menus[location.vendor];
+      const locationDrivers = activeDrivers[location.id];
       return (
         vendor &&
         vendor.registration.status === "approved" &&
         vendor.stripe.accountId &&
         vendor.stripe.detailsSubmitted &&
         vendor.stripe.payoutsEnabled &&
-        locationMenu
+        locationMenus?.length &&
+        locationDrivers?.length
       );
     })
     .map((location) => {

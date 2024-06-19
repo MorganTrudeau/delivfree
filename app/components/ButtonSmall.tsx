@@ -178,7 +178,7 @@ const $viewPresets = {
     {
       backgroundColor: colors.palette.primary500,
       borderWidth: 1,
-      borderColor: colors.palette.primary200,
+      borderColor: colors.palette.primary500,
     },
   ] as StyleProp<ViewStyle>,
 
