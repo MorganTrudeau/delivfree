@@ -6,7 +6,10 @@ import Animated from "react-native-reanimated";
 import RestaurantListItem from "./RestaurantListItem";
 import { EmptyList } from "./EmptyList";
 
-interface Props extends Partial<FlatListProps<VendorLocation>> {
+interface Props
+  extends Partial<
+    Omit<FlatListProps<VendorLocation>, "CellRendererComponent">
+  > {
   restaurants: VendorLocation[];
   loadMore?: () => void;
   refreshing?: boolean;

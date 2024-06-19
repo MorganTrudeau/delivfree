@@ -1,10 +1,20 @@
 import { updateDriver } from "app/apis/driver";
 import { updateVendor } from "app/apis/vendors";
-import { HeaderProps, Icon, Screen, Text, TextField } from "app/components";
+import {
+  Button,
+  HeaderProps,
+  Icon,
+  Screen,
+  Text,
+  TextField,
+} from "app/components";
 import { Drawer } from "app/components/Drawer";
 import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
+import { ScreenHeader } from "app/components/ScreenHeader";
 import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
 import { useToast } from "app/hooks";
+import { useAsyncFunction } from "app/hooks/useAsyncFunction";
+import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
@@ -21,15 +31,12 @@ import {
 interface DriverProfileScreenProps extends AppStackScreenProps<"Profile"> {}
 
 export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
-  const Toast = useToast();
-
   const driver = useAppSelector((state) => state.driver.activeDriver as Driver);
 
   const [{ updates, isSaved }, setUpdates] = useState<{
     updates: Partial<Omit<Driver, "id">>;
     isSaved: boolean;
   }>({ updates: {}, isSaved: true });
-  const [updating, setUpdating] = useState(false);
 
   const updateValue = (key: keyof Driver) => (val: string) => {
     setUpdates((s) => ({
@@ -42,59 +49,21 @@ export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
     return key in updates ? updates[key] : driver[key];
   };
 
-  const handleUpdateVendor = useCallback(async () => {
-    try {
-      setUpdating(true);
-      updateDriver(driver.id, updates);
-      setUpdates((s) => ({ ...s, isSaved: true }));
-      setUpdating(false);
-      Toast.show("Profile updated!");
-    } catch (error) {
-      setUpdating(false);
-      console.log("Update vendor error", error);
-    }
+  const handleUpdateDriver = useCallback(async () => {
+    updateDriver(driver.id, updates);
+    setUpdates((s) => ({ ...s, isSaved: true }));
   }, [updates, driver?.id]);
 
-  const headerProps: HeaderProps = useMemo(
-    () => ({
-      RightActionComponent: updating ? (
-        <ActivityIndicator color={colors.primary} />
-      ) : !isSaved ? (
-        <Pressable onPress={handleUpdateVendor}>
-          <Icon icon="check-circle" color={colors.primary} />
-        </Pressable>
-      ) : undefined,
-    }),
-    [isSaved, handleUpdateVendor]
-  );
+  const { exec, loading } = useAsyncFunction(handleUpdateDriver);
+  const Loading = useLoadingIndicator(loading);
 
   return (
     <Screen
-      preset="fixed"
+      preset="scroll"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      headerProps={headerProps}
-      inDrawer
     >
-      <View style={$row}>
-        <Text preset="heading" style={$flex}>
-          Profile
-        </Text>
-        {Platform.OS === "web" &&
-          !isSaved &&
-          (updating ? (
-            <ActivityIndicator color={colors.primary} />
-          ) : (
-            <Pressable onPress={handleUpdateVendor} style={$row}>
-              <Text>Save</Text>
-              <Icon
-                icon="check-circle"
-                color={colors.primary}
-                style={{ marginLeft: spacing.xxs }}
-              />
-            </Pressable>
-          ))}
-      </View>
+      <ScreenHeader title="Profile" />
       <TextField
         placeholder="First name"
         label="First name"
@@ -124,6 +93,13 @@ export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
         style={$input}
         driverId={driver.id}
         viewOnly
+      />
+      <Button
+        onPress={exec}
+        text="Save profile"
+        RightAccessory={Loading}
+        style={{ marginTop: spacing.lg }}
+        preset={isSaved ? "default" : "reversed"}
       />
     </Screen>
   );

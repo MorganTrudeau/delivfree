@@ -49,6 +49,9 @@ import { PositionsSelect } from "../Positions/PositionsSelect";
 import { fetchPositions } from "app/apis/positions";
 import { useAppSelector } from "app/redux/store";
 import { StatusPicker } from "../StatusPicker";
+import { BottomSheet, BottomSheetRef } from "../Modal/BottomSheet";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
   editLocation?: VendorLocation | null;
@@ -63,8 +66,6 @@ export const ManageVendorLocation = ({
 }: Props) => {
   const addressSearch = useRef<ModalRef>(null);
   const phoneNumberInput = useRef<PhoneInput>(null);
-  const menuLinkInput = useRef<TextInput>(null);
-  const orderLinkInput = useRef<TextInput>(null);
 
   const Alert = useAlert();
 
@@ -90,8 +91,6 @@ export const ManageVendorLocation = ({
             callingCode: "+1",
             phoneNumber: "",
             name: "",
-            menuLink: "",
-            orderLink: "",
             image: "",
             positions: generateUid(),
             status: "pending",
@@ -142,9 +141,7 @@ export const ManageVendorLocation = ({
       vendorLocationState.longitude &&
       vendorLocationState.geohash &&
       vendorLocationState.cuisines.length &&
-      (vendorLocationState.phoneNumber ||
-        vendorLocationState.menuLink ||
-        vendorLocationState.orderLink) &&
+      vendorLocationState.phoneNumber &&
       vendorLocationState.name &&
       vendorLocationState.image &&
       (positions.maxPartTime || positions.maxFullTime),
@@ -280,7 +277,7 @@ export const ManageVendorLocation = ({
   );
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View style={$row}>
         <Text preset="subheading" style={{ flex: 1 }}>
           {editLocation ? "Manage Location" : "Add Location"}
@@ -364,29 +361,14 @@ export const ManageVendorLocation = ({
         selectedValues={vendorLocationState.cuisines}
         placeholder="Select cuisines"
       />
-      <TextField
-        ref={menuLinkInput}
-        label={"Menu link"}
-        placeholder={"Menu link"}
-        onChangeText={updateStateValue("menuLink")}
-        containerStyle={$inputContainer}
-        value={vendorLocationState.menuLink}
-        onSubmitEditing={() => orderLinkInput.current?.focus()}
-      />
-      <TextField
-        ref={orderLinkInput}
-        label={"Online order link"}
-        placeholder={"Online order link"}
-        onChangeText={updateStateValue("orderLink")}
-        containerStyle={$inputContainer}
-        value={vendorLocationState.orderLink}
-        onSubmitEditing={() => addressSearch.current?.open()}
-      />
 
       <Text preset="formLabel" style={[$formLabel, $formLabelTopSpacing]}>
         Address
       </Text>
-      <Pressable onPress={() => addressSearch.current?.open()} style={$input}>
+      <Pressable
+        onPress={() => addressSearch.current?.open()}
+        style={[$input, { paddingVertical: spacing.xs }]}
+      >
         <Text
           style={
             !vendorLocationState.address ? { color: colors.textDim } : undefined
@@ -464,18 +446,25 @@ export const ManageVendorLocation = ({
   );
 };
 
-export const ManageVendorLocationModal = forwardRef<
-  ModalRef,
-  Props & { onDismiss?: () => void }
->(function ManageVendorLocationModal({ onDismiss, ...rest }, ref) {
-  return (
-    <ReanimatedCenterModal ref={ref} onDismiss={onDismiss}>
-      <View style={{ padding: spacing.md }}>
-        <ManageVendorLocation {...rest} />
-      </View>
-    </ReanimatedCenterModal>
-  );
-});
+export const ManageVendorLocationModal = forwardRef<BottomSheetRef, Props>(
+  function ManageVendorLocationModal({ ...rest }, ref) {
+    const insets = useSafeAreaInsets();
+    return (
+      <BottomSheet ref={ref}>
+        <BottomSheetScrollView
+          contentContainerStyle={{
+            padding: spacing.md,
+            paddingBottom: spacing.md + insets.bottom,
+            flexGrow: 1,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <ManageVendorLocation {...rest} key={rest.editLocation?.id} />
+        </BottomSheetScrollView>
+      </BottomSheet>
+    );
+  }
+);
 
 const $inputContainer: ViewStyle = { marginTop: spacing.sm };
 const $button: ViewStyle = { marginTop: spacing.lg };

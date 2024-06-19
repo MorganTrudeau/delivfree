@@ -4,30 +4,20 @@ import React, { useRef, useState } from "react";
 import {
   KeyboardAvoidingViewProps,
   LayoutChangeEvent,
-  Platform,
   ScrollView,
   ScrollViewProps,
   StyleProp,
   View,
   ViewStyle,
 } from "react-native";
-import { colors, spacing } from "../theme";
+import { colors } from "../theme";
 import {
   ExtendedEdge,
   useSafeAreaInsetsStyle,
 } from "../utils/useSafeAreaInsetsStyle";
-import { DrawerIconButton } from "./DrawerIconButton";
-import { Header, HeaderProps } from "./Header";
-import { LogoHeader } from "./LogoHeader";
-import { useDimensions } from "app/hooks/useDimensions";
-import { $flex, LARGE_SCREEN, MAX_CONTENT_WIDTH } from "./styles";
+import { $flex, MAX_CONTENT_WIDTH } from "./styles";
 
 interface BaseScreenProps {
-  HeaderTitle?: React.ReactNode;
-
-  title?: string;
-
-  inDrawer?: boolean;
   /**
    * Children components.
    */
@@ -64,10 +54,6 @@ interface BaseScreenProps {
    * Pass any additional props directly to the KeyboardAvoidingView component.
    */
   KeyboardAvoidingViewProps?: KeyboardAvoidingViewProps;
-  /**
-   * Pass props to Header component
-   */
-  headerProps?: HeaderProps;
 }
 
 interface FixedScreenProps extends BaseScreenProps {
@@ -219,17 +205,11 @@ function ScreenWithScrolling(props: ScreenProps) {
 }
 
 export function Screen(props: ScreenProps) {
-  const { width } = useDimensions();
-  const largeScreenLayout = width > LARGE_SCREEN;
   const {
     backgroundColor = colors.background,
     safeAreaEdges,
     StatusBarProps,
     statusBarStyle = "dark",
-    inDrawer,
-    title,
-    HeaderTitle,
-    headerProps,
   } = props;
 
   const $containerInsets = useSafeAreaInsetsStyle(safeAreaEdges);
@@ -241,20 +221,6 @@ export function Screen(props: ScreenProps) {
         backgroundColor={colors.background}
         {...StatusBarProps}
       />
-
-      {/* {(!largeScreenLayout || !inDrawer) && (
-        <Header
-          LeftActionComponent={
-            inDrawer && !largeScreenLayout ? <DrawerIconButton /> : undefined
-          }
-          title={title}
-          HeaderTitle={
-            HeaderTitle ||
-            (inDrawer && !largeScreenLayout ? <LogoHeader /> : undefined)
-          }
-          {...headerProps}
-        />
-      )} */}
 
       <View style={$wrapper}>
         {isNonScrolling(props.preset) ? (

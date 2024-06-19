@@ -27,7 +27,7 @@ export const AdminVendorsScreen = (props: AdminVendorsScreenProps) => {
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      inDrawer
+      
     >
       <ScreenHeader title="Vendors" />
       <View style={[$row, { paddingBottom: spacing.sm }]}>

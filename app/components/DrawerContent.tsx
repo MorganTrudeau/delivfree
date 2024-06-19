@@ -1,5 +1,5 @@
-import React, { FC, useMemo } from "react";
-import { FlatList, Platform, View, ViewStyle } from "react-native";
+import React, { FC, useEffect, useMemo, useState } from "react";
+import { FlatList, Platform, Pressable, View, ViewStyle } from "react-native";
 import { ListItem } from "./ListItem";
 import { colors, spacing } from "app/theme";
 import { NavigationProp } from "app/navigators";
@@ -9,7 +9,11 @@ import { useHeaderHeight } from "app/hooks";
 import FastImage from "react-native-fast-image";
 import { AppStackParamList } from "app/navigators/StackNavigator";
 import { useAppSelector } from "app/redux/store";
-import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
+import {
+  NavigationContainerRefWithCurrent,
+  useRoute,
+} from "@react-navigation/native";
+import { Icon } from "./Icon";
 
 type DrawerItem = {
   text: string;
@@ -35,7 +39,7 @@ const ConsumerItems: DrawerItem[] = [
 
 const VendorItems: DrawerItem[] = [
   { text: "Home", route: "Home" },
-  { text: "Menus", route: "Menus" },
+  { text: "Menus", route: "Menus", include: () => Platform.OS === "web" },
   { text: "Orders", route: "Orders" },
   { text: "Locations", route: "Locations" },
   { text: "Positions", route: "Positions" },
@@ -70,9 +74,13 @@ const AdminItems: DrawerItem[] = [
 export const DrawerContent = ({
   navigation,
   onItemPress,
+  alwaysOpen,
+  closeDrawer,
 }: {
   navigation: NavigationContainerRefWithCurrent<AppStackParamList>;
   onItemPress: () => void;
+  alwaysOpen: boolean;
+  closeDrawer: () => void;
 }) => {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
@@ -90,23 +98,48 @@ export const DrawerContent = ({
     [userType]
   );
 
-  const activeRoute = useMemo(() => {
-    const state = navigation.current?.getState();
-    return state?.routes[state.index].name;
-  }, [navigation]);
+  const [activeRoute, setActiveRoute] = useState(
+    navigation.getCurrentRoute()?.name
+  );
+
+  const navigationReady = navigation.isReady();
+  useEffect(() => {
+    if (navigationReady) {
+      setActiveRoute(navigation.getCurrentRoute()?.name);
+    }
+  }, [navigationReady]);
+
+  navigation.addListener("state", (event) => {
+    setActiveRoute(getRouteNameFromNavState(event.data?.state));
+  });
 
   const renderListHeader = useMemo(
     () => () =>
       (
-        <View style={$logoContainer}>
-          <FastImage
-            source={require("../../assets/images/delivfree-logo.png")}
-            style={{
-              height: headerHeight,
-              width: headerHeight * headerImageRatio,
-            }}
-            resizeMode="contain"
-          />
+        <View>
+          <View style={$logoContainer}>
+            <FastImage
+              source={require("../../assets/images/delivfree-logo.png")}
+              style={{
+                height: headerHeight,
+                width: headerHeight * headerImageRatio,
+              }}
+              resizeMode="contain"
+            />
+          </View>
+          {!alwaysOpen && (
+            <Pressable
+              hitSlop={20}
+              style={{
+                position: "absolute",
+                top: spacing.sm,
+                right: 0,
+              }}
+              onPress={closeDrawer}
+            >
+              <Icon icon="close" />
+            </Pressable>
+          )}
         </View>
       ),
     [headerHeight]
@@ -189,6 +222,7 @@ const DrawerItem: FC<DemoListItem> = ({
 
 const $drawer: ViewStyle = {
   flex: 1,
+  backgroundColor: colors.background,
 };
 
 const $flatListContentContainer: ViewStyle = {
@@ -200,4 +234,12 @@ const $logoContainer: ViewStyle = {
   justifyContent: "center",
   paddingTop: spacing.md,
   paddingBottom: spacing.md,
+};
+
+const getRouteNameFromNavState = (state) => {
+  const index = state?.index;
+  if (!state || typeof index !== "number") {
+    return "";
+  }
+  return state.routes[index].name;
 };

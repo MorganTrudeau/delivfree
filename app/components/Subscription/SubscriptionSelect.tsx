@@ -31,6 +31,8 @@ import {
   isSurgeOrderItem,
 } from "app/utils/subscriptions";
 import { QuantitySelector } from "../QuantitySelector";
+import { createStripeCheckoutSession } from "app/apis/stripe";
+import { navigationRef } from "app/navigators";
 
 interface Props {
   fullTimeProduct: Stripe.Product;
@@ -158,15 +160,17 @@ export const SubscriptionSelect = ({
               ? __DEV__
                 ? "http://localhost:8080"
                 : "https://delivfree-vendor.web.app/"
-              : "https://mobileredirect-5vakg2iqja-uc.a.run.app", //"delivfree://subscription", // @todo change
+              : "https://mobileredirect-5vakg2iqja-uc.a.run.app", // "delivfree://subscription", // @todo change
           mode: "subscription",
+          ui_mode: "embedded",
           customer_email: user?.email || undefined,
         };
-        const data = await functions().httpsCallable("createCheckoutSession")({
-          params,
-        });
-        Linking.openURL(data.data.url);
-        console.log(data.data);
+        const session = await createStripeCheckoutSession(params);
+        if (session && session.client_secret) {
+          navigationRef.current?.navigate("Payment", {
+            clientSecret: session.client_secret,
+          });
+        }
       }
       setSubscriptionUpdating(false);
     } catch (error) {

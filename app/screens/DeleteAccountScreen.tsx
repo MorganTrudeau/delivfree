@@ -83,7 +83,7 @@ export const DeleteAccountScreen = ({ navigation }: Props) => {
       preset="scroll"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      inDrawer
+      
     >
       <Card>
         <Text preset="subheading" style={$title}>

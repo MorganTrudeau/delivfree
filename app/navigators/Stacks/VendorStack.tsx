@@ -5,9 +5,9 @@ import { getStackNavigator, screenOptions } from "../StackNavigator";
 import { renderAuthStack } from "../AuthStack";
 import { renderRegistrationStack } from "../RegistrationStack";
 import * as Screens from "app/screens";
-import { LogoHeader } from "app/components/LogoHeader";
 import { getPositionsFromSubscription } from "app/utils/subscriptions";
 import { getTotalPositions } from "app/utils/positions";
+import { DrawerIconButton } from "app/components/DrawerIconButton";
 
 const Stack = getStackNavigator();
 
@@ -101,62 +101,78 @@ export const VendorStack = () => {
       return renderRegistrationStack({ user });
     }
 
+    if (
+      user?.driver?.parentDriver &&
+      (!approvedLicenses.length ||
+        !subscriptionValid ||
+        driver.registration.status !== "approved")
+    ) {
+      return (
+        <Stack.Screen
+          name="DriverRegistration"
+          component={Screens.EditDriverProfileScreen}
+        />
+      );
+    }
+
     if (driver.registration.status !== "approved" || !approvedLicenses.length) {
       return (
         <>
           <Stack.Screen
             name="PositionsSearch"
             component={Screens.PositionsSearchScreen}
-            options={{
-              headerShown: true,
-              headerTransparent: false,
-              headerTitle: LogoHeader,
-            }}
           />
           <Stack.Screen
             name="DriverRegistration"
             component={Screens.EditDriverProfileScreen}
-            options={{
-              headerShown: true,
-              headerTransparent: false,
-              headerTitle: LogoHeader,
-            }}
           />
           <Stack.Screen
             name="AddressSearch"
             component={Screens.AddressSearchScreen}
-            options={{
-              headerShown: true,
-              headerTransparent: false,
-              headerTitle: LogoHeader,
-            }}
           />
+          <Stack.Screen name="Settings" component={Screens.SettingsScreen} />
         </>
       );
     }
 
     if (!subscriptionValid) {
       return (
-        <Stack.Screen
-          name="StartSubscription"
-          component={Screens.DriverStartSubscriptionScreen}
-        />
+        <>
+          <Stack.Screen
+            name="StartSubscription"
+            component={Screens.DriverStartSubscriptionScreen}
+          />
+          <Stack.Screen name="Payment" component={Screens.PaymentScreen} />
+        </>
       );
     }
 
     return (
       <>
-        <Stack.Screen name="Orders" component={Screens.DriverOrdersScreen} />
-        <Stack.Screen name="Profile" component={Screens.DriverProfileScreen} />
         <Stack.Screen
-          name="AddressSearch"
-          component={Screens.AddressSearchScreen}
+          name="Orders"
+          component={Screens.DriverOrdersScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Screens.DriverProfileScreen}
+          options={{ headerLeft: DrawerIconButton }}
         />
         <Stack.Screen
           name="Subscription"
           component={Screens.DriverSubscriptionScreen}
+          options={{ headerLeft: DrawerIconButton }}
         />
-        <Stack.Screen name="Settings" component={Screens.SettingsScreen} />
+        <Stack.Screen
+          name="Settings"
+          component={Screens.SettingsScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
+          name="AddressSearch"
+          component={Screens.AddressSearchScreen}
+        />
         <Stack.Screen name="About" component={Screens.AboutScreen} />
         <Stack.Screen
           name="DeleteAccount"
@@ -180,43 +196,65 @@ export const VendorStack = () => {
         <Stack.Screen
           name="VendorRegistration"
           component={Screens.EditVendorProfileScreen}
-          options={{
-            headerShown: true,
-            headerTransparent: false,
-            headerTitle: LogoHeader,
-          }}
         />
       );
     }
 
     if (!subscriptionValid) {
       return (
-        <Stack.Screen
-          name="StartSubscription"
-          component={Screens.VendorStartSubscriptionScreen}
-        />
+        <>
+          <Stack.Screen
+            name="StartSubscription"
+            component={Screens.VendorStartSubscriptionScreen}
+          />
+          <Stack.Screen name="Payment" component={Screens.PaymentScreen} />
+        </>
       );
     }
 
     return (
       <>
-        <Stack.Screen name="Home" component={Screens.VendorHomeScreen} />
-        <Stack.Screen name="Menus" component={Screens.VendorMenusScreen} />
-        <Stack.Screen name="Orders" component={Screens.VendorOrdersScreen} />
-        <Stack.Screen name="Profile" component={Screens.VendorProfileScreen} />
+        <Stack.Screen
+          name="Home"
+          component={Screens.VendorHomeScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
+          name="Menus"
+          component={Screens.VendorMenusScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
+          name="Orders"
+          component={Screens.VendorOrdersScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Screens.VendorProfileScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
         <Stack.Screen
           name="Locations"
           component={Screens.VendorLocationsScreen}
+          options={{ headerLeft: DrawerIconButton }}
         />
         <Stack.Screen
           name="Subscription"
           component={Screens.VendorSubscriptionScreen}
+          options={{ headerLeft: DrawerIconButton }}
         />
         <Stack.Screen
           name="Positions"
           component={Screens.VendorPositionsScreen}
+          options={{ headerLeft: DrawerIconButton }}
         />
-        <Stack.Screen name="Settings" component={Screens.SettingsScreen} />
+        <Stack.Screen
+          name="Settings"
+          component={Screens.SettingsScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen name="WebView" component={Screens.WebViewScreen} />
         <Stack.Screen name="About" component={Screens.AboutScreen} />
         <Stack.Screen
           name="DeleteAccount"

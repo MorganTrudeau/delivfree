@@ -68,6 +68,7 @@ export const DriversList = ({
         style={$flex}
         contentContainerStyle={[$content, { paddingBottom: insets.bottom }]}
         ListEmptyComponent={renderListEmpty}
+        showsVerticalScrollIndicator={false}
         {...rest}
       />
     </>

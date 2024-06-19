@@ -4,7 +4,7 @@ import ReanimatedCenterModal from "../Modal/CenterModal";
 import { PositionsSelect } from "./PositionsSelect";
 import { useAppSelector } from "app/redux/store";
 import { ActivityIndicator, View, ViewStyle } from "react-native";
-import { colors, spacing } from "app/theme";
+import { spacing } from "app/theme";
 import { Text } from "../Text";
 import { Button } from "../Button";
 import { useAlert, useToast } from "app/hooks";
@@ -12,25 +12,26 @@ import { alertCommonError, getAppType } from "app/utils/general";
 import { addPositions, updatePositions } from "app/apis/positions";
 import { shallowEqual } from "react-redux";
 import { $formLabel } from "../styles";
-import { StatusIndicator } from "../StatusIndicator";
 import { StatusPicker } from "../StatusPicker";
 
 interface PositionsSelectModalProps {
   positions: Positions | null | undefined;
-  onDismiss?: () => void;
+  onClose: () => void;
 }
 
 export const PositionsSelectModal = forwardRef<
   ModalRef,
   PositionsSelectModalProps
->(({ positions, onDismiss }, ref) => {
+>(({ positions, onClose }, ref) => {
   return (
-    <ReanimatedCenterModal ref={ref} onDismiss={onDismiss}>
+    <ReanimatedCenterModal ref={ref}>
       <View style={$content}>
         <Text preset={"subheading"} style={{ marginBottom: spacing.sm }}>
           Manage Positions
         </Text>
-        {positions && <ManagePositions positions={positions} />}
+        {positions && (
+          <ManagePositions positions={positions} onClose={onClose} />
+        )}
       </View>
     </ReanimatedCenterModal>
   );
@@ -38,9 +39,10 @@ export const PositionsSelectModal = forwardRef<
 
 interface ManagePositionsProps {
   positions: Positions;
+  onClose: () => void;
 }
 
-const ManagePositions = ({ positions }: ManagePositionsProps) => {
+const ManagePositions = ({ positions, onClose }: ManagePositionsProps) => {
   const Alert = useAlert();
   const Toast = useToast();
 
@@ -80,6 +82,7 @@ const ManagePositions = ({ positions }: ManagePositionsProps) => {
         status: isAdmin ? "approved" : "pending",
       });
       setLoading(false);
+      onClose();
       if (isAdmin) {
         Toast.show("Positions updated");
       } else {

@@ -27,7 +27,7 @@ export const BottomSheet = forwardRef<BottomSheetRef, Props>(
         snapToIndex: open,
         snapToPosition: open,
         expand: open,
-        close: close,
+        close,
         collapse: close,
         forceClose: close,
       }),

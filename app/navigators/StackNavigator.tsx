@@ -9,6 +9,7 @@ import { Platform, View } from "react-native";
 import { StackAnimationTypes } from "react-native-screens";
 import { navigationRef } from "./navigationUtilities";
 import { CheckoutCartTracker } from "app/components/CheckoutCart/CheckoutCartTracker";
+import { getAppType } from "app/utils/general";
 
 export type AppStackParamList = {
   Welcome: undefined;
@@ -47,6 +48,10 @@ export type AppStackParamList = {
   Licenses: undefined;
   Menus: { tab?: string };
   Checkout: undefined;
+  Payouts: undefined;
+  WebView: { uri: string };
+  Payment: { clientSecret: string };
+  CheckoutCart: undefined;
 };
 
 export const linkingConfigScreens: {
@@ -70,12 +75,21 @@ export const linkingConfigScreens: {
 
 export const screenOptions = {
   headerBackTitleVisible: false,
-  headerLeft: () => <DrawerIconButton />,
-  headerRight: () => (
-    <View style={{ paddingHorizontal: spacing.md }}>
-      <CheckoutCartTracker />
-    </View>
-  ),
+  headerRight:
+    getAppType() === "CONSUMER"
+      ? () => (
+          <View
+            style={{
+              paddingHorizontal: Platform.select({
+                web: spacing.md,
+                default: 0,
+              }),
+            }}
+          >
+            <CheckoutCartTracker />
+          </View>
+        )
+      : undefined,
   headerTitle: () => (
     <LogoHeader onPress={() => navigationRef.current?.navigate("Home")} />
   ),

@@ -38,7 +38,7 @@ export const QuantitySelectorInline = ({
         disabled={disableDecrease}
         style={[
           $quantityButton,
-          { marginRight: spacing.xs, opacity: disableDecrease ? 0.5 : 1 },
+          { marginRight: spacing.sm, opacity: disableDecrease ? 0.5 : 1 },
         ]}
         onPress={() => changeQuantity(-1)}
       >
@@ -49,7 +49,7 @@ export const QuantitySelectorInline = ({
         disabled={disableIncrease}
         style={[
           $quantityButton,
-          { marginLeft: spacing.xs, opacity: disableIncrease ? 0.5 : 1 },
+          { marginLeft: spacing.sm, opacity: disableIncrease ? 0.5 : 1 },
         ]}
         onPress={() => changeQuantity(1)}
       >

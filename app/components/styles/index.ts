@@ -290,3 +290,9 @@ export const $headerButton: ViewStyle = {
 export const $menusScreenHeader: ViewStyle = {
   paddingTop: spacing.md,
 };
+
+export const $spacerBorder: ViewStyle = {
+  borderTopWidth: StyleSheet.hairlineWidth,
+  borderTopColor: colors.borderLight,
+  marginVertical: spacing.md,
+};

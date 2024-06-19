@@ -102,7 +102,7 @@ const LocalWebNotification = ({
 
   return (
     <AnimatedTouchableOpacity
-      //@ts-ignore
+      // @ts-ignore
       onMouseEnter={handleHover(true)}
       onMouseLeave={handleHover(false)}
       activeOpacity={1}

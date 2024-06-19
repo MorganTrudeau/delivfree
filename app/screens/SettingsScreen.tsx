@@ -9,15 +9,12 @@ import {
   $screen,
 } from "app/components/styles";
 import { useAlert } from "app/hooks";
-import { Drawer } from "app/components/Drawer";
 import { ScreenHeader } from "app/components/ScreenHeader";
 
 interface Props extends AppStackScreenProps<"Settings"> {}
 
 export const SettingsScreen = ({ navigation, route }: Props) => {
   const Alert = useAlert();
-
-  const disableDrawer = route.params?.drawer === false;
 
   const confirmLogout = async () => {
     try {
@@ -57,7 +54,6 @@ export const SettingsScreen = ({ navigation, route }: Props) => {
       preset="scroll"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      inDrawer={!disableDrawer}
     >
       <ScreenHeader title="Settings" />
       <ListItem

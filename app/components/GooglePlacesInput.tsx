@@ -3,19 +3,19 @@ import {
   GooglePlaceData,
   GooglePlaceDetail,
   GooglePlacesAutocomplete,
+  GooglePlacesAutocompleteProps,
   Styles,
 } from "react-native-google-places-autocomplete";
 import { $input } from "./styles";
 import { colors } from "app/theme";
-import { EmptyList } from "./EmptyList";
 
 const API_KEY = "AIzaSyD0evHPMfgWWvkNA2E7ssT_zWFNZMnhp_M";
 
 type Props = {
   onPress: (data: GooglePlaceData, detail: GooglePlaceDetail) => void;
-};
+} & Partial<GooglePlacesAutocompleteProps>;
 
-const GooglePlacesInput = ({ onPress }: Props) => {
+const GooglePlacesInput = ({ onPress, ...rest }: Props) => {
   return (
     <GooglePlacesAutocomplete
       placeholder="Search"
@@ -26,6 +26,7 @@ const GooglePlacesInput = ({ onPress }: Props) => {
       styles={styles}
       fetchDetails
       textInputProps={{ placeholderTextColor: colors.textDim }}
+      {...rest}
     />
   );
 };

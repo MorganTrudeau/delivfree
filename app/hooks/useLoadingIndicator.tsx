@@ -8,7 +8,9 @@ export const useLoadingIndicator = (
   return useMemo(
     () =>
       loading
-        ? ({ style }) => <ActivityIndicator style={style} {...props} />
+        ? ({ style }) => (
+            <ActivityIndicator style={style} color={"#fff"} {...props} />
+          )
         : undefined,
     [loading]
   );

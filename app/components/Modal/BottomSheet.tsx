@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useImperativeHandle,
   useRef,
+  useState,
 } from "react";
 import { Portal } from "react-native-portalize";
 import GHMBottomSheet, {
@@ -12,9 +13,8 @@ import GHMBottomSheet, {
   BottomSheetBackdropProps,
   BottomSheetProps,
 } from "@gorhom/bottom-sheet";
-import { Platform, ViewStyle } from "react-native";
+import { ViewStyle } from "react-native";
 import { colors } from "app/theme";
-import ReanimatedCenterModal, { ModalRef } from "./CenterModal";
 
 const snapPoints = ["92%"];
 
@@ -28,7 +28,6 @@ const BottomSheetWithoutRef = (
   { children, ...rest }: Props,
   ref: Ref<GHMBottomSheet>
 ) => {
-  console.log("MOVEI");
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop

@@ -24,7 +24,7 @@ export const AdminUsersScreen = (props: AdminUsersScreenProps) => {
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      inDrawer
+      
     >
       <ScreenHeader title="Users" />
       <UsersList

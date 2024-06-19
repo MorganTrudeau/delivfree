@@ -41,18 +41,19 @@ import React, {
 import { ActivityIndicator, Linking, ViewStyle } from "react-native";
 import Stripe from "stripe";
 import { viewSubscriptionOnStripe } from "app/utils/subscriptions";
+import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 
 interface VendorDetailScreenProps extends AppStackScreenProps<"VendorDetail"> {}
 
 export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
   const vendorId = props.route.params?.vendor;
 
-  const vendorLocationModal = useRef<ModalRef>(null);
+  const vendorLocationModal = useRef<BottomSheetRef>(null);
   const positionsModal = useRef<ModalRef>(null);
   const licenseDisplayModal = useRef<ModalRef>(null);
 
   const openVendorLocationModal = useCallback(() => {
-    vendorLocationModal.current?.open();
+    vendorLocationModal.current?.snapToIndex(0);
   }, []);
   const closeVendorLocationModal = useCallback(() => {
     vendorLocationModal.current?.close();
@@ -110,9 +111,13 @@ export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
     positionsModal.current?.open();
   };
 
+  const closePositionsModal = () => {
+    positionsModal.current?.close();
+  };
+
   const handleVendorLocationPress = (vendorLocation: VendorLocation) => {
     setEditLocation(vendorLocation);
-    vendorLocationModal.current?.open();
+    vendorLocationModal.current?.snapToIndex(0);
   };
 
   useEffect(() => {
@@ -166,7 +171,6 @@ export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
         preset="scroll"
         style={$screen}
         contentContainerStyle={$containerPadding}
-        inDrawer
       >
         <ActivityIndicator
           color={colors.primary}
@@ -181,7 +185,6 @@ export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
       preset="scroll"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      inDrawer
     >
       <ScreenHeader title={vendor.businessName} />
 
@@ -257,13 +260,12 @@ export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
         ref={vendorLocationModal}
         onClose={closeVendorLocationModal}
         editLocation={editLocation}
-        onDismiss={() => setEditLocation(undefined)}
       />
 
       <PositionsSelectModal
         ref={positionsModal}
         positions={editPositions}
-        onDismiss={() => setEditPositions(undefined)}
+        onClose={closePositionsModal}
       />
     </Screen>
   );

@@ -11,10 +11,12 @@ export const CartItem = ({
   item,
   onChangeQuantity,
   style,
+  showPrice = true,
 }: {
   item: CheckoutItem;
   onChangeQuantity?: (item: string, quantity: number) => void;
   style?: ViewStyle;
+  showPrice?: boolean;
 }) => {
   const itemPrice = useMemo(() => {
     return (
@@ -39,7 +41,9 @@ export const CartItem = ({
             <Text style={{ color: colors.textDim }} size="xs">
               {customization.choice.name}
 
-              {customization.choice.price && Number(customization.choice.price)
+              {customization.choice.price &&
+              showPrice &&
+              Number(customization.choice.price)
                 ? ` +${localizeCurrency(
                     Number(customization.choice.price),
                     "CAD"
@@ -50,21 +54,25 @@ export const CartItem = ({
         );
       })}
 
-      <View
-        style={[
-          $row,
-          { justifyContent: "space-between", marginTop: spacing.xxs },
-        ]}
-      >
-        <Text>{localizeCurrency(itemPrice, "CAD")}</Text>
-        {onChangeQuantity && (
-          <QuantitySelectorInline
-            quantity={item.quantity}
-            decreaseIcons={{ 1: "trash-can" }}
-            changeQuantity={(q) => onChangeQuantity(item.id, item.quantity + q)}
-          />
-        )}
-      </View>
+      {(showPrice || onChangeQuantity) && (
+        <View
+          style={[
+            $row,
+            { justifyContent: "space-between", marginTop: spacing.xxs },
+          ]}
+        >
+          {showPrice && <Text>{localizeCurrency(itemPrice, "CAD")}</Text>}
+          {onChangeQuantity && (
+            <QuantitySelectorInline
+              quantity={item.quantity}
+              decreaseIcons={{ 1: "trash-can" }}
+              changeQuantity={(q) =>
+                onChangeQuantity(item.id, item.quantity + q)
+              }
+            />
+          )}
+        </View>
+      )}
     </View>
   );
 };

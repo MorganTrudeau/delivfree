@@ -32,17 +32,17 @@ export const MenuItemsSearch = ({
   const categorizedItems = useMemo(() => {
     const categoryItemMap = items.reduce((acc, item) => {
       if (!item.categories.length) {
-        acc["uncategorized"] = acc["uncategorized"] || {
+        acc.uncategorized = acc.uncategorized || {
           category: null,
           items: [],
         };
-        acc["uncategorized"].items.push(item);
+        acc.uncategorized.items.push(item);
       } else {
         item.categories.forEach((categoryId) => {
           const category = categories.find((c) => c.id === categoryId);
           if (category) {
             acc[category.id] = acc[category.id] || {
-              category: category,
+              category,
               items: [],
             };
             acc[category.id].items.push(item);

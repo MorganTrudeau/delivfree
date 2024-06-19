@@ -2,8 +2,8 @@ import { translate } from "app/i18n";
 import { useCallback, useState } from "react";
 import { useToast } from "./useToast";
 
-export const useAsyncFunction = <A>(
-  asyncFunction: (args: A) => Promise<any>,
+export const useAsyncFunction = <A, P>(
+  asyncFunction: (args: A) => Promise<P>,
   memoize?: boolean
 ) => {
   const Toast = useToast();
@@ -16,10 +16,10 @@ export const useAsyncFunction = <A>(
   const exec = async (args: A) => {
     try {
       setState({ loading: true, error: null });
-      await asyncFunction(args);
+      await asyncFunction(args as any);
       setState({ loading: false, error: null });
     } catch (error) {
-      setState({ loading: false, error: error });
+      setState({ loading: false, error });
       console.log(`ERROR: ${asyncFunction.name}`, error);
       Toast.show(translate("errors.common"));
     }

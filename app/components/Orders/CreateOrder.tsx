@@ -21,6 +21,7 @@ import { $formLabel, $row } from "../styles";
 import { useAlert } from "app/hooks";
 import { shallowEqual } from "react-redux";
 import { DropDownPicker } from "../DropDownPicker";
+import { createOrder } from "app/apis/orders";
 
 interface CreateOrderProps {
   onClose: () => void;
@@ -60,8 +61,9 @@ export const CreateOrder = ({
   const [order, setOrder] = useState<Order>(
     editOrder || {
       id: generateUid(),
-      description: "",
-      amount: "",
+      total: "",
+      subtotal: "",
+      tax: "",
       tip: "",
       customer: "",
       date: moment().valueOf(),
@@ -69,17 +71,20 @@ export const CreateOrder = ({
       vendor: vendorId,
       vendorLocation: vendorLocationId,
       driver: null,
+      currency: "CAD",
+      checkoutItems: [],
+      deliveryInstructions: { type: "meet-door", note: "" },
     }
   );
 
-  const orderComplete = order.amount && order.tip && order.customer;
+  const orderComplete = order.total && order.tip && order.customer;
 
   const customer: Customer | undefined = customers[order.customer];
 
   const formatOrder = () => {
     setOrder((o) => ({
       ...o,
-      amount: localizeCurrency(Number(o.amount), "USD"),
+      amount: localizeCurrency(Number(o.total), "USD"),
     }));
   };
 
@@ -90,23 +95,16 @@ export const CreateOrder = ({
     }));
   };
 
-  const createOrder = async () => {
+  const handleCreateOrder = async () => {
     try {
       if (!order.customer) {
         return Alert.alert("Missing Customer", "Please select a customer");
       }
-      if (!order.amount) {
+      if (!order.total) {
         return Alert.alert("Missing Amount", "Please enter an amount");
       }
       setCreateLoading(true);
-      await firestore()
-        .collection("Orders")
-        .doc(order.id)
-        .set({
-          ...order,
-          amount: order.amount.replace(/[$,]/g, ""),
-          tip: order.tip.replace(/[$,]/g, ""),
-        });
+      await createOrder(order);
       setCreateLoading(false);
       onClose();
     } catch (error) {
@@ -183,24 +181,16 @@ export const CreateOrder = ({
         vendorLocation={vendorLocationId}
       />
       <TextField
-        label="Description"
-        placeholder="Description"
-        containerStyle={$input}
-        value={order.description}
-        onChangeText={(description) => setOrder((o) => ({ ...o, description }))}
-        onSubmitEditing={() => amountInput.current?.focus()}
-      />
-      <TextField
         label="Order amount"
         placeholder="Order amount"
         containerStyle={$input}
         onBlur={formatOrder}
-        value={order.amount}
+        value={order.total}
         onChangeText={(amount) => setOrder((o) => ({ ...o, amount }))}
         ref={amountInput}
         onSubmitEditing={() => tipInput.current?.focus()}
         onFocus={() => {
-          let strippedValue = order.amount.replace(/[$,]/g, "");
+          let strippedValue = order.total.replace(/[$,]/g, "");
           if (!Number(strippedValue)) {
             strippedValue = "";
           }
@@ -247,7 +237,7 @@ export const CreateOrder = ({
       )}
 
       <Button
-        onPress={createOrder}
+        onPress={handleCreateOrder}
         text={editOrder ? "Update Order" : "Create Order"}
         style={$button}
         preset={orderComplete ? "filled" : "default"}

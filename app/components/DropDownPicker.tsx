@@ -100,13 +100,13 @@ export const DropDownPicker = <V extends string>({
   );
 
   const handleSelect = (val: V) => {
-    if (selectedValues?.includes(val)) {
+    if (singleSelect) {
+      onSelect([val]);
+      closeDropdown();
+    } else if (selectedValues?.includes(val)) {
       onSelect(selectedValues.filter((v) => v !== val));
     } else {
       onSelect([...(selectedValues || []), val]);
-    }
-    if (singleSelect) {
-      closeDropdown();
     }
   };
 
@@ -150,7 +150,7 @@ export const DropDownPicker = <V extends string>({
               width: layout?.width,
               maxHeight: height / 3,
               position: "absolute",
-              left: left,
+              left,
             },
             top + (layout?.height || 0) > height / 2
               ? { bottom: height - top + spacing.xxs }

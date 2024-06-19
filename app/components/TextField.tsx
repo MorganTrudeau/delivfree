@@ -305,12 +305,14 @@ export const TextField = forwardRef(function TextField(
 
 const $inputWrapperStyle: ViewStyle = {
   flexDirection: "row",
+  alignItems: 'center',
   paddingHorizontal: spacing.xs,
   backgroundColor: colors.palette.neutral200,
   borderWidth: StyleSheet.hairlineWidth,
   borderRadius: borderRadius.sm,
   minHeight: 38,
-  justifyContent: "center",
+  flex: 1,
+  // justifyContent: "center",
   borderColor: colors.border,
 };
 
@@ -319,6 +321,7 @@ const $inputStyle: TextStyle = {
   alignSelf: "stretch",
   color: colors.text,
   fontSize: $fontSizeStyles.sm.fontSize,
+  width: "100%",
   // @ts-ignore
   outlineStyle: "none",
 };

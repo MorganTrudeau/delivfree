@@ -7,11 +7,11 @@ import React, {
 import { ModalRef } from "delivfree";
 import ReanimatedCenterModal from "./Modal/CenterModal";
 import { Linking, View, ViewStyle } from "react-native";
-import { LogoHeader } from "./LogoHeader";
 import { Text } from "./Text";
 import { Button } from "./Button";
 import { spacing } from "app/theme";
 import { ImageStyle } from "react-native-fast-image";
+import { AppLogo } from "./AppLogo";
 
 export interface CheckoutPopUpRef {
   open: (link: string) => void;
@@ -42,7 +42,7 @@ export const CheckoutPopUp = forwardRef<CheckoutPopUpRef, Props>(
     return (
       <ReanimatedCenterModal ref={modal} tapToClose>
         <View style={$content}>
-          <LogoHeader style={$logo} />
+          <AppLogo style={$logo} height={40} />
           <Text size={"sm"} weight="semiBold">
             FREE DELIVERY & ZERO ADDED FEES
           </Text>

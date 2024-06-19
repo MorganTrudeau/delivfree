@@ -8,11 +8,12 @@ import { TouchableOpacity, ViewStyle } from "react-native";
 import { PopoverContext } from "./PopoverContext";
 
 export interface PopoverRef {
+  open: () => void;
   dismiss: () => void;
 }
 export type Props = {
-  children: React.ReactElement;
-  renderPopover: () => React.ReactElement;
+  children: React.ReactNode;
+  renderPopover: () => React.ReactNode;
   position?: "bottomRight" | "bottomLeft" | "topRight" | "topLeft";
   style?: ViewStyle;
 };
@@ -34,6 +35,7 @@ export const PopoverButton = forwardRef<PopoverRef, Props>(function Popover(
   };
 
   useImperativeHandle(ref, () => ({
+    open: () => showPopover(),
     dismiss: () => popoverContext?.dismissPopover(),
   }));
 

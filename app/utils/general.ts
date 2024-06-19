@@ -34,8 +34,8 @@ export const equalArrays = (
   }
 
   // Sort both arrays
-  let sortedArr1 = arr1.slice().sort();
-  let sortedArr2 = arr2.slice().sort();
+  const sortedArr1 = arr1.slice().sort();
+  const sortedArr2 = arr2.slice().sort();
 
   // Compare sorted arrays
   for (let i = 0; i < sortedArr1.length; i++) {
@@ -401,14 +401,14 @@ export function isValidPostalCode(postalCode: string) {
 
 export const localizeCurrency = (
   value: number,
-  currency: string,
+  currency: string = "CAD",
   options = {},
   locale?: string
 ) => {
   try {
     const localizedCurrency = value.toLocaleString(locale, {
       style: "currency",
-      currency: currency || "USD",
+      currency: currency,
       // @ts-ignore
       currencyDisplay: "narrowSymbol", // This fails on some OS
       ...options,
@@ -417,7 +417,7 @@ export const localizeCurrency = (
   } catch (error) {
     return value.toLocaleString(undefined, {
       style: "currency",
-      currency: currency || "USD",
+      currency: currency,
       ...options,
     });
   }

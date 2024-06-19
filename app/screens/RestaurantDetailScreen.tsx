@@ -11,6 +11,7 @@ import { useMenusLoading } from "app/hooks/useMenusLoading";
 import { AppStackScreenProps } from "app/navigators";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
+import { isMenuActive } from "app/utils/menus";
 import { Menu, VendorLocation } from "delivfree/types";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -69,7 +70,7 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
     vendor,
   });
 
-  const filteredMenus = useMemo(() => menus.filter((m) => m.active), [menus]);
+  const filteredMenus = useMemo(() => menus.filter(isMenuActive), [menus]);
 
   const firstMenuId = filteredMenus[0]?.id;
 
@@ -122,12 +123,6 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
     );
   }
 
-  const viewMenu = () => {
-    checkoutPopUp.current?.open(vendorLocation.menuLink);
-  };
-  const orderOnline = () => {
-    checkoutPopUp.current?.open(vendorLocation.orderLink);
-  };
   const phoneRestaurant = () => {
     checkoutPopUp.current?.open(`tel:${vendorLocation.phoneNumber}`);
   };

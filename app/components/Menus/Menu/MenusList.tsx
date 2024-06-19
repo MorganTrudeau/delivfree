@@ -9,6 +9,7 @@ import { Text } from "../../Text";
 import { EmptyList } from "../../EmptyList";
 import { Icon } from "../../Icon";
 import { colors, spacing } from "app/theme";
+import { formattedDaysAndTimes } from "app/utils/dates";
 
 interface Props {
   data: Menu[];
@@ -21,7 +22,11 @@ export const MenusList = ({ data, onPress, loaded }: Props) => {
   const largeScreen = isLargeScreen(width);
 
   const headers = useMemo(() => {
-    const h: TableHeader[] = [{ title: "Name" }, { title: "Status" }];
+    const h: TableHeader[] = [
+      { title: "Name" },
+      { title: "Hours" },
+      { title: "Status" },
+    ];
     return h;
   }, []);
 
@@ -30,6 +35,7 @@ export const MenusList = ({ data, onPress, loaded }: Props) => {
       if (largeScreen) {
         const dataCells: DataCell[] = [
           { text: item.name },
+          { text: formattedDaysAndTimes(item.hours[0]) },
           {
             renderData: () => (
               <View style={$row}>

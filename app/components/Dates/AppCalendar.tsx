@@ -223,17 +223,6 @@ const getWeekDayNames = (firstDay: number) => {
 };
 
 const styles = StyleSheet.create({
-  optionsText: {
-    ...global.text,
-    color: colors.primary,
-  },
-  header: StyleSheet.flatten([
-    global.row,
-    {
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-  ]),
   footer: {
     ...global.row,
     justifyContent: "flex-end",
@@ -243,6 +232,17 @@ const styles = StyleSheet.create({
   footerButton: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
+  },
+  header: StyleSheet.flatten([
+    global.row,
+    {
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+  ]),
+  optionsText: {
+    ...global.text,
+    color: colors.primary,
   },
   weekStyle: { flexDirection: isRTL ? "row-reverse" : "row" },
 });

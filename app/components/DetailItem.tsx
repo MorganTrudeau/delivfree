@@ -1,21 +1,28 @@
 import React from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Text } from "./Text";
-import { spacing } from "app/theme";
+import { colors, spacing } from "app/theme";
 
 export const DetailItem = ({
   title,
   value,
+  onPress,
 }: {
   title: string;
   value: string;
+  onPress?: () => void;
 }) => {
   return (
-    <View style={{ marginTop: spacing.xxs }}>
+    <Pressable style={{ marginTop: spacing.xxs }} onPress={onPress}>
       <Text preset="semibold" size={"xs"}>
         {title}
       </Text>
-      <Text>{value}</Text>
-    </View>
+      <Text
+        style={{ color: onPress ? colors.primary : colors.text }}
+        selectable
+      >
+        {value}
+      </Text>
+    </Pressable>
   );
 };

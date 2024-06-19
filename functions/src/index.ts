@@ -18,7 +18,11 @@ import {
   Vendor,
   VendorLocation,
 } from "./types";
-import { buildMessagePayload, sendNotifications } from "./utils/notifications";
+import {
+  buildMessagePayload,
+  sendAdminNotifications,
+  sendNotifications,
+} from "./utils/notifications";
 import {
   CallableRequest,
   HttpsError,
@@ -47,6 +51,7 @@ const googlePlacesApi = express();
 googlePlacesApi.use(cors({ origin: "*" }));
 
 const domain = "https://app.delivfree.com";
+const adminDomain = "https://admin.delivfree.com";
 
 googlePlacesApi.get("*", async (req, res) => {
   console.log(req.path, req.query);
@@ -133,49 +138,44 @@ export const addDriver = onCall(
   }
 );
 
-export const onOrderCreated = onDocumentCreated(
-  "Orders/{orderId}",
-  async (event) => {
-    if (!event.data) {
-      return true;
-    }
-    const order = event.data.data() as Order;
-
-    const driverSnap = await admin
-      .firestore()
-      .collection("Drivers")
-      .where("vendors", "array-contains", order.vendor)
-      .get();
-    const userIds = driverSnap.docs.map((doc) => (doc.data() as Driver).user);
-    const notification = {
-      title: "New Order",
-      body: `View and claim the order.`,
-    };
-    const data = {
-      orderId: order.id,
-      type: "order_created",
-    };
-    const collapseKey = "orderCreated";
-    const link = `https://${domain}?route=orders`;
-    const payload = buildMessagePayload(notification, data, collapseKey, link);
-    await sendNotifications(userIds, payload);
-
-    return true;
-  }
-);
-
 export const onOrderWritten = onDocumentWritten(
   "Orders/{orderId}",
   async (event) => {
     if (!event.data) {
       return true;
     }
+
     const orderBefore = event.data.before.data() as Order | undefined;
     const orderAfter = event.data.after.data() as Order | undefined;
 
     const vendor = orderBefore?.vendor || orderAfter?.vendor;
     const date = orderBefore?.date || orderAfter?.date;
     const customer = orderBefore?.customer || orderAfter?.customer;
+
+    if (!orderBefore?.driver && orderAfter?.driver) {
+      try {
+        const userIds = [orderAfter.driver];
+        const notification = {
+          title: "New Order",
+          body: `View order details and prepare for delivery.`,
+        };
+        const data = {
+          orderId: orderAfter.id,
+          type: "order_created",
+        };
+        const collapseKey = "orderCreated";
+        const link = `https://${domain}?route=orders`;
+        const payload = buildMessagePayload(
+          notification,
+          data,
+          collapseKey,
+          link
+        );
+        await sendNotifications(userIds, payload);
+      } catch (error) {
+        console.log("Failed to notify driver of new order", error);
+      }
+    }
 
     if (!(vendor && date && customer)) {
       return true;
@@ -193,8 +193,8 @@ export const onOrderWritten = onDocumentWritten(
       (orderAfter?.tip ? Number(orderAfter.tip) : 0) -
       (orderBefore?.tip ? Number(orderBefore.tip) : 0);
     const amount =
-      (orderAfter?.amount ? Number(orderAfter.amount) : 0) -
-      (orderBefore?.amount ? Number(orderBefore.amount) : 0);
+      (orderAfter?.total ? Number(orderAfter.total) : 0) -
+      (orderBefore?.total ? Number(orderBefore.total) : 0);
 
     const update: {
       count?: admin.firestore.FieldValue;
@@ -234,6 +234,68 @@ export const onOrderWritten = onDocumentWritten(
     return true;
   }
 );
+
+export const onVendorCreated = onDocumentCreated("Vendors/{id}", async () => {
+  const notification = {
+    title: "New Vendor",
+    body: "Review the new vendor profile.",
+  };
+  const data = {
+    type: "new_vendor",
+  };
+  const collapseKey = "new_vendor";
+  const link = `https://${adminDomain}?route=vendors`;
+  const payload = buildMessagePayload(notification, data, collapseKey, link);
+  await sendAdminNotifications(payload);
+});
+
+export const onVendorLocationCreated = onDocumentCreated(
+  "VendorLocations/{id}",
+  async () => {
+    const notification = {
+      title: "New Vendor Location",
+      body: "Review the new vendor location.",
+    };
+    const data = {
+      type: "new_vendor_location",
+    };
+    const collapseKey = "new_vendor_location";
+    const link = `https://${adminDomain}?route=vendors`;
+    const payload = buildMessagePayload(notification, data, collapseKey, link);
+    await sendAdminNotifications(payload);
+  }
+);
+
+export const onPositionCreated = onDocumentCreated(
+  "Positions/{id}",
+  async () => {
+    const notification = {
+      title: "New Position Posted",
+      body: "Review the new position.",
+    };
+    const data = {
+      type: "new_position",
+    };
+    const collapseKey = "new_position";
+    const link = `https://${adminDomain}?route=vendors`;
+    const payload = buildMessagePayload(notification, data, collapseKey, link);
+    await sendAdminNotifications(payload);
+  }
+);
+
+export const onLicenseCreated = onDocumentCreated("Licenses/{id}", async () => {
+  const notification = {
+    title: "New License Application",
+    body: "Review the new license application.",
+  };
+  const data = {
+    type: "new_application",
+  };
+  const collapseKey = "new_application";
+  const link = `https://${adminDomain}?route=vendors`;
+  const payload = buildMessagePayload(notification, data, collapseKey, link);
+  await sendAdminNotifications(payload);
+});
 
 export const onVendorLocationWritten = onDocumentWritten(
   "VendorLocations/{id}",

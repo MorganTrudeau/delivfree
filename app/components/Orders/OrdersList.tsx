@@ -1,27 +1,35 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Customer, ModalRef, Order, OrderStatus } from "delivfree";
-import { FlatList, View, ViewStyle } from "react-native";
-import { Text } from "../Text";
+import { FlatList, FlatListProps, ViewStyle } from "react-native";
 import { colors, spacing } from "app/theme";
 import { useAppSelector } from "app/redux/store";
 import { updateOrder } from "app/apis/orders";
 import { OrderItemMobile } from "./OrderItemMobile";
 import { Props as OrderItemProps } from "./OrderItem";
-import { HEADERS, getHeaderWidth } from "app/utils/orders";
+import { HEADERS } from "app/utils/orders";
 import { $flex, LARGE_SCREEN } from "../styles";
 import { useDimensions } from "app/hooks/useDimensions";
 import { OrderItemWeb } from "./OrderItemWeb";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CustomerDetailModal } from "../Customers/CustomerDetailModal";
 import { EmptyList } from "../EmptyList";
+import { TableHeaders } from "../TableHeaders";
+import { translate } from "app/i18n";
+import { useToast } from "app/hooks";
 
-interface Props {
+type Props = {
   orders: Order[];
   loadOrders: () => void;
   onOrderPress: (order: Order) => void;
-}
+} & Partial<FlatListProps<Order>>;
 
-export const OrdersList = ({ orders, loadOrders, onOrderPress }: Props) => {
+export const OrdersList = ({
+  orders,
+  loadOrders,
+  onOrderPress,
+  ...rest
+}: Props) => {
+  const Toast = useToast();
   const insets = useSafeAreaInsets();
   const dimensions = useDimensions();
   const largeScreenLayout = dimensions.width > LARGE_SCREEN;
@@ -34,7 +42,6 @@ export const OrdersList = ({ orders, loadOrders, onOrderPress }: Props) => {
 
   const customerDetailModal = useRef<ModalRef>(null);
 
-  const customers = useAppSelector((state) => state.customers.data);
   const driver = useAppSelector((state) => state.driver.activeDriver);
   const vendorDrivers = useAppSelector((state) => state.vendorDrivers.data);
   const driverId = driver?.id;
@@ -53,6 +60,7 @@ export const OrdersList = ({ orders, loadOrders, onOrderPress }: Props) => {
         setClaimLoading("");
       } catch (error) {
         setClaimLoading("");
+        Toast.show(translate("errors.common"));
         console.log("Failed to claim order", error);
       }
     },
@@ -78,32 +86,18 @@ export const OrdersList = ({ orders, loadOrders, onOrderPress }: Props) => {
     if (!largeScreenLayout) {
       return null;
     }
-    return (
-      <View style={$header}>
-        {HEADERS.map((header) => (
-          <View
-            key={header}
-            style={[$tableCell, { maxWidth: getHeaderWidth(header) }]}
-          >
-            <Text preset="subheading" size="xs">
-              {header}
-            </Text>
-          </View>
-        ))}
-      </View>
-    );
+    return <TableHeaders headers={HEADERS} />;
   };
 
   const renderItem = useCallback(
     ({ item: order }: { item: Order }) => {
       const props: OrderItemProps = {
-        order: order,
+        order,
         claimLoading: claimLoading === order.id,
-        userType: userType,
-        onOrderPress: onOrderPress,
-        customer: customers[order.customer],
-        claimOrder: claimOrder,
-        driverId: driverId,
+        userType,
+        onOrderPress,
+        claimOrder,
+        driverId,
         changeOrderStatus: updateOrderStatus,
         driverName: order.driver
           ? `${vendorDrivers[order.driver]?.firstName} ${
@@ -139,6 +133,7 @@ export const OrdersList = ({ orders, loadOrders, onOrderPress }: Props) => {
         ListEmptyComponent={renderEmptyComponent}
         contentContainerStyle={[$content, { paddingBottom: insets.bottom }]}
         style={$flex}
+        {...rest}
       />
       <CustomerDetailModal
         ref={customerDetailModal}

@@ -6,6 +6,8 @@ import {
   GooglePlaceData,
   GooglePlaceDetail,
 } from "react-native-google-places-autocomplete";
+import { translate } from "app/i18n";
+import { useToast } from "app/hooks";
 
 export const LocationInput = ({
   onLocationSelected,
@@ -14,7 +16,14 @@ export const LocationInput = ({
   onLocationSelected: (location: GeoLocation) => void;
   shortenAddress: boolean;
 }) => {
-  const handlePress = (data: GooglePlaceData, detail: GooglePlaceDetail) => {
+  const Toast = useToast();
+  const handlePress = (
+    data: GooglePlaceData,
+    detail: GooglePlaceDetail | null
+  ) => {
+    if (!detail) {
+      return Toast.show(translate("errors.common"));
+    }
     let address = detail.formatted_address;
 
     if (shortenAddress) {

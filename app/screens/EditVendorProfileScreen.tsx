@@ -3,12 +3,18 @@ import { Button, Icon, Screen, Text, TextField } from "app/components";
 import { Card } from "app/components/Card";
 import { DetailItem } from "app/components/DetailItem";
 import { DetailsHeader } from "app/components/Details/DetailsHeader";
+import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { StatusIndicator } from "app/components/StatusIndicator";
 import { TextInput } from "app/components/TextInput";
 import { ManageVendorLocationModal } from "app/components/VendorLocation/ManageVendorLocation";
 import { VendorLocationsList } from "app/components/VendorLocations/VendorLocationsList";
-import { $borderedArea, $row } from "app/components/styles";
+import {
+  $borderedArea,
+  $containerPadding,
+  $flex,
+  $row,
+} from "app/components/styles";
 import { useAlert, useToast } from "app/hooks";
 import { FirebaseUser } from "app/redux/reducers/auth";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
@@ -34,7 +40,7 @@ export const EditVendorProfileScreen = () => {
   const lastNameInput = useRef<RNInput>(null);
   const businessNameInput = useRef<RNInput>(null);
   const phoneNumberInput = useRef<RNInput>(null);
-  const vendorLocationModal = useRef<ModalRef>(null);
+  const vendorLocationModal = useRef<BottomSheetRef>(null);
 
   const dispatch = useAppDispatch();
   const authUser = useAppSelector((state) => state.auth.user as FirebaseUser);
@@ -67,16 +73,26 @@ export const EditVendorProfileScreen = () => {
       updated: Date.now(),
       pendingLocations: [],
       pendingPositions: [],
+      referralCode: "",
+      stripe: {
+        accountId: "",
+        detailsSubmitted: false,
+        payoutsEnabled: false,
+        currency: "CAD",
+        taxRates: [],
+      },
     }
   );
 
-  const fieldsComplete = useMemo(
-    () => Object.values(vendorState).every((v) => !!v),
-    [vendorState]
-  );
+  const fieldsComplete =
+    vendorState.firstName &&
+    vendorState.lastName &&
+    vendorState.businessName &&
+    vendorState.phoneNumber &&
+    vendorState.email;
 
   const openVendorLocationModal = useCallback(() => {
-    vendorLocationModal.current?.open();
+    vendorLocationModal.current?.snapToIndex(0);
   }, []);
   const closeVendorLocationModal = useCallback(() => {
     vendorLocationModal.current?.close();
@@ -88,7 +104,7 @@ export const EditVendorProfileScreen = () => {
 
   const handleVendorLocationPress = (vendorLocation: VendorLocation) => {
     setEditLocation(vendorLocation);
-    vendorLocationModal.current?.open();
+    vendorLocationModal.current?.snapToIndex(0);
   };
 
   const handleCreateVendor = async () => {
@@ -98,12 +114,27 @@ export const EditVendorProfileScreen = () => {
         "Please fill out all fields before continuing."
       );
     }
-    const newUser = {
+    const newUser: Pick<
+      User,
+      | "id"
+      | "firstName"
+      | "lastName"
+      | "email"
+      | "vendor"
+      | "deliveryInstructions"
+      | "phoneNumber"
+      | "callingCode"
+      | "callingCountry"
+    > = {
       id: authUser?.uid,
       firstName: vendorState.firstName,
       lastName: vendorState.lastName,
       email: vendorState.email,
       vendor: { ids: [vendorState.id] },
+      deliveryInstructions: { type: "meet-door", note: "" },
+      phoneNumber: null,
+      callingCode: null,
+      callingCountry: null,
     };
 
     try {
@@ -133,8 +164,12 @@ export const EditVendorProfileScreen = () => {
   );
 
   return (
-    <Screen preset={"scroll"} contentContainerStyle={$screen}>
-      <Card>
+    <Screen
+      preset={"scroll"}
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+    >
+      <Card smallStyle={$flex}>
         <Text style={$header} preset={"heading"} weight={"bold"}>
           Vendor profile
         </Text>
@@ -273,13 +308,12 @@ export const EditVendorProfileScreen = () => {
         ref={vendorLocationModal}
         onClose={closeVendorLocationModal}
         editLocation={editLocation}
-        onDismiss={() => setEditLocation(undefined)}
       />
     </Screen>
   );
 };
 
-const $screen = { padding: spacing.md };
+const $screen = { flex: 1 };
 const $header: TextStyle = { marginBottom: spacing.lg, alignSelf: "center" };
 const $button = { marginTop: spacing.lg };
 const $input: ViewStyle = { marginTop: spacing.sm };

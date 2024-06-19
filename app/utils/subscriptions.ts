@@ -78,12 +78,12 @@ export const subscriptionsInSync = (
 };
 
 export const maxOrdersForSubscription = (subscription: Stripe.Subscription) => {
-  const fullTimeOrderItem = subscription.items.data.find(isFullTimeOrderItem);
-  const surgeOrderItem = subscription.items.data.find(isSurgeOrderItem);
+  const { fullTime: subscribedFullTime, partTime: subscribedPartTime } =
+    getPositionsFromSubscription(subscription);
 
   return (
-    (fullTimeOrderItem?.quantity || 0) * FULL_TIME_ORDERS +
-    (surgeOrderItem?.quantity || 0) * PART_TIME_ORDERS
+    subscribedFullTime * FULL_TIME_ORDERS +
+    subscribedPartTime * PART_TIME_ORDERS
   );
 };
 

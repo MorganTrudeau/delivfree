@@ -144,7 +144,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
   return (
     <Screen
       safeAreaEdges={HORIZONTAL_SAFE_AREA_EDGES}
-      inDrawer
+      
       contentContainerStyle={$screen}
     >
       <CuisineList

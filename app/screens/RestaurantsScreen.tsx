@@ -31,9 +31,8 @@ export const RestaurantsScreen = ({
 
   const insets = useSafeAreaInsets();
 
-  const { restaurants, loadRestaurants, refreshRestaurants } = useRestaurantsLoading(
-    route.params.cuisine
-  );
+  const { restaurants, loadRestaurants, refreshRestaurants } =
+    useRestaurantsLoading(route.params.cuisine);
   const loaded = restaurants !== undefined;
 
   const scrollY = useSharedValue(0);

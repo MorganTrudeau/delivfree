@@ -6,6 +6,145 @@ import {
   getPositionsPrice,
 } from "app/utils/subscriptions";
 import { Linking, Platform } from "react-native";
+import { Vendor } from "delivfree/types";
+import { updateVendor } from "./vendors";
+import { navigationRef } from "app/navigators";
+
+export const getStripeAccountBalance = async (
+  account: string
+): Promise<Stripe.Balance> => {
+  const res = await functions().httpsCallable("getAccountBalance")({
+    account,
+  });
+  return res.data;
+};
+
+export const verifyStripeAccount = async (
+  vendor: Vendor
+): Promise<{
+  vendor: Vendor;
+  stripeAccount: Stripe.Account | undefined;
+  isUpdated: boolean;
+}> => {
+  if (typeof vendor.stripe.accountId !== "string") {
+    return { vendor, stripeAccount: undefined, isUpdated: false };
+  }
+
+  const stripeAccount = await getStripeAccount(vendor.stripe.accountId);
+  const { details_submitted, payouts_enabled } = stripeAccount;
+  const { detailsSubmitted, payoutsEnabled } = vendor.stripe;
+
+  if (
+    details_submitted !== detailsSubmitted ||
+    payouts_enabled !== payoutsEnabled
+  ) {
+    const updatedVendor = {
+      ...vendor,
+      stripe: {
+        ...vendor.stripe,
+        detailsSubmitted: details_submitted,
+        payoutsEnabled: payouts_enabled,
+      },
+    };
+    return { vendor: updatedVendor, stripeAccount, isUpdated: true };
+  } else {
+    return { vendor, stripeAccount, isUpdated: false };
+  }
+};
+
+export const createStripeAccount = async (vendor: Vendor): Promise<string> => {
+  const res = await functions().httpsCallable("createAccount")({
+    email: vendor.email,
+    companyPhone: vendor.callingCode + vendor.phoneNumber,
+    companyName: vendor.businessName,
+  });
+
+  if (res.data.account) {
+    await updateVendor(vendor.id, {
+      stripe: { ...vendor.stripe, accountId: res.data.account },
+    });
+  } else {
+    throw "missing account";
+  }
+
+  return res.data.account;
+};
+
+export const createStripeCheckoutSession = async (
+  params: Stripe.Checkout.SessionCreateParams
+): Promise<Stripe.Checkout.Session> => {
+  const res = await functions().httpsCallable("createCheckoutSession")(params);
+  return res.data;
+};
+
+export const getStripeAccount = async (
+  account: string
+): Promise<Stripe.Account> => {
+  const res = await functions().httpsCallable("retrieveAccount")({
+    account,
+  });
+  return res.data;
+};
+
+export const getTaxRate = async (taxRate: string): Promise<Stripe.TaxRate> => {
+  const res = await functions().httpsCallable("retrieveTaxRate")({
+    taxRate,
+  });
+  return res.data;
+};
+
+export const createTaxRate = async (
+  params: Stripe.TaxRateCreateParams
+): Promise<Stripe.TaxRate> => {
+  const res = await functions().httpsCallable("createTaxRate")(params);
+  return res.data;
+};
+
+export const updateTaxRate = async (
+  taxRate: string,
+  update: Stripe.TaxRateUpdateParams
+): Promise<Stripe.TaxRate> => {
+  const res = await functions().httpsCallable("updateTaxRate")({
+    taxRate,
+    update,
+  });
+  return res.data;
+};
+
+export const createStripeAccountLink = async (
+  account: string
+): Promise<Stripe.AccountLink> => {
+  const url =
+    Platform.OS === "web"
+      ? __DEV__
+        ? window.location.origin
+        : "https://delivfree-vendor.web.app/"
+      : "https://mobileredirect-5vakg2iqja-uc.a.run.app";
+  const res = await functions().httpsCallable("createAccountLink")({
+    account,
+    returnUrl: url,
+    refreshUrl: url,
+  });
+  return res.data;
+};
+
+export const createStripeLogin = async (
+  account: string
+): Promise<Stripe.LoginLink> => {
+  const res = await functions().httpsCallable("createAcountLoginLink")({
+    account,
+  });
+  return res.data;
+};
+
+export const createStripePayment = async (
+  account: string
+): Promise<Stripe.LoginLink> => {
+  const res = await functions().httpsCallable("createPayment")({
+    account,
+  });
+  return res.data;
+};
 
 export const fetchSubscription = async (userId: string) => {
   const doc = await firestore().collection("Subscriptions").doc(userId).get();
@@ -39,7 +178,8 @@ export const subscribe = async (
   userEmail: string,
   fullTimePostions: number,
   partTimePositions: number,
-  subscription: Stripe.Subscription | null | undefined
+  subscription: Stripe.Subscription | null | undefined,
+  freeTrial: boolean
 ) => {
   const metadata: { [key: string]: string } = {};
 
@@ -67,6 +207,8 @@ export const subscribe = async (
       quantity: partTimePositions,
     });
   }
+
+  console.log(subscription);
 
   if (subscription && subscription.status !== "canceled") {
     const items: Array<Stripe.SubscriptionUpdateParams.Item> = lineItems.map(
@@ -108,21 +250,25 @@ export const subscribe = async (
       line_items: lineItems,
       subscription_data: {
         metadata,
-        trial_period_days: SUBSCRIPTION_TRIAL_PERIOD,
       },
-      success_url:
+      return_url:
         Platform.OS === "web"
           ? __DEV__
-            ? "http://localhost:8080"
+            ? window.location.origin
             : "https://delivfree-vendor.web.app/"
-          : "https://mobileredirect-5vakg2iqja-uc.a.run.app", //"delivfree://subscription", // @todo change
+          : "https://mobileredirect-5vakg2iqja-uc.a.run.app", // "delivfree://subscription", // @todo change
       mode: "subscription",
+      ui_mode: "embedded",
       customer_email: userEmail || undefined,
     };
-    const data = await functions().httpsCallable("createCheckoutSession")({
-      params,
-    });
-    Linking.openURL(data.data.url);
-    console.log(data.data);
+    if (freeTrial && params.subscription_data) {
+      params.subscription_data.trial_period_days = SUBSCRIPTION_TRIAL_PERIOD;
+    }
+    const session = await createStripeCheckoutSession(params);
+    if (session && session.client_secret) {
+      navigationRef.current?.navigate("Payment", {
+        clientSecret: session.client_secret,
+      });
+    }
   }
 };

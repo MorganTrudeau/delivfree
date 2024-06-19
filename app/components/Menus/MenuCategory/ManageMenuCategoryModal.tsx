@@ -36,7 +36,7 @@ const ManageMenuCategory = ({
       : {
           id: generateUid(),
           name: "",
-          vendor: vendor,
+          vendor,
           menus: categoryMenu ? [categoryMenu] : [],
           order: {},
         }

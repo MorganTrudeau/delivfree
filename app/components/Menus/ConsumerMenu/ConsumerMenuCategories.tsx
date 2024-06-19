@@ -4,6 +4,7 @@ import { colors, spacing } from "app/theme";
 import React, { useEffect, useMemo } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { ConsumerMenuItems } from "./ConsumerMenuItems";
+import { EmptyList } from "app/components/EmptyList";
 
 interface Props {
   menu: string;
@@ -32,6 +33,9 @@ export const ConsumerMenuCategories = ({
   return (
     <View>
       {!categoriesLoaded && <ActivityIndicator color={colors.primary} />}
+      {orderedCategories.length === 0 && (
+        <EmptyList title={"No items available right now"} icon={"silverware"} />
+      )}
       {orderedCategories.map((category) => {
         return (
           <View key={category.id}>

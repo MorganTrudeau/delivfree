@@ -15,7 +15,6 @@ import {
   ViewStyle,
 } from "react-native";
 import { DrawerContent } from "./DrawerContent";
-import { NavigationProp } from "app/navigators";
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -23,7 +22,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useDimensions } from "app/hooks/useDimensions";
-import { LARGE_SCREEN } from "./styles";
 import { Icon } from "./Icon";
 import { AppStackParamList } from "app/navigators/StackNavigator";
 import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
@@ -32,10 +30,12 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export const DrawerContext = createContext({
   drawerRef: { current: null } as MutableRefObject<{
-    openDrawer: () => void;
-    closeDrawer: () => void;
+    openDrawer: (config?: { speed?: number }) => void;
+    closeDrawer: (config?: { speed?: number }) => void;
   } | null>,
   open: false,
+  setAlwaysOpen: (always: boolean) => {},
+  alwaysOpen: false,
 });
 
 export const Drawer = ({
@@ -48,16 +48,16 @@ export const Drawer = ({
   disabled?: boolean;
 }) => {
   const { width } = useDimensions();
-  const largeScreenLayout = false; //width > LARGE_SCREEN;
 
+  const [alwaysOpen, setAlwaysOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const openAnimation = useSharedValue(0);
 
   useEffect(() => {
-    if (largeScreenLayout && open) {
+    if (alwaysOpen && open) {
       closeDrawer();
     }
-  }, [open, largeScreenLayout]);
+  }, [open, alwaysOpen]);
 
   const openDrawer = () => {
     openAnimation.value = withTiming(1);
@@ -80,11 +80,11 @@ export const Drawer = ({
 
   const styles = useAnimatedStyle(
     () => ({
-      left: !largeScreenLayout
+      left: !alwaysOpen
         ? interpolate(openAnimation.value, [0, 1], [-drawerWidth, 0])
         : 0,
     }),
-    [openAnimation, drawerWidth, largeScreenLayout]
+    [openAnimation, drawerWidth, alwaysOpen]
   );
 
   const backdropStyle = useAnimatedStyle(
@@ -105,7 +105,9 @@ export const Drawer = ({
   }
 
   return (
-    <DrawerContext.Provider value={{ drawerRef, open }}>
+    <DrawerContext.Provider
+      value={{ drawerRef, open, setAlwaysOpen, alwaysOpen }}
+    >
       <View style={[$row, { overflow: "hidden" }]}>
         <Animated.View
           style={[
@@ -113,7 +115,7 @@ export const Drawer = ({
             {
               width: drawerWidth,
               zIndex: 500,
-              position: largeScreenLayout ? undefined : "absolute",
+              position: alwaysOpen ? undefined : "absolute",
             },
             styles,
           ]}
@@ -126,27 +128,14 @@ export const Drawer = ({
           >
             <DrawerContent
               navigation={navigation}
-              onItemPress={() => {
-                setTimeout(closeDrawer, 1);
-              }}
+              onItemPress={closeDrawer}
+              closeDrawer={closeDrawer}
+              alwaysOpen={alwaysOpen}
             />
-            {!largeScreenLayout && (
-              <Pressable
-                hitSlop={20}
-                style={{
-                  position: "absolute",
-                  top: spacing.sm,
-                  right: spacing.sm,
-                }}
-                onPress={closeDrawer}
-              >
-                <Icon icon="close" />
-              </Pressable>
-            )}
           </View>
         </Animated.View>
         <Animated.View style={childrenAnimation}>{children}</Animated.View>
-        {!largeScreenLayout && (
+        {!alwaysOpen && (
           <AnimatedPressable
             onPress={closeDrawer}
             style={[$backdrop, backdropStyle]}

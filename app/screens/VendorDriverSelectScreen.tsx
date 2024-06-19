@@ -6,6 +6,7 @@ import { AppStackScreenProps } from "app/navigators";
 import { spacing } from "app/theme";
 import React from "react";
 import { ViewStyle } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface EditVendorProfileScreenProps
   extends AppStackScreenProps<"VendorDriverSelect"> {}
@@ -13,6 +14,8 @@ interface EditVendorProfileScreenProps
 export const VendorDriverSelectScreen = (
   props: EditVendorProfileScreenProps
 ) => {
+  const insets = useSafeAreaInsets();
+
   const selectRole = (role: "driver" | "vendor") => () => {
     if (role === "driver") {
       props.navigation.navigate("EditDriverProfile");
@@ -21,7 +24,13 @@ export const VendorDriverSelectScreen = (
     }
   };
   return (
-    <Screen preset="scroll" contentContainerStyle={$containerPadding}>
+    <Screen
+      preset="scroll"
+      contentContainerStyle={[
+        $containerPadding,
+        { paddingBottom: spacing.md + insets.bottom },
+      ]}
+    >
       <Card smallStyle={$flex}>
         <Text preset="heading">What is your role?</Text>
         <Text style={$message}>

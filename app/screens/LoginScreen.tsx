@@ -146,11 +146,13 @@ export const LoginScreen = (_props: LoginScreenProps) => {
           RightAccessory={Loading}
         />
 
-        <Pressable onPress={() => _props.navigation.navigate("SignUp")}>
-          <Text style={$loginMessage}>
-            Don't have an account? <Text style={$loginText}>Sign Up</Text>
-          </Text>
-        </Pressable>
+        {getAppType() !== "ADMIN" && (
+          <Pressable onPress={() => _props.navigation.navigate("SignUp")}>
+            <Text style={$loginMessage}>
+              Don't have an account? <Text style={$loginText}>Sign Up</Text>
+            </Text>
+          </Pressable>
+        )}
       </Card>
     </Screen>
   );

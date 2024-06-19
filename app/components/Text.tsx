@@ -91,31 +91,31 @@ export function Text(props: TextProps) {
 export const $fontSizeStyles = {
   xxl: {
     fontSize: scaleSize(30),
-    lineHeight: scaleSize(44),
+    // lineHeight: scaleSize(44),
   } satisfies TextStyle,
   xl: {
     fontSize: scaleSize(24),
-    lineHeight: scaleSize(34),
+    // lineHeight: scaleSize(34),
   } satisfies TextStyle,
   lg: {
     fontSize: scaleSize(20),
-    lineHeight: scaleSize(32),
+    // lineHeight: scaleSize(32),
   } satisfies TextStyle,
   md: {
     fontSize: scaleSize(18),
-    lineHeight: scaleSize(26),
+    // lineHeight: scaleSize(26),
   } satisfies TextStyle,
   sm: {
     fontSize: scaleSize(16),
-    lineHeight: scaleSize(24),
+    // lineHeight: scaleSize(24),
   } satisfies TextStyle,
   xs: {
     fontSize: scaleSize(14),
-    lineHeight: scaleSize(21),
+    // lineHeight: scaleSize(21),
   } satisfies TextStyle,
   xxs: {
     fontSize: scaleSize(12),
-    lineHeight: scaleSize(18),
+    // lineHeight: scaleSize(18),
   } satisfies TextStyle,
 };
 
@@ -154,7 +154,7 @@ const $presets = {
   subheading: [
     $baseStyle,
     $fontSizeStyles.lg,
-    $fontWeightStyles.medium,
+    $fontWeightStyles.semiBold,
   ] as StyleProp<TextStyle>,
 
   formLabel: [$baseStyle, $fontWeightStyles.medium] as StyleProp<TextStyle>,

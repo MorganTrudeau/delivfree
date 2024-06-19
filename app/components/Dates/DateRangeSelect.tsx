@@ -122,34 +122,12 @@ export const DateRangeSelect = ({
     <View style={containerStyle}>
       <Pressable
         onPress={() => optionsModal.current?.open()}
-        style={[
-          $row,
-          {
-            borderWidth: 1,
-            borderRadius: borderRadius.md,
-            borderColor: colors.border,
-            alignSelf: "flex-start",
-            marginTop: spacing.xs,
-          },
-        ]}
+        style={[$row, $button]}
       >
-        <View
-          style={{
-            borderRightWidth: 1,
-            borderRightColor: colors.border,
-            flex: 1,
-            paddingHorizontal: spacing.xs,
-            paddingVertical: spacing.xxs,
-          }}
-        >
+        <View style={$firstCell}>
           <Text>{getDateRangeFilterTitle(dateFilter)}</Text>
         </View>
-        <View
-          style={[
-            $row,
-            { paddingHorizontal: spacing.xs, paddingVertical: spacing.xxs },
-          ]}
-        >
+        <View style={[$row, $secondCell]}>
           <Icon
             icon={"calendar"}
             style={{ marginRight: spacing.xs }}
@@ -168,7 +146,10 @@ export const DateRangeSelect = ({
       <DateRangeSelectModal
         ref={dateRangeSelect}
         onConfirm={(_dateRange) => {
-          onFilterByDate("customRange", _dateRange);
+          onFilterByDate("customRange", {
+            start: moment(_dateRange.start).startOf("day").format(),
+            end: moment(_dateRange.end).endOf("day").format(),
+          });
           dateRangeSelect.current?.close();
         }}
         onCancel={() => dateRangeSelect.current?.close()}
@@ -177,6 +158,20 @@ export const DateRangeSelect = ({
   );
 };
 
-const styles = StyleSheet.create({
-  button: { marginEnd: spacing.lg, marginBottom: spacing.md },
-});
+const $button: ViewStyle = {
+  borderWidth: 1,
+  borderRadius: borderRadius.md,
+  borderColor: colors.border,
+  alignSelf: "flex-start",
+  marginTop: spacing.xs,
+};
+const $firstCell: ViewStyle = {
+  borderRightWidth: 1,
+  borderRightColor: colors.border,
+  paddingHorizontal: spacing.xs,
+  paddingVertical: spacing.xxs,
+};
+const $secondCell: ViewStyle = {
+  paddingHorizontal: spacing.xs,
+  paddingVertical: spacing.xxs,
+};

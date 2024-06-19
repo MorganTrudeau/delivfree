@@ -1,9 +1,17 @@
-import { Cuisine, LatLng, Positions, VendorLocation } from "delivfree";
+import {
+  Cuisine,
+  LatLng,
+  Menu,
+  Positions,
+  Vendor,
+  VendorLocation,
+} from "delivfree";
 import * as geofire from "geofire-common";
 import firestore, {
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
 import { equalStringOrInArray } from "./utils";
+import { getMenuNextOpen, hasActiveMenu } from "app/utils/menus";
 
 export const updateVendorLocation = (
   vendorLocation: string,
@@ -122,5 +130,61 @@ export const fetchVendorLocations = async (
     }
   }
 
-  return vendorLocations;
+  const vendorIds = vendorLocations.map((v) => v.vendor);
+
+  const [vendorDocs, menuSnaps] = await Promise.all([
+    Promise.all(
+      vendorIds.map((id) => firestore().collection("Vendors").doc(id).get())
+    ),
+    Promise.all(
+      vendorIds.map((id) =>
+        firestore().collection("Menus").where("vendor", "==", id).get()
+      )
+    ),
+  ]);
+
+  const vendors = vendorDocs.reduce((acc, doc) => {
+    const vendor = doc.data() as Vendor;
+    return { ...acc, [vendor.id]: vendor };
+  }, {} as { [vendor: string]: Vendor });
+  const menus = menuSnaps.reduce((acc, menuSnap) => {
+    const menus = menuSnap.docs.map((doc) => doc.data() as Menu);
+    if (!menus?.[0]?.vendor) {
+      return acc;
+    }
+    const vendor = menus[0].vendor;
+    return { ...acc, [vendor]: menus };
+  }, {} as { [vendor: string]: Menu[] });
+
+  return vendorLocations
+    .filter((location) => {
+      const vendor = vendors[location.vendor];
+      const locationMenu = menus[location.vendor];
+      return (
+        vendor &&
+        vendor.registration.status === "approved" &&
+        vendor.stripe.accountId &&
+        vendor.stripe.detailsSubmitted &&
+        vendor.stripe.payoutsEnabled &&
+        locationMenu
+      );
+    })
+    .map((location) => {
+      const locationMenus = menus[location.vendor];
+      const menusActive = hasActiveMenu(locationMenus);
+      return {
+        ...location,
+        menusActive,
+        nextOpen: !menusActive ? getMenuNextOpen(locationMenus) : "",
+      };
+    })
+    .sort((a, b) => {
+      if (a.menusActive && !b.menusActive) {
+        return -1;
+      }
+      if (b.menusActive && !a.menusActive) {
+        return 1;
+      }
+      return 1;
+    });
 };

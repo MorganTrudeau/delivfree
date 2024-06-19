@@ -2,7 +2,6 @@ import React, { forwardRef, useCallback, useState } from "react";
 import {
   DeliveryInstructions,
   DeliveryInstructionsType,
-  User,
 } from "delivfree/types";
 import { Pressable, View } from "react-native";
 import { Text } from "../Text";

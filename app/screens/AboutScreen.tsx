@@ -23,7 +23,7 @@ export const AboutScreen = ({ navigation }: Props) => {
       style={$screen}
       contentContainerStyle={$containerPadding}
       safeAreaEdges={NO_TOP_BOTTOM_SAFE_AREA_EDGES}
-      inDrawer
+      
     >
       <ScreenHeader title="About" />
       <ListItem
@@ -36,11 +36,11 @@ export const AboutScreen = ({ navigation }: Props) => {
         RightComponent={<Text weight="semiBold">{appJson.buildNumber}</Text>}
         style={[$borderBottom, $row]}
       />
-      <ListItem
+      {/* <ListItem
         text={"Env"}
         RightComponent={<Text weight="semiBold">{getAppType()}</Text>}
         style={[$borderBottom, $row]}
-      />
+      /> */}
     </Screen>
   );
 };

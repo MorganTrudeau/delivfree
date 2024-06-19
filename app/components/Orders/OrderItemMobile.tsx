@@ -1,25 +1,23 @@
 import { colors, spacing } from "app/theme";
-import { OrderStatus } from "delivfree";
 import { Pressable, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
 import { ButtonSmall } from "../ButtonSmall";
-import { $borderedArea, $flex, $row } from "../styles";
-import { localizeCurrency } from "app/utils/general";
+import { $flex, $row } from "../styles";
+import { localizeCurrency, pluralFormat } from "app/utils/general";
 import moment from "moment";
 import { Icon } from "../Icon";
 import { Props } from "./OrderItem";
 import React from "react";
+import { getStatusColor, getStatusText } from "app/utils/orders";
 
 export const OrderItemMobile = ({
   order,
   userType,
   onOrderPress,
-  customer,
   claimOrder,
   driverId,
   changeOrderStatus,
   driverName,
-  onViewCustomer,
 }: Props) => {
   const showClaimButton = userType === "driver" && !order.driver;
   const showStatusButtons =
@@ -35,12 +33,13 @@ export const OrderItemMobile = ({
         preset="subheading"
         size="sm"
       >
-        {order.description}
+        {order.checkoutItems.length}{" "}
+        {pluralFormat("item", order.checkoutItems.length)}
       </Text>
 
       <View style={$row}>
         <Text style={{ marginRight: spacing.md }} size={"xs"}>
-          Order value: {localizeCurrency(Number(order.amount), "USD")}
+          Order total: {localizeCurrency(Number(order.total), "USD")}
         </Text>
 
         <Text size={"xs"}>
@@ -66,19 +65,6 @@ export const OrderItemMobile = ({
         >
           {moment(order.date).format("MMM Do, h:mma")}
         </Text>
-      </View>
-
-      <View style={[$row, $borderedArea, { marginTop: spacing.sm }]}>
-        <View style={$flex}>
-          <Text size={"xxs"} style={{ color: colors.textDim }}>
-            Customer
-          </Text>
-          <Text style={$flex}>{customer?.name}</Text>
-        </View>
-        <ButtonSmall
-          text={"View Customer"}
-          onPress={customer ? () => onViewCustomer(customer) : undefined}
-        />
       </View>
 
       {driverId && order.driver && order.driver !== driverId && (
@@ -122,36 +108,6 @@ export const OrderItemMobile = ({
       )}
     </Pressable>
   );
-};
-
-const getStatusColor = (status: OrderStatus) => {
-  switch (status) {
-    case "incomplete":
-      return colors.error;
-    case "canceled":
-      return colors.palette.shade500;
-    case "complete":
-      return colors.success;
-    case "arrived":
-      return colors.palette.accent500;
-    case "in-progress":
-      return colors.palette.accent500;
-  }
-};
-
-const getStatusText = (status: OrderStatus) => {
-  switch (status) {
-    case "incomplete":
-      return "Incomplete";
-    case "canceled":
-      return "Cancelled";
-    case "complete":
-      return "Complete";
-    case "arrived":
-      return "Arrived";
-    case "in-progress":
-      return "In progress";
-  }
 };
 
 const STATUS_BUBBLE_SIZE = 15;

@@ -5,6 +5,7 @@ import { getStackNavigator, screenOptions } from "../StackNavigator";
 import { renderAuthStack } from "../AuthStack";
 import { renderRegistrationStack } from "../RegistrationStack";
 import * as Screens from "app/screens";
+import { DrawerIconButton } from "app/components/DrawerIconButton";
 
 const Stack = getStackNavigator();
 
@@ -23,10 +24,31 @@ export const AdminStack = () => {
   const renderMainStack = () => {
     return (
       <>
-        <Stack.Screen name="Vendors" component={Screens.AdminVendorsScreen} />
-        <Stack.Screen name="Drivers" component={Screens.AdminDriversScreen} />
-        <Stack.Screen name="Users" component={Screens.AdminUsersScreen} />
-        <Stack.Screen name="AdConfig" component={Screens.AdConfigScreen} />
+        <Stack.Screen
+          name="Vendors"
+          component={Screens.AdminVendorsScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
+          name="Drivers"
+          component={Screens.AdminDriversScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
+          name="Users"
+          component={Screens.AdminUsersScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
+          name="AdConfig"
+          component={Screens.AdConfigScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={Screens.SettingsScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
         <Stack.Screen
           name="VendorDetail"
           component={Screens.VendorDetailScreen}
@@ -35,7 +57,6 @@ export const AdminStack = () => {
           name="DriverDetail"
           component={Screens.DriverDetailScreen}
         />
-        <Stack.Screen name="Settings" component={Screens.SettingsScreen} />
         <Stack.Screen name="About" component={Screens.AboutScreen} />
         <Stack.Screen
           name="DeleteAccount"

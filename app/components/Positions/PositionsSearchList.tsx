@@ -40,7 +40,7 @@ export const PositionsSearchList = ({
   );
 
   const renderEmpty = useCallback(
-    () => <EmptyList title="No positions to show" />,
+    () => <EmptyList title="No positions in your area" />,
     []
   );
 
@@ -109,8 +109,8 @@ const PositionsItem = ({
         $shadow,
       ]}
     >
-      <View style={[{ marginBottom: spacing.xs }]}>
-        <LoadingPlaceholder style={[$imageContainer]} loading={!vendorLocation}>
+      <View style={{ marginBottom: spacing.xs }}>
+        <LoadingPlaceholder style={$imageContainer} loading={!vendorLocation}>
           <FastImage style={$image} source={{ uri: vendorLocation?.image }} />
         </LoadingPlaceholder>
         <LoadingPlaceholder

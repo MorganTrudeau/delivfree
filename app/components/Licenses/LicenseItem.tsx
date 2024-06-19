@@ -51,7 +51,7 @@ export const LicenseItem = ({
             deleteLoading: false,
             error: false,
             license: licenseData,
-            vendorLocation: vendorLocation,
+            vendorLocation,
           });
         }
       }
@@ -106,7 +106,7 @@ export const LicenseItem = ({
           />
         </LoadingPlaceholder>
 
-        <View style={{ marginLeft: spacing.sm }}>
+        <View style={{ marginLeft: spacing.sm, flex: 1 }}>
           <LoadingPlaceholder loading={!license} height={18} width={125}>
             <Text preset="semibold" numberOfLines={2} ellipsizeMode="tail">
               {vendorLocation?.name}
@@ -119,7 +119,7 @@ export const LicenseItem = ({
             style={{ marginTop: !license ? 4 : 0 }}
           >
             <Text
-              style={{ color: colors.textDim, maxWidth: 250 }}
+              style={{ color: colors.textDim, maxWidth: 250, flex: 1 }}
               size={"xs"}
               numberOfLines={1}
               ellipsizeMode="tail"

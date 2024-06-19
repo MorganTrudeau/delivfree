@@ -51,9 +51,9 @@ const AskMessagingPermission = ({ style, onEnable, onCancel }: Props) => {
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
     borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
   },
 });
 

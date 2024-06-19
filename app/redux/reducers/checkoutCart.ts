@@ -16,12 +16,14 @@ export type CheckoutItem = {
   customizations: CheckoutItemCustomization[];
 };
 export type CheckoutOrderUpdate = {
+  id: string;
   customer: string;
   vendor: string;
   vendorLocation: string;
   items: CheckoutItem;
 };
 export type CheckoutOrder = {
+  id: string;
   customer: string;
   vendor: string;
   vendorLocation: string;

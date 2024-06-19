@@ -139,27 +139,27 @@ export const DateRangeSelectModal = forwardRef<ModalRef, Props>(
 );
 
 const styles = StyleSheet.create({
-  container: {
-    padding: spacing.lg,
-  },
-  dateInputRow: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingBottom: spacing.md,
-  },
-  dateInputContainer: { padding: spacing.xs, flex: 1 },
-  dateLabel: { marginBottom: spacing.sm },
-  dateInput: {
-    borderRadius: borderRadius.md,
-    borderWidth: 2,
-    borderColor: colors.borderLight,
-    padding: spacing.sm,
-    flex: 1,
-  },
   activeDateInput: { borderColor: colors.primary },
   confirmCancelButtons: {
     marginTop: 0,
     paddingHorizontal: 0,
   },
+  container: {
+    padding: spacing.lg,
+  },
+  dateInput: {
+    borderColor: colors.borderLight,
+    borderRadius: borderRadius.md,
+    borderWidth: 2,
+    flex: 1,
+    padding: spacing.sm,
+  },
+  dateInputContainer: { flex: 1, padding: spacing.xs },
+  dateInputRow: {
+    alignItems: "center",
+    flex: 1,
+    flexDirection: "row",
+    paddingBottom: spacing.md,
+  },
+  dateLabel: { marginBottom: spacing.sm },
 });

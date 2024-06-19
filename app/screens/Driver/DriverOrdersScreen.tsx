@@ -16,14 +16,10 @@ import { ViewStyle } from "react-native";
 interface DriverOrdersScreenProps extends AppStackScreenProps<"Orders"> {}
 
 export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
-  const vendor = useAppSelector(
-    (state) => state.vendor.activeVendor?.id as string
-  );
-
   const [selectedOrder, setSelectedOrder] = useState<Order>();
   const [vendorLocation, setVendorLocation] = useState("");
 
-  const { data, loadData } = useOrderData(vendor, vendorLocation);
+  const { data, loadData } = useOrderData(vendorLocation);
 
   const handleVendorLocationSelect = (location: VendorLocation) =>
     setVendorLocation(location.id);
@@ -39,7 +35,6 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      inDrawer
     >
       <ScreenHeader title={"Orders"} />
       <VendorLocationSelect

@@ -5,18 +5,15 @@ import { listenToOrders } from "app/apis/orders";
 
 const cache = new DataCache<Order>();
 
-export const useOrderData = (
-  vendor: string | undefined,
-  vendorLocation: string | undefined
-) => {
+export const useOrderData = (vendorLocation: string | undefined) => {
   const handleLoadOrders = useCallback(
     (limit: number, onData: (orders: Order[]) => void) => {
-      if (!(vendor && vendorLocation)) {
+      if (!vendorLocation) {
         return () => {};
       }
-      return listenToOrders(vendor, vendorLocation, limit, onData);
+      return listenToOrders(vendorLocation, limit, onData);
     },
-    [vendor, vendorLocation]
+    [vendorLocation]
   );
 
   const { data, loadData } = useDataListener<Order>(

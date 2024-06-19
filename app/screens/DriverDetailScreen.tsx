@@ -108,7 +108,7 @@ export const DriverDetailScreen = (props: DriverDetailScreenProps) => {
         preset="scroll"
         style={$screen}
         contentContainerStyle={$containerPadding}
-        inDrawer
+        
       >
         <ActivityIndicator
           color={colors.primary}
@@ -123,7 +123,7 @@ export const DriverDetailScreen = (props: DriverDetailScreenProps) => {
       preset="scroll"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      inDrawer
+      
     >
       <ScreenHeader title={driver.firstName + " " + driver.lastName} />
 

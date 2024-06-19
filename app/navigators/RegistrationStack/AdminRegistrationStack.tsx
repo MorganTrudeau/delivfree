@@ -10,9 +10,7 @@ export const renderAdminRegistrationStack = () => (
       name="EditProfile"
       component={Screens.EditUserScreen}
       options={{
-        headerShown: true,
         headerRight: () => null,
-        headerTransparent: false,
       }}
     />
   </>

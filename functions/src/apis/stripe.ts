@@ -19,6 +19,146 @@ const getStripe = () => {
   return _stripe;
 };
 
+export const createAccount = onCall(
+  async (
+    data: CallableRequest<{
+      email: string;
+      companyPhone: string;
+      companyName: string;
+    }>
+  ) => {
+    const { companyPhone, companyName, email } = data.data;
+    const account = await getStripe().accounts.create({
+      email: email,
+      business_type: "company",
+      company: {
+        phone: companyPhone,
+        name: companyName,
+      },
+      controller: {
+        fees: {
+          payer: "application",
+        },
+        losses: {
+          payments: "application",
+        },
+        stripe_dashboard: {
+          type: "express",
+        },
+      },
+    });
+
+    return {
+      account: account.id,
+    };
+  }
+);
+
+export const createAccountLink = onCall(
+  async (
+    data: CallableRequest<{
+      account: string;
+      returnUrl: string;
+      refreshUrl: string;
+    }>
+  ) => {
+    const { account, refreshUrl, returnUrl } = data.data;
+
+    const accountLink = await getStripe().accountLinks.create({
+      account: account,
+      return_url: returnUrl,
+      refresh_url: refreshUrl,
+      type: "account_onboarding",
+    });
+
+    return accountLink;
+  }
+);
+
+export const createCheckoutSession = onCall(
+  async (data: CallableRequest<Stripe.Checkout.SessionCreateParams>) => {
+    return await getStripe().checkout.sessions.create(data.data);
+  }
+);
+
+export const retrieveTaxRate = onCall(
+  async (data: CallableRequest<{ taxRate: string }>) => {
+    return await getStripe().taxRates.retrieve(data.data.taxRate);
+  }
+);
+
+export const createTaxRate = onCall(
+  async (data: CallableRequest<Stripe.TaxRateCreateParams>) => {
+    return await getStripe().taxRates.create(data.data);
+  }
+);
+
+export const updateTaxRate = onCall(
+  async (
+    data: CallableRequest<{
+      taxRate: string;
+      update: Stripe.TaxRateUpdateParams;
+    }>
+  ) => {
+    const { taxRate, update } = data.data;
+    return await getStripe().taxRates.update(taxRate, update);
+  }
+);
+
+export const retrieveAccount = onCall(
+  async (
+    data: CallableRequest<{
+      account: string;
+    }>
+  ) => {
+    const { account } = data.data;
+    return await getStripe().accounts.retrieve(account);
+  }
+);
+
+export const createAcountLoginLink = onCall(
+  async (
+    data: CallableRequest<{
+      account: string;
+    }>
+  ) => {
+    const { account } = data.data;
+    return await getStripe().accounts.createLoginLink(account);
+  }
+);
+
+export const getAccountBalance = onCall(
+  async (data: CallableRequest<{ account: string }>) => {
+    return await getStripe().balance.retrieve({
+      stripeAccount: data.data.account,
+    });
+  }
+);
+
+export const createPayout = onCall(
+  async (data: CallableRequest<{ account: string }>) => {
+    const { account } = data.data;
+
+    const stripe = getStripe();
+
+    const balance = await stripe.balance.retrieve({
+      stripeAccount: account,
+    });
+    // This demo app only uses USD so we'll just use the first available balance
+    // (Note: there is one balance for each currency used in your application)
+    const { amount, currency } = balance.available[0];
+    // Create a payout
+    return await stripe.payouts.create(
+      {
+        amount: amount,
+        currency: currency,
+        statement_descriptor: "DelivFree",
+      },
+      { stripeAccount: account }
+    );
+  }
+);
+
 export const createSubscription = onCall(
   async (
     data: CallableRequest<{ params: Stripe.SubscriptionCreateParams }>
@@ -53,14 +193,6 @@ export const fetchProducts = onCall(
   }
 );
 
-export const createCheckoutSession = onCall(
-  async (
-    data: CallableRequest<{ params: Stripe.Checkout.SessionCreateParams }>
-  ) => {
-    return await getStripe().checkout.sessions.create(data.data.params);
-  }
-);
-
 export const loadCheckoutSession = onCall(
   async (data: CallableRequest<{ id: string }>) => {
     return await getStripe().checkout.sessions.retrieve(data.data.id);
@@ -88,10 +220,28 @@ export const stripeWebhook = onRequest(async (req, res) => {
 
     // Handle the event
     switch (event.type) {
+      case "checkout.session.completed": {
+        console.log("checkout.session.completed", event.data.object);
+        const pendingOrderRef = admin
+          .firestore()
+          .collection("PendingOrders")
+          .doc(event.data.object.id);
+        const pendingOrderDoc = await pendingOrderRef.get();
+        const pendingOrder = pendingOrderDoc.data();
+        if (pendingOrder) {
+          await admin
+            .firestore()
+            .collection("Orders")
+            .doc(pendingOrder.id)
+            .set(pendingOrder);
+          await pendingOrderRef.delete();
+        }
+      }
       case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted": {
         const subscription = event.data.object;
+        // @ts-expect-error always added to metadata
         const { vendor, driver } = subscription.metadata;
 
         if (vendor) {

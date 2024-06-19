@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { AppStackScreenProps } from "../navigators";
 import { PositionsSearchList } from "../components/Positions/PositionsSearchList";
-import { colors, spacing } from "../theme";
+import { spacing } from "../theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon, Screen, Text } from "../components";
 import { Pressable, View, ViewStyle } from "react-native";
@@ -51,21 +51,25 @@ export const PositionsSearchScreen = ({ navigation }: Props) => {
     navigation.setOptions({
       headerRight: registrationStatus
         ? () => (
-            <Pressable
-              style={[$headerButton, $row]}
-              onPress={() => navigation.navigate("DriverRegistration")}
-            >
-              <View
-                style={{ paddingRight: spacing.sm, alignItems: "flex-end" }}
+            <View style={[$row, $headerButton]}>
+              <Pressable
+                style={$row}
+                onPress={() => navigation.navigate("DriverRegistration")}
               >
-                <Text size={"xs"}>Account registration</Text>
                 <StatusIndicator
                   status={registrationStatus}
-                  style={{ alignSelf: "flex-end", marginTop: 4 }}
+                  style={{ marginRight: spacing.sm, alignSelf: "center" }}
                 />
-              </View>
-              <Icon icon="account-circle" size={sizing.xxl} />
-            </Pressable>
+                <Icon icon="account-circle" size={sizing.xxl} />
+              </Pressable>
+
+              <Pressable
+                style={{ marginLeft: spacing.md }}
+                onPress={() => navigation.navigate("Settings")}
+              >
+                <Icon icon="settings" />
+              </Pressable>
+            </View>
           )
         : undefined,
     });
@@ -134,7 +138,7 @@ export const PositionsSearchScreen = ({ navigation }: Props) => {
         <TextInput placeholder="Search" />
       </View>
     );
-  }, []);
+  }, [userAddress]);
 
   return (
     <Screen style={$screen} contentContainerStyle={$flexGrow} preset="fixed">

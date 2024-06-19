@@ -58,7 +58,7 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
     customizations,
     customizationsLoaded,
     loadCustomizations,
-  } = useMenusLoading();
+  } = useMenusLoading({ vendor });
 
   useEffect(() => {
     loadMenus();
@@ -162,7 +162,7 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
     onAdd: addItem,
     closeModal: closeEditItem,
     onModalClose: onEditItemClose,
-    itemEdit: itemEdit,
+    itemEdit,
     parent: itemCategory,
   } = useEditModalControl<MenuItem, string>();
 
@@ -179,7 +179,7 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
     <Screen
       style={$screen}
       contentContainerStyle={[$containerPadding, { minWidth: 550 }]}
-      inDrawer
+      
       preset="scroll"
     >
       <ListTabs

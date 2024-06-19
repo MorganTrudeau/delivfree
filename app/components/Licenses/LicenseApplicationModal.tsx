@@ -72,7 +72,7 @@ export const LicenseApplication = ({
 
     const license: License = {
       id: generateUid(),
-      driver: driver,
+      driver,
       position: positions.id,
       vendor: vendorLocation.vendor,
       vendorLocation: vendorLocation.id,

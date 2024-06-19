@@ -11,7 +11,7 @@ export const listenToUsers = (
   limit: number,
   onData: (users: User[]) => void
 ) => {
-  let query = firestore().collection("Users").limit(limit);
+  const query = firestore().collection("Users").limit(limit);
 
   return query.onSnapshot((snap) => {
     const users = snap ? snap.docs.map((doc) => doc.data() as User) : [];

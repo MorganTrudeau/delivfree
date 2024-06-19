@@ -5,12 +5,12 @@ import { getStackNavigator, screenOptions } from "../StackNavigator";
 import { renderAuthStack } from "../AuthStack";
 import { renderRegistrationStack } from "../RegistrationStack";
 import * as Screens from "app/screens";
-import { LogoHeader } from "app/components/LogoHeader";
-import { Platform, Pressable } from "react-native";
-import { spacing } from "app/theme";
+import { Platform, Pressable, View } from "react-native";
+import { colors, spacing } from "app/theme";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "app/components";
 import { DrawerIconButton } from "app/components/DrawerIconButton";
+import { CheckoutCartTracker } from "app/components/CheckoutCart/CheckoutCartTracker";
 
 const Stack = getStackNavigator();
 
@@ -31,49 +31,76 @@ export const ConsumerStack = () => {
   const renderMainStack = () => {
     return (
       <>
-        <Stack.Screen name="Home" component={Screens.HomeScreen} />
+        <Stack.Screen
+          name="Home"
+          component={Screens.HomeScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={Screens.SettingsScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
         <Stack.Screen
           name="AddressSearch"
           component={Screens.AddressSearchScreen}
-          options={{
-            headerTitle: "Address Search",
-            headerTransparent: false,
-          }}
         />
         <Stack.Screen
           name="Restaurants"
           component={Screens.RestaurantsScreen}
-          options={{
-            headerTransparent: false,
-          }}
         />
-        <Stack.Screen name="Checkout" component={Screens.CheckoutScreen} />
+        <Stack.Screen
+          name="Checkout"
+          component={Screens.CheckoutScreen}
+          options={{ headerRight: undefined }}
+        />
+        <Stack.Screen
+          name="Payment"
+          component={Screens.PaymentScreen}
+          options={{ headerRight: undefined }}
+        />
         <Stack.Screen
           name="RestaurantDetail"
           component={Screens.RestaurantDetailScreen}
-          options={{
-            headerTransparent: Platform.OS !== "web",
-            headerStyle: { backgroundColor: "transparent" },
-            headerLeft:
-              Platform.OS === "web"
-                ? () => <DrawerIconButton />
-                : (props) =>
-                    props.canGoBack ? (
-                      <Pressable
-                        style={{
-                          backgroundColor: "rgba(0,0,0,0.5)",
-                          borderRadius: 100,
-                          padding: spacing.xxs,
-                          marginLeft: Platform.OS === "web" ? spacing.md : 0,
-                        }}
-                        onPress={() => navigation.goBack()}
-                      >
-                        <Icon icon={"arrow-left"} color={"#fff"} />
-                      </Pressable>
-                    ) : null,
-          }}
+          options={Platform.select({
+            web: {},
+            default: {
+              headerTransparent: true,
+              headerStyle: { backgroundColor: "transparent" },
+              headerTitle: "",
+              headerRight: () => (
+                <View
+                  style={{
+                    paddingHorizontal: Platform.select({
+                      web: spacing.md,
+                      default: 0,
+                    }),
+                  }}
+                >
+                  <CheckoutCartTracker color={colors.white} />
+                </View>
+              ),
+              headerLeft: (props) =>
+                props.canGoBack ? (
+                  <Pressable
+                    style={{
+                      backgroundColor: "rgba(0,0,0,0.5)",
+                      borderRadius: 100,
+                      padding: spacing.xxs,
+                      marginLeft: Platform.OS === "web" ? spacing.md : 0,
+                    }}
+                    onPress={() => navigation.goBack()}
+                  >
+                    <Icon icon={"arrow-left"} color={"#fff"} />
+                  </Pressable>
+                ) : null,
+            },
+          })}
         />
-        <Stack.Screen name="Settings" component={Screens.SettingsScreen} />
+        <Stack.Screen
+          name="CheckoutCart"
+          component={Screens.CheckoutCartScreen}
+        />
         <Stack.Screen name="About" component={Screens.AboutScreen} />
         <Stack.Screen
           name="DeleteAccount"

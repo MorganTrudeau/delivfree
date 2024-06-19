@@ -79,3 +79,9 @@ export async function sendNotifications(
 
   return admin.messaging().sendEach(messages);
 }
+
+export async function sendAdminNotifications(payload: BaseMessage) {
+  const adminSnap = await admin.firestore().collection("Admins").get();
+  const adminIds = adminSnap.docs.map((doc) => doc.id);
+  return sendNotifications(adminIds, payload);
+}

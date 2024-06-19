@@ -23,9 +23,10 @@ import { NavigationProp } from "app/navigators";
 
 interface Props {
   onRequestClose: () => void;
+  title?: string;
 }
 
-const LocationContent = ({ onRequestClose }: Props) => {
+const LocationContent = ({ onRequestClose, title }: Props) => {
   const navigation = useNavigation<NavigationProp>();
 
   const Alert = useAlert();
@@ -130,7 +131,7 @@ const LocationContent = ({ onRequestClose }: Props) => {
   return (
     <View style={$content}>
       <Text preset={"subheading"} style={$heading}>
-        Find restaurants in your area
+        {title || "Find restaurants in your area"}
       </Text>
 
       {!!location?.address && (
@@ -168,7 +169,7 @@ const LocationContent = ({ onRequestClose }: Props) => {
 const snapPoints = ["45%"];
 
 const LocationModal = forwardRef<BottomSheetRef, Props>(function LocationModal(
-  { onRequestClose },
+  { onRequestClose, ...rest },
   ref
 ) {
   const activeUser = useAppSelector((state) => state.user.user as User);
@@ -178,7 +179,7 @@ const LocationModal = forwardRef<BottomSheetRef, Props>(function LocationModal(
       snapPoints={snapPoints}
       enablePanDownToClose={!!activeUser.location}
     >
-      <LocationContent onRequestClose={onRequestClose} />
+      <LocationContent onRequestClose={onRequestClose} {...rest} />
     </BottomSheet>
   );
 });

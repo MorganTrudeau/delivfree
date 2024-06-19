@@ -1,5 +1,4 @@
 import { Screen } from "app/components";
-import { Drawer } from "app/components/Drawer";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import { $containerPadding, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
@@ -23,7 +22,7 @@ export const DriverLicensesScreen = (props: DriverLicensesScreenProps) => {
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      inDrawer
+      
     >
       <ScreenHeader title={"Licenses"} />
       <LicensesList licenses={licensesList} vendorLocations={vendorLocations} />

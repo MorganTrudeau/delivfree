@@ -73,9 +73,6 @@ export class VendorDataLoading extends Component<Props> {
       return;
     }
 
-    const customersListener = await this.props
-      .listenToCustomers({ vendor: vendor.id })
-      .then(unwrapResult);
     const vendorLocationsListener = await this.props
       .listenToVendorLocations({ vendor: vendor.id })
       .then(unwrapResult);
@@ -89,7 +86,6 @@ export class VendorDataLoading extends Component<Props> {
       .listenToVendorLicenses(vendor.id)
       .then(unwrapResult);
 
-    this.vendorDataListeners.add(customersListener);
     this.vendorDataListeners.add(vendorLocationsListener);
     this.vendorDataListeners.add(subscriptionListener);
     this.vendorDataListeners.add(positionsListener);
@@ -112,7 +108,6 @@ const mapDispatch = {
   listenToVendorSubscription,
   listenToVendorLicenses,
   listenToVendorLocations,
-  listenToCustomers,
   listenToPositions,
   fetchProducts,
 };

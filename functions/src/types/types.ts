@@ -1,14 +1,18 @@
 import { Cuisines } from "./enums";
 
+export type DaysAndTimes = {
+  days: number[];
+  startTime: { hours: number; minutes: number } | null;
+  endTime: { hours: number; minutes: number } | null;
+  allDay: boolean;
+};
+export type TipType = "15" | "18" | "20" | "25" | "other";
 // Menu builder
 export type Menu = {
   id: string;
   name: string;
   active: boolean;
-  hours: {
-    times: "24-hours" | { start: string; end: string };
-    days: "every-day" | string[];
-  };
+  hours: DaysAndTimes[];
   vendor: string;
   vendorLocations: string[];
 };
@@ -36,9 +40,9 @@ export type MenuCustomizationChoice = {
   id: string;
   name: string;
   price: string;
-  vendor: string;
 };
 export type MenuCustomization = {
+  name: string;
   id: string;
   choices: MenuCustomizationChoice[];
   minChoices: string;
@@ -99,10 +103,13 @@ export type User = {
   lastName: string;
   location: GeoLocation | null;
   email: string;
-  deliveryInstructions?: DeliveryInstructions | null;
+  deliveryInstructions: DeliveryInstructions;
+  callingCountry: CountryCode | null;
+  callingCode: string | null;
+  phoneNumber: string | null;
   consumer?: {};
   vendor?: { ids: string[] };
-  driver?: { id: string };
+  driver?: { id: string; parentDriver?: string };
   admin?: {};
 };
 export type Cuisine = (typeof Cuisines)[keyof typeof Cuisines];
@@ -119,12 +126,12 @@ export type VendorLocation = {
   callingCode: string;
   phoneNumber: string;
   name: string;
-  menuLink: string;
-  orderLink: string;
   image: string;
   positions: string;
   status: Status;
   updated: number;
+  menusActive?: boolean;
+  nextOpen?: string;
 };
 export type Vendor = {
   id: string;
@@ -139,10 +146,23 @@ export type Vendor = {
     status: Status;
     message: string | null;
   };
+  referralCode: string;
   users: string[];
   updated: number;
   pendingLocations: string[];
   pendingPositions: string[];
+  stripe: {
+    accountId: string | null;
+    detailsSubmitted: boolean;
+    payoutsEnabled: boolean;
+    currency: string;
+    taxRates: {
+      id: string;
+      displayName: string;
+      percentage: string;
+      inclusive: boolean;
+    }[];
+  };
 };
 export type Driver = {
   id: string;
@@ -157,17 +177,44 @@ export type Driver = {
     status: Status;
     message: string | null;
   };
+  referralCode: string;
   driversLicenseFront: string;
   driversLicenseBack: string;
   vendors: string[];
   vendorLocations: string[];
   licenses: string[];
-  parentDrivers: { [vendorId: string]: string /* parent driver iD */ };
   updated: number;
   location: GeoLocation;
   pendingLicenses: string[];
 };
+export type CheckoutItemCustomization = {
+  customization: string;
+  choice: MenuCustomizationChoice;
+  quantity: number;
+  text: string;
+};
+export type CheckoutItem = {
+  id: string;
+  item: MenuItem;
+  quantity: number;
+  customizations: CheckoutItemCustomization[];
+};
+export type CheckoutOrderUpdate = {
+  id: string;
+  customer: string;
+  vendor: string;
+  vendorLocation: string;
+  items: CheckoutItem;
+};
+export type CheckoutOrder = {
+  id: string;
+  customer: string;
+  vendor: string;
+  vendorLocation: string;
+  items: CheckoutItem[];
+};
 export type OrderStatus =
+  | "pending"
   | "in-progress"
   | "arrived"
   | "complete"
@@ -176,14 +223,18 @@ export type OrderStatus =
 export type Order = {
   id: string;
   customer: string;
-  amount: string;
+  subtotal: string;
   tip: string;
-  description: string;
+  tax: string;
+  total: string;
+  currency: string;
   status: OrderStatus;
   date: number;
   vendor: string;
   vendorLocation: string;
   driver: null | string;
+  checkoutItems: CheckoutItem[];
+  deliveryInstructions: DeliveryInstructions;
 };
 export type OrderCount = { count: number };
 export type Customer = {

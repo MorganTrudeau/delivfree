@@ -47,7 +47,7 @@ export const chooseImage = async (
   const defaultImagePickerOptions: ImagePickerOptions = {
     selectionLimit: 1,
     allowsMultipleSelection: false,
-    quality: 0.9,
+    quality: 1,
     // allowsEditing: true,
     mediaTypes: MediaTypeOptions.Images,
     ...options,

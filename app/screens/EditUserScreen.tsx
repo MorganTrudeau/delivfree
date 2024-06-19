@@ -51,6 +51,10 @@ export const EditUserScreen = () => {
       lastName,
       email,
       location: null,
+      deliveryInstructions: { type: "meet-door", note: "" },
+      phoneNumber: null,
+      callingCode: null,
+      callingCountry: null,
     };
 
     if (getAppType() === "ADMIN") {

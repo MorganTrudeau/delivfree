@@ -56,7 +56,7 @@ const ManageMenuItem = ({
           name: "",
           description: "",
           price: "",
-          vendor: vendor,
+          vendor,
           categories: itemCategory ? [itemCategory] : [],
           energy: {
             cals: "",

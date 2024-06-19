@@ -13,10 +13,10 @@ export const VendorSubscriptionScreen = ({
 }: VendorSubscriptionScreenProps) => {
   return (
     <Screen
-      preset="fixed"
+      preset="scroll"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      inDrawer
+      
     >
       <ManageVendorSubscription displayOnly={true} />
     </Screen>

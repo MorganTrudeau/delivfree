@@ -53,6 +53,7 @@ export const Dates = ({ onDatePress, currentDate, markedDates }: Props) => {
       renderItem={renderDate}
       numColumns={7}
       scrollEnabled={false}
+      showsVerticalScrollIndicator={false}
       style={$style}
     />
   );

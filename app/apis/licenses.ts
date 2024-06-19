@@ -52,6 +52,7 @@ export const listenToLicenses = (
   }
 
   if (driver) {
+    console.log("LOAD DRIVER", driver);
     query = query.where("driver", "==", driver);
   }
 

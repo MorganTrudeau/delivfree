@@ -1,5 +1,5 @@
 import { colors } from "app/theme";
-import { DateRange, MOMENT_DATE_FORMAT } from "delivfree";
+import { DateRange, DaysAndTimes, MOMENT_DATE_FORMAT } from "delivfree";
 import moment from "moment";
 import { type CalendarProps } from "react-native-calendars";
 
@@ -12,14 +12,36 @@ export type DateFilter =
   | "lastMonth"
   | "customRange";
 
+export const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+export const formattedDaysAndTimes = (daysAndTimes: DaysAndTimes) => {
+  if (daysAndTimes.days.length === 0) {
+    return "Not available";
+  }
+  return `${
+    daysAndTimes.days.length === 7
+      ? "Every day"
+      : daysAndTimes.days
+          .sort()
+          .map((day) => daysOfWeek[day])
+          .join(", ")
+  } • ${
+    daysAndTimes.allDay
+      ? "All day"
+      : moment(daysAndTimes.startTime).format("h:mma") +
+        " - " +
+        moment(daysAndTimes.endTime).format("h:mma")
+  }`;
+};
+
 export function dateRangeIteration(
   dateRange: DateRange,
   iteration: (date: string) => void,
   inputFormat?: string,
   outputFormat?: string
 ) {
-  let start = moment(dateRange.start, inputFormat);
-  let end = moment(dateRange.end, inputFormat);
+  const start = moment(dateRange.start, inputFormat);
+  const end = moment(dateRange.end, inputFormat);
   while (start.isBefore(end, "day") || start.isSame(end, "day")) {
     const date = start.format(outputFormat || MOMENT_DATE_FORMAT);
     iteration(date);

@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { listenToOrderCount } from "app/apis/orders";
 import { useAppSelector } from "app/redux/store";
 import { maxOrdersForSubscription } from "app/utils/subscriptions";
 import { OrderCount } from "delivfree";
-import { useEffect, useState } from "react";
 import { View, ViewStyle } from "react-native";
 import { Text } from "./Text";
 import { colors, spacing } from "app/theme";
@@ -32,6 +31,7 @@ export const OrderCountAlert = ({ style }: { style?: ViewStyle }) => {
   useEffect(() => {
     if (vendorSubscription) {
       const maxOrders = maxOrdersForSubscription(vendorSubscription);
+
       const overOrder = Object.values(orderCount).find(
         (c) => c.count > maxOrders
       );

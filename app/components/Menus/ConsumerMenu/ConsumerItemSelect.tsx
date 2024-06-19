@@ -94,6 +94,13 @@ const ConsumerItemSelect = ({
         [] as CheckoutItemCustomization[]
       ),
     };
+    const newCart = {
+      id: generateUid(),
+      customer: authToken,
+      vendor,
+      vendorLocation,
+      items: [checkoutItem],
+    };
     if (cartOrder) {
       if (
         cartOrder.vendor === vendor &&
@@ -109,34 +116,20 @@ const ConsumerItemSelect = ({
             {
               text: "New order",
               onPress: () => {
-                dispatch(
-                  startCart({
-                    customer: authToken,
-                    vendor,
-                    vendorLocation,
-                    items: [checkoutItem],
-                  })
-                );
+                dispatch(startCart(newCart));
               },
             },
           ]
         );
       }
     } else {
-      dispatch(
-        startCart({
-          customer: authToken,
-          vendor,
-          vendorLocation,
-          items: [checkoutItem],
-        })
-      );
+      dispatch(startCart(newCart));
     }
     onClose();
   };
 
   return (
-    <View style={[largeScreen && { flexDirection: "row" }]}>
+    <View style={largeScreen && { flexDirection: "row" }}>
       <FastImage source={imageSource} style={$image} />
       <View style={{ padding: spacing.md, flex: 1 }}>
         <Text preset="heading">{item.name}</Text>
@@ -257,7 +250,7 @@ const ConsumerItemSelect = ({
             "CAD"
           )}`}
           preset="reversed"
-          style={{ marginTop: spacing.md }}
+          style={{ marginTop: spacing.lg }}
           onPress={handleAddItemToCart}
         />
       </View>

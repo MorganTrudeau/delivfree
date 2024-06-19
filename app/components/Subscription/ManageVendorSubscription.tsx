@@ -5,6 +5,7 @@ import { subscribe } from "app/apis/stripe";
 import { alertCommonError } from "app/utils/general";
 import { useAlert, useToast } from "app/hooks";
 import { ManageSubscription } from "./ManageSubscription";
+import { updateVendor } from "app/apis/vendors";
 
 export const ManageVendorSubscription = ({
   displayOnly,
@@ -15,6 +16,7 @@ export const ManageVendorSubscription = ({
   const Toast = useToast();
 
   const [loading, setLoading] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
 
   const user = useAppSelector((state) => state.user.user);
   const vendor = useAppSelector((state) => state.vendor.activeVendor);
@@ -38,15 +40,20 @@ export const ManageVendorSubscription = ({
         throw "missing-data";
       }
       setLoading(true);
+      console.log({ referralCode });
       await subscribe(
         "vendor",
         vendor?.id,
         user?.email,
         fullTime,
         partTime,
-        vendorSubscription
+        vendorSubscription,
+        !!referralCode
       );
-      if (vendorSubscription) {
+      if (referralCode) {
+        await updateVendor(vendor.id, { referralCode });
+      }
+      if (vendorSubscription && vendorSubscription.status !== "canceled") {
         Toast.show("Subscription activated successfully!");
       }
       setLoading(false);
@@ -66,6 +73,8 @@ export const ManageVendorSubscription = ({
       displayOnly={displayOnly}
       subscription={vendorSubscription}
       description={description}
+      onReferralCodeVerified={setReferralCode}
+      freeTrialReward
     />
   );
 };

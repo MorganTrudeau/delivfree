@@ -136,6 +136,7 @@ export const LicensesList = ({
         data={licenses}
         renderItem={renderItem}
         ListEmptyComponent={renderEmptyList}
+        showsVerticalScrollIndicator={false}
         {...rest}
       />
     </>

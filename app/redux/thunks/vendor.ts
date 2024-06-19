@@ -42,3 +42,10 @@ export const listenToVendors = createAsyncThunk(
     );
   }
 );
+
+export const fetchVendor = createAsyncThunk(
+  "vendors/fetchVendor",
+  (vendor: string, { dispatch }) => {
+    return VendorApis.fetchVendor(vendor);
+  }
+);

@@ -40,9 +40,11 @@ export const DriversLicenseUpload = ({
 
   const uploadSide = async (side: "front" | "back") => {
     try {
-      console.log("UPLOAD");
       const media = await chooseImage();
-      const url = media?.[0]?.url;
+      if (media === undefined) {
+        return;
+      }
+      const url = media[0]?.url;
       if (!url) {
         throw "missing-image";
       }

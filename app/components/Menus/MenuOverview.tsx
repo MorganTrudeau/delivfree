@@ -165,8 +165,10 @@ export const MenuOverview = React.memo(function MenuOverview({
     canSave,
   ]);
 
-  const { exec: handleSaveMenu, loading: saveLoading } =
-    useAsyncFunction(saveMenu);
+  const { exec: handleSaveMenu, loading: saveLoading } = useAsyncFunction<
+    void,
+    void
+  >(saveMenu);
 
   return (
     <View>

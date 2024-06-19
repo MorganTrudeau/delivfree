@@ -80,7 +80,7 @@ export const DateLineChart = ({
 
   const chartData = useMemo(
     () => ({
-      labels: labels,
+      labels,
       datasets: dataSets,
     }),
     [labels, dataSets]
@@ -263,7 +263,7 @@ const generateDateGroupLabels = (dateRange: DateRange) => {
   const endDate = moment(dateRange.end);
   const totalDays = endDate.diff(startDate, "days") + 1;
 
-  let labels: string[] = [];
+  const labels: string[] = [];
 
   if (endDate.isSame(startDate, "day")) {
     const numHours = endDate.diff(startDate, "hours") + 1;
@@ -284,7 +284,7 @@ const generateDateGroupLabels = (dateRange: DateRange) => {
     let currentStart = startDate;
     while (currentStart.isBefore(endDate, "day")) {
       // Calculate end date of the current group, without exceeding the overall end date
-      let currentEnd = moment.min(
+      const currentEnd = moment.min(
         currentStart.clone().add(daysPerGroup - 1, "days"),
         endDate
       );
@@ -324,8 +324,8 @@ const calculateDateGroup = (dateRange: DateRange, singleDate: string) => {
   const groupNumber = Math.floor(daysFromStart / daysPerGroup);
 
   // Calculate the start and end date of the group
-  let groupStartDate = startDate.add(groupNumber * daysPerGroup, "days");
-  let groupEndDate = moment.min(
+  const groupStartDate = startDate.add(groupNumber * daysPerGroup, "days");
+  const groupEndDate = moment.min(
     groupStartDate.clone().add(daysPerGroup - 1, "days"),
     endDate
   );
@@ -365,29 +365,29 @@ const styles = StyleSheet.create({
   chart: {
     borderRadius: 6,
   },
-  touchableContainer: {
-    alignSelf: "flex-start",
-    paddingLeft: PADDING_LEFT,
+  pointContainer: {
+    backgroundColor: colors.background,
+    borderRadius: 5,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    position: "absolute",
+  },
+  pointDot: {
+    borderRadius: 10,
+    height: 14,
+    marginEnd: spacing.sm,
+    width: 14,
   },
   pointViewDate: StyleSheet.flatten([
     // globalStyles.textSmallMeta,
     { marginBottom: spacing.xs },
   ]),
-  pointDot: {
-    height: 14,
-    width: 14,
-    borderRadius: 10,
-    marginEnd: spacing.sm,
-  },
-  pointContainer: {
-    position: "absolute",
-    backgroundColor: colors.background,
-    borderRadius: 5,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-  },
   pointViewTask: StyleSheet.flatten([
     $row,
     { maxWidth: 150, marginBottom: spacing.xs },
   ]),
+  touchableContainer: {
+    alignSelf: "flex-start",
+    paddingLeft: PADDING_LEFT,
+  },
 });

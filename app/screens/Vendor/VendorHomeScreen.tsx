@@ -1,48 +1,32 @@
 import { loadOrders } from "app/apis/orders";
-import { Icon, Screen, Text } from "app/components";
+import { getUser } from "app/apis/user";
+import { Screen, Text } from "app/components";
 import { LineChart } from "app/components/Charts/LineChart";
 import { DateRangeSelect } from "app/components/Dates/DateRangeSelect";
-import { Drawer } from "app/components/Drawer";
+import { LoadingPlaceholder } from "app/components/LoadingPlaceholder";
+import { PayoutsHeader } from "app/components/Stripe/PayoutsHeader";
+import { TaxRateSelect } from "app/components/Stripe/TaxRateSelect";
 import {
   $containerPadding,
   $flex,
   $row,
   $screen,
   LARGE_SCREEN,
+  MAX_CONTAINER_WIDTH,
 } from "app/components/styles";
+import { useDrawer } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
-import { borderRadius } from "app/theme/borderRadius";
-import { sizing } from "app/theme/sizing";
 import { DateFilter, getDateRangeByFilter } from "app/utils/dates";
 import { localizeCurrency } from "app/utils/general";
-import { Customer, DateRange, Order } from "delivfree";
+import { Customer, DateRange, Order, User, Vendor } from "delivfree";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
-import { View, useWindowDimensions } from "react-native";
+import { View, ViewStyle, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
-
-// const todaySales = [
-//   Math.random() * 500,
-//   Math.random() * 500,
-//   Math.random() * 500,
-//   Math.random() * 500,
-//   Math.random() * 500,
-//   Math.random() * 500,
-// ];
-
-const overviewSales = new Array(7).fill(0).map(() => Math.random() * 5000);
-
-const customerSales = [
-  { name: "James", spend: "$590.99", phone: "778-898-0345" },
-  { name: "Sarah", spend: "$338.99", phone: "604-772-2292" },
-  { name: "Lina", spend: "$150.99", phone: "778-251-9828" },
-  { name: "Rod", spend: "$128.50", phone: "778-555-9521" },
-  { name: "Gary", spend: "$89.99", phone: "778-877-2212" },
-];
 
 const DATE_FORMAT = "MMM Do";
 
@@ -52,7 +36,7 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
   const largeScreenLayout = width > LARGE_SCREEN;
 
   const customers = useAppSelector((state) => state.customers.data);
-  const vendor = useAppSelector((state) => state.vendor.activeVendor);
+  const vendor = useAppSelector((state) => state.vendor.activeVendor as Vendor);
   const vendorId = vendor?.id;
 
   const [todaysOrders, setTodaysOrders] = useState<Order[]>([]);
@@ -61,6 +45,11 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
     filter: DateFilter;
     range: DateRange;
   }>({ filter: "last7", range: getDateRangeByFilter("last7") });
+
+  // const { setAlwaysOpen } = useDrawer();
+  // useEffect(() => {
+  //   setAlwaysOpen(largeScreenLayout);
+  // }, [largeScreenLayout]);
 
   useEffect(() => {
     if (vendorId) {
@@ -95,7 +84,7 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
         const hour = moment().hour(i);
         return todaysOrders
           .filter((o) => moment(o.date).isSame(hour, "hour"))
-          .reduce((acc, order) => acc + Number(order.amount), 0);
+          .reduce((acc, order) => acc + Number(order.total || 0), 0);
       });
   }, [todaysOrders]);
 
@@ -119,11 +108,11 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
           const hour = moment(overviewDateState.range.start).hour(i);
           return overviewOrders
             .filter((o) => moment(o.date).isSame(hour, "hour"))
-            .reduce((acc, order) => acc + Number(order.amount), 0);
+            .reduce((acc, order) => acc + Number(order.total || 0), 0);
         });
     } else {
-      let start = moment(overviewDateState.range.start);
-      const days = diff / 6;
+      const start = moment(overviewDateState.range.start);
+      const days = Math.max(1, diff / 6);
 
       const sales: number[] = [];
 
@@ -132,7 +121,7 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
           .filter((o) =>
             moment(o.date).isBetween(start, moment(start).add(days, "days"))
           )
-          .reduce((acc, order) => acc + Number(order.amount), 0);
+          .reduce((acc, order) => acc + Number(order.total || 0), 0);
         sales.push(total);
         start.add(days, "days");
       }
@@ -156,8 +145,9 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
     if (diff < 1) {
       return todaysLabels;
     } else {
-      const dayDiff = diff / 6;
+      const dayDiff = Math.max(1, diff / 6);
       const labels: string[] = [];
+
       while (!start.isAfter(end)) {
         let label = start.format(DATE_FORMAT);
         if (dayDiff > 1) {
@@ -165,7 +155,11 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
           if (endLabel.isAfter(end)) {
             endLabel = end.clone();
           }
-          label = label + " - " + endLabel.format(DATE_FORMAT);
+          label =
+            label +
+            (!endLabel.isSame(start, "day")
+              ? " - " + endLabel.format(DATE_FORMAT)
+              : "");
         }
         labels.push(label);
         start.add(dayDiff, "days");
@@ -176,23 +170,16 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
 
   const customerSales = useMemo(() => {
     const mappedSales = overviewOrders.reduce((acc, order) => {
-      const customer = customers[order.customer];
-      if (!customer) {
-        return acc;
-      }
       return {
         ...acc,
         [order.customer]: {
-          customer: customer,
-          spend:
-            (acc[order.customer]?.spend || 0) +
-            Number(order.amount) +
-            Number(order.tip),
+          customer: order.customer,
+          spend: (acc[order.customer]?.spend || 0) + Number(order.total || 0),
         },
       };
-    }, {} as { [customer: string]: { customer: Customer; spend: number } });
+    }, {} as { [customer: string]: { customer: string; spend: number } });
     return Object.values(mappedSales);
-  }, [overviewOrders, customers]);
+  }, [overviewOrders]);
 
   const renderOverviewDateRangeSelect = () => {
     return (
@@ -214,14 +201,18 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
         $containerPadding,
         { paddingBottom: insets.bottom + spacing.sm },
       ]}
-      inDrawer
     >
+      <PayoutsHeader vendor={vendor} style={$payouts} />
+      <TaxRateSelect vendor={vendor} style={$taxRates} />
       <Text preset="heading">Today</Text>
       <View style={{ paddingVertical: spacing.md }}>
         <Text>Gross volume</Text>
         <Text preset="subheading">{grossVolumeToday}</Text>
         <LineChart
-          width={Math.min(1000, width * (largeScreenLayout ? 0.8 : 1))}
+          width={Math.min(
+            1000,
+            Math.min(MAX_CONTAINER_WIDTH, width) * (largeScreenLayout ? 1 : 0.9)
+          )}
           height={300}
           data={{
             labels: todaysLabels,
@@ -249,7 +240,7 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
           <Text>Gross volume</Text>
           <Text preset="subheading">{grossVolumeOverview}</Text>
           <LineChart
-            width={Math.min(450, width * (largeScreenLayout ? 0.35 : 1))}
+            width={Math.min(450, width * (largeScreenLayout ? 0.35 : 0.9))}
             height={300}
             data={{
               labels: overviewLabels,
@@ -271,36 +262,22 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
               width: largeScreenLayout
                 ? Math.min(450, width * 0.35)
                 : undefined,
-              height: 300,
+              maxHeight: 300,
             }}
           >
             {customerSales.length > 0 ? (
               customerSales.map(({ customer, spend }) => {
                 return (
-                  <View
-                    key={customer.id}
-                    style={[
-                      $row,
-                      {
-                        paddingVertical: spacing.xxs,
-                        borderBottomWidth: 1,
-                        borderBottomColor: colors.border,
-                      },
-                    ]}
-                  >
-                    <View style={$flex}>
-                      <Text>{customer.name}</Text>
-                      <Text size="xs" style={{ color: colors.textDim }}>
-                        {customer.phoneNumber}
-                      </Text>
-                    </View>
-                    <Text>${spend.toFixed(2)}</Text>
-                  </View>
+                  <CustomerSale
+                    key={customer}
+                    userId={customer}
+                    spend={spend}
+                  />
                 );
               })
             ) : (
               <View style={{ paddingVertical: spacing.xxs }}>
-                <Text>No sales recorded</Text>
+                <Text preset="semibold">No sales recorded</Text>
               </View>
             )}
           </View>
@@ -308,6 +285,52 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
       </View>
     </Screen>
   );
+};
+
+const CustomerSale = ({ userId, spend }: { userId: string; spend: number }) => {
+  const [user, setUser] = useState<User>();
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await getUser(userId);
+        if (data) {
+          setUser(data);
+        }
+      } catch (error) {
+        console.log("Failed to load customer", error);
+      }
+    };
+    load();
+  }, []);
+
+  return (
+    <View
+      style={[
+        {
+          paddingVertical: spacing.xxs,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.border,
+        },
+      ]}
+    >
+      <LoadingPlaceholder
+        loading={!user}
+        loadingStyle={{ marginBottom: spacing.xxs, maxWidth: 150 }}
+      >
+        <Text>
+          {user?.firstName} {user?.lastName}
+        </Text>
+      </LoadingPlaceholder>
+      <Text>{localizeCurrency(spend)}</Text>
+    </View>
+  );
+};
+
+const $payouts: ViewStyle = { marginBottom: spacing.sm };
+const $taxRates: ViewStyle = {
+  marginBottom: spacing.lg,
+  alignSelf: "flex-start",
 };
 
 const todaysLabels = [

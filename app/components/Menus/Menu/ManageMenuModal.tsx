@@ -1,18 +1,18 @@
 import { generateUid } from "app/utils/general";
 import { Menu } from "functions/src/types";
-import React, { forwardRef, useCallback, useMemo, useState } from "react";
+import React, { forwardRef, useMemo, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { TextField } from "../../TextField";
-import { $inputFormContainer } from "../../styles";
+import { $inputFormContainer, $spacerBorder } from "../../styles";
 import { Text } from "../../Text";
 import { spacing } from "app/theme";
 import { Toggle } from "../../Toggle";
-import ReanimatedCenterModal, { ModalRef } from "../../Modal/CenterModal";
 import { Button } from "../../Button";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { saveMenu } from "app/apis/menus";
 import { useAlert } from "app/hooks";
 import { BottomSheet, BottomSheetRef } from "../../Modal/BottomSheet";
+import { DayAndTimeSelect } from "app/components/Dates/DayAndTimeSelect";
 
 interface ManageMenuProps {
   vendor: string;
@@ -30,8 +30,8 @@ const ManageMenu = ({ menu, vendor, onClose }: ManageMenuProps) => {
           id: generateUid(),
           name: "",
           active: true,
-          hours: { times: "24-hours", days: "every-day" },
-          vendor: vendor,
+          hours: [{ days: [], startTime: null, endTime: null, allDay: false }],
+          vendor,
           vendorLocations: [],
         }
   );
@@ -80,9 +80,31 @@ const ManageMenu = ({ menu, vendor, onClose }: ManageMenuProps) => {
         onValueChange={updateState("active")}
         labelPosition="left"
       />
+
+      <View style={$spacerBorder} />
+
+      <Text preset="subheading" style={{ marginBottom: spacing.sm }}>
+        Set menu hours
+      </Text>
+      <DayAndTimeSelect
+        daysAndTimes={menuState.hours[0]}
+        onChange={(hours) =>
+          setMenuState((state) => ({ ...state, hours: [hours] }))
+        }
+      />
+
+      <View style={$spacerBorder} />
+
       <Button
         text={"Save menu"}
-        preset={menuState.name ? "filled" : "default"}
+        preset={
+          menuState.name &&
+          menuState.hours[0]?.days.length &&
+          ((menuState.hours[0]?.endTime && menuState.hours[0]?.startTime) ||
+            menuState.hours[0]?.allDay)
+            ? "filled"
+            : "default"
+        }
         onPress={onSave}
         style={{ marginTop: spacing.md }}
         RightAccessory={Loading}

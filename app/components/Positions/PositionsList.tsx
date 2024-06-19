@@ -174,6 +174,7 @@ export const PositionsList = ({
         data={positions}
         renderItem={renderItem}
         ListEmptyComponent={renderEmptyList}
+        showsVerticalScrollIndicator={false}
         {...rest}
       />
     </>

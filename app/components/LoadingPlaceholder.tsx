@@ -6,6 +6,7 @@ export type Props = {
   width?: number | `${number}%`;
   height?: number;
   style?: StyleProp<ViewStyle>;
+  loadingStyle?: StyleProp<ViewStyle>;
   loading: boolean;
   children?: ViewProps["children"];
 };
@@ -13,8 +14,9 @@ export type Props = {
 export const LoadingPlaceholder = ({
   backgroundColor = "rgba(0,0,0,0.1)",
   width,
-  height,
+  height = 20,
   style,
+  loadingStyle,
   loading,
   children,
 }: Props) => {
@@ -54,6 +56,7 @@ export const LoadingPlaceholder = ({
     <Animated.View
       style={[
         style,
+        loadingStyle,
         { backgroundColor, width, height, borderRadius: 5 },
         { opacity },
       ]}

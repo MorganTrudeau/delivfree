@@ -1,12 +1,23 @@
 import { updateVendor } from "app/apis/vendors";
-import { HeaderProps, Icon, Screen, Text, TextField } from "app/components";
+import {
+  Button,
+  HeaderProps,
+  Icon,
+  Screen,
+  Text,
+  TextField,
+} from "app/components";
 import { Drawer } from "app/components/Drawer";
+import { PhoneNumberInput } from "app/components/PhoneNumberInput";
+import { ScreenHeader } from "app/components/ScreenHeader";
 import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
+import { useAsyncFunction } from "app/hooks/useAsyncFunction";
+import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
 import { Vendor } from "delivfree";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -49,31 +60,17 @@ export const VendorProfileScreen = (props: VendorProfileScreenProps) => {
     }
   }, [updates, vendor?.id]);
 
-  const headerProps: HeaderProps = useMemo(
-    () => ({
-      RightActionComponent: updating ? (
-        <ActivityIndicator color={colors.primary} />
-      ) : !isSaved ? (
-        <Pressable onPress={handleUpdateVendor}>
-          <Icon icon="check-circle" color={colors.primary} />
-        </Pressable>
-      ) : undefined,
-    }),
-    [isSaved, handleUpdateVendor]
-  );
+  const { exec, loading } = useAsyncFunction(handleUpdateVendor);
+  const Loading = useLoadingIndicator(loading);
 
   return (
     <Screen
-      preset="fixed"
+      preset="scroll"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      headerProps={headerProps}
-      inDrawer
     >
       <View style={$row}>
-        <Text preset="heading" style={$flex}>
-          Profile
-        </Text>
+        <ScreenHeader title={"Profile"} />
         {Platform.OS === "web" &&
           !isSaved &&
           (updating ? (
@@ -110,12 +107,26 @@ export const VendorProfileScreen = (props: VendorProfileScreenProps) => {
         value={getValue("businessName")}
         onChangeText={updateValue("businessName")}
       />
-      <TextField
+      <PhoneNumberInput
         placeholder="Phone number"
         label="Phone number"
         containerStyle={$input}
         value={getValue("phoneNumber")}
         onChangeText={updateValue("phoneNumber")}
+        onChangeCallingCode={(callingCode, callingCountry) => {
+          setUpdates((s) => ({
+            isSaved: false,
+            updates: { ...s.updates, callingCode, callingCountry },
+          }));
+        }}
+        callingCountry={getValue("callingCountry")}
+      />
+      <Button
+        onPress={exec}
+        text="Save profile"
+        RightAccessory={Loading}
+        style={{ marginTop: spacing.lg }}
+        preset={isSaved ? "default" : "reversed"}
       />
     </Screen>
   );

@@ -79,6 +79,7 @@ export const MenuCategoriesList = ({
         data={categories}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
+        showsVerticalScrollIndicator={false}
       />
     </>
   );

@@ -14,14 +14,14 @@ import { spacing } from "app/theme";
 export const PopoverContext = createContext({
   showPopover: (
     measurement: Measurement,
-    render: () => React.ReactElement,
+    render: () => React.ReactNode,
     position: PopoverPosition
   ) => {},
   dismissPopover: () => {},
 });
 /* eslint-enable */
 
-type Props = { children: React.ReactElement | React.ReactElement[] };
+type Props = { children: React.ReactNode };
 type PopoverPosition = "bottomRight" | "bottomLeft" | "topRight" | "topLeft";
 type Measurement = {
   x: number;
@@ -45,7 +45,7 @@ const PopoverProvider = ({ children }: Props) => {
 
   const [{ measurement, renderPopover, position }, setState] = useState<{
     measurement: Measurement | null;
-    renderPopover: null | (() => React.ReactElement);
+    renderPopover: null | (() => React.ReactNode);
     position: PopoverPosition;
   }>(defaultState);
 
@@ -59,7 +59,7 @@ const PopoverProvider = ({ children }: Props) => {
 
   const showPopover = (
     measurement: Measurement,
-    render: () => React.ReactElement,
+    render: () => React.ReactNode,
     position: PopoverPosition
   ) => {
     setState({ measurement, renderPopover: render, position });

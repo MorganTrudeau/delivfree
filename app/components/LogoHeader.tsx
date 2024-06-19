@@ -1,4 +1,4 @@
-import { useHeaderHeight } from "app/hooks";
+import { useDrawer, useHeaderHeight } from "app/hooks";
 import React, { useMemo } from "react";
 import { ImageStyle } from "react-native-fast-image";
 import { AppLogo } from "./AppLogo";
@@ -13,12 +13,17 @@ interface Props extends Object {
 
 export const LogoHeader = ({ style, onPress }: Props) => {
   const headerHeight = useHeaderHeight();
+  const { alwaysOpen } = useDrawer();
 
   const _style = useMemo(() => {
     const height = headerHeight * 0.4;
     const width = height * imageRatio;
     return { height, width };
   }, [headerHeight, style]);
+
+  if (alwaysOpen) {
+    return null;
+  }
 
   return (
     <Pressable onPress={onPress} style={style}>

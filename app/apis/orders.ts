@@ -4,8 +4,18 @@ import firestore, {
 import { MOMENT_DATE_FORMAT, Order } from "delivfree";
 import moment from "moment";
 
+export const createOrder = (order: Order) => {
+  return firestore().collection("Orders").doc(order.id).set(order);
+};
+
+export const createPendingOrder = (checkoutSessionId: string, order: Order) => {
+  return firestore()
+    .collection("PendingOrders")
+    .doc(checkoutSessionId)
+    .set(order);
+};
+
 export const listenToOrders = (
-  vendor: string,
   vendorLocation: string,
   limit: number,
   onData: (order: Order[]) => void
@@ -13,16 +23,21 @@ export const listenToOrders = (
   return firestore()
     .collection("Orders")
     .orderBy("date", "desc")
-    .where("vendor", "==", vendor)
     .where("vendorLocation", "==", vendorLocation)
     .limit(limit)
-    .onSnapshot((snap) => {
-      if (snap) {
-        onData(snap.docs.map((doc) => doc.data() as Order));
-      } else {
-        onData([]);
+    .onSnapshot(
+      (snap) => {
+        console.log("SNAP", snap, limit, vendorLocation);
+        if (snap) {
+          onData(snap.docs.map((doc) => doc.data() as Order));
+        } else {
+          onData([]);
+        }
+      },
+      (error) => {
+        console.log("Orders listener error", error);
       }
-    });
+    );
 };
 
 export const updateOrder = (orderId: string, update: Partial<Order>) => {

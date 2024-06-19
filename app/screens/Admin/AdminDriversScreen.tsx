@@ -27,7 +27,7 @@ export const AdminDriversScreen = (props: AdminDriversScreenProps) => {
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      inDrawer
+      
     >
       <ScreenHeader title="Drivers" />
       <View style={[$row, { paddingBottom: spacing.sm }]}>

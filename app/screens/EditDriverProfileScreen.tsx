@@ -4,10 +4,17 @@ import { AddressSearchModal } from "app/components/AddressSearchModal";
 import { Card } from "app/components/Card";
 import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
 import { LocationInput } from "app/components/LocationInput";
+import { LogoutButton } from "app/components/LogoutButton";
 import { ModalRef } from "app/components/Modal/CenterModal";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { StatusIndicator } from "app/components/StatusIndicator";
-import { $borderedArea, $formLabel, $input, $row } from "app/components/styles";
+import {
+  $borderedArea,
+  $flex,
+  $formLabel,
+  $input,
+  $row,
+} from "app/components/styles";
 import { useAlert, useToast } from "app/hooks";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { createDriver } from "app/redux/thunks/driver";
@@ -53,7 +60,6 @@ export const EditDriverProfileScreen = () => {
       registration: { status: "pending", message: null },
       vendors: [],
       vendorLocations: [],
-      parentDrivers: {},
       email: user?.email || "",
       user: authToken,
       updated: Date.now(),
@@ -62,6 +68,7 @@ export const EditDriverProfileScreen = () => {
       pendingLicenses: [],
       driversLicenseFront: "",
       driversLicenseBack: "",
+      referralCode: "",
     }
   );
 
@@ -86,7 +93,16 @@ export const EditDriverProfileScreen = () => {
     }
     const newUser: Pick<
       User,
-      "id" | "firstName" | "lastName" | "email" | "driver" | "location"
+      | "id"
+      | "firstName"
+      | "lastName"
+      | "email"
+      | "driver"
+      | "location"
+      | "deliveryInstructions"
+      | "phoneNumber"
+      | "callingCode"
+      | "callingCountry"
     > = {
       id: authToken,
       firstName: driverState.firstName,
@@ -94,6 +110,10 @@ export const EditDriverProfileScreen = () => {
       email: driverState.email,
       driver: { id: driverState.id },
       location: driverState.location,
+      deliveryInstructions: { type: "meet-door", note: "" },
+      phoneNumber: null,
+      callingCode: null,
+      callingCountry: null,
     };
 
     try {
@@ -101,7 +121,9 @@ export const EditDriverProfileScreen = () => {
       if (user) {
         await updateUser(newUser.id, newUser);
       } else {
-        await dispatch(createUser({ ...newUser, location: null }));
+        await dispatch(
+          createUser({ ...newUser, location: driverState.location })
+        );
       }
       await dispatch(createDriver(driverState));
       Toast.show("Driver profile sent for review");
@@ -122,7 +144,7 @@ export const EditDriverProfileScreen = () => {
 
   return (
     <Screen preset={"scroll"} contentContainerStyle={$screen}>
-      <Card>
+      <Card smallStyle={$flex}>
         <Text style={$header} preset={"heading"} weight={"bold"}>
           Driver profile
         </Text>
@@ -222,6 +244,8 @@ export const EditDriverProfileScreen = () => {
           RightAccessory={Loading}
         />
       </Card>
+
+      {/* <LogoutButton style={{ alignSelf: "center", marginTop: spacing.md }} /> */}
 
       <AddressSearchModal
         ref={addressSearch}

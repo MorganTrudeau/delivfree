@@ -1,44 +1,66 @@
-import { updateUser } from "app/apis/user";
+import { createPendingOrder } from "app/apis/orders";
+import { createStripeCheckoutSession } from "app/apis/stripe";
 import { Button, Icon, IconTypes, Screen, Text } from "app/components";
 import { Card } from "app/components/Card";
 import { CartItem } from "app/components/CheckoutCart/CartItem";
+import { CartItemsModal } from "app/components/CheckoutCart/CartItemsModal";
+import { CheckoutTotals } from "app/components/CheckoutCart/CheckoutTotals";
 import { DeliveryInstructionsModal } from "app/components/CheckoutCart/DeliveryInstructions";
 import { EmptyList } from "app/components/EmptyList";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { ModalRef } from "app/components/Modal/CenterModal";
 import LocationModal from "app/components/Modal/LocationModal";
+import { UserPhoneNumberModal } from "app/components/Users/UserPhoneNumberModal";
 import {
-  $borderBottom,
   $borderBottomLight,
   $containerPadding,
   $flex,
-  $flexRowBetween,
   $row,
   $screen,
   $screenHeading,
+  $spacerBorder,
+  MAX_CONTAINER_WIDTH,
   isLargeScreen,
 } from "app/components/styles";
-import { useLayout } from "app/hooks";
+import { useAlert, useLayout } from "app/hooks";
+import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useDimensions } from "app/hooks/useDimensions";
 import { AppStackScreenProps } from "app/navigators";
 import { CheckoutItem } from "app/redux/reducers/checkoutCart";
-import { useAppSelector } from "app/redux/store";
+import { useAppDispatch, useAppSelector } from "app/redux/store";
+import { fetchVendor } from "app/redux/thunks/vendor";
 import { colors, spacing } from "app/theme";
 import { sizing } from "app/theme/sizing";
 import {
   calcCheckoutOrderSubtotal,
+  checkoutItemsStripeLineItems,
   getDeliveryInstructionsTitle,
 } from "app/utils/checkout";
-import { localizeCurrency, pluralFormat } from "app/utils/general";
-import { User } from "delivfree/types";
-import React, { useMemo, useRef } from "react";
-import { Pressable, StyleProp, View, ViewStyle } from "react-native";
+import { pluralFormat } from "app/utils/general";
+import { Order, TipType, User } from "delivfree/types";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  StyleProp,
+  View,
+  ViewStyle,
+} from "react-native";
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Stripe from "stripe";
 
 interface RestaurantsScreenProps extends AppStackScreenProps<"Checkout"> {}
 
@@ -46,39 +68,150 @@ export const CheckoutScreen = (props: RestaurantsScreenProps) => {
   const { width } = useDimensions();
   const largeScreen = isLargeScreen(width);
 
+  const Alert = useAlert();
+  const insets = useSafeAreaInsets();
+
   const deliveryInstructionsModal = useRef<ModalRef>(null);
+  const phoneNumberModal = useRef<ModalRef>(null);
   const locationModal = useRef<BottomSheetRef>(null);
 
+  const dispatch = useAppDispatch();
   const cart = useAppSelector((state) => state.checkoutCart.order);
   const user = useAppSelector((state) => state.user.user as User);
 
+  const vendorLocationId = cart?.vendorLocation;
+  const vendorId = cart?.vendor;
+
+  const vendor = useAppSelector((state) =>
+    vendorId ? state.vendor.data[vendorId] : null
+  );
+
+  useEffect(() => {
+    if (vendorId) {
+      dispatch(fetchVendor(vendorId));
+    }
+  }, [vendorLocationId, vendorId]);
+
   const handleEnterAddress = () => {
     locationModal.current?.snapToIndex(0);
+  };
+
+  const handleEnterPhoneNumber = () => {
+    phoneNumberModal.current?.open();
+  };
+  const closePhoneNumberModal = () => {
+    phoneNumberModal.current?.close();
   };
 
   const handleChangeDeliveryInstructions = () => {
     deliveryInstructionsModal.current?.open();
   };
 
+  const [tipState, setTipState] = useState<{
+    type: TipType;
+    amount: string;
+  }>({ type: "18", amount: "" });
+
   const subtotal = useMemo(
     () => (cart?.items ? calcCheckoutOrderSubtotal(cart.items) : 0),
     [cart?.items]
   );
+  const tip = useMemo(() => {
+    if (tipState.type === "other") {
+      return Number(tipState.amount);
+    } else {
+      return subtotal * (Number(tipState.type) / 100);
+    }
+  }, [subtotal, tipState]);
+  const taxRate = vendor?.stripe.taxRates[0];
+  const tax = Number(
+    (
+      (taxRate && taxRate.percentage ? Number(taxRate.percentage) / 100 : 0) *
+      subtotal
+    ).toFixed(2)
+  );
+  const total = Number((subtotal + tax).toFixed(2)) + tip;
 
-  const handlePlaceOrder = () => {};
+  const handlePlaceOrder = useCallback(async () => {
+    if (!user.phoneNumber) {
+      return Alert.alert(
+        "Phone number",
+        "Please enter your phone number in case you need to be contacted about your order."
+      );
+    }
+    if (!(cart && vendor && vendor.stripe.accountId)) {
+      throw `missing-data`;
+    }
 
-  const RightArrow = useMemo(
+    const lineItems: Stripe.Checkout.SessionCreateParams["line_items"] =
+      checkoutItemsStripeLineItems(
+        cart.items,
+        tip,
+        vendor.stripe.currency,
+        vendor.stripe.taxRates[0]?.id
+      );
+    const session = await createStripeCheckoutSession({
+      line_items: lineItems,
+      payment_intent_data: {
+        application_fee_amount: 0,
+        transfer_data: {
+          destination: vendor.stripe.accountId,
+        },
+      },
+      mode: "payment",
+      ui_mode: "embedded",
+      customer_email: user?.email || undefined,
+      redirect_on_completion: "never",
+    });
+
+    const order: Order = {
+      id: cart.id,
+      customer: cart.customer,
+      subtotal: ((session.amount_subtotal || 0) / 100).toFixed(2),
+      tip: tip.toFixed(2),
+      tax: ((session.total_details?.amount_tax || 0) / 100).toFixed(2),
+      total: ((session.amount_total || 0) / 100).toFixed(2),
+      status: "pending",
+      date: Date.now(),
+      vendor: cart.vendor,
+      vendorLocation: cart.vendorLocation,
+      checkoutItems: cart.items,
+      driver: null,
+      deliveryInstructions: user.deliveryInstructions,
+      currency: session.currency || vendor.stripe.currency,
+    };
+
+    if (session && session.client_secret) {
+      await createPendingOrder(session.id, order);
+      props.navigation.navigate("Payment", {
+        clientSecret: session.client_secret,
+      });
+    }
+  }, [cart, vendor, tip]);
+
+  const { exec: placeOrder, loading: placeOrderLoading } =
+    useAsyncFunction(handlePlaceOrder);
+
+  const ButtonIcon = useMemo(
     () =>
-      ({ style }) =>
-        <Icon icon={"arrow-right"} color={"#fff"} style={style} />,
-    []
+      placeOrderLoading
+        ? ({ style }) => <ActivityIndicator color={"#fff"} style={style} />
+        : ({ style }) => (
+            <Icon icon={"arrow-right"} color={"#fff"} style={style} />
+          ),
+    [placeOrderLoading]
   );
 
   return (
     <Screen
       style={$screen}
-      backgroundColor={colors.surface}
-      contentContainerStyle={$containerPadding}
+      backgroundColor={
+        width > MAX_CONTAINER_WIDTH ? colors.surface : colors.background
+      }
+      contentContainerStyle={[
+        $containerPadding,
+        { paddingBottom: spacing.md + insets.bottom },
+      ]}
       preset="scroll"
     >
       {!cart?.items.length && (
@@ -91,7 +224,7 @@ export const CheckoutScreen = (props: RestaurantsScreenProps) => {
           </Text>
 
           <View
-            style={[{ flexDirection: largeScreen ? "row" : "column", flex: 1 }]}
+            style={{ flexDirection: largeScreen ? "row" : "column", flex: 1 }}
           >
             <View style={largeScreen ? $flex : undefined}>
               <Card>
@@ -102,6 +235,13 @@ export const CheckoutScreen = (props: RestaurantsScreenProps) => {
                   title={user?.location?.address || "Enter your address"}
                   icon="map-marker-outline"
                   onPress={handleEnterAddress}
+                />
+
+                <DetailItem
+                  subtitle="Phone number"
+                  title={user?.phoneNumber || "Enter your phone number"}
+                  icon="phone-outline"
+                  onPress={handleEnterPhoneNumber}
                 />
 
                 <DetailItem
@@ -116,47 +256,54 @@ export const CheckoutScreen = (props: RestaurantsScreenProps) => {
               </Card>
             </View>
 
-            <View style={$spacer} />
+            <View
+              style={width > MAX_CONTAINER_WIDTH ? $spacer : $spacerBorder}
+            />
 
             <View style={largeScreen ? $flex : undefined}>
-              <CartItemsDropDown items={cart.items} />
+              {Platform.OS === "web" ? (
+                <CartItemsDropDown items={cart.items} />
+              ) : (
+                <CartItemsModal items={cart.items} />
+              )}
 
-              <View style={$spacer} />
+              <View
+                style={width > MAX_CONTAINER_WIDTH ? $spacer : $spacerBorder}
+              />
 
               <Card>
-                <Text preset="subheading">Order total</Text>
-                <View style={{ maxWidth: 500, paddingTop: spacing.sm }}>
-                  <View style={$flexRowBetween}>
-                    <Text>Subtotal</Text>
-                    <Text>{localizeCurrency(subtotal, "CAD")}</Text>
-                  </View>
-                  <View style={$flexRowBetween}>
-                    <Text>Fees</Text>
-                    <Text>{localizeCurrency(0, "CAD")}</Text>
-                  </View>
-                  <View style={$flexRowBetween}>
-                    <Text>Tax</Text>
-                    <Text>{localizeCurrency(subtotal * 0.12, "CAD")}</Text>
-                  </View>
-                  <View style={$flexRowBetween}>
-                    <Text>Total</Text>
-                    <Text>{localizeCurrency(subtotal * 1.12, "CAD")}</Text>
-                  </View>
-                </View>
+                <Text preset="subheading">Order price</Text>
+                <CheckoutTotals
+                  currency={vendor?.stripe.currency}
+                  total={total}
+                  subtotal={subtotal}
+                  tax={tax}
+                  tip={tip}
+                  onTipChange={(type, amount) =>
+                    setTipState({ type, amount: amount || "" })
+                  }
+                  tipAmount={tipState.amount}
+                  tipType={tipState.type}
+                  style={{ maxWidth: 500, paddingTop: spacing.sm }}
+                />
               </Card>
 
               <Button
                 preset="reversed"
                 text={"Place order"}
-                onPress={handlePlaceOrder}
+                onPress={placeOrder}
                 style={{ marginTop: spacing.md }}
-                RightAccessory={RightArrow}
+                RightAccessory={ButtonIcon}
               />
             </View>
           </View>
         </>
       )}
 
+      <UserPhoneNumberModal
+        ref={phoneNumberModal}
+        onClose={closePhoneNumberModal}
+      />
       <DeliveryInstructionsModal
         user={user.id}
         ref={deliveryInstructionsModal}
@@ -166,17 +313,24 @@ export const CheckoutScreen = (props: RestaurantsScreenProps) => {
       <LocationModal
         ref={locationModal}
         onRequestClose={() => locationModal.current?.close()}
+        title={"Delivery address"}
       />
     </Screen>
   );
 };
 
-const CartItemsDropDown = ({ items }: { items: CheckoutItem[] }) => {
+const CartItemsDropDown = ({
+  items,
+  startOpen,
+}: {
+  items: CheckoutItem[];
+  startOpen?: boolean;
+}) => {
   const { layout, handleLayout } = useLayout();
   const dropdownHeight = layout?.height || 0;
 
-  const isOpen = useRef(false);
-  const openAnimation = useSharedValue(0);
+  const isOpen = useRef(!!startOpen);
+  const openAnimation = useSharedValue(startOpen ? 1 : 0);
 
   const open = () => {
     isOpen.current = true;

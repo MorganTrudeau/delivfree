@@ -1,5 +1,7 @@
 // TODO: write documentation for colors and palette in own markdown file and add links from here
 
+import { Platform } from "react-native";
+
 const palette = {
   neutral100: "#FFFFFF",
   neutral200: "#faf9f9",
@@ -56,6 +58,8 @@ export const colors = {
    * This is only included for rare, one-off cases. Try to use
    * semantic names as much as possible.
    */
+  white: "#fff",
+
   palette,
   /**
    * A helper for making something see-thru.
@@ -85,7 +89,10 @@ export const colors = {
    * The default border color.
    */
   border: palette.shade300,
-  borderLight: palette.shade200,
+  borderLight: Platform.select({
+    ios: palette.shade300,
+    default: palette.shade200,
+  }),
   /**
    * The main tinting color of icons.
    */

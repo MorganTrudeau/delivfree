@@ -70,11 +70,17 @@ export class DriverDataLoading extends Component<Props> {
     const driverListener = await this.props
       .listenToActiveDriver(driverId)
       .then(unwrapResult);
+
+    const subscriptionDriverId =
+      this.props.user?.driver?.parentDriver || driverId;
+
+    console.log({ subscriptionDriverId });
+
     const driverSubscriptionListener = await this.props
-      .listenToDriverSubscription(driverId)
+      .listenToDriverSubscription(subscriptionDriverId)
       .then(unwrapResult);
     const licensesListener = await this.props
-      .listenToDriverLicenses(driverId)
+      .listenToDriverLicenses(subscriptionDriverId)
       .then(unwrapResult);
 
     this.driverListeners.add(driverListener);

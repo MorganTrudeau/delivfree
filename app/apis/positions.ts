@@ -66,7 +66,7 @@ export const fetchPositions = async (
 ): Promise<Positions[]> => {
   const { latitude, longitude } = params;
 
-  let query = buildPositionsQuery(params);
+  const query = buildPositionsQuery(params);
 
   if (latitude && longitude) {
     const center: [number, number] = [latitude, longitude];

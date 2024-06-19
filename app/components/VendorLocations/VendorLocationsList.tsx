@@ -10,7 +10,6 @@ import {
 import { VendorLocation } from "delivfree";
 import { useDimensions } from "app/hooks/useDimensions";
 import {
-  $borderBottom,
   $borderBottomLight,
   $flex,
   $image,
@@ -122,6 +121,7 @@ export const VendorLocationsList = ({
         data={locations}
         renderItem={renderItem}
         ListEmptyComponent={renderEmptyList}
+        showsVerticalScrollIndicator={false}
         {...rest}
       />
     </>

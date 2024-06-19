@@ -5,7 +5,7 @@ const PAGE_SIZE = 15;
 export const useDataListener = <T extends { id: string }>(
   query: (limit: number, onData: (data: T[]) => void) => () => void,
   cache?: DataCache<T>,
-  cacheKey: string = "cache-key"
+  cacheKey = "cache-key"
 ) => {
   const [data, setData] = useState<T[]>(cache?.listCache[cacheKey] || []);
 

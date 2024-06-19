@@ -2,34 +2,13 @@ import { colors } from "app/theme";
 import { OrderStatus } from "delivfree";
 
 export const HEADERS = [
-  "Amount",
-  "Tip",
-  "Description",
-  "Customer",
-  "Date",
-  "Driver",
-  "Status",
-] as const;
-
-export const getHeaderWidth = (header: (typeof HEADERS)[number]) => {
-  return undefined;
-  switch (header) {
-    case "Amount":
-      140;
-    case "Tip":
-      return 140;
-    case "Customer":
-      return undefined;
-    case "Date":
-      return 200;
-    case "Description":
-      return undefined;
-    case "Status":
-      return 150;
-    default:
-      return 200;
-  }
-};
+  { title: "Amount" },
+  { title: "Tip" },
+  { title: "Items" },
+  { title: "Date" },
+  { title: "Driver" },
+  { title: "Status" },
+];
 
 export const getStatusColor = (status: OrderStatus) => {
   switch (status) {
@@ -41,6 +20,7 @@ export const getStatusColor = (status: OrderStatus) => {
       return colors.success;
     case "arrived":
       return colors.palette.accent500;
+    case "pending":
     case "in-progress":
       return colors.palette.accent500;
   }
@@ -48,6 +28,8 @@ export const getStatusColor = (status: OrderStatus) => {
 
 export const getStatusText = (status: OrderStatus) => {
   switch (status) {
+    case "pending":
+      return "Pending";
     case "incomplete":
       return "Incomplete";
     case "canceled":

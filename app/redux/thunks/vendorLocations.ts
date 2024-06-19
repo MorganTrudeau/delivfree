@@ -13,3 +13,10 @@ export const listenToVendorLocations = createAsyncThunk(
     }, params);
   }
 );
+
+export const fetchVendorLocation = createAsyncThunk(
+  "vendorLocations/fetchVendorLocation",
+  (vendorLocation: string) => {
+    return VendorLocationApis.fetchVendorLocation(vendorLocation);
+  }
+);

@@ -20,6 +20,7 @@ import { VendorLocation } from "delivfree";
 import { borderRadius } from "app/theme/borderRadius";
 import { $shadow } from "../styles";
 import { Portal } from "react-native-portalize";
+import { useDimensions } from "app/hooks/useDimensions";
 
 interface Props {
   selectedLocationId: string;
@@ -32,6 +33,8 @@ export const VendorLocationSelect = ({
   onSelect,
   style,
 }: Props) => {
+  const { width } = useDimensions();
+
   const vendorLocations = useAppSelector((state) => state.vendorLocations.data);
   const vendorLocationsList = useMemo(
     () => Object.values(vendorLocations),
@@ -132,7 +135,8 @@ export const VendorLocationSelect = ({
               animatedStyle,
               {
                 top: top + (layout?.height || 0) + spacing.sm,
-                left: left,
+                left,
+                maxWidth: width - spacing.md * 2,
               },
             ]}
             pointerEvents={open ? "auto" : "none"}

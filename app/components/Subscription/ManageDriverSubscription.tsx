@@ -5,6 +5,7 @@ import { subscribe } from "app/apis/stripe";
 import { alertCommonError } from "app/utils/general";
 import { useAlert, useToast } from "app/hooks";
 import { ManageSubscription } from "./ManageSubscription";
+import { updateDriver } from "app/apis/driver";
 
 export const ManageDriverSubscription = ({
   displayOnly,
@@ -15,6 +16,7 @@ export const ManageDriverSubscription = ({
   const Toast = useToast();
 
   const [loading, setLoading] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
 
   const user = useAppSelector((state) => state.user.user);
   const driver = useAppSelector((state) => state.driver.activeDriver);
@@ -44,13 +46,16 @@ export const ManageDriverSubscription = ({
         user?.email,
         fullTime,
         partTime,
-        subscription
+        subscription,
+        true
       );
       setLoading(false);
-      if (subscription) {
+      if (referralCode) {
+        await updateDriver(driver.id, { referralCode });
+      }
+      if (subscription && subscription.status !== "canceled") {
         Toast.show("Subscription activated successfully!");
       }
-      Toast.show("Subscription activated successfully!");
     } catch (error) {
       setLoading(false);
       alertCommonError(Alert);
@@ -69,6 +74,7 @@ export const ManageDriverSubscription = ({
       subscription={subscription}
       description={description}
       displayOnly={displayOnly}
+      onReferralCodeVerified={setReferralCode}
     />
   );
 };
