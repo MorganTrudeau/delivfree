@@ -10,12 +10,14 @@ interface Props {
   menu: string;
   vendor: string;
   vendorLocation: string;
+  vendorLocationClosed: boolean;
 }
 
 export const ConsumerMenuCategories = ({
   menu,
   vendor,
   vendorLocation,
+  vendorLocationClosed,
 }: Props) => {
   const { categories, categoriesLoaded, loadCategories } = useMenusLoading({
     menu,
@@ -49,6 +51,7 @@ export const ConsumerMenuCategories = ({
               category={category.id}
               vendor={vendor}
               vendorLocation={vendorLocation}
+              vendorLocationClosed={vendorLocationClosed}
             />
           </View>
         );

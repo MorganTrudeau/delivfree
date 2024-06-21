@@ -1,6 +1,5 @@
 import React from "react";
-import { fetchVendorLocation } from "app/apis/vendorLocations";
-import { useDimensions } from "app/hooks/useDimensions";
+import { fetchVendorLocationDetail } from "app/apis/vendorLocations";
 import { changeCartItemQuantity } from "app/redux/reducers/checkoutCart";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { calcCheckoutOrderSubtotal } from "app/utils/checkout";
@@ -37,8 +36,10 @@ export const CheckoutCart = ({
     if (cartVendorLocation && !vendorLocation) {
       const loadVendorData = async () => {
         try {
-          const data = await fetchVendorLocation(cartVendorLocation);
-          setVendorLocation(data);
+          const data = await fetchVendorLocationDetail(cartVendorLocation);
+          if (data) {
+            setVendorLocation(data);
+          }
         } catch (error) {
           console.log("Failed to load cart vendor location", error);
         }

@@ -1,9 +1,9 @@
 import {
   Cuisine,
+  DriverClockIn,
   LatLng,
   Menu,
   Positions,
-  Vendor,
   VendorLocation,
 } from "delivfree";
 import * as geofire from "geofire-common";
@@ -39,6 +39,15 @@ export const addVendorLocation = (
 export const fetchVendorLocation = async (id: string) => {
   const doc = await firestore().collection("VendorLocations").doc(id).get();
   return doc.data() as VendorLocation | undefined;
+};
+
+export const fetchVendorLocationDetail = async (id: string) => {
+  const doc = await firestore().collection("VendorLocations").doc(id).get();
+  const vendorLocation = doc.data() as VendorLocation | undefined;
+  if (!vendorLocation) {
+    return undefined;
+  }
+  return loadVendorLocationDetails(vendorLocation);
 };
 
 export const listenToVendorLocations = (
@@ -130,82 +139,69 @@ export const fetchVendorLocations = async (
     }
   }
 
-  const vendorLocationIds = vendorLocations.map((v) => v.id);
-  const vendorIds = vendorLocations.map((v) => v.vendor);
+  const vendorLocationDetails = await Promise.all(
+    vendorLocations.map((vendorLocation) =>
+      loadVendorLocationDetails(vendorLocation)
+    )
+  );
 
-  const [vendorDocs, menuSnaps, activeDriverSnaps] = await Promise.all([
-    Promise.all(
-      vendorIds.map((id) => firestore().collection("Vendors").doc(id).get())
-    ),
-    Promise.all(
-      vendorIds.map((id) =>
-        firestore().collection("Menus").where("vendor", "==", id).get()
-      )
-    ),
-    Promise.all(
-      vendorLocationIds.map((id) =>
-        firestore()
-          .collection("DriverClockIns")
-          .where("vendorLocation", "==", id)
-          .get()
-      )
-    ),
-  ]);
-
-  const vendors = vendorDocs.reduce((acc, doc) => {
-    const vendor = doc.data() as Vendor;
-    return { ...acc, [vendor.id]: vendor };
-  }, {} as { [vendor: string]: Vendor });
-  const menus = menuSnaps.reduce((acc, menuSnap) => {
-    const menus = menuSnap.docs.map((doc) => doc.data() as Menu);
-    if (!menus[0]?.vendor) {
-      return acc;
-    }
-    const vendor = menus[0].vendor;
-    return { ...acc, [vendor]: menus };
-  }, {} as { [vendor: string]: Menu[] });
-  const activeDrivers = activeDriverSnaps.reduce((acc, driverSnap) => {
-    const drivers = driverSnap.docs.map(
-      (doc) => doc.data() as { vendorLocation: string; date: number }
-    );
-    const vendorLocation = drivers[0]?.vendorLocation;
-    if (!vendorLocation) {
-      return acc;
-    }
-    return { ...acc, [vendorLocation]: drivers };
-  }, {} as { [vendor: string]: { vendorLocation: string; date: number }[] });
-
-  return vendorLocations
-    .filter((location) => {
-      const vendor = vendors[location.vendor];
-      const locationMenus = menus[location.vendor];
-      const locationDrivers = activeDrivers[location.id];
-      return (
-        vendor &&
-        vendor.registration.status === "approved" &&
-        vendor.stripe.accountId &&
-        vendor.stripe.detailsSubmitted &&
-        vendor.stripe.payoutsEnabled &&
-        locationMenus?.length &&
-        locationDrivers?.length
-      );
-    })
-    .map((location) => {
-      const locationMenus = menus[location.vendor];
-      const menusActive = hasActiveMenu(locationMenus);
-      return {
-        ...location,
-        menusActive,
-        nextOpen: !menusActive ? getMenuNextOpen(locationMenus) : "",
-      };
-    })
+  return vendorLocationDetails
+    .filter((v) => v)
     .sort((a, b) => {
-      if (a.menusActive && !b.menusActive) {
+      const vendorLocationA = a as VendorLocation;
+      const vendorLocationB = b as VendorLocation;
+
+      if (vendorLocationA.isOpen && !vendorLocationB.isOpen) {
         return -1;
       }
-      if (b.menusActive && !a.menusActive) {
+      if (vendorLocationB.isOpen && !vendorLocationA.isOpen) {
         return 1;
       }
+
       return 1;
     });
+};
+
+const loadVendorLocationDetails = async (
+  vendorLocation: VendorLocation
+): Promise<VendorLocation | null> => {
+  const vendorDoc = await firestore()
+    .collection("Vendors")
+    .doc(vendorLocation.vendor)
+    .get();
+  const menusSnap = await firestore()
+    .collection("Menus")
+    .where("vendor", "==", vendorLocation.vendor)
+    .get();
+  const activeDriversSnap = await firestore()
+    .collection("DriverClockIns")
+    .where("vendorLocation", "==", vendorLocation.id)
+    .get();
+
+  const vendor = vendorDoc.data();
+  const menus = menusSnap.docs.map((doc) => doc.data() as Menu);
+  const activeDrivers = activeDriversSnap.docs.map(
+    (doc) => doc.data() as DriverClockIn
+  );
+
+  if (
+    !(
+      vendor &&
+      vendor.registration.status === "approved" &&
+      vendor.stripe.accountId &&
+      vendor.stripe.detailsSubmitted &&
+      vendor.stripe.payoutsEnabled &&
+      menus?.length
+    )
+  ) {
+    return null;
+  }
+
+  const menusActive = hasActiveMenu(menus);
+  const locationDrivers = activeDrivers[vendorLocation.id];
+  return {
+    ...vendorLocation,
+    isOpen: !!menusActive && !!locationDrivers?.length,
+    nextOpen: !menusActive ? getMenuNextOpen(menus) : "",
+  };
 };

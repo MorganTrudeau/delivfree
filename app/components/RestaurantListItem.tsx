@@ -15,28 +15,26 @@ interface Props {
 }
 
 const RestaurantListItem = ({ restaurant, onPress }: Props) => {
-  const closed = !restaurant.menusActive;
-
   return (
     <Pressable onPress={() => onPress?.(restaurant)}>
       <View
         style={[$imageContainer, { maxWidth: 400, marginBottom: spacing.xxs }]}
       >
         <FastImage source={{ uri: restaurant.image }} style={$image} />
-        {closed && (
+        {!restaurant.isOpen && (
           <View style={$closedOverlay}>
             <Icon icon={"weather-night"} color={colors.white} />
             <Text style={{ color: colors.white }}>Closed</Text>
           </View>
         )}
       </View>
-      {closed && !!restaurant.nextOpen && (
+      {!restaurant.isOpen && !!restaurant.nextOpen && (
         <MenuNextOpen nextOpen={restaurant.nextOpen} />
       )}
       <Text preset={"semibold"} size={"lg"}>
         {restaurant.name}
       </Text>
-      {!restaurant.menusActive && (
+      {!restaurant.isOpen && (
         <Text style={{ color: colors.textDim }}>Closed</Text>
       )}
     </Pressable>

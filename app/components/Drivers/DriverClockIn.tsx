@@ -1,11 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import firestore from "@react-native-firebase/firestore";
 import { View } from "react-native";
@@ -20,15 +13,18 @@ import { VendorLocationSelectModal } from "../VendorLocation/VendorLocationSelec
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
 import { setDriverClockInStatus } from "app/redux/reducers/driverClockIn";
+import { useAlert } from "app/hooks";
 
 export const DriverClockIn = () => {
   const insets = useSafeAreaInsets();
+  const Alert = useAlert();
 
   const locationSelect = useRef<ModalRef>(null);
 
   const dispatch = useAppDispatch();
   const driverId = useAppSelector((state) => state.driver.activeDriver?.id);
   const vendorLocations = useAppSelector((state) => state.vendorLocations.data);
+
   const vendorLocationsList = useMemo(
     () => Object.values(vendorLocations),
     [vendorLocations]

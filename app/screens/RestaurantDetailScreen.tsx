@@ -1,4 +1,4 @@
-import { fetchVendorLocation } from "app/apis/vendorLocations";
+import { fetchVendorLocationDetail } from "app/apis/vendorLocations";
 import { Icon, IconTypes, Screen, Text } from "app/components";
 import { AdBanner } from "app/components/AdBanner";
 import { CheckoutPopUp, CheckoutPopUpRef } from "app/components/CheckoutPopUp";
@@ -42,7 +42,8 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
   useEffect(() => {
     if (!vendorLocation) {
       const load = async () => {
-        const data = await fetchVendorLocation(restaurantId);
+        const data = await fetchVendorLocationDetail(restaurantId);
+
         if (data) {
           setVendorLocation(data);
         }
@@ -147,36 +148,19 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
         {Platform.OS !== "web" && renderHeader()}
         <View style={$detailsContainer}>
           {Platform.OS === "web" && renderHeader()}
-          {/* {!!restaurant.menuLink && (
-            <DetailItem
-              text={"View menu"}
-              icon={"food-fork-drink"}
-              onPress={viewMenu}
-            />
-          )}
-          {!!restaurant.orderLink && (
-            <DetailItem
-              text={"Order online"}
-              icon={"web"}
-              onPress={orderOnline}
-            />
-          )}
-          {!!restaurant.phoneNumber && (
-            <DetailItem
-              text={"Order by phone"}
-              icon={"phone"}
-              onPress={phoneRestaurant}
-            />
-          )}
-          {!!restaurant.address && (
-            <DetailItem
-              text={restaurant.address}
-              icon={"pin"}
-              onPress={viewAddress}
-            />
-          )} */}
           <View style={{ height: spacing.sm }} />
           {!menusLoaded && <ActivityIndicator color={colors.primary} />}
+          {!vendorLocation.isOpen && (
+            <View style={{ paddingBottom: spacing.md }}>
+              <Text preset="subheading">Restaurant closed</Text>
+              {!!vendorLocation.nextOpen && (
+                <Text style={{ color: colors.primary }}>
+                  Opens {vendorLocation.nextOpen}
+                </Text>
+              )}
+            </View>
+          )}
+
           {menusLoaded && !filteredMenus.length && (
             <EmptyList
               title={"No menus available right now"}
@@ -193,6 +177,7 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
               menu={activeMenu}
               vendor={vendorLocation.vendor}
               vendorLocation={vendorLocation.id}
+              vendorLocationClosed={!vendorLocation.isOpen}
             />
           )}
         </View>

@@ -1,12 +1,3 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
 import * as admin from "firebase-admin";
 import * as express from "express";
 import axios from "axios";
@@ -21,7 +12,8 @@ import {
 import {
   buildMessagePayload,
   sendAdminNotifications,
-  sendNotifications,
+  sendNewOrderNotification,
+  sendOrderDriverAssignedNotification,
 } from "./utils/notifications";
 import {
   CallableRequest,
@@ -40,6 +32,8 @@ import {
   getLicenseData,
   decreaseLicensePositionsBatch,
 } from "./utils";
+import { assignOrderDriver, updateOrderAnalytics } from "./utils/orders";
+import { adminDomain } from "./config.json";
 
 const whitelistDomains = true; //[/delivfree-vendor\.web\.app$/, "*"];
 
@@ -49,9 +43,6 @@ const googlePlacesApi = express();
 
 //Other stuff you are doing with express
 googlePlacesApi.use(cors({ origin: "*" }));
-
-const domain = "https://app.delivfree.com";
-const adminDomain = "https://admin.delivfree.com";
 
 googlePlacesApi.get("*", async (req, res) => {
   console.log(req.path, req.query);
@@ -107,10 +98,9 @@ export const addDriver = onCall(
     request: CallableRequest<{
       driver: string;
       vendor: string;
-      parentDriver: string;
     }>
   ) => {
-    const { driver: driverId, vendor, parentDriver } = request.data;
+    const { driver: driverId, vendor } = request.data;
     if (!(driverId && vendor)) {
       throw new HttpsError("invalid-argument", "Missing required data");
     }
@@ -128,11 +118,42 @@ export const addDriver = onCall(
       vendors: [...(driver.vendors || []), vendor],
     };
 
-    if (parentDriver) {
-      updatedDriver.parentDrivers = { [vendor]: parentDriver };
+    driverRef.set(updatedDriver);
+
+    return true;
+  }
+);
+
+export const onOrderCreated = onDocumentCreated(
+  "Orders/{orderId}",
+  async (event) => {
+    if (!event.data) {
+      return true;
     }
 
-    driverRef.set(updatedDriver);
+    const order = event.data.data() as Order | undefined;
+
+    if (!order) {
+      return true;
+    }
+
+    try {
+      await sendNewOrderNotification(order);
+    } catch (error) {
+      console.error("Failed to notify driver of new order", error);
+    }
+
+    try {
+      assignOrderDriver(order);
+    } catch (error) {
+      console.error("Failed to assign driver", error);
+    }
+
+    try {
+      updateOrderAnalytics(order);
+    } catch (error) {
+      console.error("Failed to update order analytics", error);
+    }
 
     return true;
   }
@@ -148,88 +169,13 @@ export const onOrderWritten = onDocumentWritten(
     const orderBefore = event.data.before.data() as Order | undefined;
     const orderAfter = event.data.after.data() as Order | undefined;
 
-    const vendor = orderBefore?.vendor || orderAfter?.vendor;
-    const date = orderBefore?.date || orderAfter?.date;
-    const customer = orderBefore?.customer || orderAfter?.customer;
-
     if (!orderBefore?.driver && orderAfter?.driver) {
       try {
-        const userIds = [orderAfter.driver];
-        const notification = {
-          title: "New Order",
-          body: `View order details and prepare for delivery.`,
-        };
-        const data = {
-          orderId: orderAfter.id,
-          type: "order_created",
-        };
-        const collapseKey = "orderCreated";
-        const link = `https://${domain}?route=orders`;
-        const payload = buildMessagePayload(
-          notification,
-          data,
-          collapseKey,
-          link
-        );
-        await sendNotifications(userIds, payload);
+        sendOrderDriverAssignedNotification(orderAfter);
       } catch (error) {
         console.log("Failed to notify driver of new order", error);
       }
     }
-
-    if (!(vendor && date && customer)) {
-      return true;
-    }
-
-    var today = new Date(date);
-
-    var year = today.getFullYear();
-    var month = String(today.getMonth() + 1).padStart(2, "0");
-    var day = String(today.getDate()).padStart(2, "0");
-
-    var formattedDate = year + "-" + month + "-" + day;
-
-    const tip =
-      (orderAfter?.tip ? Number(orderAfter.tip) : 0) -
-      (orderBefore?.tip ? Number(orderBefore.tip) : 0);
-    const amount =
-      (orderAfter?.total ? Number(orderAfter.total) : 0) -
-      (orderBefore?.total ? Number(orderBefore.total) : 0);
-
-    const update: {
-      count?: admin.firestore.FieldValue;
-      tips: admin.firestore.FieldValue;
-      amount: admin.firestore.FieldValue;
-      customer: {
-        [id: string]: {
-          amount: admin.firestore.FieldValue;
-          tips: admin.firestore.FieldValue;
-        };
-      };
-    } = {
-      amount: admin.firestore.FieldValue.increment(amount),
-      tips: admin.firestore.FieldValue.increment(tip),
-      customer: {
-        [customer]: {
-          amount: admin.firestore.FieldValue.increment(amount),
-          tips: admin.firestore.FieldValue.increment(tip),
-        },
-      },
-    };
-
-    if (!orderBefore || !orderAfter) {
-      update.count = admin.firestore.FieldValue.increment(
-        !orderBefore ? 1 : -1
-      );
-    }
-
-    await admin
-      .firestore()
-      .collection("VendorOrderCount")
-      .doc(vendor)
-      .collection("OrderCount")
-      .doc(formattedDate)
-      .set(update, { merge: true });
 
     return true;
   }
@@ -303,6 +249,7 @@ export const onVendorLocationWritten = onDocumentWritten(
     if (!event.data) {
       return true;
     }
+
     const locationBefore = event.data.before.data() as
       | VendorLocation
       | undefined;
@@ -344,6 +291,7 @@ export const onPositionsWritten = onDocumentWritten(
     if (!event.data) {
       return true;
     }
+
     const positionsBefore = event.data.before.data() as Positions | undefined;
     const positionsAfter = event.data.after.data() as Positions | undefined;
 
@@ -383,6 +331,7 @@ export const onLicensesWritten = onDocumentWritten(
     if (!event.data) {
       return true;
     }
+
     const licenseBefore = event.data.before.data() as License | undefined;
     const licenseAfter = event.data.after.data() as License | undefined;
 

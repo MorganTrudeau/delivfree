@@ -1,5 +1,6 @@
 import { Cuisines } from "./enums";
 
+export type DriverClockIn = { vendorLocation: string; date: number; ordersTaken: number };
 export type DaysAndTimes = {
   days: number[];
   startTime: { hours: number; minutes: number } | null;
@@ -130,7 +131,7 @@ export type VendorLocation = {
   positions: string;
   status: Status;
   updated: number;
-  menusActive?: boolean;
+  isOpen?: boolean;
   nextOpen?: string;
 };
 export type Vendor = {

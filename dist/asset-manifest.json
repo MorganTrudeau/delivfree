@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/chunk.main.0038d21779e597197f9f.js",
-    "chunk.892.js": "/chunk.892.37db2386e7cbda5aefdb.js",
+    "main.js": "/chunk.main.e771ba8c047f063059ac.js",
+    "chunk.846.js": "/chunk.846.fecf2f0b30c4149ee5a2.js",
     "MaterialCommunityIcons.ttf": "/5d42b4e60858731e7b65.ttf",
     "pizza.jpg": "/097729fcae7e049f327e.jpg",
     "sushi.jpg": "/059666be1816495d79de.jpg",
@@ -46,6 +46,7 @@
     "favicon/mstile-150x150.png": "/favicon/mstile-150x150.png",
     "favicon/favicon-16x16.png": "/favicon/favicon-16x16.png",
     "favicon/favicon.ico": "/favicon/favicon.ico",
+    "stripe-logo-sm.png": "/e9548ae1fbe399154b52.png",
     "../web-build/index.html": "/../web-build/index.html",
     "index.html": "/index.html",
     "favicon/safari-pinned-tab.svg": "/favicon/safari-pinned-tab.svg",
@@ -61,7 +62,7 @@
     "meta.json": "/meta.json"
   },
   "entrypoints": [
-    "chunk.892.37db2386e7cbda5aefdb.js",
-    "chunk.main.0038d21779e597197f9f.js"
+    "chunk.846.fecf2f0b30c4149ee5a2.js",
+    "chunk.main.e771ba8c047f063059ac.js"
   ]
 }

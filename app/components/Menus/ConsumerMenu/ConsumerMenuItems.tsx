@@ -13,12 +13,14 @@ interface Props {
   category: string;
   vendor: string;
   vendorLocation: string;
+  vendorLocationClosed: boolean;
 }
 
 export const ConsumerMenuItems = ({
   category,
   vendor,
   vendorLocation,
+  vendorLocationClosed,
 }: Props) => {
   const itemSelectModal = useRef<ModalRef>(null);
 
@@ -33,9 +35,12 @@ export const ConsumerMenuItems = ({
   const [selectedItem, setSelectedItem] = useState<MenuItem>();
 
   const handleItemPress = useCallback((item: MenuItem) => {
+    if (vendorLocationClosed) {
+      return;
+    }
     setSelectedItem(item);
     itemSelectModal.current?.open();
-  }, []);
+  }, [vendorLocationClosed]);
 
   return (
     <View>

@@ -2,6 +2,14 @@ import * as admin from "firebase-admin";
 import { License, Positions } from "../types";
 import { HttpsError } from "firebase-functions/v2/https";
 
+export const getTodaysDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 export const checkAuthentication = (uid: string | undefined): void => {
   if (!uid) {
     throw new HttpsError("unauthenticated", "User must be authenticated.");

@@ -1,5 +1,7 @@
 import * as admin from "firebase-admin";
 import { BaseMessage } from "firebase-admin/lib/messaging/messaging-api";
+import { Order, Vendor } from "../types";
+import { vendorDomain } from "../config.json";
 
 const webpushImage = "";
 
@@ -84,4 +86,51 @@ export async function sendAdminNotifications(payload: BaseMessage) {
   const adminSnap = await admin.firestore().collection("Admins").get();
   const adminIds = adminSnap.docs.map((doc) => doc.id);
   return sendNotifications(adminIds, payload);
+}
+
+export async function sendNewOrderNotification(order: Order) {
+  const vendorDoc = await admin
+    .firestore()
+    .collection("Vendors")
+    .doc(order.vendor)
+    .get();
+  const vendor = vendorDoc.data() as Vendor | undefined;
+
+  if (!vendor) {
+    return true;
+  }
+
+  const vendorOwners = vendor.users;
+
+  const notification = {
+    title: "New Order",
+    body: `An new order has been placed`,
+  };
+  const data = {
+    orderId: order.id,
+    type: "order_created",
+  };
+  const collapseKey = "orderCreated";
+  const link = `${vendorDomain}?route=orders`;
+  const payload = buildMessagePayload(notification, data, collapseKey, link);
+  return sendNotifications(vendorOwners, payload);
+}
+
+export async function sendOrderDriverAssignedNotification(order: Order) {
+  if (!order.driver) {
+    return;
+  }
+  const userIds = [order.driver];
+  const notification = {
+    title: "New Order",
+    body: `View order details and prepare for delivery.`,
+  };
+  const data = {
+    orderId: order.id,
+    type: "order_created",
+  };
+  const collapseKey = "orderCreated";
+  const link = `https://${vendorDomain}?route=orders`;
+  const payload = buildMessagePayload(notification, data, collapseKey, link);
+  return sendNotifications(userIds, payload);
 }
