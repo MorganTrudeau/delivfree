@@ -5,6 +5,7 @@ import React from "react";
 import { spacing } from "app/theme";
 import { LogoutButton } from "app/components/LogoutButton";
 import { ManageDriverSubscription } from "app/components/Subscription/ManageDriverSubscription";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface DriverStartSubscriptionScreenProps
   extends AppStackScreenProps<"StartSubscription"> {}
@@ -12,11 +13,15 @@ interface DriverStartSubscriptionScreenProps
 export const DriverStartSubscriptionScreen = (
   props: DriverStartSubscriptionScreenProps
 ) => {
+  const insets = useSafeAreaInsets();
   return (
     <Screen
       preset="scroll"
       style={{ flex: 1, maxWidth: undefined }}
-      contentContainerStyle={$containerPadding}
+      contentContainerStyle={[
+        $containerPadding,
+        { paddingBottom: spacing.md + insets.bottom },
+      ]}
     >
       <ManageDriverSubscription />
       <LogoutButton style={{ alignSelf: "center", marginTop: spacing.md }} />

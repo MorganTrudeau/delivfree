@@ -6,7 +6,6 @@ import { DetailsHeader } from "app/components/Details/DetailsHeader";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { StatusIndicator } from "app/components/StatusIndicator";
-import { TextInput } from "app/components/TextInput";
 import { ManageVendorLocationModal } from "app/components/VendorLocation/ManageVendorLocation";
 import { VendorLocationsList } from "app/components/VendorLocations/VendorLocationsList";
 import {
@@ -19,11 +18,10 @@ import { useAlert, useToast } from "app/hooks";
 import { FirebaseUser } from "app/redux/reducers/auth";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { createVendor } from "app/redux/thunks/vendor";
-import { listenToVendorLocations } from "app/redux/thunks/vendorLocations";
 import { colors, spacing } from "app/theme";
 import { sizing } from "app/theme/sizing";
-import { generateUid } from "app/utils/general";
-import { ModalRef, Status, User, Vendor, VendorLocation } from "delivfree";
+import { generateUid, isValidEmail } from "app/utils/general";
+import { User, Vendor, VendorLocation } from "delivfree";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -97,6 +95,9 @@ export const EditVendorProfileScreen = () => {
   const closeVendorLocationModal = useCallback(() => {
     vendorLocationModal.current?.close();
   }, []);
+  const handleVendorLocationClosed = useCallback(() => {
+    setEditLocation(undefined);
+  }, []);
 
   const addLocation = () => {
     openVendorLocationModal();
@@ -113,6 +114,9 @@ export const EditVendorProfileScreen = () => {
         "Missing fields",
         "Please fill out all fields before continuing."
       );
+    }
+    if (!isValidEmail(vendorState.email)) {
+      return Alert.alert("Invalid email", "Please enter a valid email.");
     }
     const newUser: Pick<
       User,
@@ -308,6 +312,7 @@ export const EditVendorProfileScreen = () => {
         ref={vendorLocationModal}
         onClose={closeVendorLocationModal}
         editLocation={editLocation}
+        onDismiss={handleVendorLocationClosed}
       />
     </Screen>
   );

@@ -42,8 +42,8 @@ export const RestaurantsScreen = ({
 
   const listContent = useMemo(
     () => ({
-      paddingBottom: spacing.sm + insets.bottom,
-      paddingHorizontal: spacing.lg,
+      paddingBottom: spacing.md + insets.bottom,
+      paddingHorizontal: spacing.md,
     }),
     [insets.bottom]
   );
@@ -84,10 +84,7 @@ export const RestaurantsScreen = ({
   );
 
   return (
-    <Screen
-      safeAreaEdges={HORIZONTAL_SAFE_AREA_EDGES}
-      contentContainerStyle={$screen}
-    >
+    <Screen contentContainerStyle={$screen}>
       <RestaurantsList
         restaurants={restaurants}
         loadMore={loadRestaurants}

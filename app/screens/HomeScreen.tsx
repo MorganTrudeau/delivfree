@@ -1,5 +1,4 @@
 import { Icon, Screen, Text } from "app/components";
-import { Drawer } from "app/components/Drawer";
 import React, {
   useCallback,
   useEffect,
@@ -7,15 +6,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { $screen, HORIZONTAL_SAFE_AREA_EDGES } from "app/components/styles";
+import { $screen } from "app/components/styles";
 import CuisineList from "app/components/Cuisines/CuisineList";
-import {
-  ActivityIndicator,
-  Platform,
-  Pressable,
-  View,
-  ViewStyle,
-} from "react-native";
+import { ActivityIndicator, Pressable, View, ViewStyle } from "react-native";
 import { colors, spacing } from "app/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TextInput } from "app/components/TextInput";
@@ -57,8 +50,8 @@ export const HomeScreen = (props: HomeScreenProps) => {
   const listContent = useMemo(
     () => ({
       paddingTop: spacing.md,
-      paddingHorizontal: spacing.lg,
-      paddingBottom: spacing.sm + insets.bottom,
+      paddingHorizontal: spacing.md,
+      paddingBottom: spacing.md + insets.bottom,
     }),
     [insets.bottom]
   );
@@ -142,11 +135,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
   }, [searchLoading, search]);
 
   return (
-    <Screen
-      safeAreaEdges={HORIZONTAL_SAFE_AREA_EDGES}
-      
-      contentContainerStyle={$screen}
-    >
+    <Screen contentContainerStyle={$screen}>
       <CuisineList
         contentContainerStyle={listContent}
         onCuisinePress={navigateToCuisine}

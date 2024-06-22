@@ -39,11 +39,11 @@ export const OrderItemMobile = ({
 
       <View style={$row}>
         <Text style={{ marginRight: spacing.md }} size={"xs"}>
-          Order total: {localizeCurrency(Number(order.total), "USD")}
+          Order total: {localizeCurrency(Number(order.total), order.currency)}
         </Text>
 
         <Text size={"xs"}>
-          Tip: {localizeCurrency(Number(order.tip), "USD")}
+          Tip: {localizeCurrency(Number(order.tip), order.currency)}
         </Text>
       </View>
 
@@ -67,8 +67,10 @@ export const OrderItemMobile = ({
         </Text>
       </View>
 
-      {driverId && order.driver && order.driver !== driverId && (
-        <Text style={{ marginTop: spacing.xs }}>Driver: {driverName}</Text>
+      {!driverId && !!driverName && (
+        <Text style={{ marginTop: spacing.xs }} size={"xs"}>
+          Driver: {driverName}
+        </Text>
       )}
 
       {(showClaimButton || showStatusButtons) && (

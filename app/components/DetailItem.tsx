@@ -13,7 +13,11 @@ export const DetailItem = ({
   onPress?: () => void;
 }) => {
   return (
-    <Pressable style={{ marginTop: spacing.xxs }} onPress={onPress}>
+    <Pressable
+      style={{ marginTop: spacing.xxs }}
+      onPress={onPress}
+      disabled={!onPress}
+    >
       <Text preset="semibold" size={"xs"}>
         {title}
       </Text>

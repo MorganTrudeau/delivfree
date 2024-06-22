@@ -14,6 +14,7 @@ import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
 import { setDriverClockInStatus } from "app/redux/reducers/driverClockIn";
 import { useAlert } from "app/hooks";
+import { DriverClockIn as DriverClockInType } from "delivfree";
 
 export const DriverClockIn = () => {
   const insets = useSafeAreaInsets();
@@ -68,7 +69,11 @@ export const DriverClockIn = () => {
         .collection("DriverClockIns")
         .doc(driverId);
 
-      const newClockInStatus = { vendorLocation, date: Date.now() };
+      const newClockInStatus: DriverClockInType = {
+        vendorLocation,
+        date: Date.now(),
+        ordersTaken: 0,
+      };
       await driverClockInDoc.set(newClockInStatus);
       dispatch(setDriverClockInStatus(newClockInStatus));
     },

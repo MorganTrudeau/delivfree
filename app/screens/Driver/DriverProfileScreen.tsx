@@ -12,12 +12,13 @@ import { Drawer } from "app/components/Drawer";
 import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
-import { useToast } from "app/hooks";
+import { useAlert, useToast } from "app/hooks";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
+import { isValidEmail } from "app/utils/general";
 import { Driver, Vendor } from "delivfree";
 import React, { useCallback, useMemo, useState } from "react";
 import {
@@ -31,6 +32,9 @@ import {
 interface DriverProfileScreenProps extends AppStackScreenProps<"Profile"> {}
 
 export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
+  const Alert = useAlert();
+  const Toast = useToast();
+
   const driver = useAppSelector((state) => state.driver.activeDriver as Driver);
 
   const [{ updates, isSaved }, setUpdates] = useState<{
@@ -50,8 +54,12 @@ export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
   };
 
   const handleUpdateDriver = useCallback(async () => {
+    if (updates.email && !isValidEmail(updates.email)) {
+      return Alert.alert("Invalid email", "Please enter a valid email.");
+    }
     updateDriver(driver.id, updates);
     setUpdates((s) => ({ ...s, isSaved: true }));
+    Toast.show("Profile update successfully");
   }, [updates, driver?.id]);
 
   const { exec, loading } = useAsyncFunction(handleUpdateDriver);
@@ -77,6 +85,13 @@ export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
         containerStyle={$input}
         value={getValue("lastName")}
         onChangeText={updateValue("lastName")}
+      />
+      <TextField
+        placeholder="Email"
+        label="Email"
+        containerStyle={$input}
+        value={getValue("email")}
+        onChangeText={updateValue("email")}
       />
       <TextField
         placeholder="Phone number"

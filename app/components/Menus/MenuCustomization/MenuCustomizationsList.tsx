@@ -76,6 +76,7 @@ export const MenuCustomizationsList = ({
         data={customizations}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
+        showsVerticalScrollIndicator={false}
       />
     </>
   );

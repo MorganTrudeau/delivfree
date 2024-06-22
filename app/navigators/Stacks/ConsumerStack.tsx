@@ -34,12 +34,12 @@ export const ConsumerStack = () => {
         <Stack.Screen
           name="Home"
           component={Screens.HomeScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Settings"
           component={Screens.SettingsScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="AddressSearch"
@@ -65,35 +65,7 @@ export const ConsumerStack = () => {
           options={Platform.select({
             web: {},
             default: {
-              headerTransparent: true,
-              headerStyle: { backgroundColor: "transparent" },
-              headerTitle: "",
-              headerRight: () => (
-                <View
-                  style={{
-                    paddingHorizontal: Platform.select({
-                      web: spacing.md,
-                      default: 0,
-                    }),
-                  }}
-                >
-                  <CheckoutCartTracker color={colors.white} />
-                </View>
-              ),
-              headerLeft: (props) =>
-                props.canGoBack ? (
-                  <Pressable
-                    style={{
-                      backgroundColor: "rgba(0,0,0,0.5)",
-                      borderRadius: 100,
-                      padding: spacing.xxs,
-                      marginLeft: Platform.OS === "web" ? spacing.md : 0,
-                    }}
-                    onPress={() => navigation.goBack()}
-                  >
-                    <Icon icon={"arrow-left"} color={"#fff"} />
-                  </Pressable>
-                ) : null,
+              headerShown: false,
             },
           })}
         />

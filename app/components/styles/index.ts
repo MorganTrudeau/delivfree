@@ -63,7 +63,6 @@ export const $containerPadding: ViewStyle = {
 };
 export const $screen: ViewStyle = {
   flex: 1,
-  maxWidth: MAX_CONTENT_WIDTH,
 };
 export const $screenHeading: TextStyle = {
   marginBottom: spacing.md,
@@ -241,7 +240,7 @@ export const $imageContainer: StyleProp<ViewStyle> = [
     borderRadius: borderRadius.md,
     width: "100%",
     // maxWidth: 400,
-    aspectRatio: 2.8,
+    aspectRatio: 2.5,
     backgroundColor: colors.background,
   },
 ];

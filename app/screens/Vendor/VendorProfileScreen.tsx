@@ -11,11 +11,13 @@ import { Drawer } from "app/components/Drawer";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
+import { useAlert, useToast } from "app/hooks";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
+import { isValidEmail } from "app/utils/general";
 import { Vendor } from "delivfree";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -29,6 +31,9 @@ import {
 interface VendorProfileScreenProps extends AppStackScreenProps<"Profile"> {}
 
 export const VendorProfileScreen = (props: VendorProfileScreenProps) => {
+  const Alert = useAlert();
+  const Toast = useToast();
+
   const vendor = useAppSelector((state) => state.vendor.activeVendor as Vendor);
 
   const [{ updates, isSaved }, setUpdates] = useState<{
@@ -50,10 +55,14 @@ export const VendorProfileScreen = (props: VendorProfileScreenProps) => {
 
   const handleUpdateVendor = useCallback(async () => {
     try {
+      if (updates.email && !isValidEmail(updates.email)) {
+        return Alert.alert("Invalid email", "Please enter a valid email.");
+      }
       setUpdating(true);
       updateVendor(vendor.id, updates);
       setUpdates((s) => ({ ...s, isSaved: true }));
       setUpdating(false);
+      Toast.show("Profile update successfully");
     } catch (error) {
       setUpdating(false);
       console.log("Update vendor error", error);
@@ -69,23 +78,8 @@ export const VendorProfileScreen = (props: VendorProfileScreenProps) => {
       style={$screen}
       contentContainerStyle={$containerPadding}
     >
-      <View style={$row}>
-        <ScreenHeader title={"Profile"} />
-        {Platform.OS === "web" &&
-          !isSaved &&
-          (updating ? (
-            <ActivityIndicator color={colors.primary} />
-          ) : (
-            <Pressable onPress={handleUpdateVendor} style={$row}>
-              <Text>Save</Text>
-              <Icon
-                icon="check-circle"
-                color={colors.primary}
-                style={{ marginLeft: spacing.xxs }}
-              />
-            </Pressable>
-          ))}
-      </View>
+      <ScreenHeader title={"Profile"} />
+
       <TextField
         placeholder="First name"
         label="First name"
@@ -106,6 +100,13 @@ export const VendorProfileScreen = (props: VendorProfileScreenProps) => {
         containerStyle={$input}
         value={getValue("businessName")}
         onChangeText={updateValue("businessName")}
+      />
+      <TextField
+        placeholder="Email"
+        label="Email"
+        containerStyle={$input}
+        value={getValue("email")}
+        onChangeText={updateValue("email")}
       />
       <PhoneNumberInput
         placeholder="Phone number"

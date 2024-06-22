@@ -52,6 +52,9 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
   const closeManageLocation = () => {
     manageLocationModal.current?.close();
   };
+  const handleVendorLocationClosed = useCallback(() => {
+    setEditLocation(undefined);
+  }, []);
 
   const handleEditLocation = useCallback((location: VendorLocation) => {
     setEditLocation(location);
@@ -74,7 +77,6 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      
     >
       <VendorLocationsList
         locations={vendorLocationList}
@@ -88,6 +90,7 @@ export const VendorLocationsScreen = (props: VendorLocationsScreenProps) => {
           vendor={vendorId}
           onClose={closeManageLocation}
           editLocation={editLocation}
+          onDismiss={handleVendorLocationClosed}
         />
       )}
     </Screen>

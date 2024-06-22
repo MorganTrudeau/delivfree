@@ -9,6 +9,7 @@ import { Linking, Platform } from "react-native";
 import { Vendor } from "delivfree/types";
 import { updateVendor } from "./vendors";
 import { navigationRef } from "app/navigators";
+import { extractFont } from "react-native-svg/lib/typescript/lib/extract/extractText";
 
 export const getStripeAccountBalance = async (
   account: string
@@ -208,8 +209,6 @@ export const subscribe = async (
     });
   }
 
-  console.log(subscription);
-
   if (subscription && subscription.status !== "canceled") {
     const items: Array<Stripe.SubscriptionUpdateParams.Item> = lineItems.map(
       (item) => {
@@ -271,4 +270,85 @@ export const subscribe = async (
       });
     }
   }
+};
+
+export const updateSubscription = async (
+  subscription: Stripe.Subscription,
+  lineItems: Stripe.SubscriptionCreateParams.Item[],
+  metadata: { [key: string]: string }
+) => {
+  const items: Array<Stripe.SubscriptionUpdateParams.Item> = lineItems.map(
+    (item) => {
+      const subscriptionItem = subscription.items.data.find(
+        (i) => i.price.id === item.price
+      );
+      if (subscriptionItem) {
+        return {
+          price: item.price,
+          quantity: item.quantity,
+          id: subscriptionItem.id,
+        };
+      } else {
+        return { price: item.price, quantity: item.quantity };
+      }
+    }
+  );
+
+  subscription.items.data.forEach((item) => {
+    if (!items.find((i) => i.price === item.price.id)) {
+      items.push({ id: item.id, quantity: 0, price: item.price.id });
+    }
+  });
+
+  const params: Stripe.SubscriptionUpdateParams = {
+    items,
+    cancel_at_period_end: false,
+    proration_behavior: "create_prorations",
+    cancellation_details: {},
+    metadata,
+  };
+  await functions().httpsCallable("updateSubscription")({
+    id: subscription.id,
+    params,
+  });
+};
+
+export const fetchPaymentSheet = async ({
+  customerData,
+  params,
+}: {
+  customerData: {
+    email: string;
+  };
+  params: Stripe.PaymentIntentCreateParams;
+}): Promise<{
+  ephemeralKey: string;
+  clientSecret: string;
+  customerId: string;
+}> => {
+  const res = await functions().httpsCallable("fetchPaymentSheet")({
+    customerData,
+    params,
+  });
+  return res.data;
+};
+
+export const fetchSubscriptionPaymentSheet = async ({
+  customerData,
+  params,
+}: {
+  customerData: {
+    email: string;
+  };
+  params: Omit<Stripe.SubscriptionCreateParams, "customer">;
+}): Promise<{
+  ephemeralKey: string;
+  clientSecret: string;
+  customerId: string;
+}> => {
+  const res = await functions().httpsCallable("fetchSubscriptionPaymentSheet")({
+    customerData,
+    params,
+  });
+  return res.data;
 };

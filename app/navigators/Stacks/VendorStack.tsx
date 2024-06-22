@@ -84,7 +84,7 @@ export const VendorStack = () => {
       getPositionsFromSubscription(subscription);
 
     return (
-      ["active", "incomplete", "trialing"].includes(subscription.status) &&
+      ["active", "trialing"].includes(subscription.status) &&
       licensedFullTime === subscribedFullTime &&
       licensedPartTime === subscribedPartTime
     );
@@ -119,7 +119,10 @@ export const VendorStack = () => {
           <Stack.Screen
             name="PositionsSearch"
             component={Screens.PositionsSearchScreen}
-            options={{ headerTitle: "", headerLeft: LogoHeader }}
+            options={{
+              headerTitle: "",
+              headerLeft: LogoHeader,
+            }}
           />
           <Stack.Screen
             name="DriverRegistration"
@@ -151,22 +154,22 @@ export const VendorStack = () => {
         <Stack.Screen
           name="Orders"
           component={Screens.DriverOrdersScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Profile"
           component={Screens.DriverProfileScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Subscription"
           component={Screens.DriverSubscriptionScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Settings"
           component={Screens.SettingsScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="AddressSearch"
@@ -216,42 +219,42 @@ export const VendorStack = () => {
         <Stack.Screen
           name="Home"
           component={Screens.VendorHomeScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Menus"
           component={Screens.VendorMenusScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Orders"
           component={Screens.VendorOrdersScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Profile"
           component={Screens.VendorProfileScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Locations"
           component={Screens.VendorLocationsScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Subscription"
           component={Screens.VendorSubscriptionScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Positions"
           component={Screens.VendorPositionsScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
           name="Settings"
           component={Screens.SettingsScreen}
-          options={{ headerLeft: DrawerIconButton }}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen name="WebView" component={Screens.WebViewScreen} />
         <Stack.Screen name="About" component={Screens.AboutScreen} />

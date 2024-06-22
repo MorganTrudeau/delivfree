@@ -19,7 +19,10 @@ export const ConsumerMenuItem = React.memo(function ConsumerMenuItem({
 }: Props) {
   const imageSource = useMemo(() => ({ uri: item.image }), [item.image]);
   return (
-    <Pressable onPress={() => onPress(item)} style={[$borderLight, $container]}>
+    <Pressable
+      onPress={() => onPress(item)}
+      style={[$borderLight, { borderWidth: 1 }, $container]}
+    >
       <View style={{ padding: spacing.md, flex: 1 }}>
         <Text preset="semibold">{item.name}</Text>
         <Text>

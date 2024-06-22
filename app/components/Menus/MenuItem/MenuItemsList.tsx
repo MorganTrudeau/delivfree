@@ -105,6 +105,7 @@ export const MenuItemsList = ({
         data={items}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
+        showsVerticalScrollIndicator={false}
       />
     </>
   );

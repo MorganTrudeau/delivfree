@@ -16,4 +16,7 @@ export const Cuisines = {
   CoffeeShopsCafes: "coffee_shops_cafes",
 } as const;
 
-export const AppMessageTypes = {} as const;
+export const AppMessageTypes = {
+  ORDER_DRIVER_ASSIGNED: "order_driver_assigned",
+  NEW_ORDER: "new_order",
+} as const;

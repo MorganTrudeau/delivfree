@@ -51,6 +51,7 @@ export const LoginScreen = (_props: LoginScreenProps) => {
           email: trimmedEmail,
         });
         if (!res.data) {
+          setLoading(false);
           return Alert.alert("No access", "You are not an admin user.");
         }
       }

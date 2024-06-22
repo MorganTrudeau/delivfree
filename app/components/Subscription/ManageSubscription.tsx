@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Button, Text } from "app/components";
-import { $borderTop, $borderedArea } from "app/components/styles";
+import { $borderTop, $borderedArea, $flex } from "app/components/styles";
 import { spacing } from "app/theme";
 import { Card } from "app/components/Card";
 import { LicenseItem } from "app/components/Licenses/LicenseItem";
@@ -38,7 +38,7 @@ export const ManageSubscription = ({
   );
 
   return (
-    <Card>
+    <Card smallStyle={$flex}>
       {/* <AppLogo style={{ marginBottom: spacing.lg }} height={50} /> */}
       <Text preset="heading" style={{ marginBottom: spacing.md }}>
         License subscription

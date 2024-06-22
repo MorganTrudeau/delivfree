@@ -84,6 +84,7 @@ export const MenusList = ({ data, onPress, loaded }: Props) => {
         data={data}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
+        showsVerticalScrollIndicator={false}
       />
     </>
   );

@@ -6,13 +6,19 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { generateUid, getAppType } from "app/utils/general";
+import {
+  generateUid,
+  generateVendorLocationKeywords,
+  getAppType,
+} from "app/utils/general";
 import { Cuisines, Positions, Status, VendorLocation } from "delivfree";
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
+  ScrollView,
+  ScrollViewProps,
   StyleSheet,
-  TextInput,
   TextStyle,
   View,
   ViewStyle,
@@ -20,7 +26,7 @@ import {
 import { TextField } from "../TextField";
 import { colors, spacing } from "app/theme";
 import { DropDownPicker } from "../DropDownPicker";
-import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
+import { ModalRef } from "../Modal/CenterModal";
 import { getCuisineTitle } from "app/utils/cuisines";
 import { Text } from "../Text";
 import {
@@ -31,7 +37,7 @@ import {
   $input,
   $row,
 } from "../styles";
-import { useAlert, useUploadImage } from "app/hooks";
+import { useAlert, useOnChange, useUploadImage } from "app/hooks";
 import firestore from "@react-native-firebase/firestore";
 import FastImage from "react-native-fast-image";
 import { chooseImage } from "app/utils/media";
@@ -40,6 +46,7 @@ import { Icon } from "../Icon";
 import { Button } from "../Button";
 import {
   addVendorLocation,
+  deleteVendorLocation,
   updateVendorLocation,
 } from "app/apis/vendorLocations";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
@@ -47,7 +54,6 @@ import { PhoneNumberInput } from "../PhoneNumberInput";
 import PhoneInput from "react-native-phone-number-input";
 import { PositionsSelect } from "../Positions/PositionsSelect";
 import { fetchPositions } from "app/apis/positions";
-import { useAppSelector } from "app/redux/store";
 import { StatusPicker } from "../StatusPicker";
 import { BottomSheet, BottomSheetRef } from "../Modal/BottomSheet";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -58,6 +64,34 @@ interface Props {
   vendor: string;
   onClose: () => void;
 }
+
+const stateFromProps = (
+  editLocation: Props["editLocation"],
+  vendor: Props["vendor"]
+): VendorLocation =>
+  editLocation
+    ? {
+        ...editLocation,
+        positions: editLocation.positions || generateUid(),
+      }
+    : {
+        id: generateUid(),
+        address: "",
+        latitude: 0,
+        longitude: 0,
+        geohash: "",
+        cuisines: [],
+        keywords: [],
+        vendor,
+        callingCountry: "CA",
+        callingCode: "+1",
+        phoneNumber: "",
+        name: "",
+        image: "",
+        positions: generateUid(),
+        status: "pending",
+        updated: Date.now(),
+      };
 
 export const ManageVendorLocation = ({
   vendor,
@@ -72,31 +106,7 @@ export const ManageVendorLocation = ({
   const { uploadImage, progress, uploadTask } = useUploadImage();
 
   const [vendorLocationState, setVendorLocationState] =
-    useState<VendorLocation>(
-      editLocation
-        ? {
-            ...editLocation,
-            positions: editLocation.positions || generateUid(),
-          }
-        : {
-            id: generateUid(),
-            address: "",
-            latitude: 0,
-            longitude: 0,
-            geohash: "",
-            cuisines: [],
-            keywords: [],
-            vendor,
-            callingCountry: "CA",
-            callingCode: "+1",
-            phoneNumber: "",
-            name: "",
-            image: "",
-            positions: generateUid(),
-            status: "pending",
-            updated: Date.now(),
-          }
-    );
+    useState<VendorLocation>(stateFromProps(editLocation, vendor));
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
   const [positions, setPositions] = useState<Positions>({
@@ -114,6 +124,12 @@ export const ManageVendorLocation = ({
     latitude: vendorLocationState.latitude,
     longitude: vendorLocationState.longitude,
     geohash: vendorLocationState.geohash,
+  });
+
+  useOnChange(editLocation?.id, (next, prev) => {
+    if (next !== prev) {
+      setVendorLocationState(stateFromProps(editLocation, vendor));
+    }
   });
 
   const editLocationId = editLocation?.id;
@@ -189,10 +205,7 @@ export const ManageVendorLocation = ({
         return;
       }
       setDeleteLoading(true);
-      await firestore()
-        .collection("VendorLocations")
-        .doc(editLocation.id)
-        .delete();
+      await deleteVendorLocation(editLocation.id);
       setDeleteLoading(false);
       onClose();
     } catch (error) {
@@ -235,6 +248,7 @@ export const ManageVendorLocation = ({
           image: imageUrl,
           status: isAdmin ? "approved" : "pending",
           updated: Date.now(),
+          keywords: generateVendorLocationKeywords(vendorLocationState),
         },
         {
           ...positions,
@@ -446,25 +460,31 @@ export const ManageVendorLocation = ({
   );
 };
 
-export const ManageVendorLocationModal = forwardRef<BottomSheetRef, Props>(
-  function ManageVendorLocationModal({ ...rest }, ref) {
-    const insets = useSafeAreaInsets();
-    return (
-      <BottomSheet ref={ref}>
-        <BottomSheetScrollView
-          contentContainerStyle={{
-            padding: spacing.md,
-            paddingBottom: spacing.md + insets.bottom,
-            flexGrow: 1,
-          }}
-          showsVerticalScrollIndicator={false}
-        >
-          <ManageVendorLocation {...rest} key={rest.editLocation?.id} />
-        </BottomSheetScrollView>
-      </BottomSheet>
-    );
-  }
-);
+const ScrollContainer = Platform.select<React.ComponentType<ScrollViewProps>>({
+  web: ScrollView,
+  default: BottomSheetScrollView as React.ComponentType<ScrollViewProps>,
+});
+
+export const ManageVendorLocationModal = forwardRef<
+  BottomSheetRef,
+  Props & { onDismiss: () => void }
+>(function ManageVendorLocationModal({ onDismiss, ...rest }, ref) {
+  const insets = useSafeAreaInsets();
+  return (
+    <BottomSheet ref={ref} onClose={onDismiss}>
+      <ScrollContainer
+        contentContainerStyle={{
+          padding: spacing.md,
+          paddingBottom: spacing.md + insets.bottom,
+          flexGrow: 1,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <ManageVendorLocation {...rest} />
+      </ScrollContainer>
+    </BottomSheet>
+  );
+});
 
 const $inputContainer: ViewStyle = { marginTop: spacing.sm };
 const $button: ViewStyle = { marginTop: spacing.lg };

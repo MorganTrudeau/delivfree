@@ -8,11 +8,8 @@ export const createOrder = (order: Order) => {
   return firestore().collection("Orders").doc(order.id).set(order);
 };
 
-export const createPendingOrder = (checkoutSessionId: string, order: Order) => {
-  return firestore()
-    .collection("PendingOrders")
-    .doc(checkoutSessionId)
-    .set(order);
+export const createPendingOrder = (order: Order) => {
+  return firestore().collection("PendingOrders").doc(order.id).set(order);
 };
 
 export type OrderListenerParams = {

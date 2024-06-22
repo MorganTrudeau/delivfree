@@ -17,6 +17,8 @@ import { colors } from "app/theme";
 import { useAppSelector } from "app/redux/store";
 import { isWebNotificationsSupported } from "app/utils/general";
 import { LocalWebNotificationContext } from "app/context/LocalWebNotificationContext";
+import { AppMessageTypes } from "delivfree/enums";
+import { navigationRef } from "app/navigators";
 
 export const LOCAL_NOTIFICATION_CHANNEL = "local_notifications";
 
@@ -271,41 +273,11 @@ export const FirebaseMessaging = () => {
   const handleMessage = async (message: AppMessage) => {
     const { data } = message;
 
-    switch (
-      data.type
-      // case AppMessageTypes.CHALLENGE_CREATE: {
-      //   if (data.challengeId) {
-      //     const navigationState = navigation.getState();
-      //     const currentRoute = navigationState?.routes?.[navigationState.index];
-      //     if (currentRoute?.name !== "Challenge") {
-      //       navigation.navigate("AcceptChallenge", {
-      //         challengeId: data.challengeId,
-      //       });
-      //     }
-      //   }
-      //   break;
-      // }
-      // case AppMessageTypes.CHALLENGE_ACCEPT: {
-      //   if (data.challengeId) {
-      //     navigation.navigate("Challenge", {
-      //       challengeId: data.challengeId,
-      //     });
-      //   }
-      //   break;
-      // }
-      // case AppMessageTypes.CHALLENGE_UPDATE: {
-      //   if (data.challengeId) {
-      //     navigation.navigate("Challenge", {
-      //       challengeId: data.challengeId,
-      //     });
-      //   }
-      //   break;
-      // }
-      // case AppMessageTypes.DAILY_TRIVIA: {
-      //   navigation.navigate("DailyTrivia");
-      //   break;
-      // }
-    ) {
+    switch (data.type) {
+      case AppMessageTypes.ORDER_DRIVER_ASSIGNED:
+      case AppMessageTypes.NEW_ORDER:
+        navigationRef.current?.navigate("Orders");
+        break;
     }
   };
   // Unsubscribe to background and foreground messages

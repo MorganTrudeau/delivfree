@@ -6,7 +6,14 @@ import {
   MenuCustomizationChoice,
   MenuItem,
 } from "functions/src/types";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  ScrollView,
+  ScrollViewProps,
+  View,
+} from "react-native";
 import { TextField } from "../../TextField";
 import {
   $borderBottomLight,
@@ -30,6 +37,8 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { Icon } from "app/components/Icon";
 import { MenuItemsSearch } from "../MenuItem/MenuItemsSearch";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ManageCustomizationProps {
   vendor: string;
@@ -211,7 +220,7 @@ const ManageMenuItem = ({
           value={state.name}
         />
 
-        <View style={$inputFormContainer}>
+        <View style={[$inputFormContainer, { marginTop: spacing.lg }]}>
           <Text preset="formLabel" style={$formLabel}>
             Options
           </Text>
@@ -242,7 +251,12 @@ const ManageMenuItem = ({
           style={[
             $row,
             $inputFormContainer,
-            { flexWrap: "wrap", rowGap: spacing.xs, columnGap: spacing.sm },
+            {
+              flexWrap: "wrap",
+              rowGap: spacing.xs,
+              columnGap: spacing.sm,
+              marginTop: spacing.lg,
+            },
           ]}
         >
           <TextField
@@ -270,7 +284,7 @@ const ManageMenuItem = ({
           />
         </View>
 
-        <View style={$inputFormContainer}>
+        <View style={[$inputFormContainer, { marginTop: spacing.lg }]}>
           <Text preset="formLabel" style={$formLabel}>
             Menu items
           </Text>
@@ -289,7 +303,7 @@ const ManageMenuItem = ({
           text={"Save customization"}
           preset={state.name ? "filled" : "default"}
           onPress={onSave}
-          style={{ marginTop: spacing.md }}
+          style={{ marginTop: spacing.lg }}
           RightAccessory={Loading}
         />
       </>
@@ -327,7 +341,7 @@ const ManageMenuItem = ({
   };
 
   return (
-    <View style={{ padding: spacing.md }}>
+    <View style={$flex}>
       <View style={[$row, { marginBottom: spacing.xs }]}>
         <Text preset="heading" style={{ flex: 1 }}>
           {customization ? "Edit customization" : "New customization"}
@@ -349,13 +363,28 @@ const ManageMenuItem = ({
   );
 };
 
+const ScrollContainer = Platform.select<React.ComponentType<ScrollViewProps>>({
+  web: ScrollView,
+  default: BottomSheetScrollView as React.ComponentType<ScrollViewProps>,
+});
+
 export const ManageMenuCustomizationModal = forwardRef<
   BottomSheetRef,
   ManageCustomizationProps & { onDismiss?: () => void }
 >(function ManageMenuCustomizationModal({ onDismiss, ...rest }, ref) {
+  const insets = useSafeAreaInsets();
   return (
     <BottomSheet ref={ref} onClose={onDismiss}>
-      <ManageMenuItem {...rest} />
+      <ScrollContainer
+        contentContainerStyle={{
+          padding: spacing.md,
+          paddingBottom: spacing.md + insets.bottom,
+          flexGrow: 1,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <ManageMenuItem {...rest} />
+      </ScrollContainer>
     </BottomSheet>
   );
 });

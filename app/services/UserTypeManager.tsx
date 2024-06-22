@@ -29,6 +29,7 @@ export const UserTypeManager = () => {
         newUserType = "vendor";
       }
     }
+    console.log("NEW USER", newUserType, userType);
     if (newUserType !== userType) {
       dispatch(setUserType(newUserType));
     }

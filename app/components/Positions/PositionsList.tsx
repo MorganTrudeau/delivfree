@@ -34,6 +34,7 @@ export const PositionsList = ({
   vendorLocations,
   onPress,
   headerStyle,
+  ListHeaderComponent,
   ...rest
 }: Props) => {
   const { width } = useDimensions();
@@ -167,16 +168,30 @@ export const PositionsList = ({
     []
   );
 
+  const renderListHeader = useCallback(() => {
+    return (
+      <>
+        {ListHeaderComponent ? (
+          React.isValidElement(ListHeaderComponent) ? (
+            ListHeaderComponent
+          ) : (
+            //@ts-ignore
+            <ListHeaderComponent />
+          )
+        ) : null}
+        {largeScreen && <TableHeaders headers={headers} style={headerStyle} />}
+      </>
+    );
+  }, [ListHeaderComponent, largeScreen]);
+
   return (
-    <>
-      {largeScreen && <TableHeaders headers={headers} style={headerStyle} />}
-      <FlatList
-        data={positions}
-        renderItem={renderItem}
-        ListEmptyComponent={renderEmptyList}
-        showsVerticalScrollIndicator={false}
-        {...rest}
-      />
-    </>
+    <FlatList
+      data={positions}
+      renderItem={renderItem}
+      ListEmptyComponent={renderEmptyList}
+      showsVerticalScrollIndicator={false}
+      ListHeaderComponent={renderListHeader}
+      {...rest}
+    />
   );
 };

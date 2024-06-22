@@ -85,6 +85,7 @@ export const UsersList = ({ users, onPress, ...rest }: Props) => {
         data={users}
         renderItem={renderItem}
         ListEmptyComponent={renderEmptyList}
+        showsVerticalScrollIndicator={false}
         {...rest}
       />
     </>

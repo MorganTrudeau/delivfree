@@ -13,6 +13,28 @@ import firestore, {
 import { equalStringOrInArray } from "./utils";
 import { getMenuNextOpen, hasActiveMenu } from "app/utils/menus";
 
+export const deleteVendorLocation = async (vendorLocation: string) => {
+  const batch = firestore().batch();
+
+  const vendorLocationDoc = firestore()
+    .collection("VendorLocations")
+    .doc(vendorLocation);
+  const positionsSnap = await firestore()
+    .collection("Positions")
+    .where("vendorLocation", "==", vendorLocation)
+    .get();
+  const licensesSnap = await firestore()
+    .collection("Licenses")
+    .where("vendorLocation", "==", vendorLocation)
+    .get();
+
+  positionsSnap.docs.forEach((doc) => batch.delete(doc.ref));
+  licensesSnap.docs.forEach((doc) => batch.delete(doc.ref));
+  batch.delete(vendorLocationDoc);
+
+  return batch.commit();
+};
+
 export const updateVendorLocation = (
   vendorLocation: string,
   update: Partial<VendorLocation>
@@ -85,7 +107,7 @@ export const fetchVendorLocations = async (
   centerLatLng: LatLng,
   queryOptions: { cuisine?: Cuisine; limit?: number; keyword?: string } = {},
   radiusKm = 10
-) => {
+): Promise<VendorLocation[]> => {
   const { cuisine, limit, keyword } = queryOptions;
 
   const center: [number, number] = [
@@ -159,7 +181,7 @@ export const fetchVendorLocations = async (
       }
 
       return 1;
-    });
+    }) as VendorLocation[];
 };
 
 const loadVendorLocationDetails = async (
@@ -198,10 +220,9 @@ const loadVendorLocationDetails = async (
   }
 
   const menusActive = hasActiveMenu(menus);
-  const locationDrivers = activeDrivers[vendorLocation.id];
   return {
     ...vendorLocation,
-    isOpen: !!menusActive && !!locationDrivers?.length,
+    isOpen: !!menusActive && !!activeDrivers?.length,
     nextOpen: !menusActive ? getMenuNextOpen(menus) : "",
   };
 };

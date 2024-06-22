@@ -5,7 +5,6 @@ import { updateVendor } from "app/apis/vendors";
 import { Screen, Text } from "app/components";
 import { DetailItem } from "app/components/DetailItem";
 import { DetailsHeader } from "app/components/Details/DetailsHeader";
-import { Drawer } from "app/components/Drawer";
 import { EmptyList } from "app/components/EmptyList";
 import { LicenseDisplayModal } from "app/components/Licenses/LicenseDisplayModal";
 import { LicensesList } from "app/components/Licenses/LicensesList";
@@ -38,7 +37,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ActivityIndicator, Linking, ViewStyle } from "react-native";
+import { ActivityIndicator, Linking, View, ViewStyle } from "react-native";
 import Stripe from "stripe";
 import { viewSubscriptionOnStripe } from "app/utils/subscriptions";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
@@ -57,6 +56,9 @@ export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
   }, []);
   const closeVendorLocationModal = useCallback(() => {
     vendorLocationModal.current?.close();
+  }, []);
+  const handleVendorLocationClosed = useCallback(() => {
+    setEditLocation(undefined);
   }, []);
 
   const vendors = useAppSelector((state) => state.vendor.data);
@@ -260,6 +262,7 @@ export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
         ref={vendorLocationModal}
         onClose={closeVendorLocationModal}
         editLocation={editLocation}
+        onDismiss={handleVendorLocationClosed}
       />
 
       <PositionsSelectModal

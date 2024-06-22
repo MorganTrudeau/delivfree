@@ -25,6 +25,9 @@ import { useDimensions } from "app/hooks/useDimensions";
 import { Icon } from "./Icon";
 import { AppStackParamList } from "app/navigators/StackNavigator";
 import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
+import { getAppType } from "app/utils/general";
+import { isLargeScreen } from "./styles";
+import { useOnChange } from "app/hooks";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -48,10 +51,19 @@ export const Drawer = ({
   disabled?: boolean;
 }) => {
   const { width } = useDimensions();
+  const largeScreen = isLargeScreen(width);
 
-  const [alwaysOpen, setAlwaysOpen] = useState(false);
+  const [alwaysOpen, setAlwaysOpen] = useState(
+    largeScreen && getAppType() === "ADMIN"
+  );
   const [open, setOpen] = useState(false);
   const openAnimation = useSharedValue(0);
+
+  useOnChange(largeScreen, (next) => {
+    if (getAppType() === "ADMIN") {
+      setAlwaysOpen(next);
+    }
+  });
 
   useEffect(() => {
     if (alwaysOpen && open) {

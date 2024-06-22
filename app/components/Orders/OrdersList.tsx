@@ -27,6 +27,7 @@ export const OrdersList = ({
   orders,
   loadOrders,
   onOrderPress,
+  ListHeaderComponent,
   ...rest
 }: Props) => {
   const Toast = useToast();
@@ -82,13 +83,6 @@ export const OrdersList = ({
     setViewCustomer(undefined);
   };
 
-  const renderHeader = () => {
-    if (!largeScreenLayout) {
-      return null;
-    }
-    return <TableHeaders headers={HEADERS} />;
-  };
-
   const renderItem = useCallback(
     ({ item: order }: { item: Order }) => {
       const props: OrderItemProps = {
@@ -123,9 +117,24 @@ export const OrdersList = ({
     []
   );
 
+  const renderListHeader = useCallback(() => {
+    return (
+      <>
+        {ListHeaderComponent ? (
+          React.isValidElement(ListHeaderComponent) ? (
+            ListHeaderComponent
+          ) : (
+            //@ts-ignore
+            <ListHeaderComponent />
+          )
+        ) : null}
+        {largeScreenLayout && <TableHeaders headers={HEADERS} />}
+      </>
+    );
+  }, [ListHeaderComponent, largeScreenLayout]);
+
   return (
     <>
-      {renderHeader()}
       <FlatList
         data={orders}
         renderItem={renderItem}
@@ -133,6 +142,8 @@ export const OrdersList = ({
         ListEmptyComponent={renderEmptyComponent}
         contentContainerStyle={[$content, { paddingBottom: insets.bottom }]}
         style={$flex}
+        ListHeaderComponent={renderListHeader}
+        showsVerticalScrollIndicator={false}
         {...rest}
       />
       <CustomerDetailModal

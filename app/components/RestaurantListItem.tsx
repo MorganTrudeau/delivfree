@@ -12,11 +12,12 @@ import { borderRadius } from "app/theme/borderRadius";
 interface Props {
   restaurant: VendorLocation;
   onPress?: (restaurant: VendorLocation) => void;
+  style?: ViewStyle
 }
 
-const RestaurantListItem = ({ restaurant, onPress }: Props) => {
+const RestaurantListItem = ({ restaurant, onPress, style }: Props) => {
   return (
-    <Pressable onPress={() => onPress?.(restaurant)}>
+    <Pressable onPress={() => onPress?.(restaurant)} style={style}>
       <View
         style={[$imageContainer, { maxWidth: 400, marginBottom: spacing.xxs }]}
       >

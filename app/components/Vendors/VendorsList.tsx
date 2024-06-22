@@ -100,6 +100,7 @@ export const VendorsList = ({ vendors, onPress, ...rest }: Props) => {
         data={vendors}
         renderItem={renderItem}
         ListEmptyComponent={renderEmptyList}
+        showsVerticalScrollIndicator={false}
         {...rest}
       />
     </>

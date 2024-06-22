@@ -118,8 +118,8 @@ export const ViewOrderModal = forwardRef<
 >(function ViewOrderModal(props, ref) {
   return (
     <BottomSheet ref={ref}>
-      {Platform.OS === "web" && <ModalCloseButton onPress={props.onClose} />}
       {props.order && <ViewOrder {...props} order={props.order} />}
+      {Platform.OS === "web" && <ModalCloseButton onPress={props.onClose} />}
     </BottomSheet>
   );
 });

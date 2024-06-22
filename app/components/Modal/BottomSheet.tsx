@@ -1,12 +1,4 @@
-import React, {
-  ReactNode,
-  Ref,
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import React, { ReactNode, Ref, forwardRef, useCallback } from "react";
 import { Portal } from "react-native-portalize";
 import GHMBottomSheet, {
   BottomSheetBackdrop,

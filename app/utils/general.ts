@@ -5,6 +5,24 @@ import messaging from "@react-native-firebase/messaging";
 import { AlertProps } from "app/components/Alert/AlertContext";
 import { translate } from "app/i18n";
 import React from "react";
+import { VendorLocation } from "delivfree/types";
+
+export const generateKeywords = (str: string) => {
+  const keywords: string[] = [];
+  for (let i = 1; i < str.length + 1; i++) {
+    keywords.push(str.substring(0, i).toLowerCase());
+  }
+  return keywords;
+};
+
+export const generateVendorLocationKeywords = (
+  vendorLocation: VendorLocation
+) => {
+  const terms = [vendorLocation.name, ...vendorLocation.cuisines];
+  const keywords: string[] = [];
+  terms.forEach((str) => keywords.push(...generateKeywords(str)));
+  return keywords;
+};
 
 export const pluralFormat = (singleTerm: string, length: number) =>
   `${singleTerm}${length !== 1 ? "s" : ""}`;

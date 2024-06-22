@@ -127,7 +127,7 @@ export async function sendOrderDriverAssignedNotification(order: Order) {
   };
   const data = {
     orderId: order.id,
-    type: "order_created",
+    type: "order_driver_assigned",
   };
   const collapseKey = "orderCreated";
   const link = `https://${vendorDomain}?route=orders`;

@@ -34,6 +34,7 @@ export const VendorLocationsList = ({
   locations,
   onPress,
   headerStyle,
+  ListHeaderComponent,
   ...rest
 }: Props) => {
   const { width } = useDimensions();
@@ -114,16 +115,30 @@ export const VendorLocationsList = ({
     []
   );
 
+  const renderListHeader = useCallback(() => {
+    return (
+      <>
+        {ListHeaderComponent ? (
+          React.isValidElement(ListHeaderComponent) ? (
+            ListHeaderComponent
+          ) : (
+            //@ts-ignore
+            <ListHeaderComponent />
+          )
+        ) : null}
+        {largeScreen && <TableHeaders headers={headers} style={headerStyle} />}
+      </>
+    );
+  }, [ListHeaderComponent, largeScreen]);
+
   return (
-    <>
-      {largeScreen && <TableHeaders headers={headers} style={headerStyle} />}
-      <FlatList
-        data={locations}
-        renderItem={renderItem}
-        ListEmptyComponent={renderEmptyList}
-        showsVerticalScrollIndicator={false}
-        {...rest}
-      />
-    </>
+    <FlatList
+      data={locations}
+      renderItem={renderItem}
+      ListEmptyComponent={renderEmptyList}
+      showsVerticalScrollIndicator={false}
+      ListHeaderComponent={renderListHeader}
+      {...rest}
+    />
   );
 };

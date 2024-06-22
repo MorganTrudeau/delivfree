@@ -220,21 +220,26 @@ export const stripeWebhook = onRequest(async (req, res) => {
 
     // Handle the event
     switch (event.type) {
+      case "payment_intent.succeeded":
       case "checkout.session.completed": {
-        console.log("checkout.session.completed", event.data.object);
-        const pendingOrderRef = admin
-          .firestore()
-          .collection("PendingOrders")
-          .doc(event.data.object.id);
-        const pendingOrderDoc = await pendingOrderRef.get();
-        const pendingOrder = pendingOrderDoc.data();
-        if (pendingOrder) {
-          await admin
+        console.log(event.type, event.data.object);
+
+        const orderId = event.data.object.metadata?.orderId;
+        if (orderId) {
+          const pendingOrderRef = admin
             .firestore()
-            .collection("Orders")
-            .doc(pendingOrder.id)
-            .set(pendingOrder);
-          await pendingOrderRef.delete();
+            .collection("PendingOrders")
+            .doc(orderId);
+          const pendingOrderDoc = await pendingOrderRef.get();
+          const pendingOrder = pendingOrderDoc.data();
+          if (pendingOrder) {
+            await admin
+              .firestore()
+              .collection("Orders")
+              .doc(pendingOrder.id)
+              .set(pendingOrder);
+            await pendingOrderRef.delete();
+          }
         }
       }
       case "customer.subscription.created":
@@ -280,3 +285,120 @@ export const stripeWebhook = onRequest(async (req, res) => {
     res.status(500).send();
   }
 });
+
+export const fetchSubscriptionPaymentSheet = onCall(
+  async (
+    data: CallableRequest<{
+      customerData: {
+        email: string;
+        name: string;
+        address: { country: string; postal_code: string };
+      };
+      params: Stripe.SubscriptionCreateParams;
+    }>
+  ) => {
+    let customer;
+
+    const stripe = getStripe();
+    const { customerData, params } = data.data;
+
+    const customers = await stripe.customers.list({
+      limit: 1,
+      email: customerData.email,
+    });
+
+    if (!customers.data[0]) {
+      customer = await stripe.customers.create(customerData);
+    } else {
+      customer = customers.data[0];
+    }
+
+    // let pendingSubscription;
+
+    // try {
+    //   const subscriptions = await stripe.subscriptions.list({
+    //     customer: customer.id,
+    //     expand: ["data.latest_invoice", "data.latest_invoice.payment_intent"],
+    //   });
+    //   pendingSubscription =
+    //     subscriptions.data &&
+    //     subscriptions.data.find(
+    //       (subscription: any) =>
+    //         subscription.status === "incomplete" &&
+    //         subscription.metadata &&
+    //         subscription.items.data.length === prices.length &&
+    //         params.items.every(({ id, quantity }) => {
+    //           return subscription.items.data.find((item: any) => {
+    //             return item.price.id === id && item.quantity === quantity;
+    //           });
+    //         })
+    //     );
+    // } catch (error) {
+    //   console.log("Failed to check for pending subscription: ", error);
+    // }
+
+    const subscription = await stripe.subscriptions.create({
+      payment_behavior: "default_incomplete",
+      payment_settings: { save_default_payment_method: "on_subscription" },
+      expand: ["latest_invoice.payment_intent"],
+      ...params,
+      customer: customer.id,
+    });
+
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customer.id },
+      { apiVersion: "2024-04-10" }
+    );
+
+    return {
+      // @ts-expect-error works
+      clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+      ephemeralKey: ephemeralKey.secret,
+      customerId: customer.id,
+    };
+  }
+);
+
+export const fetchPaymentSheet = onCall(
+  async (
+    data: CallableRequest<{
+      customerData: {
+        email: string;
+        name: string;
+      };
+      params: Stripe.PaymentIntentCreateParams;
+    }>
+  ) => {
+    let customer: Stripe.Customer;
+
+    const { customerData, params } = data.data;
+
+    const stripe = getStripe();
+
+    const customers = await stripe.customers.list({
+      limit: 1,
+      email: customerData.email,
+    });
+
+    if (!customers.data[0]) {
+      customer = await stripe.customers.create(customerData);
+    } else {
+      customer = customers.data[0];
+    }
+
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customer.id },
+      { apiVersion: "2024-04-10" }
+    );
+    const paymentIntent = await stripe.paymentIntents.create({
+      ...params,
+      customer: customer.id,
+    });
+
+    return {
+      ephemeralKey: ephemeralKey.secret,
+      clientSecret: paymentIntent.client_secret,
+      customerId: customer.id,
+    };
+  }
+);

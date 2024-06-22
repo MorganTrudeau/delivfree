@@ -52,15 +52,22 @@ export const AdminStack = () => {
         <Stack.Screen
           name="VendorDetail"
           component={Screens.VendorDetailScreen}
+          options={{ headerLeft: DrawerIconButton }}
         />
         <Stack.Screen
           name="DriverDetail"
           component={Screens.DriverDetailScreen}
+          options={{ headerLeft: DrawerIconButton }}
         />
-        <Stack.Screen name="About" component={Screens.AboutScreen} />
+        <Stack.Screen
+          name="About"
+          component={Screens.AboutScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
         <Stack.Screen
           name="DeleteAccount"
           component={Screens.DeleteAccountScreen}
+          options={{ headerLeft: DrawerIconButton }}
         />
       </>
     );

@@ -221,24 +221,14 @@ export function Screen(props: ScreenProps) {
         backgroundColor={colors.background}
         {...StatusBarProps}
       />
-
-      <View style={$wrapper}>
-        {isNonScrolling(props.preset) ? (
-          <ScreenWithoutScrolling {...props} />
-        ) : (
-          <ScreenWithScrolling {...props} />
-        )}
-      </View>
+      {isNonScrolling(props.preset) ? (
+        <ScreenWithoutScrolling {...props} />
+      ) : (
+        <ScreenWithScrolling {...props} />
+      )}
     </View>
   );
 }
-
-const $wrapper: ViewStyle = {
-  flex: 1,
-  maxWidth: MAX_CONTENT_WIDTH,
-  width: "100%",
-  alignSelf: "center",
-};
 
 const $containerStyle: ViewStyle = {
   flex: 1,
@@ -251,4 +241,7 @@ const $outerStyle: ViewStyle = {
 const $innerStyle: ViewStyle = {
   justifyContent: "flex-start",
   alignItems: "stretch",
+  maxWidth: MAX_CONTENT_WIDTH,
+  width: "100%",
+  alignSelf: "center",
 };

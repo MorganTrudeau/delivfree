@@ -35,7 +35,7 @@ export const ConsumerMenuCategories = ({
   return (
     <View>
       {!categoriesLoaded && <ActivityIndicator color={colors.primary} />}
-      {orderedCategories.length === 0 && (
+      {categoriesLoaded && orderedCategories.length === 0 && (
         <EmptyList title={"No items available right now"} icon={"silverware"} />
       )}
       {orderedCategories.map((category) => {

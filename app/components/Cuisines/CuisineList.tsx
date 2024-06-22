@@ -63,7 +63,11 @@ const CuisineList = ({
   const renderRestaurant = useCallback(
     ({ item }: { item: VendorLocation }) => {
       return (
-        <RestaurantListItem restaurant={item} onPress={onRestaurantPress} />
+        <RestaurantListItem
+          restaurant={item}
+          onPress={onRestaurantPress}
+          style={{ width: `${itemWidth}%` }}
+        />
       );
     },
     [onRestaurantPress]
@@ -82,7 +86,7 @@ const CuisineList = ({
       columnWrapperStyle={
         numColumns > 1
           ? {
-              justifyContent: "space-between",
+              columnGap: spacing.md,
             }
           : undefined
       }

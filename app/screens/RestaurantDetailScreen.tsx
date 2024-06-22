@@ -1,8 +1,12 @@
+import { useScrollEventsHandlersDefault } from "@gorhom/bottom-sheet";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { fetchVendorLocationDetail } from "app/apis/vendorLocations";
 import { Icon, IconTypes, Screen, Text } from "app/components";
 import { AdBanner } from "app/components/AdBanner";
+import { CheckoutCartTracker } from "app/components/CheckoutCart/CheckoutCartTracker";
 import { CheckoutPopUp, CheckoutPopUpRef } from "app/components/CheckoutPopUp";
 import { EmptyList } from "app/components/EmptyList";
+import { LogoHeader } from "app/components/LogoHeader";
 import { ConsumerMenuCategories } from "app/components/Menus/ConsumerMenu/ConsumerMenuCategories";
 import { MenuNames } from "app/components/Menus/Menu/MenuNames";
 import { $flex, MAX_CONTENT_WIDTH } from "app/components/styles";
@@ -27,12 +31,22 @@ import {
 } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";
 import LinearGradient from "react-native-linear-gradient";
+import Animated, {
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface RestaurantsScreenProps
   extends AppStackScreenProps<"RestaurantDetail"> {}
 
-export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
+export const RestaurantDetailScreen = ({
+  route,
+  navigation,
+}: RestaurantsScreenProps) => {
   const { restaurantId } = route.params;
 
   const [vendorLocation, setVendorLocation] = useState<
@@ -53,16 +67,20 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
   }, [vendorLocation]);
 
   const checkoutPopUp = useRef<CheckoutPopUpRef>(null);
+
   const insets = useSafeAreaInsets();
+  const headerHeight = 50 + insets.top;
+
   const gradientStyles: ViewStyle = useMemo(
     () => ({
-      height: insets.top,
+      paddingTop: insets.top,
+      height: headerHeight,
       position: "absolute",
       top: 0,
       right: 0,
       left: 0,
     }),
-    [insets.top]
+    [insets.top, headerHeight]
   );
 
   const vendor = vendorLocation?.vendor;
@@ -116,6 +134,63 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
     );
   };
 
+  const scrollY = useSharedValue(0);
+
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (event) => (scrollY.value = event.contentOffset.y),
+  });
+
+  const headerStyle: ViewStyle = useMemo(
+    () => ({
+      paddingTop: insets.top,
+      height: headerHeight,
+      position: "absolute",
+      top: 0,
+      right: 0,
+      left: 0,
+      paddingLeft: spacing.sm,
+      paddingRight: spacing.md,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    }),
+    [headerHeight, insets.top]
+  );
+  const animatedHeaderStyle = useAnimatedStyle(
+    () => ({
+      justifyContent: "center",
+      backgroundColor: colors.background,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderLight,
+      opacity: interpolate(scrollY.value, [0, headerHeight], [0, 1]),
+    }),
+    [scrollY, headerHeight]
+  );
+  const scrollShowStyle = useAnimatedStyle(
+    () => ({
+      opacity: interpolate(scrollY.value, [0, headerHeight], [0, 1]),
+    }),
+    [scrollY, headerHeight]
+  );
+  const scrollShowTransitionStyle = useAnimatedStyle(
+    () => ({
+      opacity: withTiming(
+        interpolate(
+          scrollY.value,
+          [0, headerHeight - 1, headerHeight, headerHeight + 1],
+          [0, 0, 1, 1]
+        )
+      ),
+    }),
+    [scrollY, headerHeight]
+  );
+  const scrollHideStyle = useAnimatedStyle(
+    () => ({
+      opacity: interpolate(scrollY.value, [0, headerHeight], [1, 0]),
+    }),
+    [scrollY, headerHeight]
+  );
+
   if (!vendorLocation) {
     return (
       <View style={[$flex, { alignItems: "center", justifyContent: "center" }]}>
@@ -124,27 +199,9 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
     );
   }
 
-  const phoneRestaurant = () => {
-    checkoutPopUp.current?.open(`tel:${vendorLocation.phoneNumber}`);
-  };
-  const viewAddress = () => {
-    const scheme = Platform.select({
-      ios: "maps://0,0?q=",
-      android: "geo:0,0?q=",
-    });
-    const latLng = `${vendorLocation.latitude},${vendorLocation.longitude}`;
-    const label = "Custom Label";
-    const url = Platform.select({
-      ios: `${scheme}${label}@${latLng}`,
-      android: `${scheme}${latLng}(${label})`,
-      default: `https://www.google.com/maps/place/${vendorLocation.address}/`,
-    });
-    Linking.openURL(url);
-  };
-
   return (
     <>
-      <Screen style={$flex} preset={"scroll"}>
+      <Animated.ScrollView style={$flex} onScroll={onScroll}>
         {Platform.OS !== "web" && renderHeader()}
         <View style={$detailsContainer}>
           {Platform.OS === "web" && renderHeader()}
@@ -181,9 +238,46 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
             />
           )}
         </View>
-      </Screen>
-      {Platform.OS === "ios" && insets.top > 0 && (
-        <LinearGradient colors={GRADIENT_COLORS} style={gradientStyles} />
+      </Animated.ScrollView>
+      {Platform.OS !== "web" && (
+        <>
+          <Animated.View style={[headerStyle, animatedHeaderStyle]}>
+            <Animated.View style={scrollShowTransitionStyle}>
+              <LogoHeader />
+            </Animated.View>
+          </Animated.View>
+          <Animated.View style={[gradientStyles, scrollHideStyle]}>
+            <LinearGradient
+              colors={GRADIENT_COLORS}
+              style={StyleSheet.absoluteFill}
+            ></LinearGradient>
+          </Animated.View>
+          <View style={headerStyle}>
+            <Pressable
+              style={{
+                backgroundColor: "rgba(0,0,0,0.5)",
+                borderRadius: 100,
+                padding: spacing.xxs,
+              }}
+              onPress={() => {
+                console.log("BACK");
+                navigation.goBack();
+              }}
+            >
+              <Icon icon={"arrow-left"} color={"#fff"} />
+            </Pressable>
+            <View>
+              <Animated.View style={scrollHideStyle}>
+                <CheckoutCartTracker color={colors.white} />
+              </Animated.View>
+              <Animated.View
+                style={[{ position: "absolute" }, scrollShowStyle]}
+              >
+                <CheckoutCartTracker />
+              </Animated.View>
+            </View>
+          </View>
+        </>
       )}
       <StatusBar style={"light"} />
       <CheckoutPopUp ref={checkoutPopUp} />
@@ -191,27 +285,13 @@ export const RestaurantDetailScreen = ({ route }: RestaurantsScreenProps) => {
   );
 };
 
-interface DetailItemProps {
-  icon: IconTypes;
-  text: string;
-  onPress: () => void;
-}
-const DetailItem = ({ icon, text, onPress }: DetailItemProps) => {
-  return (
-    <Pressable style={$detailItem} onPress={onPress}>
-      <Icon icon={icon} style={$detailItemIcon} />
-      <Text style={$flex}>{text}</Text>
-    </Pressable>
-  );
-};
-
-const GRADIENT_COLORS = ["rgba(0,0,0,0.5)", "rgba(0,0,0,0)"];
+const GRADIENT_COLORS = ["rgba(25,16,21,0.5)", "rgba(25,16,21,0)"];
 
 const $header: ViewStyle = {
   paddingBottom: Platform.select({ default: 0, web: spacing.md }),
 };
 const $headerImage: ImageStyle = Platform.select({
-  default: { width: "100%", aspectRatio: 2.8 },
+  default: { width: "100%", aspectRatio: 2.5 },
   web: {
     aspectRatio: 4,
     borderRadius: borderRadius.md,

@@ -39,8 +39,8 @@ const ConsumerItems: DrawerItem[] = [
 
 const VendorItems: DrawerItem[] = [
   { text: "Home", route: "Home" },
-  { text: "Menus", route: "Menus", include: () => Platform.OS === "web" },
   { text: "Orders", route: "Orders" },
+  { text: "Menus", route: "Menus", include: () => Platform.OS === "web" },
   { text: "Locations", route: "Locations" },
   { text: "Positions", route: "Positions" },
   { text: "Subscription", route: "Subscription" },
@@ -86,17 +86,21 @@ export const DrawerContent = ({
   const headerHeight = useHeaderHeight();
 
   const userType = useAppSelector((state) => state.appConfig.userType);
-  const Items = useMemo(
-    () =>
+  const Items = useMemo(() => {
+    const items =
       userType === "vendor"
         ? VendorItems
         : userType === "driver"
         ? DriverItems
         : userType === "admin"
         ? AdminItems
-        : ConsumerItems,
-    [userType]
-  );
+        : ConsumerItems;
+    return items.filter(
+      (item) => !item.include || item.include()
+    ) as DrawerItem[];
+  }, [userType]);
+
+  console.log({ userType, Items });
 
   const [activeRoute, setActiveRoute] = useState(
     navigation.getCurrentRoute()?.name
@@ -145,12 +149,6 @@ export const DrawerContent = ({
     [headerHeight]
   );
 
-  const items = useMemo(
-    () =>
-      Items.filter((item) => !item.include || item.include()) as DrawerItem[],
-    []
-  );
-
   return (
     <FlatList<{ text: string; route?: keyof AppStackParamList; params?: any }>
       key={userType}
@@ -163,7 +161,7 @@ export const DrawerContent = ({
           paddingRight: spacing.md,
         },
       ]}
-      data={items}
+      data={Items}
       keyExtractor={(item) => item.text}
       renderItem={({ item, index }) => (
         <DrawerItem

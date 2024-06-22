@@ -32,10 +32,14 @@ export const AdminVendorsScreen = (props: AdminVendorsScreenProps) => {
         <StatusFilter
           activeFilter={dataParams.status}
           onFilterPress={(filter) =>
-            setDataParams((d) => ({
-              ...d,
-              status: d.status === filter ? undefined : filter,
-            }))
+            setDataParams((d) =>
+              d.status === filter
+                ? {}
+                : {
+                    ...d,
+                    status: filter,
+                  }
+            )
           }
         />
       </View>

@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { createDriver } from "app/redux/thunks/driver";
 import { colors, spacing } from "app/theme";
 import { sizing } from "app/theme/sizing";
-import { generateUid } from "app/utils/general";
+import { generateUid, isValidEmail } from "app/utils/general";
 import { Driver, Status, User } from "delivfree";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
@@ -90,6 +90,9 @@ export const EditDriverProfileScreen = () => {
         "Form incomplete",
         "Please complete all fields before continuing."
       );
+    }
+    if (!isValidEmail(driverState.email)) {
+      return Alert.alert("Invalid email", "Please enter a valid email.");
     }
     const newUser: Pick<
       User,

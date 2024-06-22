@@ -6,7 +6,6 @@ export const assignOrderDriver = async (order: Order) => {
   const activeDriverSnap = await admin
     .firestore()
     .collection("DriverClockIns")
-    .orderBy("date")
     .where("vendorLocation", "==", order.vendorLocation)
     .get();
 
@@ -32,7 +31,7 @@ export const assignOrderDriver = async (order: Order) => {
     batch.update(admin.firestore().collection("Orders").doc(order.id), {
       driver: nextDriver.driverId,
     });
-    batch.update(
+    batch.set(
       admin
         .firestore()
         .collection("Drivers")
