@@ -4,13 +4,13 @@ importScripts(
 );
 
 firebase.initializeApp({
-  apiKey: "AIzaSyAKOSDmdUpVxNpBbkdgfIJ3TxTF9RD4Gbw",
-  authDomain: "trivia-b4527.firebaseapp.com",
-  projectId: "trivia-b4527",
-  storageBucket: "trivia-b4527.appspot.com",
-  messagingSenderId: "305022913578",
-  appId: "1:305022913578:web:26da94d29a1f2a8a0ac753",
-  measurementId: "G-D64YYQBEVH",
+  apiKey: "AIzaSyDDKuob3VoBk8B6YVcZL0Z_HuCrZ0saODY",
+  authDomain: "delivfree-app.firebaseapp.com",
+  projectId: "delivfree-app",
+  storageBucket: "delivfree-app.appspot.com",
+  messagingSenderId: "406179880402",
+  appId: "1:406179880402:web:8ca561290bd87b61297c0b",
+  measurementId: "G-C1X5PN737R",
 });
 
 const FCM_MSG = "FCM_MSG";

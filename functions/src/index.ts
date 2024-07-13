@@ -2,6 +2,7 @@ import * as admin from "firebase-admin";
 import * as express from "express";
 import axios from "axios";
 import {
+  ADMIN_DOMAIN,
   Driver,
   License,
   Order,
@@ -33,9 +34,9 @@ import {
   decreaseLicensePositionsBatch,
 } from "./utils";
 import { assignOrderDriver, updateOrderAnalytics } from "./utils/orders";
-import { adminDomain } from "./config.json";
+import { sendEmailNotification } from "./utils/email";
 
-const whitelistDomains = true; //[/delivfree-vendor\.web\.app$/, "*"];
+const whitelistDomains = true; // [/delivfree-vendor\.web\.app$/, "*"];
 
 admin.initializeApp();
 
@@ -144,13 +145,13 @@ export const onOrderCreated = onDocumentCreated(
     }
 
     try {
-      assignOrderDriver(order);
+      await assignOrderDriver(order);
     } catch (error) {
       console.error("Failed to assign driver", error);
     }
 
     try {
-      updateOrderAnalytics(order);
+      await updateOrderAnalytics(order);
     } catch (error) {
       console.error("Failed to update order analytics", error);
     }
@@ -171,7 +172,7 @@ export const onOrderWritten = onDocumentWritten(
 
     if (!orderBefore?.driver && orderAfter?.driver) {
       try {
-        sendOrderDriverAssignedNotification(orderAfter);
+        await sendOrderDriverAssignedNotification(orderAfter);
       } catch (error) {
         console.log("Failed to notify driver of new order", error);
       }
@@ -190,9 +191,11 @@ export const onVendorCreated = onDocumentCreated("Vendors/{id}", async () => {
     type: "new_vendor",
   };
   const collapseKey = "new_vendor";
-  const link = `https://${adminDomain}?route=vendors`;
+  const link = `${ADMIN_DOMAIN}?route=vendors`;
   const payload = buildMessagePayload(notification, data, collapseKey, link);
   await sendAdminNotifications(payload);
+  await sendEmailNotification(notification);
+  return true;
 });
 
 export const onVendorLocationCreated = onDocumentCreated(
@@ -206,9 +209,11 @@ export const onVendorLocationCreated = onDocumentCreated(
       type: "new_vendor_location",
     };
     const collapseKey = "new_vendor_location";
-    const link = `https://${adminDomain}?route=vendors`;
+    const link = `${ADMIN_DOMAIN}?route=vendors`;
     const payload = buildMessagePayload(notification, data, collapseKey, link);
     await sendAdminNotifications(payload);
+    await sendEmailNotification(notification);
+    return true;
   }
 );
 
@@ -223,9 +228,11 @@ export const onPositionCreated = onDocumentCreated(
       type: "new_position",
     };
     const collapseKey = "new_position";
-    const link = `https://${adminDomain}?route=vendors`;
+    const link = `${ADMIN_DOMAIN}?route=vendors`;
     const payload = buildMessagePayload(notification, data, collapseKey, link);
     await sendAdminNotifications(payload);
+    await sendEmailNotification(notification);
+    return true;
   }
 );
 
@@ -238,9 +245,11 @@ export const onLicenseCreated = onDocumentCreated("Licenses/{id}", async () => {
     type: "new_application",
   };
   const collapseKey = "new_application";
-  const link = `https://${adminDomain}?route=vendors`;
+  const link = `${ADMIN_DOMAIN}?route=vendors`;
   const payload = buildMessagePayload(notification, data, collapseKey, link);
   await sendAdminNotifications(payload);
+  await sendEmailNotification(notification);
+  return true;
 });
 
 export const onVendorLocationWritten = onDocumentWritten(

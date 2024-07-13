@@ -13,6 +13,7 @@ import Stripe from "stripe";
 import { SUBSCRIPTION_TRIAL_PERIOD } from "app/utils/subscriptions";
 import functions from "@react-native-firebase/functions";
 import { useCallback } from "react";
+import { VENDOR_DOMAIN } from "functions/src/types";
 
 export const useCheckout: UseCheckout = ({}: UseCheckoutParams) => {
   const onCheckout: OnCheckout = async ({
@@ -64,9 +65,7 @@ export const useCheckout: UseCheckout = ({}: UseCheckoutParams) => {
           subscription_data: {
             metadata,
           },
-          return_url: __DEV__
-            ? window.location.origin
-            : "https://delivfree-vendor.web.app/",
+          return_url: __DEV__ ? window.location.origin : VENDOR_DOMAIN,
           mode: "subscription",
           ui_mode: "embedded",
           customer_email: email || undefined,

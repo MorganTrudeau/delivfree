@@ -92,7 +92,15 @@ export const VendorStack = () => {
 
   const renderDriverStack = () => {
     if (!driverDataLoaded) {
-      return <Stack.Screen name="Loading" component={Screens.LoadingScreen} />;
+      return (
+        <Stack.Screen
+          name="Loading"
+          component={Screens.LoadingScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+      );
     }
 
     if (!driver) {
@@ -186,7 +194,15 @@ export const VendorStack = () => {
 
   const renderVendorStack = () => {
     if (!vendorDataLoaded) {
-      return <Stack.Screen name="Loading" component={Screens.LoadingScreen} />;
+      return (
+        <Stack.Screen
+          name="Loading"
+          component={Screens.LoadingScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+      );
     }
 
     if (!vendor) {

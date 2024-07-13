@@ -33,6 +33,7 @@ import {
 import { QuantitySelector } from "../QuantitySelector";
 import { createStripeCheckoutSession } from "app/apis/stripe";
 import { navigationRef } from "app/navigators";
+import { VENDOR_DOMAIN } from "functions/src/types";
 
 interface Props {
   fullTimeProduct: Stripe.Product;
@@ -159,7 +160,7 @@ export const SubscriptionSelect = ({
             Platform.OS === "web"
               ? __DEV__
                 ? "http://localhost:8080"
-                : "https://delivfree-vendor.web.app/"
+                : VENDOR_DOMAIN
               : "https://mobileredirect-5vakg2iqja-uc.a.run.app", // "delivfree://subscription", // @todo change
           mode: "subscription",
           ui_mode: "embedded",

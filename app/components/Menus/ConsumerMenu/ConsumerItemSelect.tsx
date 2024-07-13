@@ -1,5 +1,7 @@
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Button } from "app/components/Button";
 import { Icon } from "app/components/Icon";
+import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
 import ReanimatedCenterModal, {
   ModalRef,
 } from "app/components/Modal/CenterModal";
@@ -28,7 +30,7 @@ import { borderRadius } from "app/theme/borderRadius";
 import { generateUid, localizeCurrency } from "app/utils/general";
 import { MenuCustomizationChoice, MenuItem } from "delivfree/types";
 import React, { forwardRef, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import { ActivityIndicator, Platform, Pressable, View } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";
 
 interface Props {
@@ -129,8 +131,17 @@ const ConsumerItemSelect = ({
   };
 
   return (
-    <View style={largeScreen && { flexDirection: "row" }}>
-      <FastImage source={imageSource} style={$image} />
+    <View style={[$flex, largeScreen && { flexDirection: "row" }]}>
+      <View style={{ padding: spacing.md }}>
+        <FastImage
+          source={imageSource}
+          resizeMode="cover"
+          style={[
+            $image,
+            // largeScreen ? { width: 500 } : { width: width - spacing.md * 4 },
+          ]}
+        />
+      </View>
       <View style={{ padding: spacing.md, flex: 1 }}>
         <Text preset="heading">{item.name}</Text>
         <Text size={"md"} style={{ color: colors.textDim }}>
@@ -259,34 +270,37 @@ const ConsumerItemSelect = ({
 };
 
 export const ConsumerItemSelectModal = forwardRef<
-  ModalRef,
+  BottomSheetRef,
   Omit<Props, "item"> & {
     item: MenuItem | null | undefined;
+    onDismiss: () => void;
   }
 >(function ConsumerItemSelectModal(props, ref) {
   return (
-    <ReanimatedCenterModal
+    <BottomSheet
       ref={ref}
+      onClose={props.onDismiss}
       contentStyle={{ maxWidth: 1000, alignSelf: "center" }}
     >
-      <View
-        style={{
-          paddingTop: spacing.md,
-          paddingHorizontal: spacing.md,
-          alignItems: "flex-start",
-        }}
-      >
-        <Icon icon="close" onPress={props.onClose} />
-      </View>
-      {props.item && <ConsumerItemSelect {...props} item={props.item} />}
-    </ReanimatedCenterModal>
+      <BottomSheetScrollView style={{ flex: 1, width: "100%" }}>
+        {Platform.OS === "web" && (
+          <View
+            style={{
+              paddingTop: spacing.md,
+              paddingHorizontal: spacing.md,
+              alignItems: "flex-start",
+            }}
+          >
+            <Icon icon="close" onPress={props.onClose} />
+          </View>
+        )}
+        {props.item && <ConsumerItemSelect {...props} item={props.item} />}
+      </BottomSheetScrollView>
+    </BottomSheet>
   );
 });
 
 const $image: ImageStyle = {
-  flex: 1,
-  aspectRatio: 1,
-  maxWidth: 500,
-  margin: spacing.md,
+  aspectRatio: 1.5,
   borderRadius: borderRadius.md,
 };

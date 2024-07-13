@@ -7,12 +7,14 @@ import GHMBottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { ViewStyle } from "react-native";
 import { colors } from "app/theme";
+import { Props as CenterModalProps } from "./CenterModal";
 
 const snapPoints = ["92%"];
 
-type Props = Partial<Omit<BottomSheetProps, "children">> & {
-  children: ReactNode | ReactNode[];
-};
+type Props = Partial<Omit<BottomSheetProps, "children">> &
+  CenterModalProps & {
+    children: ReactNode | ReactNode[];
+  };
 
 export type BottomSheetRef = GHMBottomSheet;
 

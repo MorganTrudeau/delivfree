@@ -8,19 +8,16 @@ import { PayoutsHeader } from "app/components/Stripe/PayoutsHeader";
 import { TaxRateSelect } from "app/components/Stripe/TaxRateSelect";
 import {
   $containerPadding,
-  $flex,
-  $row,
   $screen,
   LARGE_SCREEN,
   MAX_CONTAINER_WIDTH,
 } from "app/components/styles";
-import { useDrawer } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
 import { DateFilter, getDateRangeByFilter } from "app/utils/dates";
 import { localizeCurrency } from "app/utils/general";
-import { Customer, DateRange, Order, User, Vendor } from "delivfree";
+import { DateRange, Order, User, Vendor } from "delivfree";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { View, ViewStyle, useWindowDimensions } from "react-native";
@@ -30,12 +27,29 @@ interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
 const DATE_FORMAT = "MMM Do";
 
+const TEST_ORDERS_TODAY: Pick<Order, "date" | "total">[] = new Array(10)
+  .fill(0)
+  .map((_, i) => ({
+    total: (Math.floor(Math.random() * 1500) + 100).toFixed(2),
+    date: moment()
+      .hour(i + 9)
+      .valueOf(),
+  }));
+
+const TEST_ORDERS_OVERVIEW: Pick<Order, "date" | "total">[] = new Array(7)
+  .fill(1)
+  .map((days, index) => ({
+    date: moment()
+      .subtract(index + 1, "days")
+      .valueOf(),
+    total: (Math.floor(Math.random() * 6000) + 1000).toFixed(2),
+  }));
+
 export const VendorHomeScreen = (props: HomeScreenProps) => {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const largeScreenLayout = width > LARGE_SCREEN;
 
-  const customers = useAppSelector((state) => state.customers.data);
   const vendor = useAppSelector((state) => state.vendor.activeVendor as Vendor);
   const vendorId = vendor?.id;
 

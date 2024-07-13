@@ -5,11 +5,10 @@ import {
   SUBSCRIPTION_TRIAL_PERIOD,
   getPositionsPrice,
 } from "app/utils/subscriptions";
-import { Linking, Platform } from "react-native";
-import { Vendor } from "delivfree/types";
+import { Platform } from "react-native";
+import { Vendor, VENDOR_DOMAIN } from "delivfree";
 import { updateVendor } from "./vendors";
 import { navigationRef } from "app/navigators";
-import { extractFont } from "react-native-svg/lib/typescript/lib/extract/extractText";
 
 export const getStripeAccountBalance = async (
   account: string
@@ -119,7 +118,7 @@ export const createStripeAccountLink = async (
     Platform.OS === "web"
       ? __DEV__
         ? window.location.origin
-        : "https://delivfree-vendor.web.app/"
+        : VENDOR_DOMAIN
       : "https://mobileredirect-5vakg2iqja-uc.a.run.app";
   const res = await functions().httpsCallable("createAccountLink")({
     account,
@@ -254,7 +253,7 @@ export const subscribe = async (
         Platform.OS === "web"
           ? __DEV__
             ? window.location.origin
-            : "https://delivfree-vendor.web.app/"
+            : VENDOR_DOMAIN
           : "https://mobileredirect-5vakg2iqja-uc.a.run.app", // "delivfree://subscription", // @todo change
       mode: "subscription",
       ui_mode: "embedded",

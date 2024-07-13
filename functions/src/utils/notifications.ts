@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 import { BaseMessage } from "firebase-admin/lib/messaging/messaging-api";
-import { Order, Vendor } from "../types";
-import { vendorDomain } from "../config.json";
+import { Order, VENDOR_DOMAIN, Vendor } from "../types";
+import { sendEmailNotification } from "./email";
 
 const webpushImage = "";
 
@@ -70,10 +70,6 @@ export async function sendNotifications(
     return;
   }
 
-  console.log("Sending notifications");
-  console.log("User ids", userIds);
-  console.log("Device tokens", deviceTokens);
-
   const messages: admin.messaging.Message[] = deviceTokens.map((token) => ({
     ...payload,
     token,
@@ -111,9 +107,10 @@ export async function sendNewOrderNotification(order: Order) {
     type: "order_created",
   };
   const collapseKey = "orderCreated";
-  const link = `${vendorDomain}?route=orders`;
+  const link = `${VENDOR_DOMAIN}?route=orders`;
   const payload = buildMessagePayload(notification, data, collapseKey, link);
-  return sendNotifications(vendorOwners, payload);
+  await sendNotifications(vendorOwners, payload);
+  await sendEmailNotification(notification);
 }
 
 export async function sendOrderDriverAssignedNotification(order: Order) {
@@ -130,7 +127,8 @@ export async function sendOrderDriverAssignedNotification(order: Order) {
     type: "order_driver_assigned",
   };
   const collapseKey = "orderCreated";
-  const link = `https://${vendorDomain}?route=orders`;
+  const link = `${VENDOR_DOMAIN}?route=orders`;
   const payload = buildMessagePayload(notification, data, collapseKey, link);
-  return sendNotifications(userIds, payload);
+  await sendNotifications(userIds, payload);
+  await sendEmailNotification(notification);
 }

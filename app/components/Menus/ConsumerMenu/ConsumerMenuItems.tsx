@@ -8,6 +8,7 @@ import { MenuItem } from "delivfree/types";
 import { ConsumerItemSelectModal } from "./ConsumerItemSelect";
 import { ModalRef } from "app/components/Modal/CenterModal";
 import { useDimensions } from "app/hooks/useDimensions";
+import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 
 interface Props {
   category: string;
@@ -22,7 +23,7 @@ export const ConsumerMenuItems = ({
   vendorLocation,
   vendorLocationClosed,
 }: Props) => {
-  const itemSelectModal = useRef<ModalRef>(null);
+  const itemSelectModal = useRef<BottomSheetRef>(null);
 
   const { width } = useDimensions();
 
@@ -34,13 +35,16 @@ export const ConsumerMenuItems = ({
 
   const [selectedItem, setSelectedItem] = useState<MenuItem>();
 
-  const handleItemPress = useCallback((item: MenuItem) => {
-    if (vendorLocationClosed) {
-      return;
-    }
-    setSelectedItem(item);
-    itemSelectModal.current?.open();
-  }, [vendorLocationClosed]);
+  const handleItemPress = useCallback(
+    (item: MenuItem) => {
+      if (vendorLocationClosed) {
+        return;
+      }
+      setSelectedItem(item);
+      itemSelectModal.current?.snapToIndex(0);
+    },
+    [vendorLocationClosed]
+  );
 
   return (
     <View>
@@ -67,6 +71,9 @@ export const ConsumerMenuItems = ({
         onClose={() => itemSelectModal.current?.close()}
         vendor={vendor}
         vendorLocation={vendorLocation}
+        onDismiss={() => {
+          setSelectedItem(undefined);
+        }}
       />
     </View>
   );

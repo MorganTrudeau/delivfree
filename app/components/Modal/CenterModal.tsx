@@ -25,7 +25,7 @@ import { MAX_CENTER_MODAL_WIDTH } from "../styles";
 import { spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
 
-type Props = {
+export type Props = {
   tapToClose?: boolean;
   children: ViewProps["children"];
   onDismiss?: () => void;
