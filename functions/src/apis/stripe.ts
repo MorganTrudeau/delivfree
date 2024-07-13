@@ -12,7 +12,6 @@ const signingSecret = defineString("STRIPE_SIGNING_SECRET");
 
 let _stripe: Stripe;
 const getStripe = () => {
-  console.log("API KEY", apiKey.value());
   if (!_stripe) {
     _stripe = new Stripe(apiKey.value());
   }
