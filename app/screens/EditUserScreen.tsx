@@ -14,7 +14,7 @@ import { useAlert } from "app/hooks";
 import { Card } from "app/components/Card";
 import { LogoutButton } from "app/components/LogoutButton";
 import { getAppType } from "app/utils/general";
-import { User } from "functions/src/types";
+import { User } from "delivfree";
 
 export const EditUserScreen = () => {
   const Alert = useAlert();

@@ -33,7 +33,7 @@ import {
 import { QuantitySelector } from "../QuantitySelector";
 import { createStripeCheckoutSession } from "app/apis/stripe";
 import { navigationRef } from "app/navigators";
-import { VENDOR_DOMAIN } from "functions/src/types";
+import { VENDOR_DOMAIN } from "delivfree";
 
 interface Props {
   fullTimeProduct: Stripe.Product;

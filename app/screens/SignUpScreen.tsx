@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   TextInput,
   TextStyle,
+  View,
   ViewStyle,
 } from "react-native";
 import {
@@ -22,6 +23,7 @@ import { NO_TOP_BOTTOM_SAFE_AREA_EDGES } from "app/components/styles";
 import { Card } from "app/components/Card";
 import { useAlert } from "app/hooks";
 import { getAppType } from "app/utils/general";
+import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
 
 interface SignUpScreenProps extends AppStackScreenProps<"SignUp"> {}
 
@@ -29,6 +31,7 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
   const Alert = useAlert();
 
   const authPasswordInput = useRef<TextInput>(null);
+  const termsModal = useRef<BottomSheetRef>(null);
 
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
@@ -157,6 +160,16 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
           RightAccessory={SignUpLoading}
         />
 
+        <Text style={{ marginTop: spacing.sm, alignSelf: "center" }}>
+          By signing up you are agreeing to the DelivFree{" "}
+          <Text
+            style={{ color: colors.primary }}
+            onPress={() => termsModal.current?.snapToIndex(0)}
+          >
+            Terms and conditions
+          </Text>
+        </Text>
+
         {getAppType() === "CONSUMER" && (
           <>
             <Text preset="formLabel" style={$guestAccountTitle}>
@@ -172,6 +185,12 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
             />
           </>
         )}
+
+        <BottomSheet ref={termsModal}>
+          <View style={{ padding: spacing.md }}>
+            <Text preset="subheading">Terms and conditions</Text>
+          </View>
+        </BottomSheet>
 
         {/* <Pressable onPress={() => _props.navigation.navigate("Login")}>
         <Text style={$loginMessage}>
@@ -193,7 +212,7 @@ const $signIn: TextStyle = {
 };
 
 const $textField: ViewStyle = {
-  marginBottom: spacing.lg,
+  marginBottom: spacing.md,
 };
 
 const $tapButton: ViewStyle = {

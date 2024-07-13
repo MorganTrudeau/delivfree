@@ -1,4 +1,4 @@
-import { Menu } from "functions/src/types";
+import { Menu } from "delivfree";
 import React from "react";
 import { View, ViewStyle } from "react-native";
 import { $row } from "../../styles";

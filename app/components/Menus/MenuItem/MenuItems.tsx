@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { MenuCategory, MenuItem } from "functions/src/types";
+import { MenuCategory, MenuItem } from "delivfree";
 import { $menusScreenHeader } from "../../styles";
 import { ScreenHeader } from "../../ScreenHeader";
 import { MenuItemsList } from "./MenuItemsList";

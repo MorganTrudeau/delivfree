@@ -13,7 +13,7 @@ import {
   MenuCategory,
   MenuCustomization,
   MenuItem,
-} from "functions/src/types";
+} from "delivfree";
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "./useToast";
 import { translate } from "app/i18n";

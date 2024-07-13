@@ -54,16 +54,16 @@ export const Drawer = ({
   const largeScreen = isLargeScreen(width);
 
   const [alwaysOpen, setAlwaysOpen] = useState(
-    largeScreen && getAppType() === "ADMIN"
+   false// largeScreen && getAppType() === "ADMIN"
   );
   const [open, setOpen] = useState(false);
   const openAnimation = useSharedValue(0);
 
-  useOnChange(largeScreen, (next) => {
-    if (getAppType() === "ADMIN") {
-      setAlwaysOpen(next);
-    }
-  });
+  // useOnChange(largeScreen, (next) => {
+  //   if (getAppType() === "ADMIN") {
+  //     setAlwaysOpen(next);
+  //   }
+  // });
 
   useEffect(() => {
     if (alwaysOpen && open) {

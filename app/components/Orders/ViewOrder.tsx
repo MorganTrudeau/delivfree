@@ -1,6 +1,6 @@
 import { getUser } from "app/apis/user";
 import { spacing } from "app/theme";
-import { Order, User } from "functions/src/types";
+import { Order, User } from "delivfree";
 import React, { forwardRef, useCallback, useEffect, useState } from "react";
 import { Platform, StyleSheet, View, ViewStyle } from "react-native";
 import { Text } from "../Text";

@@ -5,7 +5,7 @@ import { spacing } from "app/theme";
 import { Card } from "app/components/Card";
 import { LicenseItem } from "app/components/Licenses/LicenseItem";
 import { ActivityIndicator, View } from "react-native";
-import { License } from "functions/src/types";
+import { License } from "delivfree";
 import { SubscriptionInfo } from "./SubscriptionInfo";
 import Stripe from "stripe";
 import { ReferralCodeInput } from "./ReferralCodeInput";

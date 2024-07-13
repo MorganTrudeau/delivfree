@@ -1,6 +1,10 @@
 import { Cuisines } from "./enums";
 
-export type DriverClockIn = { vendorLocation: string; date: number; ordersTaken: number };
+export type DriverClockIn = {
+  vendorLocation: string;
+  date: number;
+  ordersTaken: number;
+};
 export type DaysAndTimes = {
   days: number[];
   startTime: { hours: number; minutes: number } | null;
@@ -164,6 +168,7 @@ export type Vendor = {
       inclusive: boolean;
     }[];
   };
+  subscriptionStatus?: "active" | "inactive";
 };
 export type Driver = {
   id: string;

@@ -3,7 +3,7 @@ import { ActivityIndicator, View } from "react-native";
 import { MenuNames } from "./Menu/MenuNames";
 import { Text } from "../Text";
 import { colors, spacing } from "app/theme";
-import { Menu, MenuCategory, MenuItem } from "functions/src/types";
+import { Menu, MenuCategory, MenuItem } from "delivfree";
 import { $menusScreenHeader } from "../styles";
 import { MenuOverviewEmpty } from "./MenuOverviewEmpty";
 import { MenuToolbar } from "./Menu/MenuToolbar";

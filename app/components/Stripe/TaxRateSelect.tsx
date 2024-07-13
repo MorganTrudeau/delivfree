@@ -1,4 +1,4 @@
-import { Vendor } from "functions/src/types";
+import { Vendor } from "delivfree";
 import React, { useCallback, useRef, useState } from "react";
 import { Pressable, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
