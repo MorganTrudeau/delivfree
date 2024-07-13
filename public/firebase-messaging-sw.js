@@ -21,7 +21,7 @@ const liveConfig = {
   measurementId: "G-C1X5PN737R",
 };
 
-firebase.initializeApp(devConfig);
+firebase.initializeApp(liveConfig);
 
 const FCM_MSG = "FCM_MSG";
 const MessageType = {

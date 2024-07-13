@@ -20,6 +20,6 @@ const liveConfig = {
 };
 
 export const initFirebase = () => {
-  firebase.initializeApp(devConfig);
+  firebase.initializeApp(liveConfig);
   // functions().useEmulator("localhost", 5001);
 };
