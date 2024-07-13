@@ -1,3 +1,6 @@
+import Bugsnag from "@bugsnag/react-native";
+Bugsnag.start();
+
 // import "./wdyr";
 import "react-native-gesture-handler";
 import App from "./app/app.tsx";

@@ -44,7 +44,14 @@
     "host:admin": "firebase deploy --only hosting:admin",
     "web:consumer": "MODE=development ENVFILE=.env.consumer GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
     "web:vendor": "MODE=development ENVFILE=.env.vendor GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
-    "web:admin": "MODE=development ENVFILE=.env.admin GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js"
+    "web:admin": "MODE=development ENVFILE=.env.admin GENERATE_SOURCEMAP=false webpack serve --mode=development --config webpack.config.js",
+    "bugsnag:create-build": "bugsnag-cli create-build",
+    "bugsnag:upload-android-ndk": "bugsnag-cli upload android-ndk android/",
+    "bugsnag:upload-android-proguard": "bugsnag-cli upload android-proguard android/",
+    "bugsnag:upload-rn-android": "bugsnag-cli upload react-native-android",
+    "bugsnag:upload-dsym": "bugsnag-cli upload dsym ios/",
+    "bugsnag:upload-rn-ios": "bugsnag-cli upload react-native-ios",
+    "bugsnag:upload": "bugsnag-cli upload android-ndk android/ && bugsnag-cli upload android-proguard android/ && bugsnag-cli upload react-native-android && bugsnag-cli upload dsym ios/ && bugsnag-cli upload react-native-ios"
   },
   "overrides": {
     "react-error-overlay": "6.0.9"
@@ -150,6 +157,7 @@
     "@babel/preset-env": "^7.20.0",
     "@babel/preset-react": "^7.24.1",
     "@babel/runtime": "^7.20.0",
+    "@bugsnag/cli": "^2.4.0",
     "@bugsnag/source-maps": "^2.3.1",
     "@expo/webpack-config": "^19.0.1",
     "@react-native-community/cli-platform-ios": "^11.3.5",
