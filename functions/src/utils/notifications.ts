@@ -111,6 +111,7 @@ export async function sendNewOrderNotification(order: Order) {
   const payload = buildMessagePayload(notification, data, collapseKey, link);
   await sendNotifications(vendorOwners, payload);
   await sendEmailNotification(notification);
+  return true;
 }
 
 export async function sendOrderDriverAssignedNotification(order: Order) {

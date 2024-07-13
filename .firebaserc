@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "delivfree-app"
+    "default": "delivfree-app",
+    "dev": "delivfree-app-dev"
   },
   "targets": {
     "delivfree-app": {

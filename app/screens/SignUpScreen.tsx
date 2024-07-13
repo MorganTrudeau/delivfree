@@ -191,12 +191,6 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
             <Text preset="subheading">Terms and conditions</Text>
           </View>
         </BottomSheet>
-
-        {/* <Pressable onPress={() => _props.navigation.navigate("Login")}>
-        <Text style={$loginMessage}>
-          Already have an account? <Text style={$loginText}>Log In</Text>
-        </Text>
-      </Pressable> */}
       </Card>
     </Screen>
   );
