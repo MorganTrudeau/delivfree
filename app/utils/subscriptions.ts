@@ -6,11 +6,19 @@ export const PART_TIME_ORDERS = 12;
 export const SUBSCRIPTION_TRIAL_PERIOD = 60;
 
 // Driver
-export const FULL_TIME_DRIVER_PRICE = "price_1P5yoJ076A0nkV3S5AURCebc";
-export const PART_TIME_DRIVER_PRICE = "price_1P6Pln076A0nkV3SQRuZl37f";
+export const FULL_TIME_DRIVER_PRICE = __DEV__
+  ? "price_1P5yoJ076A0nkV3S5AURCebc"
+  : "price_1PNfJM076A0nkV3SBJuEagTk";
+export const PART_TIME_DRIVER_PRICE = __DEV__
+  ? "price_1P6Pln076A0nkV3SQRuZl37f"
+  : "price_1PNfIp076A0nkV3SO2VM1VDz";
 // Vendor
-export const FULL_TIME_VENDOR_PRICE = "price_1PN8Eq076A0nkV3SqdXnai9z";
-export const PART_TIME_VENDOR_PRICE = "price_1PN8Fe076A0nkV3SxcGFsZpM";
+export const FULL_TIME_VENDOR_PRICE = __DEV__
+  ? "price_1PN8Eq076A0nkV3SqdXnai9z"
+  : "price_1PNfKO076A0nkV3SBq6O3DWy";
+export const PART_TIME_VENDOR_PRICE = __DEV__
+  ? "price_1PN8Fe076A0nkV3SxcGFsZpM"
+  : "price_1Pc5WY076A0nkV3S5x8VbjDP";
 
 export const getPositionsPrice = (
   userType: "driver" | "vendor",
