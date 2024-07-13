@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyCc1WVGcoBGW4lUkm9q_43tUHoS5SP9sQ8</string>
+	<string>AIzaSyC_rq5HkJpzwu22YYVVrVLNKeljSork0eo</string>
 	<key>GCM_SENDER_ID</key>
-	<string>406179880402</string>
+	<string>1045793418822</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.delivfree.consumer</string>
+	<string>com.delivfree.app</string>
 	<key>PROJECT_ID</key>
-	<string>delivfree-app</string>
+	<string>delivfree-app-dev</string>
 	<key>STORAGE_BUCKET</key>
-	<string>delivfree-app.appspot.com</string>
+	<string>delivfree-app-dev.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:406179880402:ios:c7d290486eaf685b297c0b</string>
+	<string>1:1045793418822:ios:4af70ff3748abfd2e6e447</string>
 </dict>
 </plist>

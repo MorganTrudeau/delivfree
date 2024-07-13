@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "406179880402",
-    "project_id": "delivfree-app",
-    "storage_bucket": "delivfree-app.appspot.com"
+    "project_number": "1045793418822",
+    "project_id": "delivfree-app-dev",
+    "storage_bucket": "delivfree-app-dev.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:406179880402:android:86233492c51ccdd0297c0b",
+        "mobilesdk_app_id": "1:1045793418822:android:5d2598fc08c75af1e6e447",
         "android_client_info": {
           "package_name": "com.delivfree.app"
         }
@@ -15,45 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAKK9SQ2i7BmDm15rRq4rXZMEEQETRTCnA"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:406179880402:android:61128a9af8b84caa297c0b",
-        "android_client_info": {
-          "package_name": "com.delivfree.consumer"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAKK9SQ2i7BmDm15rRq4rXZMEEQETRTCnA"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:406179880402:android:bc9c9a6a5d922206297c0b",
-        "android_client_info": {
-          "package_name": "com.delivfree.vendor"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAKK9SQ2i7BmDm15rRq4rXZMEEQETRTCnA"
+          "current_key": "AIzaSyAsJH5dbw2NqTUYFQivc3GBVlM24LnEkrA"
         }
       ],
       "services": {
