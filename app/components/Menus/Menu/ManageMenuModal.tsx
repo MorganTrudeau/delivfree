@@ -1,5 +1,5 @@
 import { generateUid } from "app/utils/general";
-import { Menu } from "functions/src/types";
+import { Menu } from "delivfree";
 import React, { forwardRef, useMemo, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { TextField } from "../../TextField";

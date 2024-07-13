@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
-import { Menu } from "functions/src/types";
+import { Menu } from "delivfree";
 import { $menusScreenHeader } from "../../styles";
 import { ScreenHeader } from "../../ScreenHeader";
 import { MenusList } from "./MenusList";

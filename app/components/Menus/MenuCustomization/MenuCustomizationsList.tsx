@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { MenuCustomization, MenuItem } from "functions/src/types";
+import { MenuCustomization, MenuItem } from "delivfree";
 import { TableHeader, TableHeaders } from "../../TableHeaders";
 import { ActivityIndicator, FlatList, Pressable } from "react-native";
 import { useDimensions } from "app/hooks/useDimensions";

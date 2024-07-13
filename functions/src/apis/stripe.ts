@@ -254,6 +254,17 @@ export const stripeWebhook = onRequest(async (req, res) => {
             .collection("Subscriptions")
             .doc(vendor)
             .set({ subscription });
+          await admin
+            .firestore()
+            .collection("Vendors")
+            .doc(vendor)
+            .update({
+              subscriptionStatus:
+                subscription.status === "active" ||
+                subscription.status === "trialing"
+                  ? "active"
+                  : "inactive",
+            });
         } else if (driver) {
           await admin
             .firestore()

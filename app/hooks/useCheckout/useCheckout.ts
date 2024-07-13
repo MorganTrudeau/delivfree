@@ -60,16 +60,18 @@ export const useCheckout: UseCheckout = ({
     amount: number;
     currency: string;
   }) => {
+    const _amount = Number((amount * 100).toFixed(0));
     const response = await fetchPaymentSheet({
       customerData: { email },
       params: {
-        amount: Number((amount * 100).toFixed(0)),
+        amount: _amount,
         currency,
         // In the latest version of the API, specifying the `automatic_payment_methods` parameter
         // is optional because Stripe enables its functionality by default.
         automatic_payment_methods: {
           enabled: true,
         },
+        application_fee_amount: 30 + _amount * 0.029,
         transfer_data: {
           destination: stripeAccount,
         },

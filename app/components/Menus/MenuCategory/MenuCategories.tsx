@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react";
-import { Menu, MenuCategory } from "functions/src/types";
+import { Menu, MenuCategory } from "delivfree";
 import { MenuCategoriesList } from "./MenuCategoriesList";
 import { ScreenHeader } from "../../ScreenHeader";
 import { $menusScreenHeader } from "../../styles";

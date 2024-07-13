@@ -172,7 +172,7 @@ const $forgotPassword: TextStyle = {
 const $signIn: TextStyle = {};
 
 const $textField: ViewStyle = {
-  marginTop: spacing.lg,
+  marginTop: spacing.md,
 };
 
 const $tapButton: ViewStyle = {

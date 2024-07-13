@@ -1,5 +1,5 @@
 import { generateUid, localizeCurrency } from "app/utils/general";
-import { MenuCategory, MenuItem, MenuItemAttribute } from "functions/src/types";
+import { MenuCategory, MenuItem, MenuItemAttribute } from "delivfree";
 import React, { forwardRef, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { TextField } from "../../TextField";

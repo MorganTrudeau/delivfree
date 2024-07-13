@@ -4,7 +4,7 @@ import React from "react";
 import { View, ViewStyle } from "react-native";
 import { $borderTopLight, $flexRowBetween } from "../styles";
 import { Text } from "../Text";
-import { TipType } from "functions/src/types";
+import { TipType } from "delivfree";
 import { TipSelect } from "./TipSelect";
 
 export const CheckoutTotals = ({

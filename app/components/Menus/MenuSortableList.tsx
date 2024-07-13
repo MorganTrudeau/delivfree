@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { MenuCategory, MenuItem } from "functions/src/types";
+import { MenuCategory, MenuItem } from "delivfree";
 import DraggableFlatList, {
   NestableDraggableFlatList,
   NestableScrollContainer,

@@ -5,7 +5,7 @@ import {
   MenuCustomization,
   MenuCustomizationChoice,
   MenuItem,
-} from "functions/src/types";
+} from "delivfree";
 import {
   ActivityIndicator,
   Platform,

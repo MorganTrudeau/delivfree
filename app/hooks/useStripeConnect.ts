@@ -8,7 +8,7 @@ import {
 } from "app/apis/stripe";
 import { updateVendor } from "app/apis/vendors";
 import { navigationRef } from "app/navigators";
-import { Vendor } from "functions/src/types";
+import { Vendor } from "delivfree";
 import { useEffect, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useToast } from "./useToast";

@@ -13,7 +13,7 @@ import Stripe from "stripe";
 import { SUBSCRIPTION_TRIAL_PERIOD } from "app/utils/subscriptions";
 import functions from "@react-native-firebase/functions";
 import { useCallback } from "react";
-import { VENDOR_DOMAIN } from "functions/src/types";
+import { VENDOR_DOMAIN } from "delivfree";
 
 export const useCheckout: UseCheckout = ({}: UseCheckoutParams) => {
   const onCheckout: OnCheckout = async ({

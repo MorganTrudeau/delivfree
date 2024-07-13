@@ -4,7 +4,7 @@ import { Icon } from "../../Icon";
 import { Text } from "../../Text";
 import { ButtonSmall } from "../../ButtonSmall";
 import { spacing } from "app/theme";
-import { Menu } from "functions/src/types";
+import { Menu } from "delivfree";
 import { $borderBottom, $flex, $row } from "../../styles";
 
 export const MenuToolbar = React.memo(function MenuToolbar({
