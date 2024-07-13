@@ -40,7 +40,7 @@ const livePrices = {
     partTime: "price_1PNfIp076A0nkV3SO2VM1VDz",
   },
 };
-const prices = devPrices;
+const prices = livePrices;
 
 export const getPositionsPrice = (
   userType: "driver" | "vendor",
