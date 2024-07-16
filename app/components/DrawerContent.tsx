@@ -40,6 +40,7 @@ const ConsumerItems: DrawerItem[] = [
 const VendorItems: DrawerItem[] = [
   { text: "Home", route: "Home" },
   { text: "Orders", route: "Orders" },
+  { text: "Tips", route: "Tips" },
   { text: "Menus", route: "Menus", include: () => Platform.OS === "web" },
   { text: "Locations", route: "Locations" },
   { text: "Positions", route: "Positions" },
@@ -54,6 +55,7 @@ const VendorItems: DrawerItem[] = [
 
 const DriverItems: DrawerItem[] = [
   { text: "Orders", route: "Orders" },
+  { text: "Tips", route: "Tips" },
   { text: "Subscription", route: "Subscription" },
   { text: "Profile", route: "Profile" },
   {

@@ -7,16 +7,22 @@ import { hasValidParams } from "./utils";
 const cache = new DataCache<Order>();
 
 export const useOrderData = (params: Omit<OrderListenerParams, "limit">) => {
-  const { vendorLocation, driver } = params;
+  const { vendorLocation, driver, startDate, endDate } = params;
 
   const handleLoadOrders = useCallback(
     (limit: number, onData: (orders: Order[]) => void) => {
       if (!hasValidParams(params)) {
         return () => {};
       }
-      return listenToOrders(onData, { vendorLocation, driver, limit });
+      return listenToOrders(onData, {
+        vendorLocation,
+        driver,
+        limit,
+        startDate,
+        endDate,
+      });
     },
-    [vendorLocation, driver]
+    [vendorLocation, driver, startDate, endDate]
   );
 
   const { data, loadData } = useDataListener<Order>(

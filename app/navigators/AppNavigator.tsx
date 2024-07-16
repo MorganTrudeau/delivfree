@@ -19,7 +19,6 @@ import { AdminStack } from "./Stacks/AdminStack";
 import { VendorStack } from "./Stacks/VendorStack";
 import { ConsumerStack } from "./Stacks/ConsumerStack";
 import { Drawer } from "app/components/Drawer";
-import { DriverClockIn } from "app/components/Drivers/DriverClockIn";
 import { useAppSelector } from "app/redux/store";
 
 export type NavigationProp = AppStackScreenProps<
