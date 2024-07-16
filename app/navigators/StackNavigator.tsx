@@ -52,6 +52,7 @@ export type AppStackParamList = {
   WebView: { uri: string };
   Payment: { clientSecret: string };
   CheckoutCart: undefined;
+  Tips: undefined;
 };
 
 export const linkingConfigScreens: {

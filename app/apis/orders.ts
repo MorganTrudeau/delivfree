@@ -16,12 +16,14 @@ export type OrderListenerParams = {
   driver?: string;
   vendorLocation?: string;
   limit?: number;
+  startDate?: number;
+  endDate?: number;
 };
 export const listenToOrders = (
   onData: (order: Order[]) => void,
   params: OrderListenerParams = {}
 ) => {
-  const { driver, vendorLocation, limit } = params;
+  const { driver, vendorLocation, limit, startDate, endDate } = params;
 
   let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> =
     firestore().collection("Orders").orderBy("date", "desc");
@@ -32,6 +34,14 @@ export const listenToOrders = (
 
   if (vendorLocation) {
     query = query.where("vendorLocation", "==", vendorLocation);
+  }
+
+  if (startDate) {
+    query = query.where("date", ">=", startDate);
+  }
+
+  if (endDate) {
+    query = query.where("date", "<=", endDate);
   }
 
   if (limit) {

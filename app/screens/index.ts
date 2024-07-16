@@ -35,6 +35,7 @@ export * from "./Vendor/VendorLocationsScreen";
 export * from "./Vendor/VendorDriversScreen";
 export * from "./Vendor/VendorPositionsScreen";
 export * from "./Vendor/VendorMenusScreen";
+export * from "./Vendor/VendorTipsScreen";
 
 // Driver
 export * from "./Driver/DriverCodeScreen";
@@ -43,6 +44,7 @@ export * from "./Driver/DriverSubscriptionScreen";
 export * from "./Driver/DriverProfileScreen";
 export * from "./Driver/DriverOrdersScreen";
 export * from "./Driver/DriverLicensesScreen";
+export * from "./Driver/DriverTipsScreen";
 
 // Admin
 export * from "./Admin/AdminUsersScreen";

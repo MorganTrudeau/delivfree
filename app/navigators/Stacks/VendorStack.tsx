@@ -165,6 +165,11 @@ export const VendorStack = () => {
           options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
+          name="Tips"
+          component={Screens.DriverTipsScreen}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
+        />
+        <Stack.Screen
           name="Profile"
           component={Screens.DriverProfileScreen}
           options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
@@ -245,6 +250,11 @@ export const VendorStack = () => {
         <Stack.Screen
           name="Orders"
           component={Screens.VendorOrdersScreen}
+          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
+        />
+        <Stack.Screen
+          name="Tips"
+          component={Screens.VendorTipsScreen}
           options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen
