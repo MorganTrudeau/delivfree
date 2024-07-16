@@ -89,4 +89,5 @@ web-build/
 functions/.runtimeconfig.json
 functions/firebase-debug.log
 functions/.env*
-dist
+dist/*
+.firebase/hosting.*.cache

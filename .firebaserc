@@ -16,6 +16,19 @@
           "delivfree-admin"
         ]
       }
+    },
+    "delivfree-app-dev": {
+      "hosting": {
+        "vendor": [
+          "delivfree-vendor-dev"
+        ],
+        "consumer": [
+          "delivfree-consumer-dev"
+        ],
+        "admin": [
+          "delivfree-admin-dev"
+        ]
+      }
     }
   },
   "etags": {}
