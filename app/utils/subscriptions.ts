@@ -5,13 +5,6 @@ export const FULL_TIME_ORDERS = 24;
 export const PART_TIME_ORDERS = 12;
 export const SUBSCRIPTION_TRIAL_PERIOD = 60;
 
-// Driver
-export const FULL_TIME_DRIVER_PRICE = "price_1P5yoJ076A0nkV3S5AURCebc";
-export const PART_TIME_DRIVER_PRICE = "price_1P6Pln076A0nkV3SQRuZl37f";
-// Vendor
-export const FULL_TIME_VENDOR_PRICE = "price_1PN8Eq076A0nkV3SqdXnai9z";
-export const PART_TIME_VENDOR_PRICE = "price_1PN8Fe076A0nkV3SxcGFsZpM";
-
 const devPrices = {
   vendor: {
     fullTime: "price_1PN8Eq076A0nkV3SqdXnai9z",
@@ -70,13 +63,13 @@ export const getPositionsFromSubscription = (
     (acc, item) => {
       const price = item.price.id;
       if (
-        price === FULL_TIME_DRIVER_PRICE ||
-        price === FULL_TIME_VENDOR_PRICE
+        price === prices.driver.fullTime ||
+        price === prices.vendor.fullTime
       ) {
         acc.fullTime = acc.fullTime + (item.quantity || 0);
       } else if (
-        price === PART_TIME_DRIVER_PRICE ||
-        price === PART_TIME_VENDOR_PRICE
+        price === prices.driver.partTime ||
+        price === prices.vendor.partTime
       ) {
         acc.partTime = acc.partTime + (item.quantity || 0);
       }
