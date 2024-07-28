@@ -24,7 +24,7 @@ const plugins = [
 
 /** @type {import('@babel/core').TransformOptions} */
 module.exports = {
-  presets: ["babel-preset-expo"],
+  presets: ['module:@react-native/babel-preset'],
   env: {
     production: {
       plugins: ["transform-remove-console"],
