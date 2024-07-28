@@ -1,7 +1,4 @@
-pod_folder = Pathname.new(__FILE__).dirname.realpath
-
-require File.join(File.dirname(`cd #{pod_folder} && node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
-
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 def node_require(script)
   # Resolve script with node to allow for hoisting
   require Pod::Executable.execute_command('node', ['-p',
@@ -11,19 +8,11 @@ def node_require(script)
     )", __dir__]).strip
 end
 
+# Use it to require both react-native's and this package's scripts:
 node_require('react-native/scripts/react_native_pods.rb')
 node_require('react-native-permissions/scripts/setup.rb')
 
-require 'json'
-podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
-
-production = ENV["PRODUCTION"] == "1"
-ENV['RCT_NEW_ARCH_ENABLED'] = podfile_properties['newArchEnabled'] == 'true' ? '1' : '0'
-
-platform :ios, podfile_properties['ios.deploymentTarget'] || '13.0'
-install! 'cocoapods',
-  :deterministic_uuids => false
-
+platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
 setup_permissions([
@@ -49,30 +38,6 @@ setup_permissions([
   # 'StoreKit',
 ])
 
-# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
-# because `react-native-flipper` depends on (FlipperKit,...), which will be excluded. To fix this,
-# you can also exclude `react-native-flipper` in `react-native.config.js`
-#
-# ```js
-# module.exports = {
-#   dependencies: {
-#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
-#   }
-# }
-# ```
-flipper_config = FlipperConfiguration.disabled
-if ENV['NO_FLIPPER'] == "1" || ENV['CI'] then
-  # Explicitly disabled through environment variables
-  flipper_config = FlipperConfiguration.disabled
-elsif podfile_properties.key?('ios.flipper') then
-  # Configure Flipper in Podfile.properties.json
-  if podfile_properties['ios.flipper'] == 'true' then
-    flipper_config = FlipperConfiguration.enabled(["Debug", "Release"])
-  elsif podfile_properties['ios.flipper'] != 'false' then
-    flipper_config = FlipperConfiguration.enabled(["Debug", "Release"], { 'Flipper' => podfile_properties['ios.flipper'] })
-  end
-end
-
 target 'delivfree' do
   use_expo_modules!
   config = use_native_modules!
@@ -80,9 +45,6 @@ target 'delivfree' do
   use_frameworks! :linkage => :static
   $RNFirebaseAsStaticFramework = true
   $RNGoogleMobileAdsAsStaticFramework = true
-
-  # Flags change depending on the env values.
-  flags = get_default_flags()
 
   # $static_framework = []
 
@@ -99,14 +61,6 @@ target 'delivfree' do
 
   use_react_native!(
     :path => config[:reactNativePath],
-    :production => production,
-    # Hermes is now enabled by default. Disable by setting this in Podfile.properties.json.
-    # Upcoming versions of React Native may rely on get_default_flags(), but
-    # we make it explicit here to aid in the React Native upgrade process.
-    :hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
-    :fabric_enabled => flags[:fabric_enabled],
-    # Note that if you have use_frameworks! enabled, Flipper will not work if enabled
-    :flipper_configuration => flipper_config,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -122,9 +76,9 @@ target 'delivfree' do
       config[:reactNativePath],
       # Set `mac_catalyst_enabled` to `true` in order to apply patches
       # necessary for Mac Catalyst builds
-      :mac_catalyst_enabled => false
+      :mac_catalyst_enabled => false,
+       # :ccache_enabled => true
     )
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
     File.delete("./.xcode.env.local") if File.exist?("./.xcode.env.local")
   
     # This is necessary for Xcode 14, because it signs resource bundles by default
