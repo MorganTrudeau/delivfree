@@ -5,7 +5,7 @@ import messaging from "@react-native-firebase/messaging";
 import { AlertProps } from "app/components/Alert/AlertContext";
 import { translate } from "app/i18n";
 import React from "react";
-import { VendorLocation } from "delivfree/types";
+import { VendorLocation } from "delivfree";
 
 export const generateKeywords = (str: string) => {
   const keywords: string[] = [];

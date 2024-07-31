@@ -65,6 +65,7 @@ export const Drawer = ({
             setOpen(drawerWillShow);
           }
         }}
+        useNativeAnimations
         renderNavigationView={() => (
           <DrawerContent
             navigation={navigation}

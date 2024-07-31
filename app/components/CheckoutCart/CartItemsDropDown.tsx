@@ -1,5 +1,5 @@
 import { useLayout } from "app/hooks";
-import { CheckoutItem } from "delivfree/types";
+import { CheckoutItem } from "delivfree";
 import React, { useRef } from "react";
 import Animated, {
   interpolate,

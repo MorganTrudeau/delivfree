@@ -2,9 +2,6 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Button } from "app/components/Button";
 import { Icon } from "app/components/Icon";
 import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
-import ReanimatedCenterModal, {
-  ModalRef,
-} from "app/components/Modal/CenterModal";
 import { QuantitySelector } from "app/components/QuantitySelector";
 import { Text } from "app/components/Text";
 import { Toggle } from "app/components/Toggle";
@@ -28,7 +25,7 @@ import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
 import { generateUid, localizeCurrency } from "app/utils/general";
-import { MenuCustomizationChoice, MenuItem } from "delivfree/types";
+import { MenuCustomizationChoice, MenuItem } from "delivfree";
 import React, { forwardRef, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Platform, Pressable, View } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";
@@ -138,7 +135,7 @@ const ConsumerItemSelect = ({
           resizeMode="cover"
           style={[
             $image,
-            // largeScreen ? { width: 500 } : { width: width - spacing.md * 4 },
+            largeScreen ? { width: 500 } : { width: width - spacing.md * 4 },
           ]}
         />
       </View>

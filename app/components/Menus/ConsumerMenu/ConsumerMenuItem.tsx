@@ -3,7 +3,7 @@ import { $borderLight, $row } from "app/components/styles";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
 import { localizeCurrency } from "app/utils/general";
-import { MenuItem } from "delivfree/types";
+import { MenuItem } from "delivfree";
 import React, { useMemo } from "react";
 import { Pressable, View, ViewStyle } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";

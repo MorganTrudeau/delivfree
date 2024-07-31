@@ -4,7 +4,7 @@ import { colors, spacing } from "app/theme";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { ConsumerMenuItem } from "./ConsumerMenuItem";
-import { MenuItem } from "delivfree/types";
+import { MenuItem } from "delivfree";
 import { ConsumerItemSelectModal } from "./ConsumerItemSelect";
 import { ModalRef } from "app/components/Modal/CenterModal";
 import { useDimensions } from "app/hooks/useDimensions";

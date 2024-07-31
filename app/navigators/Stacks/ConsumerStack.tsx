@@ -5,18 +5,12 @@ import { getStackNavigator, screenOptions } from "../StackNavigator";
 import { renderAuthStack } from "../AuthStack";
 import { renderRegistrationStack } from "../RegistrationStack";
 import * as Screens from "app/screens";
-import { Platform, Pressable, View } from "react-native";
-import { colors, spacing } from "app/theme";
-import { useNavigation } from "@react-navigation/native";
-import { Icon } from "app/components";
+import { Platform } from "react-native";
 import { DrawerIconButton } from "app/components/DrawerIconButton";
-import { CheckoutCartTracker } from "app/components/CheckoutCart/CheckoutCartTracker";
 
 const Stack = getStackNavigator();
 
 export const ConsumerStack = () => {
-  const navigation = useNavigation();
-
   const { user, authToken, userLoaded, deleteAccountLoading } = useAppSelector(
     (state) => ({
       user: state.user.user,
@@ -34,7 +28,10 @@ export const ConsumerStack = () => {
         <Stack.Screen
           name="Home"
           component={Screens.HomeScreen}
-          options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
+          options={{
+            headerLeft: () => <DrawerIconButton />,
+            headerBackVisible: false,
+          }}
         />
         <Stack.Screen
           name="Settings"

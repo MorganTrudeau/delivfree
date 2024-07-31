@@ -1,7 +1,7 @@
 import "./i18n";
 import "./utils/ignoreWarnings";
 import { useFonts } from "expo-font";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AppNavigator } from "./navigators";
 import { ErrorBoundary } from "./screens/ErrorScreen/ErrorBoundary";
@@ -20,6 +20,7 @@ import LocalWebNotificationProvider from "app/context/LocalWebNotificationContex
 import functions from "@react-native-firebase/functions";
 import { isEmulatorSync } from "react-native-device-info";
 import PopoverProvider from "./components/Popover/PopoverContext";
+import { AnimatedBootSplash } from "./components/AnimatedSplash";
 
 // if (__DEV__ && isEmulatorSync()) {
 //   // If you are running on a physical device, replace http://localhost with the local ip of your PC. (http://192.168.x.x)
@@ -51,6 +52,11 @@ function App() {
                   <PopoverProvider>
                     <LocalWebNotificationProvider>
                       <AppNavigator />
+                      {/* <AnimatedBootSplash
+                        onAnimationEnd={() => {
+                          setSplashVisible(false);
+                        }}
+                      /> */}
                       <FirebaseAuth />
                     </LocalWebNotificationProvider>
                   </PopoverProvider>

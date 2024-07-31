@@ -1,4 +1,4 @@
-import { CheckoutItem } from "delivfree/types";
+import { CheckoutItem } from "delivfree";
 import React, { useRef } from "react";
 import { Card } from "../Card";
 import { Pressable, View } from "react-native";

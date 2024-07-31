@@ -1,4 +1,4 @@
-import { VendorLocation } from "delivfree/types";
+import { VendorLocation } from "delivfree";
 import React, { forwardRef } from "react";
 import { Pressable, View, ViewStyle } from "react-native";
 import { Text } from "../Text";

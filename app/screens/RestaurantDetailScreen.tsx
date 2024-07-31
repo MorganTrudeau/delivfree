@@ -16,7 +16,7 @@ import { AppStackScreenProps } from "app/navigators";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
 import { isMenuActive } from "app/utils/menus";
-import { Menu, VendorLocation } from "delivfree/types";
+import { Menu, VendorLocation } from "delivfree";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {

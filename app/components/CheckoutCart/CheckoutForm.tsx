@@ -34,7 +34,7 @@ import {
   getDeliveryInstructionsTitle,
 } from "app/utils/checkout";
 import { pluralFormat } from "app/utils/general";
-import { Order, TipType, User } from "delivfree/types";
+import { Order, TipType, User } from "delivfree";
 import React, {
   useCallback,
   useEffect,

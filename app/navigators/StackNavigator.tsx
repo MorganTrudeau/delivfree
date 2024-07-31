@@ -1,5 +1,8 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from "@react-navigation/native-stack";
 import { $fontSizeStyles } from "app/components";
 import { DrawerIconButton } from "app/components/DrawerIconButton";
 import { LogoHeader } from "app/components/LogoHeader";
@@ -10,6 +13,7 @@ import { StackAnimationTypes } from "react-native-screens";
 import { navigationRef } from "./navigationUtilities";
 import { CheckoutCartTracker } from "app/components/CheckoutCart/CheckoutCartTracker";
 import { getAppType } from "app/utils/general";
+import { NativeStackHeader } from "./Header/NativeStackHeader";
 
 export type AppStackParamList = {
   Welcome: undefined;
@@ -74,7 +78,7 @@ export const linkingConfigScreens: {
   Checkout: "checkout",
 };
 
-export const screenOptions = {
+export const screenOptions: NativeStackNavigationOptions = {
   headerBackTitleVisible: false,
   headerRight:
     getAppType() === "CONSUMER"
@@ -109,6 +113,7 @@ export const screenOptions = {
     default: "default",
   }),
   animationDuration: 100,
+  header: NativeStackHeader,
 };
 
 const _stack = createNativeStackNavigator<AppStackParamList>();
