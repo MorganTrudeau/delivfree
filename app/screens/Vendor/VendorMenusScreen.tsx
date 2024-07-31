@@ -19,7 +19,7 @@ import {
   MenuCategory,
   MenuCustomization,
   MenuItem,
-} from "delivfree/types";
+} from "delivfree";
 import { MenuCustomizations } from "app/components/Menus/MenuCustomization/MenuCustomizations";
 import { ManageMenuCustomizationModal } from "app/components/Menus/MenuCustomization/ManageMenuCustomizationModal";
 

@@ -50,7 +50,11 @@ const CuisineList = ({
           style={[$cuisineListItem, { width: `${itemWidth}%` }]}
         >
           <View style={[$imageContainer, { maxWidth: 500 }]}>
-            <FastImage source={item.image} style={$image} />
+            <FastImage
+              source={item.image}
+              style={$image}
+              resizeMode="cover"
+            />
           </View>
           <Text preset={"subheading"} style={$title}>
             {item.title}

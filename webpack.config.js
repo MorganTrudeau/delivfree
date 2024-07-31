@@ -15,9 +15,25 @@ const compileNodeModules = [
   // Add every react-native package that needs compiling
   "delivfree",
   "react-native-google-places-autocomplete",
+  "@expo-google-fonts",
+  "@react-native-community/push-notification-ios",
+  "react-native-calendars",
+  "react-native-chart-kit",
+  "react-native-circular-progress",
+  "react-native-phone-number-input",
+  "react-native-swipe-gestures",
+  "@expo/vector-icons",
+  "functions/src",
+  "@expo-google-fonts",
+  "expo-asset"
 ].map((moduleName) => path.resolve(appDirectory, `node_modules/${moduleName}`));
 
 const alias = {
+  "react-native$": "react-native-web",
+  "@gorhom/bottom-sheet": path.join(
+    __dirname,
+    "app/web/modules/@gorhom/bottom-sheet"
+  ),
   "@react-native-firebase/auth": path.join(
     __dirname,
     "app/web/modules/firebase/auth"
@@ -74,7 +90,7 @@ const babelLoaderConfiguration = {
   // Add every directory that needs to be compiled by Babel during the build.
   include: [
     path.resolve(__dirname, "index.web.js"), // Entry to your application
-    path.resolve(__dirname, "src"),
+    path.resolve(__dirname, "app"),
     ...compileNodeModules,
   ],
   use: {
@@ -159,6 +175,10 @@ module.exports = {
         },
         include: /node_modules/,
         type: "javascript/auto",
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
       },
     ],
   },

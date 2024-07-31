@@ -1,5 +1,5 @@
 import { CheckoutItem } from "app/redux/reducers/checkoutCart";
-import { DeliveryInstructionsType, User } from "delivfree/types";
+import { DeliveryInstructionsType, User } from "delivfree";
 import Stripe from "stripe";
 
 export const calcCheckoutItemPrice = (item: CheckoutItem) =>

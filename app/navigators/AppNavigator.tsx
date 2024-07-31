@@ -61,13 +61,13 @@ export interface NavigationProps
   > {}
 
 const onReadyMobile = () =>
-  setTimeout(() => RNBootSplash.hide({ fade: true }), 10);
+  setTimeout(() => {
+    RNBootSplash.hide({ fade: true });
+  }, 10);
 const onReadyWeb = undefined;
 const onReady = Platform.select({ web: onReadyWeb, default: onReadyMobile });
 
 export const AppNavigator = (props: NavigationProps) => {
-  const userType = useAppSelector((state) => state.appConfig.userType);
-
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName));
 
   useEffect(() => {

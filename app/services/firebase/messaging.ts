@@ -12,12 +12,12 @@ import {
 } from "../../utils/notifications";
 import { requestNotifications } from "react-native-permissions";
 import firestore from "@react-native-firebase/firestore";
-import { getDeviceId, getUniqueId } from "react-native-device-info";
+import { getUniqueId } from "react-native-device-info";
 import { colors } from "app/theme";
 import { useAppSelector } from "app/redux/store";
 import { isWebNotificationsSupported } from "app/utils/general";
 import { LocalWebNotificationContext } from "app/context/LocalWebNotificationContext";
-import { AppMessageTypes } from "delivfree/enums";
+import { AppMessageTypes } from "delivfree";
 import { navigationRef } from "app/navigators";
 
 export const LOCAL_NOTIFICATION_CHANNEL = "local_notifications";

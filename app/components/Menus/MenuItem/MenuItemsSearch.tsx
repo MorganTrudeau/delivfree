@@ -6,7 +6,7 @@ import { Toggle } from "app/components/Toggle";
 import { $borderBottom, $flex, $row } from "app/components/styles";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
-import { MenuCategory, MenuItem } from "delivfree/types";
+import { MenuCategory, MenuItem } from "delivfree";
 import React, { useMemo, useState } from "react";
 import { Pressable, StyleProp, View, ViewStyle } from "react-native";
 import FastImage from "react-native-fast-image";

@@ -1,4 +1,4 @@
-import { Menu } from "delivfree/types";
+import { Menu } from "delivfree";
 import moment, { Moment } from "moment";
 
 export const hasActiveMenu = (menus: Menu[]) => {

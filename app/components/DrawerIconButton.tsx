@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Platform, Pressable, PressableProps, ViewStyle } from "react-native";
+import { Platform, Pressable, ViewStyle } from "react-native";
 import Animated, {
   interpolate,
   interpolateColor,
@@ -23,9 +23,9 @@ export function DrawerIconButton() {
 
   const toggleDrawer = () => {
     if (!open) {
-      drawerRef.current?.openDrawer({ speed: 2 });
+      drawerRef.current?.openDrawer({ speed: 20 });
     } else {
-      drawerRef.current?.closeDrawer({ speed: 2 });
+      drawerRef.current?.closeDrawer({ speed: 20 });
     }
   };
 
@@ -129,7 +129,6 @@ const $container: ViewStyle = {
   justifyContent: "center",
   paddingRight: spacing.md,
   paddingVertical: spacing.md,
-  marginLeft: Platform.OS === "web" ? spacing.md : 0,
 };
 
 const $topBar: ViewStyle = {

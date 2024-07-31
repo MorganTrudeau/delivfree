@@ -3,7 +3,7 @@ import React, { forwardRef, useCallback, useState } from "react";
 import { View } from "react-native";
 import { PhoneNumberInput } from "../PhoneNumberInput";
 import { useAppSelector } from "app/redux/store";
-import { CountryCode } from "delivfree/types";
+import { CountryCode } from "delivfree";
 import { Button } from "../Button";
 import { updateUser } from "app/apis/user";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";

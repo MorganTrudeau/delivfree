@@ -12,6 +12,28 @@ import {
 import { ImageStyle } from "react-native-fast-image";
 import { Edge } from "react-native-safe-area-context";
 
+export const getHeaderHeight = (): number => {
+  const { width, height } = Dimensions.get("window");
+
+  const isLandscape = width > height;
+
+  let headerHeight;
+
+  if (Platform.OS === "ios") {
+    if (isLandscape && !Platform.isPad) {
+      headerHeight = 44;
+    } else {
+      headerHeight = 44;
+    }
+  } else if (Platform.OS === "android") {
+    headerHeight = 56;
+  } else {
+    headerHeight = 64;
+  }
+
+  return headerHeight;
+};
+
 export const LARGE_SCREEN = 1000;
 export const MAX_CONTENT_WIDTH = 1200;
 
@@ -231,7 +253,9 @@ export const $listItemButton: ViewStyle = {
   minHeight: 0,
 };
 export const $image: ImageStyle = {
-  ...StyleSheet.absoluteFillObject,
+  height: '100%',
+  width: "100%",
+  aspectRatio: 2.5,
   borderRadius: borderRadius.md,
 };
 export const $imageContainer: StyleProp<ViewStyle> = [
@@ -239,6 +263,7 @@ export const $imageContainer: StyleProp<ViewStyle> = [
   {
     borderRadius: borderRadius.md,
     width: "100%",
+    position: 'relative',
     // maxWidth: 400,
     aspectRatio: 2.5,
     backgroundColor: colors.background,
