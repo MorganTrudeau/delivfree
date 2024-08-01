@@ -20,6 +20,7 @@ import { User } from "delivfree";
 import * as geofire from "geofire-common";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "app/navigators";
+import { formatAddress } from "app/utils/geolocation";
 
 interface Props {
   onRequestClose: () => void;
@@ -59,10 +60,8 @@ const LocationContent = ({ onRequestClose, title }: Props) => {
         latitude,
         longitude,
       });
-      for (const item of response) {
-        const address = `${item.city}, ${item.isoCountryCode}`;
-        setLocation({ latitude, longitude, address, geohash });
-      }
+      const address = formatAddress(response[0]);
+      setLocation({ latitude, longitude, address, geohash });
       setFindingLocation(false);
     } catch (error) {
       setFindingLocation(false);

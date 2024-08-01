@@ -1895,7 +1895,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bugsnag/react-native@npm:^7.20.2":
+"@bugsnag/react-native@npm:^7.25.0":
   version: 7.25.0
   resolution: "@bugsnag/react-native@npm:7.25.0"
   dependencies:
@@ -8512,7 +8512,7 @@ __metadata:
     "@babel/preset-react": "npm:^7.24.1"
     "@babel/runtime": "npm:^7.20.0"
     "@bugsnag/cli": "npm:^2.4.0"
-    "@bugsnag/react-native": "npm:^7.20.2"
+    "@bugsnag/react-native": "npm:^7.25.0"
     "@bugsnag/source-maps": "npm:^2.3.1"
     "@expo-google-fonts/poppins": "npm:^0.2.3"
     "@gorhom/bottom-sheet": "npm:^4.6.3"
