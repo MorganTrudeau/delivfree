@@ -41,6 +41,7 @@ export const ConsumerStack = () => {
         <Stack.Screen
           name="AddressSearch"
           component={Screens.AddressSearchScreen}
+          options={{ headerRight: undefined }}
         />
         <Stack.Screen
           name="Restaurants"

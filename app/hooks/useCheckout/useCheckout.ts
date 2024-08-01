@@ -10,7 +10,6 @@ import { AppearanceParams } from "@stripe/stripe-react-native/lib/typescript/src
 import { colors } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
 import Stripe from "stripe";
-import functions from "@react-native-firebase/functions";
 import { SUBSCRIPTION_TRIAL_PERIOD } from "app/utils/subscriptions";
 
 export const useCheckout: UseCheckout = ({
@@ -71,7 +70,6 @@ export const useCheckout: UseCheckout = ({
         automatic_payment_methods: {
           enabled: true,
         },
-        application_fee_amount: 30 + _amount * 0.029,
         transfer_data: {
           destination: stripeAccount,
         },

@@ -8,6 +8,7 @@ import {
 } from "react-native-google-places-autocomplete";
 import { translate } from "app/i18n";
 import { useToast } from "app/hooks";
+import { formatAddressFromComponents } from "app/utils/geolocation";
 
 export const LocationInput = ({
   onLocationSelected,
@@ -24,21 +25,7 @@ export const LocationInput = ({
     if (!detail) {
       return Toast.show(translate("errors.common"));
     }
-    let address = detail.formatted_address;
-
-    if (shortenAddress) {
-      const city = detail.address_components.find(
-        (comp) =>
-          comp.types.includes("locality") ||
-          comp.types.includes("administrative_area_level_3")
-      )?.long_name;
-      const country = detail.address_components.find((comp) =>
-        comp.types.includes("country")
-      )?.short_name;
-      console.log(detail.address_components);
-      address = `${city}, ${country}`;
-    }
-
+    let address = formatAddressFromComponents(detail.address_components);
     const { lat, lng } = detail.geometry.location;
     const geohash = geofire.geohashForLocation([lat, lng]);
     const location = {

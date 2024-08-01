@@ -139,6 +139,7 @@ export const VendorStack = () => {
           <Stack.Screen
             name="AddressSearch"
             component={Screens.AddressSearchScreen}
+            options={{ headerRight: undefined }}
           />
           <Stack.Screen name="Settings" component={Screens.SettingsScreen} />
         </>
@@ -187,6 +188,7 @@ export const VendorStack = () => {
         <Stack.Screen
           name="AddressSearch"
           component={Screens.AddressSearchScreen}
+          options={{ headerRight: undefined }}
         />
         <Stack.Screen name="About" component={Screens.AboutScreen} />
         <Stack.Screen

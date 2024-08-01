@@ -38,6 +38,9 @@ const query = {
   key: API_KEY,
   language: "en",
 };
-const styles: Partial<Styles> = { textInput: $input };
+const styles: Partial<Styles> = {
+  textInput: $input,
+  description: { color: colors.text },
+};
 
 export default GooglePlacesInput;

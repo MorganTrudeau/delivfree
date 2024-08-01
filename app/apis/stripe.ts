@@ -13,7 +13,10 @@ import { navigationRef } from "app/navigators";
 export const getStripeAccountBalance = async (
   account: string
 ): Promise<Stripe.Balance> => {
-  const res = await functions().httpsCallable("getAccountBalance")({
+  const res = await functions().httpsCallable<
+    { account: string },
+    Stripe.Balance
+  >("getAccountBalance")({
     account,
   });
   return res.data;
@@ -53,7 +56,14 @@ export const verifyStripeAccount = async (
 };
 
 export const createStripeAccount = async (vendor: Vendor): Promise<string> => {
-  const res = await functions().httpsCallable("createAccount")({
+  const res = await functions().httpsCallable<
+    {
+      email: string;
+      companyPhone: string;
+      companyName: string;
+    },
+    { account: string }
+  >("createAccount")({
     email: vendor.email,
     companyPhone: vendor.callingCode + vendor.phoneNumber,
     companyName: vendor.businessName,
@@ -73,21 +83,30 @@ export const createStripeAccount = async (vendor: Vendor): Promise<string> => {
 export const createStripeCheckoutSession = async (
   params: Stripe.Checkout.SessionCreateParams
 ): Promise<Stripe.Checkout.Session> => {
-  const res = await functions().httpsCallable("createCheckoutSession")(params);
+  const res = await functions().httpsCallable<
+    Stripe.Checkout.SessionCreateParams,
+    Stripe.Checkout.Session
+  >("createCheckoutSession")(params);
   return res.data;
 };
 
 export const getStripeAccount = async (
   account: string
 ): Promise<Stripe.Account> => {
-  const res = await functions().httpsCallable("retrieveAccount")({
+  const res = await functions().httpsCallable<
+    { account: string },
+    Stripe.Account
+  >("retrieveAccount")({
     account,
   });
   return res.data;
 };
 
 export const getTaxRate = async (taxRate: string): Promise<Stripe.TaxRate> => {
-  const res = await functions().httpsCallable("retrieveTaxRate")({
+  const res = await functions().httpsCallable<
+    { taxRate: string },
+    Stripe.TaxRate
+  >("retrieveTaxRate")({
     taxRate,
   });
   return res.data;
@@ -96,7 +115,10 @@ export const getTaxRate = async (taxRate: string): Promise<Stripe.TaxRate> => {
 export const createTaxRate = async (
   params: Stripe.TaxRateCreateParams
 ): Promise<Stripe.TaxRate> => {
-  const res = await functions().httpsCallable("createTaxRate")(params);
+  const res = await functions().httpsCallable<
+    Stripe.TaxRateCreateParams,
+    Stripe.TaxRate
+  >("createTaxRate")(params);
   return res.data;
 };
 
@@ -104,7 +126,13 @@ export const updateTaxRate = async (
   taxRate: string,
   update: Stripe.TaxRateUpdateParams
 ): Promise<Stripe.TaxRate> => {
-  const res = await functions().httpsCallable("updateTaxRate")({
+  const res = await functions().httpsCallable<
+    {
+      taxRate: string;
+      update: Stripe.TaxRateUpdateParams;
+    },
+    Stripe.TaxRate
+  >("updateTaxRate")({
     taxRate,
     update,
   });
@@ -120,7 +148,14 @@ export const createStripeAccountLink = async (
         ? window.location.origin
         : VENDOR_DOMAIN
       : "https://mobileredirect-5vakg2iqja-uc.a.run.app";
-  const res = await functions().httpsCallable("createAccountLink")({
+  const res = await functions().httpsCallable<
+    {
+      account: string;
+      returnUrl: string;
+      refreshUrl: string;
+    },
+    Stripe.AccountLink
+  >("createAccountLink")({
     account,
     returnUrl: url,
     refreshUrl: url,
@@ -131,7 +166,10 @@ export const createStripeAccountLink = async (
 export const createStripeLogin = async (
   account: string
 ): Promise<Stripe.LoginLink> => {
-  const res = await functions().httpsCallable("createAcountLoginLink")({
+  const res = await functions().httpsCallable<
+    { account: string },
+    Stripe.LoginLink
+  >("createAcountLoginLink")({
     account,
   });
   return res.data;
@@ -140,7 +178,10 @@ export const createStripeLogin = async (
 export const createStripePayment = async (
   account: string
 ): Promise<Stripe.LoginLink> => {
-  const res = await functions().httpsCallable("createPayment")({
+  const res = await functions().httpsCallable<
+    { account: string },
+    Stripe.LoginLink
+  >("createPayment")({
     account,
   });
   return res.data;
@@ -152,7 +193,10 @@ export const fetchSubscription = async (userId: string) => {
 };
 
 export const fetchProducts = async () => {
-  const res = await functions().httpsCallable("fetchProducts")({
+  const res = await functions().httpsCallable<
+    { params: Stripe.ProductListParams },
+    Stripe.ApiList<Stripe.Product>
+  >("fetchProducts")({
     params: { expand: ["data.default_price"] },
   });
   const data: Stripe.ApiList<Stripe.Product> = res.data;
@@ -312,40 +356,50 @@ export const updateSubscription = async (
   });
 };
 
-export const fetchPaymentSheet = async ({
-  customerData,
-  params,
-}: {
+type FetchPaymentSheetParams = {
   customerData: {
     email: string;
   };
   params: Stripe.PaymentIntentCreateParams;
-}): Promise<{
+};
+type FetchPaymentSheetResponse = {
   ephemeralKey: string;
   clientSecret: string;
   customerId: string;
-}> => {
-  const res = await functions().httpsCallable("fetchPaymentSheet")({
+};
+export const fetchPaymentSheet = async ({
+  customerData,
+  params,
+}: FetchPaymentSheetParams): Promise<FetchPaymentSheetResponse> => {
+  const res = await functions().httpsCallable<
+    FetchPaymentSheetParams,
+    FetchPaymentSheetResponse
+  >("fetchPaymentSheet")({
     customerData,
     params,
   });
   return res.data;
 };
 
-export const fetchSubscriptionPaymentSheet = async ({
-  customerData,
-  params,
-}: {
+type FetchSubscriptionPaymentSheetParams = {
   customerData: {
     email: string;
   };
   params: Omit<Stripe.SubscriptionCreateParams, "customer">;
-}): Promise<{
+};
+type FetchSubscriptionPaymentSheetResponse = {
   ephemeralKey: string;
   clientSecret: string;
   customerId: string;
-}> => {
-  const res = await functions().httpsCallable("fetchSubscriptionPaymentSheet")({
+};
+export const fetchSubscriptionPaymentSheet = async ({
+  customerData,
+  params,
+}: FetchSubscriptionPaymentSheetParams): Promise<FetchSubscriptionPaymentSheetResponse> => {
+  const res = await functions().httpsCallable<
+    FetchSubscriptionPaymentSheetParams,
+    FetchSubscriptionPaymentSheetResponse
+  >("fetchSubscriptionPaymentSheet")({
     customerData,
     params,
   });

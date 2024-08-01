@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { $screen } from "app/components/styles";
+import { $flex, $screen } from "app/components/styles";
 import CuisineList from "app/components/Cuisines/CuisineList";
 import { ActivityIndicator, Pressable, View, ViewStyle } from "react-native";
 import { colors, spacing } from "app/theme";
@@ -107,7 +107,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
             style={$location}
             onPress={() => locationModal.current?.snapToIndex(0)}
           >
-            <Text>{activeUser?.location?.address}</Text>
+            <Text style={$flex}>{activeUser?.location?.address}</Text>
             <Icon icon={"chevron-down"} />
           </Pressable>
         )}

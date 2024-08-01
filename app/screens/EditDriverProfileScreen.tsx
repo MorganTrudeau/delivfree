@@ -3,8 +3,6 @@ import { Button, Icon, Screen, Text, TextField } from "app/components";
 import { AddressSearchModal } from "app/components/AddressSearchModal";
 import { Card } from "app/components/Card";
 import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
-import { LocationInput } from "app/components/LocationInput";
-import { LogoutButton } from "app/components/LogoutButton";
 import { ModalRef } from "app/components/Modal/CenterModal";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { StatusIndicator } from "app/components/StatusIndicator";
