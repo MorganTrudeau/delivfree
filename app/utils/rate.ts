@@ -38,22 +38,22 @@ export const rateApp = (
   preferInApp = false,
   callback?: (success: boolean, errorMessage: string) => void
 ) => {
-  const options = {
-    AppleAppID: "6449789072",
-    GooglePackageName: "com.magnify.trivia",
-    preferredAndroidMarket: AndroidMarket.Google,
-    preferInApp,
-    openAppStoreIfInAppFails: !preferInApp,
-  };
+  // const options = {
+  //   AppleAppID: "6449789072",
+  //   GooglePackageName: "com.magnify.trivia",
+  //   preferredAndroidMarket: AndroidMarket.Google,
+  //   preferInApp,
+  //   openAppStoreIfInAppFails: !preferInApp,
+  // };
 
-  Rate.rate(options, (success, errorMessage) => {
-    console.log(success, errorMessage);
-    if (success) {
-      setHasRated();
-    }
-    if (errorMessage) {
-      console.log(`Example page Rate.rate() error: ${errorMessage}`);
-    }
-    callback && callback(success, errorMessage);
-  });
+  // Rate.rate(options, (success, errorMessage) => {
+  //   console.log(success, errorMessage);
+  //   if (success) {
+  //     setHasRated();
+  //   }
+  //   if (errorMessage) {
+  //     console.log(`Example page Rate.rate() error: ${errorMessage}`);
+  //   }
+  //   callback && callback(success, errorMessage);
+  // });
 };

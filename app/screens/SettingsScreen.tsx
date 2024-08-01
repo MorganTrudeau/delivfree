@@ -10,11 +10,14 @@ import {
 } from "app/components/styles";
 import { useAlert } from "app/hooks";
 import { ScreenHeader } from "app/components/ScreenHeader";
+import { useAppSelector } from "app/redux/store";
 
 interface Props extends AppStackScreenProps<"Settings"> {}
 
 export const SettingsScreen = ({ navigation, route }: Props) => {
   const Alert = useAlert();
+
+  const userType = useAppSelector((state) => state.appConfig.userType);
 
   const confirmLogout = async () => {
     try {
@@ -39,12 +42,19 @@ export const SettingsScreen = ({ navigation, route }: Props) => {
   };
 
   const contactUs = async () => {
+    const namespace =
+      userType === "driver"
+        ? "driversupport"
+        : userType === "vendor"
+        ? "merchantsupport"
+        : "orderssupport";
+    const url = `${namespace}@delivfree.com`;
     try {
-      await Linking.openURL("mailto:smarticusapp@gmail.com");
+      await Linking.openURL(url);
     } catch (error) {
       Alert.alert(
         "That didn't work",
-        "Failed to open your email app. Please email us at smarticusapp@gmail.com."
+        `Failed to open your email app. Please email us at ${url}.`
       );
     }
   };
