@@ -2,17 +2,13 @@ import React, { FC, useEffect, useMemo, useState } from "react";
 import { FlatList, Platform, Pressable, View, ViewStyle } from "react-native";
 import { ListItem } from "./ListItem";
 import { colors, spacing } from "app/theme";
-import { NavigationProp } from "app/navigators";
 import { rateApp } from "app/utils/rate";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "app/hooks";
 import FastImage from "react-native-fast-image";
 import { AppStackParamList } from "app/navigators/StackNavigator";
 import { useAppSelector } from "app/redux/store";
-import {
-  NavigationContainerRefWithCurrent,
-  useRoute,
-} from "@react-navigation/native";
+import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
 import { Icon } from "./Icon";
 
 type DrawerItem = {
@@ -198,7 +194,6 @@ const DrawerItem: FC<DemoListItem> = ({
   activeRoute,
 }) => {
   const isRateItem = item.text === "Rate App";
-
   return (
     <ListItem
       key={`section${index}-${item.text}`}
