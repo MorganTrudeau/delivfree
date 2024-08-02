@@ -19,7 +19,7 @@ export const LogoHeader = ({ style, onPress }: Props) => {
     const height = headerHeight * 0.4;
     const width = height * imageRatio;
     return { height, width };
-  }, [headerHeight, style]);
+  }, [headerHeight]);
 
   if (alwaysOpen) {
     return null;
