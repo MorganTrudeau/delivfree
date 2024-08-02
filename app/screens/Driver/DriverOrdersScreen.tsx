@@ -8,7 +8,7 @@ import { useAppSelector } from "app/redux/store";
 import { spacing } from "app/theme";
 import { Order } from "delivfree";
 import React, { useCallback, useRef, useState } from "react";
-import { ViewStyle } from "react-native";
+import { View, ViewStyle } from "react-native";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { ViewOrderModal } from "app/components/Orders/ViewOrder";
 import { DriverClockIn } from "app/components/Drivers/DriverClockIn";
@@ -39,13 +39,18 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
 
   const renderHeader = useCallback(() => <ScreenHeader title={"Orders"} />, []);
   const renderEmpty = useCallback(() => {
-    if (!clockInStatus) {
-      return (
-        <EmptyList icon={"timer-outline"} title={"Clock in to accept orders"} />
-      );
-    } else {
-      return <EmptyList title={"No orders at this location"} />;
-    }
+    return (
+      <View style={{ padding: spacing.md }}>
+        {!clockInStatus ? (
+          <EmptyList
+            icon={"timer-outline"}
+            title={"Clock in to accept orders"}
+          />
+        ) : (
+          <EmptyList title={"No orders at this location"} />
+        )}
+      </View>
+    );
   }, [clockInStatus]);
 
   return (

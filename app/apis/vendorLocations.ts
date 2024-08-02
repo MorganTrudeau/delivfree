@@ -210,7 +210,7 @@ const loadVendorLocationDetails = async (
     !(
       vendor &&
       vendor.registration.status === "approved" &&
-      vendor.subscriptionStatus === "active" &&
+      (vendor.subscriptionStatus === "active" || vendor.hasFreeSubscription) &&
       vendor.stripe.accountId &&
       vendor.stripe.detailsSubmitted &&
       vendor.stripe.payoutsEnabled &&
