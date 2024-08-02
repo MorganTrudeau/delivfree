@@ -1,5 +1,12 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { FlatList, Platform, Pressable, View, ViewStyle } from "react-native";
+import {
+  FlatList,
+  Linking,
+  Platform,
+  Pressable,
+  View,
+  ViewStyle,
+} from "react-native";
 import { ListItem } from "./ListItem";
 import { colors, spacing } from "app/theme";
 import { rateApp } from "app/utils/rate";
@@ -15,6 +22,7 @@ type DrawerItem = {
   text: string;
   route?: keyof AppStackParamList;
   params?: any;
+  link?: string;
   include?: () => boolean;
 };
 
@@ -22,9 +30,17 @@ const ConsumerItems: DrawerItem[] = [
   { text: "Home", route: "Home" },
   {
     text: "Sign up as a Vendor",
+    link: Platform.select({
+      web: "https://business.delivfree.com",
+      default: "",
+    }),
   },
   {
     text: "Sign up as a Driver",
+    link: Platform.select({
+      web: "https://business.delivfree.com",
+      default: "",
+    }),
   },
   {
     text: "Rate App",
@@ -203,13 +219,19 @@ const DrawerItem: FC<DemoListItem> = ({
           ? { color: colors.primary }
           : undefined
       }
-      onPress={() => {
+      onPress={async () => {
         onItemPress();
         if (isRateItem) {
           rateApp(false);
         } else if (item.route) {
           // @ts-ignore
           navigation.current?.navigate(item.route, item.params);
+        } else if (item.link) {
+          try {
+            await Linking.openURL(item.link);
+          } catch (error) {
+            console.log(error);
+          }
         }
       }}
     />
