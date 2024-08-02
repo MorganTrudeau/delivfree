@@ -169,6 +169,7 @@ export type Vendor = {
     }[];
   };
   subscriptionStatus?: "active" | "inactive";
+  hasFreeSubscription?: boolean;
 };
 export type Driver = {
   id: string;
@@ -192,6 +193,7 @@ export type Driver = {
   updated: number;
   location: GeoLocation;
   pendingLicenses: string[];
+  hasFreeSubscription?: boolean;
 };
 export type CheckoutItemCustomization = {
   customization: string;

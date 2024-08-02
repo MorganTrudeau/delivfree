@@ -66,7 +66,15 @@ export const VendorStack = () => {
     ).filter((l) => l.status === "approved");
   }, [vendorLicenses, driverLicenses, userType]);
 
+  const hasFreeSubscription =
+    (userType === "vendor" && vendor && vendor?.hasFreeSubscription) ||
+    (userType === "driver" && driver && driver.hasFreeSubscription);
+
   const subscriptionValid = useMemo(() => {
+    if (hasFreeSubscription) {
+      return true;
+    }
+
     const subscription =
       userType === "driver" ? driverSubscription : vendorSubscription;
 
@@ -88,7 +96,13 @@ export const VendorStack = () => {
       licensedFullTime === subscribedFullTime &&
       licensedPartTime === subscribedPartTime
     );
-  }, [approvedLicenses, vendorSubscription, driverSubscription, userType]);
+  }, [
+    approvedLicenses,
+    vendorSubscription,
+    driverSubscription,
+    userType,
+    hasFreeSubscription,
+  ]);
 
   const renderDriverStack = () => {
     if (!driverDataLoaded) {
