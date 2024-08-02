@@ -5,11 +5,13 @@ import { getStackNavigator, screenOptions } from "../StackNavigator";
 import { renderAuthStack } from "../AuthStack";
 import { renderRegistrationStack } from "../RegistrationStack";
 import * as Screens from "app/screens";
-import { getPositionsFromSubscription } from "app/utils/subscriptions";
-import { getTotalPositions } from "app/utils/positions";
 import { DrawerIconButton } from "app/components/DrawerIconButton";
 import { LogoHeader } from "app/components/LogoHeader";
 import { shallowEqual } from "react-redux";
+import { Platform } from "react-native";
+import { selectSubscriptionValid } from "app/redux/selectors";
+
+const isWeb = Platform.OS === "web";
 
 const Stack = getStackNavigator();
 
@@ -23,17 +25,17 @@ export const VendorStack = () => {
     authToken,
     userLoaded,
     deleteAccountLoading,
-    vendorSubscription,
     vendorSubscriptionLoaded,
-    driverSubscription,
     driverSubscriptionLoaded,
     userType,
     vendorLicenses,
     vendorLicensesLoaded,
     driverLicenses,
     driverLicensesLoaded,
+    subscriptionValid,
   } = useAppSelector(
     (state) => ({
+      subscriptionValid: selectSubscriptionValid(state),
       user: state.user.user,
       userLoaded: state.user.loaded,
       authToken: state.auth.authToken,
@@ -42,9 +44,7 @@ export const VendorStack = () => {
       vendorLoaded: state.vendor.licencesLoaded,
       driver: state.driver.activeDriver,
       driverLoaded: state.driver.activeDriverLoaded,
-      vendorSubscription: state.subscription.vendorSubscription,
       vendorSubscriptionLoaded: state.subscription.vendorSubscriptionLoaded,
-      driverSubscription: state.subscription.driverSubscription,
       driverSubscriptionLoaded: state.subscription.driverSubscriptionLoaded,
       userType: state.appConfig.userType,
       vendorLicenses: state.vendor.licenses,
@@ -65,44 +65,6 @@ export const VendorStack = () => {
       userType === "vendor" ? vendorLicenses : driverLicenses
     ).filter((l) => l.status === "approved");
   }, [vendorLicenses, driverLicenses, userType]);
-
-  const hasFreeSubscription =
-    (userType === "vendor" && vendor && vendor?.hasFreeSubscription) ||
-    (userType === "driver" && driver && driver.hasFreeSubscription);
-
-  const subscriptionValid = useMemo(() => {
-    if (hasFreeSubscription) {
-      return true;
-    }
-
-    const subscription =
-      userType === "driver" ? driverSubscription : vendorSubscription;
-
-    if (userType === "vendor" && !approvedLicenses.length) {
-      return true;
-    }
-
-    if (!approvedLicenses.length || !subscription) {
-      return false;
-    }
-
-    const { fullTime: licensedFullTime, partTime: licensedPartTime } =
-      getTotalPositions(approvedLicenses);
-    const { fullTime: subscribedFullTime, partTime: subscribedPartTime } =
-      getPositionsFromSubscription(subscription);
-
-    return (
-      ["active", "trialing"].includes(subscription.status) &&
-      licensedFullTime === subscribedFullTime &&
-      licensedPartTime === subscribedPartTime
-    );
-  }, [
-    approvedLicenses,
-    vendorSubscription,
-    driverSubscription,
-    userType,
-    hasFreeSubscription,
-  ]);
 
   const renderDriverStack = () => {
     if (!driverDataLoaded) {
@@ -160,7 +122,7 @@ export const VendorStack = () => {
       );
     }
 
-    if (!subscriptionValid) {
+    if (!subscriptionValid && isWeb) {
       return (
         <>
           <Stack.Screen
@@ -239,7 +201,7 @@ export const VendorStack = () => {
       );
     }
 
-    if (!subscriptionValid) {
+    if (!subscriptionValid && isWeb) {
       return (
         <>
           <Stack.Screen

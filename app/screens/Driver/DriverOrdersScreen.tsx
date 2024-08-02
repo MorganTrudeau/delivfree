@@ -13,6 +13,8 @@ import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { ViewOrderModal } from "app/components/Orders/ViewOrder";
 import { DriverClockIn } from "app/components/Drivers/DriverClockIn";
 import { EmptyList } from "app/components/EmptyList";
+import { SubscriptionNotice } from "app/components/Subscription/SubscriptionNotice";
+import { selectSubscriptionValid } from "app/redux/selectors";
 
 interface DriverOrdersScreenProps extends AppStackScreenProps<"Orders"> {}
 
@@ -20,6 +22,9 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
   const viewOrderModal = useRef<BottomSheetRef>(null);
 
   const driver = useAppSelector((state) => state.driver.activeDriver?.id);
+  const subscriptionValid = useAppSelector((state) =>
+    selectSubscriptionValid(state)
+  );
 
   const [selectedOrder, setSelectedOrder] = useState<Order>();
   const clockInStatus = useAppSelector((state) => state.driverClockIn.data);
@@ -39,6 +44,9 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
 
   const renderHeader = useCallback(() => <ScreenHeader title={"Orders"} />, []);
   const renderEmpty = useCallback(() => {
+    if (!subscriptionValid) {
+      return <EmptyList icon={"food"} title={"Find your orders here"} />;
+    }
     return (
       <View style={{ padding: spacing.md }}>
         {!clockInStatus ? (
@@ -51,7 +59,7 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
         )}
       </View>
     );
-  }, [clockInStatus]);
+  }, [clockInStatus, subscriptionValid]);
 
   return (
     <>
@@ -60,6 +68,7 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
         style={$screen}
         contentContainerStyle={$containerPadding}
       >
+        <SubscriptionNotice style={{ marginBottom: spacing.md }} />
         <OrdersList
           orders={data}
           loadOrders={loadData}
@@ -73,12 +82,7 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
           order={selectedOrder}
         />
       </Screen>
-      <DriverClockIn />
+      {subscriptionValid && <DriverClockIn />}
     </>
   );
-};
-
-const $vendorLocationSelect: ViewStyle = {
-  alignSelf: "flex-start",
-  marginBottom: spacing.sm,
 };

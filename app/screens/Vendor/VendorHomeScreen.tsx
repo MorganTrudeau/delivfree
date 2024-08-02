@@ -12,6 +12,7 @@ import {
   LARGE_SCREEN,
   MAX_CONTAINER_WIDTH,
 } from "app/components/styles";
+import { SubscriptionNotice } from "app/components/Subscription/SubscriptionNotice";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
@@ -216,6 +217,7 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
         { paddingBottom: insets.bottom + spacing.sm },
       ]}
     >
+      <SubscriptionNotice style={{ marginBottom: spacing.md }} />
       <PayoutsHeader vendor={vendor} style={$payouts} />
       <TaxRateSelect vendor={vendor} style={$taxRates} />
       <Text preset="heading">Today</Text>
