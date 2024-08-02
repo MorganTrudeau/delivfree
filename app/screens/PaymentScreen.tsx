@@ -10,10 +10,9 @@ import {
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { EmptyList } from "app/components/EmptyList";
 import { emptyCart } from "app/redux/reducers/checkoutCart";
+import { stripeApiKey } from "../../app.json";
 
-const stripePromise = loadStripe(
-  "pk_test_51P5xHH076A0nkV3SRDnuCLj3BmRHmwlz6xsFcG8ORd5Gdc1tVzbsTJQKmKmmuL2A6W3nPDHTklD8oRpFmMmRloiI00JMw181zS"
-);
+const stripePromise = loadStripe(stripeApiKey);
 
 type Props = AppStackScreenProps<"Payment">;
 
