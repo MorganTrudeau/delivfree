@@ -25,7 +25,8 @@ const compileNodeModules = [
   "@expo/vector-icons",
   "functions/src",
   "@expo-google-fonts",
-  "expo-asset"
+  "expo-asset",
+  "react-native-draggable-flatlist",
 ].map((moduleName) => path.resolve(appDirectory, `node_modules/${moduleName}`));
 
 const alias = {
@@ -178,7 +179,7 @@ module.exports = {
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: 'asset/resource',
+        type: "asset/resource",
       },
     ],
   },
