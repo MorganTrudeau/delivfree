@@ -1,4 +1,4 @@
-import { Screen, Text } from "app/components";
+import { Screen } from "app/components";
 import { $containerPadding, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
 import React, { useMemo } from "react";

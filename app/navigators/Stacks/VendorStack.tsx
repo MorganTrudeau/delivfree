@@ -129,7 +129,7 @@ export const VendorStack = () => {
             component={Screens.PositionsSearchScreen}
             options={{
               headerTitle: "",
-              headerLeft: LogoHeader,
+              headerLeft: () => <LogoHeader />,
             }}
           />
           <Stack.Screen
