@@ -8495,8 +8495,8 @@ __metadata:
 
 "delivfree@file:functions/src/types::locator=delivfreeapp%40workspace%3A.":
   version: 1.0.0
-  resolution: "delivfree@file:functions/src/types#functions/src/types::hash=8ed46a&locator=delivfreeapp%40workspace%3A."
-  checksum: 10c0/ea1105ad23ec07ec7bfaf4b72feebecbcd5fff296de176a1c1b93d93c01105f103327d59c7e5064a25a157cf8894ad95e1c37c45cd8cfc8e066d1f02fcd238e5
+  resolution: "delivfree@file:functions/src/types#functions/src/types::hash=5e65b7&locator=delivfreeapp%40workspace%3A."
+  checksum: 10c0/28c3d703d2179830d255d5b25142e9cd49fa64af6d49b5aa069d09f4660a89c2899be198ec71bb6a837bdce53d8feee077b52d1e8f8940fc995260c340f4ebbc
   languageName: node
   linkType: hard
 

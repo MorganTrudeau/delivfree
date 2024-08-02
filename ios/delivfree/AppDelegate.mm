@@ -1,12 +1,10 @@
-#import <Bugsnag/Bugsnag.h>
 #import "AppDelegate.h"
+#import <Bugsnag/Bugsnag.h>
 #import "RNBootSplash.h"
-
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
-
 #import <Firebase.h>
 
 @implementation AppDelegate
@@ -16,23 +14,16 @@
   [Bugsnag start];
   [FIRApp configure];
   
+  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+  center.delegate = self;
+  
   self.moduleName = @"delivfree";
 
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
 
-  [super application:application didFinishLaunchingWithOptions:launchOptions];
-
-  // RN BootSplash
-  UIView *rootView = self.window.rootViewController.view; // react-native >= 0.71 specific
-  rootView.backgroundColor = [UIColor colorWithRed: 0.99 green: 0.95 blue: 0.92 alpha: 1.00];
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
-  
-  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-  center.delegate = self;
-
-  return YES;
+  return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
@@ -93,6 +84,11 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
   completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
+}
+
+// ⬇️ Add this before file @end (for react-native 0.74+)
+- (void)customizeRootView:(RCTRootView *)rootView {
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
 }
 
 
