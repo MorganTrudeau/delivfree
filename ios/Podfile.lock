@@ -958,6 +958,8 @@ PODS:
   - BVLinearGradient (2.8.3):
     - React-Core
   - DoubleConversion (1.1.6)
+  - EXConstants (16.0.2):
+    - ExpoModulesCore
   - EXImageLoader (4.7.0):
     - ExpoModulesCore
     - React-Core
@@ -2653,6 +2655,7 @@ DEPENDENCIES:
   - "BugsnagReactNative (from `../node_modules/@bugsnag/react-native`)"
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - EXConstants (from `../node_modules/expo-constants/ios`)
   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
   - EXLocation (from `../node_modules/expo-location/ios`)
   - Expo (from `../node_modules/expo`)
@@ -2801,6 +2804,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-linear-gradient"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  EXConstants:
+    :path: "../node_modules/expo-constants/ios"
   EXImageLoader:
     :path: "../node_modules/expo-image-loader/ios"
   EXLocation:
@@ -2984,6 +2989,7 @@ SPEC CHECKSUMS:
   BugsnagReactNative: 5b7370cd797d247983ace25aa07cca0058d7d505
   BVLinearGradient: 880f91a7854faff2df62518f0281afb1c60d49a3
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
+  EXConstants: 409690fbfd5afea964e5e9d6c4eb2c2b59222c59
   EXImageLoader: ab589d67d6c5f2c33572afea9917304418566334
   EXLocation: 43e9b582ca63a23c6f0a18d8cbe2145b3a388b55
   Expo: 8b7948e45627e848c2d7b6be7cf5851a505aef19
