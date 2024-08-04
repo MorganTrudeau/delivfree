@@ -51,7 +51,7 @@ echo "____________________________________________________________"
 #reinstall pods
 echo "____________________________________________________________"
 echo "About to install pods"
-cd ios && pod deintegrate && pod install && pod install --repo-update && cd ..
+cd ios && pod deintegrate && USE_HERMES=0 pod install && pod install --repo-update && cd ..
 echo "Done installing pods"
 echo "____________________________________________________________"
 # clean-rn-cache

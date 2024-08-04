@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>4</string>
+	<string>5</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-6154128464262377~3879925599</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -49,11 +49,11 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Location is required to find restaurants in your area.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Location is required to find restaurants in your area.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Allow Delivfree to save photos to your device.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow Delivfree access to your image library to upload photos</string>
+	<string>Allow Delivfree access to your image library to upload photos.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
