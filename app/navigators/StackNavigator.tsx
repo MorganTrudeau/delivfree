@@ -16,6 +16,7 @@ import { getAppType } from "app/utils/general";
 import { NativeStackHeader } from "./Header/NativeStackHeader";
 
 export type AppStackParamList = {
+  PrivacyPolicy: undefined;
   Welcome: undefined;
   Login: undefined;
   ForgotPassword: undefined;

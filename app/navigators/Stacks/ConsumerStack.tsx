@@ -95,6 +95,10 @@ export const ConsumerStack = () => {
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       {renderStack()}
+      <Stack.Screen
+        name="PrivacyPolicy"
+        component={Screens.PrivacyPolicyScreen}
+      />
     </Stack.Navigator>
   );
 };
