@@ -20,6 +20,7 @@ export * from "./CheckoutScreen";
 export * from "./PaymentScreen";
 export * from "./CheckoutCartScreen";
 export * from "./WebViewScreen";
+export * from "./PrivacyPolicyScreen";
 
 // Vendor
 export * from "./EditDriverProfileScreen";
