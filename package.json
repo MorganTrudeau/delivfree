@@ -216,7 +216,7 @@
     "webpack-dev-server": "^4.3.1"
   },
   "resolutions": {
-    "@react-native/assets-registry@npm:0.74.85": "patch:@react-native/assets-registry@npm%3A0.74.85#~/.yarn/patches/@react-native-assets-registry-npm-0.74.85-95d20d5f4c.patch"
+    "@react-native/assets-registry@npm:0.74.86": "patch:@react-native/assets-registry@npm%3A0.74.86#~/.yarn/patches/@react-native-assets-registry-npm-0.74.86-95d20d5f4c.patch"
   },
   "prettier": {
     "printWidth": 100,

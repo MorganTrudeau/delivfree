@@ -77,6 +77,7 @@ export const linkingConfigScreens: {
   Menus: "menus",
   RestaurantDetail: "restaurant-menu",
   Checkout: "checkout",
+  PrivacyPolicy: "privacy-policy",
 };
 
 export const screenOptions: NativeStackNavigationOptions = {
