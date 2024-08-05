@@ -4306,6 +4306,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native/assets-registry@patch:@react-native/assets-registry@npm%3A0.74.86#~/.yarn/patches/@react-native-assets-registry-npm-0.74.86-95d20d5f4c.patch":
+  version: 0.74.86
+  resolution: "@react-native/assets-registry@patch:@react-native/assets-registry@npm%3A0.74.86#~/.yarn/patches/@react-native-assets-registry-npm-0.74.86-95d20d5f4c.patch::version=0.74.86&hash=c62c98"
+  checksum: 10c0/381d46ad77c7c7a3ab54ea7e2fe309d0a7dc11a89285576e7f338d77f47b561e783416061fb9bafd3eb24f1fb4bfc8b64455afbe86fb1b605583dd8737fb4724
+  languageName: node
+  linkType: hard
+
 "@react-native/babel-plugin-codegen@npm:0.74.85":
   version: 0.74.85
   resolution: "@react-native/babel-plugin-codegen@npm:0.74.85"
