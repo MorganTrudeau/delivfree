@@ -56,7 +56,7 @@ const VendorItems: DrawerItem[] = [
   { text: "Menus", route: "Menus", include: () => Platform.OS === "web" },
   { text: "Locations", route: "Locations" },
   { text: "Positions", route: "Positions" },
-  { text: "Subscription", route: "Subscription" },
+  { text: "Active Drivers", route: "Subscription" },
   { text: "Profile", route: "Profile" },
   {
     text: "Rate App",
@@ -68,7 +68,7 @@ const VendorItems: DrawerItem[] = [
 const DriverItems: DrawerItem[] = [
   { text: "Orders", route: "Orders" },
   { text: "Tips", route: "Tips" },
-  { text: "Subscription", route: "Subscription" },
+  { text: "Licenses", route: "Subscription" },
   { text: "Profile", route: "Profile" },
   {
     text: "Rate App",
@@ -190,12 +190,7 @@ export const DrawerContent = ({
 
 const headerImageRatio = 1638 / 822;
 interface DemoListItem {
-  item: {
-    text: string;
-    route?: keyof AppStackParamList;
-    params?: any;
-    RightComponent?: React.ReactElement;
-  };
+  item: DrawerItem;
   index: number;
   navigation: NavigationContainerRefWithCurrent<AppStackParamList>;
   onItemPress: () => void;

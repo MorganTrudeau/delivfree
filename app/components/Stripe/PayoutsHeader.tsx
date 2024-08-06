@@ -127,7 +127,7 @@ export const PayoutsHeader = ({
           />
         </View>
       ) : (
-        <ButtonSmall onPress={connectAccount} preset="reversed">
+        <ButtonSmall onPress={connectAccount} preset="reversed" noTextComponent>
           <View style={$row}>
             <Text style={{ color: "#fff" }}>Connect with</Text>
             <Image
@@ -135,7 +135,7 @@ export const PayoutsHeader = ({
               style={{
                 height: 40,
                 width: 40 * (937 / 446),
-                marginLeft: 8,
+                marginLeft: 5,
               }}
               resizeMode="contain"
             />

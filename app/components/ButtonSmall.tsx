@@ -68,6 +68,7 @@ export interface ButtonSmallProps extends PressableProps {
 
   leftIcon?: IconTypes;
   rightIcon?: IconTypes;
+  noTextComponent?: boolean;
 }
 
 /**
@@ -90,6 +91,7 @@ export function ButtonSmall(props: ButtonSmallProps) {
     LeftAccessory,
     leftIcon,
     rightIcon,
+    noTextComponent,
     ...rest
   } = props;
 
@@ -127,9 +129,13 @@ export function ButtonSmall(props: ButtonSmallProps) {
           LeftAccessory
         ))}
 
-      <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle}>
-        {children}
-      </Text>
+      {noTextComponent ? (
+        <>{children}</>
+      ) : (
+        <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle}>
+          {children}
+        </Text>
+      )}
 
       {!!RightAccessory && <RightAccessory style={$rightAccessoryStyle} />}
 
