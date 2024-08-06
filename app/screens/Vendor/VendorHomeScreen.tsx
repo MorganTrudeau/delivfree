@@ -28,6 +28,20 @@ interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
 const DATE_FORMAT = "MMM Do";
 
+const TEST_CUSTOMERS = {
+  a: "Jane White",
+  b: "Tom Parker",
+  c: "Barry Smith",
+  d: "Rhonda Lee",
+  e: "Grant Turner",
+  f: "Tim Burnes",
+  g: "Sarah Vitton"
+};
+const pickRandomCustomerId = () => {
+  const keys = Object.keys(TEST_CUSTOMERS);
+  return keys[Math.floor(Math.random() * keys.length)];
+};
+
 const TEST_ORDERS_TODAY: Pick<Order, "date" | "total">[] = new Array(10)
   .fill(0)
   .map((_, i) => ({
@@ -37,13 +51,13 @@ const TEST_ORDERS_TODAY: Pick<Order, "date" | "total">[] = new Array(10)
       .valueOf(),
   }));
 
-const TEST_ORDERS_OVERVIEW: Pick<Order, "date" | "total">[] = new Array(7)
-  .fill(1)
-  .map((days, index) => ({
+const TEST_ORDERS_OVERVIEW: Pick<Order, "date" | "total" | "customer">[] =
+  new Array(7).fill(1).map((days, index) => ({
     date: moment()
       .subtract(index + 1, "days")
       .valueOf(),
     total: (Math.floor(Math.random() * 6000) + 1000).toFixed(2),
+    customer: pickRandomCustomerId(),
   }));
 
 export const VendorHomeScreen = (props: HomeScreenProps) => {
