@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import { Text } from "../Text";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
-import { localizeCurrency } from "app/utils/general";
+import { localizeCurrency, pluralFormat } from "app/utils/general";
 import { FULL_TIME_ORDERS, PART_TIME_ORDERS } from "app/utils/subscriptions";
 import { Positions } from "delivfree";
 import { QuantitySelector } from "../QuantitySelector";
@@ -57,9 +57,8 @@ export const PositionsSelect = ({
     <View style={style}>
       <View style={$item}>
         <Text preset="semibold">
-          {maxFullTime} Full time driver
-          {maxFullTime !== 1 ? "s" : ""} & {maxFullTime * FULL_TIME_ORDERS}{" "}
-          orders a day
+          {maxFullTime} Full time {pluralFormat("driver", maxFullTime)} per{" "}
+          {maxFullTime * FULL_TIME_ORDERS} deliveries a day.
         </Text>
         {/* {renderFullTimePrice()} */}
         <QuantitySelector
@@ -71,9 +70,9 @@ export const PositionsSelect = ({
 
       <View style={[$item, { marginTop: spacing.sm }]}>
         <Text preset="semibold">
-          {maxPartTime} Part time driver
-          {maxPartTime !== 1 ? "s" : ""} & {maxPartTime * PART_TIME_ORDERS}{" "}
-          extra orders
+          {maxPartTime} Part time {pluralFormat("driver", maxPartTime)} for{" "}
+          {maxPartTime * PART_TIME_ORDERS} deliveries per half day. Covers 3
+          half days a week of your choice.
         </Text>
         {/* {renderSurgePrice()} */}
         <QuantitySelector
