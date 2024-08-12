@@ -32,14 +32,14 @@ const ConsumerItems: DrawerItem[] = [
     text: "Sign up as a Vendor",
     link: Platform.select({
       web: "https://business.delivfree.com",
-      default: "",
+      default: "https://business.delivfree.com",
     }),
   },
   {
     text: "Sign up as a Driver",
     link: Platform.select({
       web: "https://business.delivfree.com",
-      default: "",
+      default: "https://business.delivfree.com",
     }),
   },
   {
