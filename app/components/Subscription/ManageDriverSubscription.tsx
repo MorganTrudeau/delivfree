@@ -113,6 +113,8 @@ export const ManageDriverSubscription = withStripe(
         description={description}
         displayOnly={displayOnly}
         onReferralCodeVerified={setReferralCode}
+        noSubscriptionMessage={"You do not have active licenses"}
+        title={"Licenses"}
       />
     );
   }

@@ -107,7 +107,9 @@ export const ManageVendorSubscription = withStripe(
         subscription={vendorSubscription}
         description={description}
         onReferralCodeVerified={setReferralCode}
+        noSubscriptionMessage={"You have no filled positions."}
         freeTrialReward
+        title={"Filled positions"}
       />
     );
   }

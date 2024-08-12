@@ -19,6 +19,8 @@ export const ManageSubscription = ({
   description,
   onReferralCodeVerified,
   freeTrialReward,
+  noSubscriptionMessage,
+  title,
 }: {
   loading: boolean;
   onSubscribe: () => void;
@@ -28,6 +30,8 @@ export const ManageSubscription = ({
   description: string;
   onReferralCodeVerified?: (code: string) => void;
   freeTrialReward?: boolean;
+  title: string;
+  noSubscriptionMessage: string;
 }) => {
   const Loading = useMemo(
     () =>
@@ -41,7 +45,7 @@ export const ManageSubscription = ({
     <Card smallStyle={$flex}>
       {/* <AppLogo style={{ marginBottom: spacing.lg }} height={50} /> */}
       <Text preset="heading" style={{ marginBottom: spacing.md }}>
-        License subscription
+        {title}
       </Text>
 
       {!displayOnly ? (
@@ -72,9 +76,7 @@ export const ManageSubscription = ({
         </View>
       ) : (
         <View style={$borderedArea}>
-          <Text>
-            You do not have a subscription. Contact us for more information.
-          </Text>
+          <Text>{noSubscriptionMessage}</Text>
         </View>
       )}
 

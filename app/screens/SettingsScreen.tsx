@@ -48,7 +48,7 @@ export const SettingsScreen = ({ navigation, route }: Props) => {
         : userType === "vendor"
         ? "merchantsupport"
         : "orderssupport";
-    const url = `${namespace}@delivfree.com`;
+    const url = `mailto:${namespace}@delivfree.com`;
     try {
       await Linking.openURL(url);
     } catch (error) {
