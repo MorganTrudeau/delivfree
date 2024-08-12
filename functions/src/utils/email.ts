@@ -2,7 +2,7 @@ import { defineString } from "firebase-functions/params";
 
 const mailgunApiKey = defineString("MAILGUN_API_KEY");
 
-export const sendEmailNotification = ({
+export const sendEmailNotification = async ({
   title,
   body,
 }: {
@@ -11,14 +11,13 @@ export const sendEmailNotification = ({
   title: string;
   body: string;
 }) => {
-  const formData = require("form-data");
-  const Mailgun = require("mailgun.js");
+  const formData = await import("form-data");
+  const Mailgun = (await import("mailgun.js")).default;
   const mailgun = new Mailgun(formData);
   const mg = mailgun.client({
     username: "api",
-    key: mailgunApiKey,
+    key: mailgunApiKey.value(),
   });
-
   mg.messages
     .create("sandbox-123.mailgun.org", {
       from: "Excited User <mailgun@sandbox224aead0ca5f431ba978753cfe19fb97.mailgun.org>",

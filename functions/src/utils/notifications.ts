@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import { BaseMessage } from "firebase-admin/lib/messaging/messaging-api";
-import { Order, VENDOR_DOMAIN, Vendor } from "../types";
+import { Driver, Order, VENDOR_DOMAIN, Vendor } from "../types";
 import { sendEmailNotification } from "./email";
 
 const webpushImage = "";
@@ -110,12 +110,25 @@ export async function sendNewOrderNotification(order: Order) {
   const link = `${VENDOR_DOMAIN}?route=orders`;
   const payload = buildMessagePayload(notification, data, collapseKey, link);
   await sendNotifications(vendorOwners, payload);
-  await sendEmailNotification(notification);
+  await sendEmailNotification({
+    ...notification,
+    from: "admin@delivfree.com",
+    to: vendor.email,
+  });
   return true;
 }
 
 export async function sendOrderDriverAssignedNotification(order: Order) {
   if (!order.driver) {
+    return;
+  }
+  const driverDoc = await admin
+    .firestore()
+    .collection("Drivers")
+    .doc(order.driver)
+    .get();
+  const driver = driverDoc.data() as Driver | undefined;
+  if (!driver) {
     return;
   }
   const userIds = [order.driver];
@@ -131,5 +144,9 @@ export async function sendOrderDriverAssignedNotification(order: Order) {
   const link = `${VENDOR_DOMAIN}?route=orders`;
   const payload = buildMessagePayload(notification, data, collapseKey, link);
   await sendNotifications(userIds, payload);
-  await sendEmailNotification(notification);
+  await sendEmailNotification({
+    ...notification,
+    from: "admin@delivfree.com",
+    to: driver.email,
+  });
 }

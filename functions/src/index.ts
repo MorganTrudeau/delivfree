@@ -194,7 +194,11 @@ export const onVendorCreated = onDocumentCreated("Vendors/{id}", async () => {
   const link = `${ADMIN_DOMAIN}?route=vendors`;
   const payload = buildMessagePayload(notification, data, collapseKey, link);
   await sendAdminNotifications(payload);
-  await sendEmailNotification(notification);
+  await sendEmailNotification({
+    ...notification,
+    from: "server@delivfree.com",
+    to: "info@delivfree.com",
+  });
   return true;
 });
 
@@ -212,7 +216,11 @@ export const onVendorLocationCreated = onDocumentCreated(
     const link = `${ADMIN_DOMAIN}?route=vendors`;
     const payload = buildMessagePayload(notification, data, collapseKey, link);
     await sendAdminNotifications(payload);
-    await sendEmailNotification(notification);
+    await sendEmailNotification({
+      ...notification,
+      from: "server@delivfree.com",
+      to: "info@delivfree.com",
+    });
     return true;
   }
 );
@@ -231,7 +239,11 @@ export const onPositionCreated = onDocumentCreated(
     const link = `${ADMIN_DOMAIN}?route=vendors`;
     const payload = buildMessagePayload(notification, data, collapseKey, link);
     await sendAdminNotifications(payload);
-    await sendEmailNotification(notification);
+    await sendEmailNotification({
+      ...notification,
+      from: "server@delivfree.com",
+      to: "info@delivfree.com",
+    });
     return true;
   }
 );
@@ -248,7 +260,11 @@ export const onLicenseCreated = onDocumentCreated("Licenses/{id}", async () => {
   const link = `${ADMIN_DOMAIN}?route=vendors`;
   const payload = buildMessagePayload(notification, data, collapseKey, link);
   await sendAdminNotifications(payload);
-  await sendEmailNotification(notification);
+  await sendEmailNotification({
+    ...notification,
+    from: "server@delivfree.com",
+    to: "info@delivfree.com",
+  });
   return true;
 });
 
@@ -479,3 +495,4 @@ export const createLicense = onCall({}, async (request) => {
 });
 
 export * from "./apis/stripe";
+export * from "./apis/account";

@@ -10,7 +10,6 @@ import {
   NO_TOP_BOTTOM_SAFE_AREA_EDGES,
 } from "app/components/styles";
 import appJson from "../../app.json";
-import { getAppType } from "app/utils/general";
 import { AppStackScreenProps } from "app/navigators";
 import { ScreenHeader } from "app/components/ScreenHeader";
 
@@ -23,7 +22,6 @@ export const AboutScreen = ({ navigation }: Props) => {
       style={$screen}
       contentContainerStyle={$containerPadding}
       safeAreaEdges={NO_TOP_BOTTOM_SAFE_AREA_EDGES}
-      
     >
       <ScreenHeader title="About" />
       <ListItem
