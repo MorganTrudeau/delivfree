@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">@string/APP_NAME</string>
+    <string name="app_icon">@string/APP_ICON</string>
+    <string name="app_icon_round">@string/APP_ICON_ROUND</string>
 </resources>
