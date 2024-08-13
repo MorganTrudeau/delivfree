@@ -2,7 +2,8 @@ import React, { forwardRef, useMemo, useRef, useState } from "react";
 import { Customer, Order } from "delivfree";
 import { generateUid, localizeCurrency } from "app/utils/general";
 import moment from "moment";
-import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
+import ReanimatedCenterModal from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import {
   View,
   ViewStyle,

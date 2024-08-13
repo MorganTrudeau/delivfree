@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { VendorLocation } from "delivfree";
 import { resetAppState } from "../resetAppState";
-import { fetchVendorLocation } from "../thunks/vendorLocations";
 
 export interface VendorLocationsState {
   data: { [id: string]: VendorLocation };
@@ -22,18 +21,22 @@ export const vendorLocationsSlice = createSlice({
     ) => {
       state.data = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(fetchVendorLocation.fulfilled, (state, action) => {
+    setVendorLocation: (
+      state,
+      action: PayloadAction<VendorLocation | null | undefined>
+    ) => {
       if (action.payload) {
         state.data = { ...state.data, [action.payload.id]: action.payload };
       }
-    });
+    },
+  },
+  extraReducers: (builder) => {
     builder.addCase(resetAppState, () => initialState);
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setVendorLocations } = vendorLocationsSlice.actions;
+export const { setVendorLocations, setVendorLocation } =
+  vendorLocationsSlice.actions;
 
 export default vendorLocationsSlice.reducer;

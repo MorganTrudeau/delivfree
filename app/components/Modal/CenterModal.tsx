@@ -24,6 +24,7 @@ import { useOnChange } from "app/hooks";
 import { MAX_CENTER_MODAL_WIDTH } from "../styles";
 import { spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
+import { ModalRef } from "app/utils/types";
 
 export type Props = {
   tapToClose?: boolean;
@@ -32,10 +33,6 @@ export type Props = {
   modalStyle?: ViewStyle;
   contentStyle?: ViewStyle;
   backdropStyle?: ViewStyle;
-};
-export type ModalRef = {
-  open: () => void;
-  close: () => void;
 };
 
 const ReanimatedCenterModal = forwardRef<ModalRef, Props>(

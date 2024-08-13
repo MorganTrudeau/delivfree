@@ -2,7 +2,7 @@ import { Screen } from "app/components";
 import { Drawer } from "app/components/Drawer";
 import { AddDriverModal } from "app/components/Drivers/AddDriverModal";
 import { DriversList } from "app/components/Drivers/DriversList";
-import { ModalRef } from "app/components/Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import { $containerPadding, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";

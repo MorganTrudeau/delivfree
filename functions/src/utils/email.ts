@@ -21,7 +21,7 @@ export const sendEmailNotification = async ({
   mg.messages
     .create("sandbox-123.mailgun.org", {
       from: "Excited User <mailgun@sandbox224aead0ca5f431ba978753cfe19fb97.mailgun.org>",
-      to: ["test@example.com"],
+      to: ["morgantrudeau@gmail.com"],
       subject: title,
       text: body,
       // html: "<h1>Testing some Mailgun awesomeness!</h1>",

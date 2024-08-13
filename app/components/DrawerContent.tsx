@@ -13,7 +13,7 @@ import { rateApp } from "app/utils/rate";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "app/hooks";
 import FastImage from "react-native-fast-image";
-import { AppStackParamList } from "app/navigators/StackNavigator";
+import { AppStackParamList } from "app/navigators/AppStackParamList";
 import { useAppSelector } from "app/redux/store";
 import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
 import { Icon } from "./Icon";

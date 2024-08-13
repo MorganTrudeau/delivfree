@@ -1,5 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { setVendorLocations } from "../reducers/vendorLocations";
+import {
+  setVendorLocation,
+  setVendorLocations,
+} from "../reducers/vendorLocations";
 import * as VendorLocationApis from "../../apis/vendorLocations";
 
 export const listenToVendorLocations = createAsyncThunk(
@@ -16,7 +19,8 @@ export const listenToVendorLocations = createAsyncThunk(
 
 export const fetchVendorLocation = createAsyncThunk(
   "vendorLocations/fetchVendorLocation",
-  (vendorLocation: string) => {
-    return VendorLocationApis.fetchVendorLocation(vendorLocation);
+  async (vendorLocation: string, { dispatch }) => {
+    const data = await VendorLocationApis.fetchVendorLocation(vendorLocation);
+    dispatch(setVendorLocation(data));
   }
 );

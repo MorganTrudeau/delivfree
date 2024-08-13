@@ -7,10 +7,9 @@ import {
   TextStyle,
 } from "react-native";
 import { isRTL, translate, TxKeyPath } from "../i18n";
-import { colors, typography } from "../theme";
-import { scaleSize } from "./styles";
+import { colors, typography, fontSize } from "../theme";
 
-type Sizes = keyof typeof $fontSizeStyles;
+type Sizes = keyof typeof fontSize;
 type Weights = keyof typeof typography.primary;
 type Presets = keyof typeof $presets;
 
@@ -77,7 +76,7 @@ export function Text(props: TextProps) {
     $rtlStyle,
     $presets[preset],
     weight && $fontWeightStyles[weight],
-    size && $fontSizeStyles[size],
+    size && fontSize[size],
     $styleOverride,
   ];
 
@@ -87,37 +86,6 @@ export function Text(props: TextProps) {
     </RNText>
   );
 }
-
-export const $fontSizeStyles = {
-  xxl: {
-    fontSize: scaleSize(30),
-    // lineHeight: scaleSize(44),
-  } satisfies TextStyle,
-  xl: {
-    fontSize: scaleSize(24),
-    // lineHeight: scaleSize(34),
-  } satisfies TextStyle,
-  lg: {
-    fontSize: scaleSize(20),
-    // lineHeight: scaleSize(32),
-  } satisfies TextStyle,
-  md: {
-    fontSize: scaleSize(18),
-    // lineHeight: scaleSize(26),
-  } satisfies TextStyle,
-  sm: {
-    fontSize: scaleSize(16),
-    // lineHeight: scaleSize(24),
-  } satisfies TextStyle,
-  xs: {
-    fontSize: scaleSize(14),
-    // lineHeight: scaleSize(21),
-  } satisfies TextStyle,
-  xxs: {
-    fontSize: scaleSize(12),
-    // lineHeight: scaleSize(18),
-  } satisfies TextStyle,
-};
 
 const $fontWeightStyles = Object.entries(typography.primary).reduce(
   (acc, [weight, fontFamily]) => {
@@ -134,7 +102,7 @@ const $secondaryFontWeightStyles = Object.entries(typography.secondary).reduce(
 ) as Record<Weights, TextStyle>;
 
 const $baseStyle: StyleProp<TextStyle> = [
-  $fontSizeStyles.sm,
+  fontSize.sm,
   $fontWeightStyles.normal,
   { color: colors.text },
 ];
@@ -147,13 +115,13 @@ const $presets = {
 
   heading: [
     $baseStyle,
-    $fontSizeStyles.xxl,
+    fontSize.xxl,
     $secondaryFontWeightStyles.bold,
   ] as StyleProp<TextStyle>,
 
   subheading: [
     $baseStyle,
-    $fontSizeStyles.lg,
+    fontSize.lg,
     $fontWeightStyles.medium,
   ] as StyleProp<TextStyle>,
 
@@ -161,7 +129,7 @@ const $presets = {
 
   formHelper: [
     $baseStyle,
-    $fontSizeStyles.sm,
+    fontSize.sm,
     $fontWeightStyles.normal,
   ] as StyleProp<TextStyle>,
 };

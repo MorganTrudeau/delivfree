@@ -496,3 +496,26 @@ export const createLicense = onCall({}, async (request) => {
 
 export * from "./apis/stripe";
 export * from "./apis/account";
+
+export const sendEmail = onCall(
+  {},
+  (
+    request: CallableRequest<{
+      title: string;
+      body: string;
+      from: string;
+      to: string;
+    }>
+  ) => {
+    checkAuthentication(request.auth?.uid);
+
+    const { title, body, from, to } = request.data;
+
+    return sendEmailNotification({
+      title,
+      body,
+      from,
+      to,
+    });
+  }
+);

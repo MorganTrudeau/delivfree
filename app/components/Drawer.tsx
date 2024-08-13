@@ -1,8 +1,6 @@
 import { colors } from "app/theme";
 import React, {
   useRef,
-  createContext,
-  MutableRefObject,
   useState,
 } from "react";
 import {
@@ -13,14 +11,8 @@ import {
 import { Dimensions, Platform } from "react-native";
 import { DrawerContent } from "./DrawerContent";
 import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
-import { AppStackParamList } from "app/navigators/StackNavigator";
-
-export const DrawerContext = createContext({
-  drawerRef: { current: null } as MutableRefObject<DrawerLayout | null>,
-  open: false,
-  setAlwaysOpen: (always: boolean) => {},
-  alwaysOpen: false,
-});
+import { AppStackParamList } from "app/navigators/AppStackParamList";
+import { DrawerContext } from "./DrawerContext";
 
 export const Drawer = ({
   children,

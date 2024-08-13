@@ -8,7 +8,8 @@ import React, {
 } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import FastImage, { ImageStyle, OnLoadEvent } from "react-native-fast-image";
-import ReanimatedCenterModal, { ModalRef } from "./Modal/CenterModal";
+import ReanimatedCenterModal from "./Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { useDimensions } from "app/hooks/useDimensions";
 import { spacing } from "app/theme";
 import { Icon } from "./Icon";

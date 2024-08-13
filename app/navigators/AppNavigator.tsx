@@ -8,10 +8,11 @@ import { FirebaseMessaging } from "app/services/firebase/messaging";
 import RNBootSplash from "react-native-bootsplash";
 import { rateApp, shouldAskRating } from "app/utils/rate";
 import { Platform } from "react-native";
-import { AppStackParamList, linkingConfigScreens } from "./StackNavigator";
+import { linkingConfigScreens } from "./StackNavigator";
+import { AppStackParamList } from "./AppStackParamList";
 import { UserTypeManager } from "app/services/UserTypeManager";
 import { Host as PortalHost } from "react-native-portalize";
-import AlertProvider from "app/components/Alert/AlertContext";
+import AlertProvider from "app/components/Alert/AlertProvider";
 import { DataLoadingManager } from "app/services/DataLoadingManager";
 import ToastProvider from "app/components/Toast/ToastContext";
 import { getAppType } from "app/utils/general";
@@ -19,7 +20,6 @@ import { AdminStack } from "./Stacks/AdminStack";
 import { VendorStack } from "./Stacks/VendorStack";
 import { ConsumerStack } from "./Stacks/ConsumerStack";
 import { Drawer } from "app/components/Drawer";
-import { useAppSelector } from "app/redux/store";
 
 export type NavigationProp = AppStackScreenProps<
   keyof AppStackParamList

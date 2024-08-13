@@ -5,7 +5,8 @@ import React, {
   useRef,
 } from "react";
 import { BottomSheetRef } from "./BottomSheet";
-import ReanimatedCenterModal, { ModalRef } from "./CenterModal";
+import ReanimatedCenterModal from "./CenterModal";
+import { ModalRef } from "app/utils/types";
 import { BottomSheetProps } from "@gorhom/bottom-sheet";
 import { ViewStyle } from "react-native";
 

@@ -3,7 +3,8 @@ import { Customer } from "delivfree";
 import React, { forwardRef } from "react";
 import { TextStyle, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
-import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
+import ReanimatedCenterModal from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { ButtonSmall } from "../ButtonSmall";
 import { navigateToAddress } from "app/utils/general";
 

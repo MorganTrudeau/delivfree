@@ -8,7 +8,7 @@ import { Drawer } from "app/components/Drawer";
 import { EmptyList } from "app/components/EmptyList";
 import { LicenseDisplayModal } from "app/components/Licenses/LicenseDisplayModal";
 import { LicensesList } from "app/components/Licenses/LicensesList";
-import { ModalRef } from "app/components/Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { StatusPicker } from "app/components/StatusPicker";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import { SubscriptionInfo } from "app/components/Subscription/SubscriptionInfo";

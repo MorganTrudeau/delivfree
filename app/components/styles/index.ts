@@ -1,4 +1,4 @@
-import { colors, spacing, typography } from "app/theme";
+import { colors, fontSize, spacing, typography } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
 import { sizing } from "app/theme/sizing";
 import {
@@ -39,10 +39,6 @@ export const MAX_CONTENT_WIDTH = 1200;
 
 export const WEB_NOTIFICATION_HEIGHT = 80;
 export const WEB_NOTIFICATION_WIDTH = 350;
-
-export const scaleSize = (size: number) => {
-  return size;
-};
 
 export const NO_TOP_BOTTOM_SAFE_AREA_EDGES: Edge[] = [
   "bottom",
@@ -253,7 +249,7 @@ export const $listItemButton: ViewStyle = {
   minHeight: 0,
 };
 export const $image: ImageStyle = {
-  height: '100%',
+  height: "100%",
   width: "100%",
   aspectRatio: 2.5,
   borderRadius: borderRadius.md,
@@ -263,7 +259,7 @@ export const $imageContainer: StyleProp<ViewStyle> = [
   {
     borderRadius: borderRadius.md,
     width: "100%",
-    position: 'relative',
+    position: "relative",
     // maxWidth: 400,
     aspectRatio: 2.5,
     backgroundColor: colors.background,
@@ -277,13 +273,13 @@ export const $input: TextStyle = {
   borderWidth: StyleSheet.hairlineWidth,
   borderRadius: borderRadius.sm,
   color: colors.text,
-  fontSize: scaleSize(16),
   minHeight: 38,
   flexDirection: "column",
   justifyContent: "center",
   // @ts-ignore
   outlineStyle: "none",
   borderColor: colors.border,
+  ...fontSize.sm,
 };
 
 export const $adNoText: ImageStyle = {

@@ -8,7 +8,7 @@ import { Text } from "../Text";
 import { ButtonSmall } from "../ButtonSmall";
 import { Icon } from "../Icon";
 import { $flex, $row } from "../styles";
-import { ModalRef } from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { VendorLocationSelectModal } from "../VendorLocation/VendorLocationSelectModal";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";

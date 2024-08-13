@@ -5,9 +5,8 @@ import React, {
   useRef,
 } from "react";
 import { BottomSheetRef } from "../../../../components/Modal/BottomSheet";
-import ReanimatedCenterModal, {
-  ModalRef,
-} from "../../../../components/Modal/CenterModal";
+import ReanimatedCenterModal from "../../../../components/Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { BottomSheetProps } from "@gorhom/bottom-sheet";
 
 type Props = Partial<Omit<BottomSheetProps, "children">> & {

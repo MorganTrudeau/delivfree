@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
-import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
+import ReanimatedCenterModal from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { TimePicker, Props as TimePickerProps } from "./TimerPicker";
 
 export type Props = TimePickerProps;

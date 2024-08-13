@@ -561,7 +561,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3F7836A847FCEE827E9A8714 /* Pods-delivfree.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDark;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = delivfree/delivfree.entitlements;
@@ -569,7 +569,7 @@
 				DEVELOPMENT_TEAM = F7N3ZWBLCL;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = delivfree/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "DF Business";
+				INFOPLIST_KEY_CFBundleDisplayName = DelivFree;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -600,14 +600,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 22477D367BCB00480A6BEFB2 /* Pods-delivfree.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDark;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = delivfree/delivfree.entitlements;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = F7N3ZWBLCL;
 				INFOPLIST_FILE = delivfree/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "DF Business";
+				INFOPLIST_KEY_CFBundleDisplayName = DelivFree;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
