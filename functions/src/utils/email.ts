@@ -5,9 +5,11 @@ const mailgunApiKey = defineString("MAILGUN_API_KEY");
 export const sendEmailNotification = async ({
   title,
   body,
+  to,
+  from,
 }: {
-  from: string;
-  to: string;
+  from?: string;
+  to: string[];
   title: string;
   body: string;
 }) => {
@@ -19,9 +21,9 @@ export const sendEmailNotification = async ({
     key: mailgunApiKey.value(),
   });
   mg.messages
-    .create("sandbox-123.mailgun.org", {
-      from: "Excited User <mailgun@sandbox224aead0ca5f431ba978753cfe19fb97.mailgun.org>",
-      to: ["morgantrudeau@gmail.com"],
+    .create("delivfree.com", {
+      from: from || "DelivFree Canada Inc. <admin@delivfree.com>",
+      to: to,
       subject: title,
       text: body,
       // html: "<h1>Testing some Mailgun awesomeness!</h1>",

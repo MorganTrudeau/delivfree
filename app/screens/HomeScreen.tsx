@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { $flex, $flexShrink, $screen } from "app/components/styles";
+import { $flexShrink, $screen } from "app/components/styles";
 import CuisineList from "app/components/Cuisines/CuisineList";
 import { ActivityIndicator, Pressable, View, ViewStyle } from "react-native";
 import { colors, spacing } from "app/theme";
@@ -23,7 +23,6 @@ import { sizing } from "app/theme/sizing";
 import { ImageStyle } from "react-native-fast-image";
 import { AdBanner } from "app/components/AdBanner";
 import { useIsFocused } from "@react-navigation/native";
-import functions from "@react-native-firebase/functions";
 
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
@@ -134,23 +133,6 @@ export const HomeScreen = (props: HomeScreenProps) => {
       <ActivityIndicator size={"small"} color={colors.text} />
     );
   }, [searchLoading, search]);
-
-  const sendEmail = async () => {
-    try {
-      await functions().httpsCallable("sendEmail")({
-        title: "Title",
-        body: "Hello world",
-        to: "morgantrudeau@gmail.com",
-        from: "DelivFree <admin@delivfree.com>",
-      });
-    } catch (error) {
-      console.log("ERROR", error);
-    }
-  };
-
-  useEffect(() => {
-    sendEmail();
-  });
 
   return (
     <Screen contentContainerStyle={$screen}>

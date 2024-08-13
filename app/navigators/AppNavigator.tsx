@@ -21,18 +21,11 @@ import { VendorStack } from "./Stacks/VendorStack";
 import { ConsumerStack } from "./Stacks/ConsumerStack";
 import { Drawer } from "app/components/Drawer";
 
-export type NavigationProp = AppStackScreenProps<
-  keyof AppStackParamList
->["navigation"];
-
 /**
  * This is a list of all the route names that will exit the app if the back button
  * is pressed while in that screen. Only affects Android.
  */
 const exitRoutes = Config.exitRoutes;
-
-export type AppStackScreenProps<T extends keyof AppStackParamList> =
-  NativeStackScreenProps<AppStackParamList, T>;
 
 const appType = getAppType();
 
