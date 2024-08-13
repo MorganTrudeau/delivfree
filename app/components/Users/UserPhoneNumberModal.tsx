@@ -8,7 +8,8 @@ import { Button } from "../Button";
 import { updateUser } from "app/apis/user";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
-import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
+import ReanimatedCenterModal from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 
 type Props = { onClose: () => void };
 

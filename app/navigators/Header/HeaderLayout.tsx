@@ -1,6 +1,6 @@
-import { $fontSizeStyles } from "app/components";
 import { getHeaderHeight } from "app/components/styles";
 import { colors, spacing, typography } from "app/theme";
+import { fontSize } from "app/theme/fontSize";
 import React from "react";
 import {
   Platform,
@@ -142,13 +142,13 @@ const styles = StyleSheet.create({
         color: colors.text,
         textAlign: Platform.select({ ios: "center", default: "left" }),
       },
-      $fontSizeStyles.lg,
+      fontSize.lg,
     ],
   ]),
   headerLeft: {
     flex: Platform.select({ ios: 1, default: undefined }),
     alignItems: "flex-start",
-    paddingHorizontal: spacing.md
+    paddingHorizontal: spacing.md,
   },
   headerTitle: {
     position: "absolute",
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   headerRight: {
     flex: Platform.select({ ios: 1, default: undefined }),
     alignItems: "flex-end",
-    paddingHorizontal: spacing.md
+    paddingHorizontal: spacing.md,
   },
 });
 

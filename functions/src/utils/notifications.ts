@@ -112,8 +112,7 @@ export async function sendNewOrderNotification(order: Order) {
   await sendNotifications(vendorOwners, payload);
   await sendEmailNotification({
     ...notification,
-    from: "admin@delivfree.com",
-    to: vendor.email,
+    to: [vendor.email],
   });
   return true;
 }
@@ -146,7 +145,69 @@ export async function sendOrderDriverAssignedNotification(order: Order) {
   await sendNotifications(userIds, payload);
   await sendEmailNotification({
     ...notification,
-    from: "admin@delivfree.com",
-    to: driver.email,
+    to: [driver.email],
+  });
+}
+
+export async function sendVendorPositionFilledNotification(vendor: string) {
+  const vendorDoc = await admin
+    .firestore()
+    .collection("Vendors")
+    .doc(vendor)
+    .get();
+
+  const vendorData = vendorDoc.data() as Vendor | undefined;
+
+  if (!vendorData) {
+    return;
+  }
+
+  const notification = {
+    title: "Position Filled",
+    body: "A driver has been found for your posted position.",
+  };
+  const data = {
+    type: "license_approved",
+  };
+  const collapseKey = "license_approved";
+  const link = `${VENDOR_DOMAIN}`;
+  const payload = buildMessagePayload(notification, data, collapseKey, link);
+  await sendNotifications(vendorData.users, payload);
+
+  await sendEmailNotification({
+    ...notification,
+    body: "A driver has been found for your posted position. Please visit https://business.delivfree.com to activate your driver.\n\nRegards,\n\nDelivFree Canada Inc.",
+    to: [vendorData.email],
+  });
+}
+
+export async function sendDriverLicenseApprovedNotification(driver: string) {
+  const driverDoc = await admin
+    .firestore()
+    .collection("Drivers")
+    .doc(driver)
+    .get();
+  const driverData = driverDoc.data() as Driver | undefined;
+
+  if (!driverData) {
+    return;
+  }
+
+  const notification = {
+    title: "License Approved",
+    body: "Your license application has been approved.",
+  };
+  const data = {
+    type: "license_approved",
+  };
+  const collapseKey = "new_application";
+  const link = `${VENDOR_DOMAIN}`;
+  const payload = buildMessagePayload(notification, data, collapseKey, link);
+  await sendNotifications([driverData.user], payload);
+
+  await sendEmailNotification({
+    ...notification,
+    body: "Your license application has been approved. Please visit https://business.delivfree.com to activate your license.\n\nRegards,\n\nDelivFree Canada Inc.",
+    to: [driverData.email],
   });
 }

@@ -9,7 +9,8 @@ import {
 
 import { colors, spacing } from "app/theme";
 import { Icon, IconTypes } from "../Icon";
-import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
+import ReanimatedCenterModal from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { Text } from "../Text";
 import { $borderTop, $row, MAX_CENTER_MODAL_WIDTH } from "../styles";
 

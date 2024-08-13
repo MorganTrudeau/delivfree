@@ -3,7 +3,7 @@ import { Button, Icon, Screen, Text, TextField } from "app/components";
 import { AddressSearchModal } from "app/components/AddressSearchModal";
 import { Card } from "app/components/Card";
 import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
-import { ModalRef } from "app/components/Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { StatusIndicator } from "app/components/StatusIndicator";
 import {

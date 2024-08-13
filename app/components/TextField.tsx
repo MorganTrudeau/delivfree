@@ -21,8 +21,8 @@ import {
   ViewStyle,
 } from "react-native";
 import { isRTL, translate } from "../i18n";
-import { colors, spacing, typography } from "../theme";
-import { $fontSizeStyles, Text, TextProps } from "./Text";
+import { colors, fontSize, spacing } from "../theme";
+import { Text, TextProps } from "./Text";
 import { borderRadius } from "app/theme/borderRadius";
 import NumberTextInput from "./NumberTextInput";
 import { $formLabel } from "./styles";
@@ -305,7 +305,7 @@ export const TextField = forwardRef(function TextField(
 
 const $inputWrapperStyle: ViewStyle = {
   flexDirection: "row",
-  alignItems: 'center',
+  alignItems: "center",
   paddingHorizontal: spacing.xs,
   backgroundColor: colors.palette.neutral200,
   borderWidth: StyleSheet.hairlineWidth,
@@ -320,7 +320,7 @@ const $inputStyle: TextStyle = {
   flex: 1,
   alignSelf: "stretch",
   color: colors.text,
-  fontSize: $fontSizeStyles.sm.fontSize,
+  ...fontSize.sm,
   width: "100%",
   // @ts-ignore
   outlineStyle: "none",

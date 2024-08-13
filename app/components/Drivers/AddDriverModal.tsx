@@ -1,5 +1,6 @@
 import React, { forwardRef, useMemo, useState } from "react";
-import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
+import ReanimatedCenterModal from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { ActivityIndicator, TextStyle, View, ViewStyle } from "react-native";
 import { colors, spacing } from "app/theme";
 import { TextField } from "../TextField";

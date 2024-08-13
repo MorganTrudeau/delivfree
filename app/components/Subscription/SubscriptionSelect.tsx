@@ -21,7 +21,8 @@ import { localizeCurrency } from "app/utils/general";
 import { Button } from "../Button";
 import functions from "@react-native-firebase/functions";
 import { useAppSelector } from "app/redux/store";
-import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
+import ReanimatedCenterModal from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { AppLogo } from "../AppLogo";
 import { useAlert } from "app/hooks";
 import {

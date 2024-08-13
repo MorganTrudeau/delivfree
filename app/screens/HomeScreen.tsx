@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { $flex, $flexShrink, $screen } from "app/components/styles";
+import { $flexShrink, $screen } from "app/components/styles";
 import CuisineList from "app/components/Cuisines/CuisineList";
 import { ActivityIndicator, Pressable, View, ViewStyle } from "react-native";
 import { colors, spacing } from "app/theme";

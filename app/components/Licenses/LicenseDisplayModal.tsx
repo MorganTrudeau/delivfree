@@ -1,5 +1,6 @@
 import React, { forwardRef, useState } from "react";
-import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
+import ReanimatedCenterModal from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { ManageLicense, Props } from "./ManageLicense";
 import { License, Status } from "delivfree";
 import { approveLicense, denyLicense, updateLicense } from "app/apis/licenses";

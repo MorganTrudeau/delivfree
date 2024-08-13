@@ -6,9 +6,9 @@ import * as VendorApis from "../../apis/vendors";
 
 export const createVendor = createAsyncThunk(
   "vendors/createVendor",
-  async (vendor: Vendor) => {
+  async (vendor: Vendor, { dispatch }) => {
     await firestore().collection("Vendors").doc(vendor.id).set(vendor);
-    return vendor;
+    dispatch(setActiveVendor(vendor));
   }
 );
 
@@ -45,7 +45,8 @@ export const listenToVendors = createAsyncThunk(
 
 export const fetchVendor = createAsyncThunk(
   "vendors/fetchVendor",
-  (vendor: string, { dispatch }) => {
-    return VendorApis.fetchVendor(vendor);
+  async (vendor: string, { dispatch }) => {
+    const data = await VendorApis.fetchVendor(vendor);
+    dispatch(setVendor(data));
   }
 );

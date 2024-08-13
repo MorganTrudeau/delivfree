@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { License, Vendor } from "delivfree";
 import { resetAppState } from "../resetAppState";
-import { createVendor, fetchVendor } from "../thunks/vendor";
 
 export interface VendorState {
   data: { [id: string]: Vendor };
@@ -48,20 +47,6 @@ export const vendorSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(
-      createVendor.fulfilled,
-      (state, action: PayloadAction<Vendor>) => {
-        state.activeVendor = action.payload;
-      }
-    );
-    builder.addCase(
-      fetchVendor.fulfilled,
-      (state, action: PayloadAction<Vendor | undefined>) => {
-        if (action.payload) {
-          state.data = { ...state.data, [action.payload.id]: action.payload };
-        }
-      }
-    );
     builder.addCase(resetAppState, () => initialState);
   },
 });

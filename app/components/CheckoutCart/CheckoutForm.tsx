@@ -7,7 +7,7 @@ import { CheckoutTotals } from "app/components/CheckoutCart/CheckoutTotals";
 import { DeliveryInstructionsModal } from "app/components/CheckoutCart/DeliveryInstructions";
 import { EmptyList } from "app/components/EmptyList";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
-import { ModalRef } from "app/components/Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import LocationModal from "app/components/Modal/LocationModal";
 import { UserPhoneNumberModal } from "app/components/Users/UserPhoneNumberModal";
 import {

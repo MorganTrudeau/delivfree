@@ -13,8 +13,11 @@ import {
 import {
   buildMessagePayload,
   sendAdminNotifications,
+  sendDriverLicenseApprovedNotification,
   sendNewOrderNotification,
+  sendNotifications,
   sendOrderDriverAssignedNotification,
+  sendVendorPositionFilledNotification,
 } from "./utils/notifications";
 import {
   CallableRequest,
@@ -196,8 +199,7 @@ export const onVendorCreated = onDocumentCreated("Vendors/{id}", async () => {
   await sendAdminNotifications(payload);
   await sendEmailNotification({
     ...notification,
-    from: "server@delivfree.com",
-    to: "info@delivfree.com",
+    to: ["info@delivfree.com"],
   });
   return true;
 });
@@ -218,8 +220,7 @@ export const onVendorLocationCreated = onDocumentCreated(
     await sendAdminNotifications(payload);
     await sendEmailNotification({
       ...notification,
-      from: "server@delivfree.com",
-      to: "info@delivfree.com",
+      to: ["info@delivfree.com"],
     });
     return true;
   }
@@ -241,8 +242,7 @@ export const onPositionCreated = onDocumentCreated(
     await sendAdminNotifications(payload);
     await sendEmailNotification({
       ...notification,
-      from: "server@delivfree.com",
-      to: "info@delivfree.com",
+      to: ["info@delivfree.com"],
     });
     return true;
   }
@@ -262,8 +262,7 @@ export const onLicenseCreated = onDocumentCreated("Licenses/{id}", async () => {
   await sendAdminNotifications(payload);
   await sendEmailNotification({
     ...notification,
-    from: "server@delivfree.com",
-    to: "info@delivfree.com",
+    to: ["info@delivfree.com"],
   });
   return true;
 });
@@ -372,6 +371,16 @@ export const onLicensesWritten = onDocumentWritten(
 
     const statusBefore = licenseBefore?.status;
     const statusAfter = licenseAfter?.status;
+
+    if (
+      statusBefore !== "approved" &&
+      statusAfter === "approved" &&
+      vendor &&
+      driver
+    ) {
+      await sendVendorPositionFilledNotification(vendor);
+      await sendDriverLicenseApprovedNotification(driver);
+    }
 
     if (statusBefore !== statusAfter) {
       const update: {
@@ -493,6 +502,29 @@ export const createLicense = onCall({}, async (request) => {
 
   return await batch.commit();
 });
+
+export const sendEmail = onCall(
+  {},
+  (
+    request: CallableRequest<{
+      title: string;
+      body: string;
+      from: string;
+      to: string[];
+    }>
+  ) => {
+    checkAuthentication(request.auth?.uid);
+
+    const { title, body, from, to } = request.data;
+
+    return sendEmailNotification({
+      title,
+      body,
+      from,
+      to,
+    });
+  }
+);
 
 export * from "./apis/stripe";
 export * from "./apis/account";

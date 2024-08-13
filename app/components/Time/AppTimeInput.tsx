@@ -2,7 +2,7 @@ import moment, { MomentInput } from "moment";
 import React, { useCallback, useMemo, useRef } from "react";
 import { Pressable, View, ViewStyle } from "react-native";
 import { TimePickerModal, Props as TimePickerProps } from "./TimePickerModal";
-import { ModalRef } from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { $formLabel, $input } from "../styles";
 import { Text } from "../Text";
 import { colors } from "app/theme";

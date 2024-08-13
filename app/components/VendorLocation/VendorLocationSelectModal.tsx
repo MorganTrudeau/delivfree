@@ -3,7 +3,8 @@ import React, { forwardRef } from "react";
 import { Pressable, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
 import { spacing } from "app/theme";
-import ReanimatedCenterModal, { ModalRef } from "../Modal/CenterModal";
+import ReanimatedCenterModal from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { $borderBottom } from "../styles";
 
 type Props = {

@@ -6,7 +6,7 @@ import { ActivityIndicator, View } from "react-native";
 import { ConsumerMenuItem } from "./ConsumerMenuItem";
 import { MenuItem } from "delivfree";
 import { ConsumerItemSelectModal } from "./ConsumerItemSelect";
-import { ModalRef } from "app/components/Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { useDimensions } from "app/hooks/useDimensions";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 

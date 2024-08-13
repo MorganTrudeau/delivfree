@@ -26,7 +26,7 @@ import {
 import { TextField } from "../TextField";
 import { colors, spacing } from "app/theme";
 import { DropDownPicker } from "../DropDownPicker";
-import { ModalRef } from "../Modal/CenterModal";
+import { ModalRef } from "app/utils/types";
 import { getCuisineTitle } from "app/utils/cuisines";
 import { Text } from "../Text";
 import {

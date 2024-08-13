@@ -1,11 +1,5 @@
-import { colors, spacing } from "app/theme";
-import React, {
-  useRef,
-  createContext,
-  MutableRefObject,
-  useState,
-  useEffect,
-} from "react";
+import { colors } from "app/theme";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Pressable,
   StyleProp,
@@ -22,24 +16,12 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useDimensions } from "app/hooks/useDimensions";
-import { Icon } from "./Icon";
-import { AppStackParamList } from "app/navigators/StackNavigator";
+import { AppStackParamList } from "app/navigators/AppStackParamList";
 import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
-import { getAppType } from "app/utils/general";
 import { isLargeScreen } from "./styles";
-import { useOnChange } from "app/hooks";
+import { DrawerContext } from "./DrawerContext.web";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
-export const DrawerContext = createContext({
-  drawerRef: { current: null } as MutableRefObject<{
-    openDrawer: (config?: { speed?: number }) => void;
-    closeDrawer: (config?: { speed?: number }) => void;
-  } | null>,
-  open: false,
-  setAlwaysOpen: (always: boolean) => {},
-  alwaysOpen: false,
-});
 
 export const Drawer = ({
   children,
@@ -54,7 +36,7 @@ export const Drawer = ({
   const largeScreen = isLargeScreen(width);
 
   const [alwaysOpen, setAlwaysOpen] = useState(
-   false// largeScreen && getAppType() === "ADMIN"
+    false // largeScreen && getAppType() === "ADMIN"
   );
   const [open, setOpen] = useState(false);
   const openAnimation = useSharedValue(0);
