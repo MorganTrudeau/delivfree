@@ -139,6 +139,10 @@ export const saveMenuItem = (item: MenuItem) => {
   return firestore().collection("MenuItems").doc(item.id).set(item);
 };
 
+export const deleteMenuItem = (id: string) => {
+  return firestore().collection("MenuItems").doc(id).delete();
+};
+
 export const listenToMenuCategories = (
   onData: (menus: MenuCategory[]) => void,
   params: { menu?: string; vendor?: string } = {},
@@ -192,6 +196,10 @@ export const saveMenuCategory = (category: MenuCategory) => {
     .set(category);
 };
 
+export const deleteMenuCategory = (id: string) => {
+  return firestore().collection("MenuCategories").doc(id).delete();
+};
+
 export const listenToMenus = (
   onData: (menus: Menu[]) => void,
   params: { vendorLocation?: string; vendor?: string } = {},
@@ -236,4 +244,8 @@ export const fetchMenus = async (
 
 export const saveMenu = (menu: Menu) => {
   return firestore().collection("Menus").doc(menu.id).set(menu);
+};
+
+export const deleteMenu = (id: string) => {
+  return firestore().collection("Menus").doc(id).delete();
 };

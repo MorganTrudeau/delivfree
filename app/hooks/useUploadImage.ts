@@ -35,6 +35,11 @@ export const useUploadImage = () => {
     setUploadTask(task);
 
     return new Promise((resolve, reject) => {
+      const handleError = (error: unknown) => {
+        reject(error);
+        setUploadTask(null);
+        setProgress(0);
+      };
       task.then(async (snapshot) => {
         try {
           if (
@@ -52,11 +57,10 @@ export const useUploadImage = () => {
             throw new Error("missing_image");
           }
         } catch (error) {
-          reject(error);
-          setUploadTask(null);
-          setProgress(0);
+          handleError(error);
         }
       });
+      task.catch(handleError);
     });
   };
 

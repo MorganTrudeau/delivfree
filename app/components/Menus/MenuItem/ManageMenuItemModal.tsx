@@ -1,10 +1,15 @@
-import { generateUid, localizeCurrency } from "app/utils/general";
+import {
+  confirmDelete,
+  generateUid,
+  localizeCurrency,
+} from "app/utils/general";
 import { MenuCategory, MenuItem, MenuItemAttribute } from "delivfree";
 import React, { forwardRef, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { TextField } from "../../TextField";
 import {
   $borderedArea,
+  $flexRowBetween,
   $formLabel,
   $inputFormContainer,
   $row,
@@ -13,7 +18,7 @@ import { Text } from "../../Text";
 import { colors, spacing } from "app/theme";
 import { Button } from "../../Button";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
-import { saveMenuItem } from "app/apis/menus";
+import { deleteMenuItem, saveMenuItem } from "app/apis/menus";
 import { useAlert, useUploadImage } from "app/hooks";
 import { BottomSheet, BottomSheetRef } from "../../Modal/BottomSheet";
 import { Icon, IconTypes } from "app/components/Icon";
@@ -87,7 +92,7 @@ const ManageMenuItem = ({
   };
 
   const handleSave = async () => {
-    if (!state.image || localImage) {
+    if (!state.image && !localImage) {
       if (!state.price) {
         return Alert.alert(
           "Missing photo",
@@ -120,8 +125,21 @@ const ManageMenuItem = ({
     });
     onClose();
   };
-
   const { exec: onSave, loading } = useAsyncFunction(handleSave);
+
+  const handleDelete = async () => {
+    if (!item) {
+      return;
+    }
+    const shouldDelete = await confirmDelete(Alert);
+    if (!shouldDelete) {
+      return;
+    }
+    await deleteMenuItem(item.id);
+    onClose && onClose();
+  };
+  const { exec: onDelete, loading: deleteLoading } =
+    useAsyncFunction(handleDelete);
 
   const Loading = useMemo(
     () =>
@@ -133,9 +151,20 @@ const ManageMenuItem = ({
 
   return (
     <View style={{ padding: spacing.md }}>
-      <Text preset="heading" style={{ marginBottom: spacing.xs }}>
-        {item ? "Edit item" : "New item"}
-      </Text>
+      <View style={[$flexRowBetween, { marginBottom: spacing.xs }]}>
+        <Text preset="heading">{item ? "Edit item" : "New item"}</Text>
+        {!!item && (
+          <Pressable onPress={onDelete} style={$row}>
+            {deleteLoading && (
+              <ActivityIndicator
+                color={colors.error}
+                style={{ marginRight: spacing.xs }}
+              />
+            )}
+            <Text style={{ color: colors.error }}>Delete</Text>
+          </Pressable>
+        )}
+      </View>
 
       <View style={$inputFormContainer}>
         <Text preset="formLabel" style={$formLabel}>

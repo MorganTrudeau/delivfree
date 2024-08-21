@@ -1,15 +1,21 @@
-import { generateUid } from "app/utils/general";
+import { confirmDelete, generateUid } from "app/utils/general";
 import { Menu } from "delivfree";
 import React, { forwardRef, useMemo, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Pressable, View } from "react-native";
 import { TextField } from "../../TextField";
-import { $inputFormContainer, $spacerBorder } from "../../styles";
+import {
+  $flexRow,
+  $flexRowBetween,
+  $inputFormContainer,
+  $row,
+  $spacerBorder,
+} from "../../styles";
 import { Text } from "../../Text";
-import { spacing } from "app/theme";
+import { colors, spacing } from "app/theme";
 import { Toggle } from "../../Toggle";
 import { Button } from "../../Button";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
-import { saveMenu } from "app/apis/menus";
+import { deleteMenu, saveMenu } from "app/apis/menus";
 import { useAlert } from "app/hooks";
 import { BottomSheet, BottomSheetRef } from "../../Modal/BottomSheet";
 import { DayAndTimeSelect } from "app/components/Dates/DayAndTimeSelect";
@@ -46,11 +52,39 @@ const ManageMenu = ({ menu, vendor, onClose }: ManageMenuProps) => {
     if (!menuState.name) {
       return Alert.alert("Missing name", "Please enter a name for your menu.");
     }
+    if (!menuState.hours[0].days.length) {
+      return Alert.alert(
+        "Missing days",
+        "Please enter the days when this menu is active."
+      );
+    }
+    if (
+      !menuState.hours[0].allDay &&
+      (!menuState.hours[0].startTime || !menuState.hours[0].endTime)
+    ) {
+      return Alert.alert(
+        "Missing hours",
+        "Please enter the hours when this menu is active."
+      );
+    }
     await saveMenu(menuState);
     onClose && onClose();
   };
-
   const { exec: onSave, loading } = useAsyncFunction(handleSave);
+
+  const handleDelete = async () => {
+    if (!menu) {
+      return;
+    }
+    const shouldDelete = await confirmDelete(Alert);
+    if (!shouldDelete) {
+      return;
+    }
+    await deleteMenu(menu.id);
+    onClose && onClose();
+  };
+  const { exec: onDelete, loading: deleteLoading } =
+    useAsyncFunction(handleDelete);
 
   const Loading = useMemo(
     () =>
@@ -62,9 +96,20 @@ const ManageMenu = ({ menu, vendor, onClose }: ManageMenuProps) => {
 
   return (
     <View style={{ padding: spacing.md }}>
-      <Text preset="heading" style={{ marginBottom: spacing.xs }}>
-        {menu ? "Edit menu" : "New menu"}
-      </Text>
+      <View style={[$flexRowBetween, { marginBottom: spacing.xs }]}>
+        <Text preset="heading">{menu ? "Edit menu" : "New menu"}</Text>
+        {!!menu && (
+          <Pressable onPress={onDelete} style={$row}>
+            {deleteLoading && (
+              <ActivityIndicator
+                color={colors.error}
+                style={{ marginRight: spacing.xs }}
+              />
+            )}
+            <Text style={{ color: colors.error }}>Delete</Text>
+          </Pressable>
+        )}
+      </View>
       <TextField
         placeholder="Menu name"
         label="Menu name"

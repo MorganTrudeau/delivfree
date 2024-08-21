@@ -1,14 +1,14 @@
-import { generateUid } from "app/utils/general";
+import { confirmDelete, generateUid } from "app/utils/general";
 import { Menu, MenuCategory } from "delivfree";
 import React, { forwardRef, useMemo, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Pressable, View } from "react-native";
 import { TextField } from "../../TextField";
-import { $inputFormContainer, $row } from "../../styles";
+import { $flexRowBetween, $inputFormContainer, $row } from "../../styles";
 import { Text } from "../../Text";
-import { spacing } from "app/theme";
+import { colors, spacing } from "app/theme";
 import { Button } from "../../Button";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
-import { saveMenuCategory } from "app/apis/menus";
+import { deleteMenuCategory, saveMenuCategory } from "app/apis/menus";
 import { useAlert } from "app/hooks";
 import { BottomSheet, BottomSheetRef } from "../../Modal/BottomSheet";
 import { Toggle } from "../../Toggle";
@@ -58,8 +58,21 @@ const ManageMenuCategory = ({
     await saveMenuCategory(state);
     onClose();
   };
-
   const { exec: onSave, loading } = useAsyncFunction(handleSave);
+
+  const handleDelete = async () => {
+    if (!category) {
+      return;
+    }
+    const shouldDelete = await confirmDelete(Alert);
+    if (!shouldDelete) {
+      return;
+    }
+    await deleteMenuCategory(category.id);
+    onClose && onClose();
+  };
+  const { exec: onDelete, loading: deleteLoading } =
+    useAsyncFunction(handleDelete);
 
   const Loading = useMemo(
     () =>
@@ -71,9 +84,22 @@ const ManageMenuCategory = ({
 
   return (
     <View style={{ padding: spacing.md }}>
-      <Text preset="heading" style={{ marginBottom: spacing.xs }}>
-        {category ? "Edit category" : "New category"}
-      </Text>
+      <View style={[$flexRowBetween, { marginBottom: spacing.xs }]}>
+        <Text preset="heading">
+          {category ? "Edit category" : "New category"}
+        </Text>
+        {!!category && (
+          <Pressable onPress={onDelete} style={$row}>
+            {deleteLoading && (
+              <ActivityIndicator
+                color={colors.error}
+                style={{ marginRight: spacing.xs }}
+              />
+            )}
+            <Text style={{ color: colors.error }}>Delete</Text>
+          </Pressable>
+        )}
+      </View>
       <TextField
         placeholder="Category name"
         label="Category name"

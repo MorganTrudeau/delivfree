@@ -347,14 +347,14 @@ const ManageMenuItem = ({
           {customization ? "Edit customization" : "New customization"}
         </Text>
         {customization && (
-          <Pressable onPress={onDelete}>
+          <Pressable onPress={onDelete} style={$row}>
             {deleteLoading && (
               <ActivityIndicator
-                color={colors.primary}
-                style={{ marginRight: spacing.xxs }}
+                color={colors.error}
+                style={{ marginRight: spacing.xs }}
               />
             )}
-            <Text style={{ color: colors.textDim }}>Delete</Text>
+            <Text style={{ color: colors.error }}>Delete</Text>
           </Pressable>
         )}
       </View>
