@@ -291,6 +291,10 @@ export const VendorStack = () => {
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       {renderStack()}
+      <Stack.Screen
+        name="PrivacyPolicy"
+        component={Screens.PrivacyPolicyScreen}
+      />
     </Stack.Navigator>
   );
 };
