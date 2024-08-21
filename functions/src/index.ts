@@ -26,6 +26,7 @@ import {
 } from "firebase-functions/v2/https";
 import {
   onDocumentCreated,
+  onDocumentDeleted,
   onDocumentWritten,
 } from "firebase-functions/v2/firestore";
 import * as cors from "cors";
@@ -345,6 +346,50 @@ export const onPositionsWritten = onDocumentWritten(
     }
 
     return true;
+  }
+);
+
+export const onPositionsDeleted = onDocumentDeleted(
+  "Positions/{id}",
+  async (event) => {
+    const positions = event.data?.data() as Positions | undefined;
+    if (!positions) {
+      return;
+    }
+    await Promise.all(
+      positions.licenses.map((licenseId) =>
+        admin.firestore().collection("Licenses").doc(licenseId).delete()
+      )
+    );
+  }
+);
+
+export const onLicenseDeleted = onDocumentDeleted(
+  "Licenses/{id}",
+  async (event) => {
+    const license = event.data?.data() as License | undefined;
+    if (!license) {
+      return;
+    }
+    const driver = await admin
+      .firestore()
+      .collection("Drivers")
+      .doc(license.driver)
+      .get();
+    if (!driver.data()) {
+      return;
+    }
+    const update: {
+      [Property in keyof Partial<Driver>]: admin.firestore.FieldValue;
+    } = {
+      licenses: admin.firestore.FieldValue.arrayRemove(license.id),
+      pendingLicenses: admin.firestore.FieldValue.arrayRemove(license.id),
+    };
+    await admin
+      .firestore()
+      .collection("Drivers")
+      .doc(license.driver)
+      .update(update);
   }
 );
 
