@@ -6,17 +6,19 @@ import {
 } from "app/components/styles";
 import { colors, spacing } from "app/theme";
 import React, { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, TextStyle, ViewStyle } from "react-native";
+import { ActivityIndicator, TextStyle, ViewStyle } from "react-native";
 import auth from "@react-native-firebase/auth";
 import { useAppDispatch } from "app/redux/store";
 import { setDeleteAccountLoading } from "app/redux/reducers/user";
 import { Card } from "app/components/Card";
 import { AppStackScreenProps } from "app/navigators";
-import { Drawer } from "app/components/Drawer";
+import { useAlert } from "app/hooks";
 
 interface Props extends AppStackScreenProps<"DeleteAccount"> {}
 
 export const DeleteAccountScreen = ({ navigation }: Props) => {
+  const Alert = useAlert();
+
   const [loading, setLoading] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -28,6 +30,7 @@ export const DeleteAccountScreen = ({ navigation }: Props) => {
   }, []);
 
   const confirmDelete = async () => {
+    console.log("delete");
     try {
       const shouldContinue = await new Promise<boolean>((resolve) => {
         Alert.alert(
@@ -83,7 +86,6 @@ export const DeleteAccountScreen = ({ navigation }: Props) => {
       preset="scroll"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      
     >
       <Card>
         <Text preset="subheading" style={$title}>

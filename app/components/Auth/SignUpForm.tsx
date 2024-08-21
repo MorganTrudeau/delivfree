@@ -3,14 +3,17 @@ import { Button } from "../Button";
 import { TextField, TextFieldAccessoryProps } from "../TextField";
 import auth from "@react-native-firebase/auth";
 import { firebaseAuthErrorToMessage } from "app/utils/firebase";
-import { ActivityIndicator, Alert, TextInput, ViewStyle } from "react-native";
+import { ActivityIndicator, TextInput, ViewStyle } from "react-native";
 import { colors, spacing } from "app/theme";
 import { Icon } from "../Icon";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { setAnonymous } from "app/redux/reducers/auth";
 import { logAnalytics } from "app/services/firebase/analytics";
+import { useAlert } from "app/hooks";
 
 export const SignUpForm = ({ onSignUp }: { onSignUp?: () => void }) => {
+  const Alert = useAlert()
+
   const authPasswordInput = useRef<TextInput>(null);
 
   const authToken = useAppSelector((state) => state.auth.authToken);
