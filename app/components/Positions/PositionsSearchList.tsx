@@ -67,6 +67,7 @@ const PositionsItem = ({
   onApply: (positions: Positions, vendorLocation: VendorLocation) => void;
   applied: boolean;
 }) => {
+  const [vendorLocationError, setVendorLocationError] = useState(false);
   const [vendorLocation, setVendorLocation] = useState<VendorLocation>();
 
   useEffect(() => {
@@ -76,6 +77,7 @@ const PositionsItem = ({
         setVendorLocation(data);
       } catch (error) {
         console.log("Failed to load vendor location", error);
+        setVendorLocationError(true);
       }
     };
     load();
@@ -93,6 +95,10 @@ const PositionsItem = ({
         : undefined,
     [applied]
   );
+
+  if (vendorLocationError) {
+    return null;
+  }
 
   return (
     <View

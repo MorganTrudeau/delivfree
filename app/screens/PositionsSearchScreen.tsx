@@ -19,7 +19,6 @@ import {
   $row,
   MAX_CONTENT_WIDTH,
 } from "../components/styles";
-import { TextInput } from "../components/TextInput";
 import { ScreenHeader } from "../components/ScreenHeader";
 import { useAppSelector } from "../redux/store";
 import { ModalRef, Positions, VendorLocation } from "delivfree";
