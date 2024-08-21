@@ -480,27 +480,67 @@ export const deleteLicense = onCall({}, async (request) => {
   return await batch.commit();
 });
 
-export const createLicense = onCall({}, async (request) => {
-  checkAuthentication(request.auth?.uid);
+export const createLicense = onCall(
+  {},
+  async (request: CallableRequest<{ license: License }>) => {
+    checkAuthentication(request.auth?.uid);
 
-  const { license } = request.data;
-  const batch = admin.firestore().batch();
+    const { license } = request.data;
+    const batch = admin.firestore().batch();
 
-  batch.set(admin.firestore().collection("Licenses").doc(license.id), license);
-  batch.update(admin.firestore().collection("Drivers").doc(license.driver), {
-    updated: Date.now(),
-    licenses: admin.firestore.FieldValue.arrayUnion(license.id),
-  });
-  batch.update(
-    admin.firestore().collection("Positions").doc(license.position),
-    {
+    const vendorDoc = await admin
+      .firestore()
+      .collection("Vendors")
+      .doc(license.vendor)
+      .get();
+    const vendor = vendorDoc.data() as Vendor | undefined;
+    const vendorLocationDoc = await admin
+      .firestore()
+      .collection("VendorLocations")
+      .doc(license.vendorLocation)
+      .get();
+    const vendorLocation = vendorLocationDoc.data() as
+      | VendorLocation
+      | undefined;
+    const positionDoc = await admin
+      .firestore()
+      .collection("Positions")
+      .doc(license.position)
+      .get();
+    const position = positionDoc.data() as Positions | undefined;
+
+    if (
+      !(
+        vendor &&
+        vendor.registration.status === "approved" &&
+        vendorLocation &&
+        vendorLocation.status === "approved" &&
+        position &&
+        position.status === "approved"
+      )
+    ) {
+      throw new HttpsError("not-found", "Vendor or location not found");
+    }
+
+    batch.set(
+      admin.firestore().collection("Licenses").doc(license.id),
+      license
+    );
+    batch.update(admin.firestore().collection("Drivers").doc(license.driver), {
       updated: Date.now(),
       licenses: admin.firestore.FieldValue.arrayUnion(license.id),
-    }
-  );
+    });
+    batch.update(
+      admin.firestore().collection("Positions").doc(license.position),
+      {
+        updated: Date.now(),
+        licenses: admin.firestore.FieldValue.arrayUnion(license.id),
+      }
+    );
 
-  return await batch.commit();
-});
+    return await batch.commit();
+  }
+);
 
 export const sendEmail = onCall(
   {},
