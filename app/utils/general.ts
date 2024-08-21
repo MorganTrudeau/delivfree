@@ -2,10 +2,10 @@ import Config from "react-native-config";
 import { avatarColors } from "../theme";
 import { Linking, Platform } from "react-native";
 import messaging from "@react-native-firebase/messaging";
-import { AlertProps } from "app/components/Alert/AlertContext";
 import { translate } from "app/i18n";
 import React from "react";
 import { VendorLocation } from "delivfree";
+import { AlertProps } from "app/components/Alert/AlertProvider";
 
 export const generateKeywords = (str: string) => {
   const keywords: string[] = [];
@@ -28,7 +28,7 @@ export const pluralFormat = (singleTerm: string, length: number) =>
   `${singleTerm}${length !== 1 ? "s" : ""}`;
 
 export const confirmDelete = (Alert: AlertProps) => {
-  return new Promise((resolve) => {
+  return new Promise<boolean>((resolve) => {
     Alert.alert("Confirm delete", "Are you sure you want to delete?", [
       { text: "Cancel", onPress: () => resolve(false) },
       {

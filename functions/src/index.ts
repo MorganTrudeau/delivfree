@@ -15,7 +15,6 @@ import {
   sendAdminNotifications,
   sendDriverLicenseApprovedNotification,
   sendNewOrderNotification,
-  sendNotifications,
   sendOrderDriverAssignedNotification,
   sendVendorPositionFilledNotification,
 } from "./utils/notifications";

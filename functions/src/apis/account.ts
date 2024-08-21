@@ -1,4 +1,4 @@
-import { firestore } from "firebase-admin";
+import { firestore, auth } from "firebase-admin";
 import {
   CallableRequest,
   HttpsError,
@@ -57,5 +57,7 @@ export const deleteAccount = onCall(async (data: CallableRequest<{}>) => {
 
   batch.delete(firestore().collection("Users").doc(uid));
 
-  return batch.commit();
+  await batch.commit();
+
+  await auth().deleteUser(uid);
 });
