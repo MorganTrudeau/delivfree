@@ -28,12 +28,5 @@ export const renderAuthStack = () => (
         headerRight: () => null,
       }}
     />
-    <Stack.Screen
-      name="ChangePassword"
-      component={Screens.ForgotPasswordScreen}
-      options={{
-        headerRight: () => null,
-      }}
-    />
   </>
 );

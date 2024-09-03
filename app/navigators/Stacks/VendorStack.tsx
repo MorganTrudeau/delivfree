@@ -166,11 +166,6 @@ export const VendorStack = () => {
           component={Screens.AddressSearchScreen}
           options={{ headerRight: undefined }}
         />
-        <Stack.Screen name="About" component={Screens.AboutScreen} />
-        <Stack.Screen
-          name="DeleteAccount"
-          component={Screens.DeleteAccountScreen}
-        />
       </>
     );
   };
@@ -261,11 +256,7 @@ export const VendorStack = () => {
           options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen name="WebView" component={Screens.WebViewScreen} />
-        <Stack.Screen name="About" component={Screens.AboutScreen} />
-        <Stack.Screen
-          name="DeleteAccount"
-          component={Screens.DeleteAccountScreen}
-        />
+    
       </>
     );
   };
@@ -298,7 +289,15 @@ export const VendorStack = () => {
       <Stack.Screen
         name="ChangePassword"
         component={Screens.ForgotPasswordScreen}
+        options={{
+          headerRight: () => null,
+        }}
       />
+      <Stack.Screen name="About" component={Screens.AboutScreen} />
+        <Stack.Screen
+          name="DeleteAccount"
+          component={Screens.DeleteAccountScreen}
+        />
     </Stack.Navigator>
   );
 };
