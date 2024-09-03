@@ -161,15 +161,17 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
           RightAccessory={SignUpLoading}
         />
 
-        <Text style={{ marginTop: spacing.sm, alignSelf: "center" }}>
-          By signing up you are agreeing to the DelivFree{" "}
-          <Text
-            style={{ color: colors.primary }}
-            onPress={() => termsModal.current?.snapToIndex(0)}
-          >
-            Terms and conditions
+        {getAppType() === "CONSUMER" && (
+          <Text style={{ marginTop: spacing.sm, alignSelf: "center" }}>
+            By signing up you are agreeing to the DelivFree{" "}
+            <Text
+              style={{ color: colors.primary }}
+              onPress={() => termsModal.current?.snapToIndex(0)}
+            >
+              Terms and conditions
+            </Text>
           </Text>
-        </Text>
+        )}
 
         {getAppType() === "CONSUMER" && (
           <>
@@ -187,11 +189,13 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
           </>
         )}
 
-        <BottomSheet ref={termsModal}>
-          <View style={{ padding: spacing.md }}>
-            <TermsAndConditions />
-          </View>
-        </BottomSheet>
+        {getAppType() === "CONSUMER" && (
+          <BottomSheet ref={termsModal}>
+            <View style={{ padding: spacing.md }}>
+              <TermsAndConditions />
+            </View>
+          </BottomSheet>
+        )}
       </Card>
     </Screen>
   );
