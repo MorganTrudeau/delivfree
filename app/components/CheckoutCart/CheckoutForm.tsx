@@ -12,7 +12,9 @@ import LocationModal from "app/components/Modal/LocationModal";
 import { UserPhoneNumberModal } from "app/components/Users/UserPhoneNumberModal";
 import {
   $borderBottomLight,
+  $borderedArea,
   $flex,
+  $flexShrink,
   $row,
   $screenHeading,
   $spacerBorder,
@@ -298,8 +300,30 @@ export const CheckoutForm = withStripe(function CheckoutForm({
                   }
                   tipAmount={tipState.amount}
                   tipType={tipState.type}
-                  style={{ maxWidth: 500, paddingTop: spacing.sm }}
+                  style={{
+                    maxWidth: 500,
+                    paddingTop: spacing.sm,
+                    marginBottom: spacing.xs,
+                  }}
                 />
+                <View style={[$borderedArea, { flexDirection: "row" }]}>
+                  <Icon
+                    icon={"star"}
+                    color={colors.primary}
+                    style={{ marginRight: spacing.sm }}
+                  />
+                  <Text size={"xs"} style={$flexShrink}>
+                    You are saving money on this order via{" "}
+                    <Text preset="semibold" size={"xs"}>
+                      DelivFree
+                    </Text>{" "}
+                    with{" "}
+                    <Text preset="semibold" size={"xs"}>
+                      (FREE DELIVERY & ZERO ADDED FEES)
+                    </Text>{" "}
+                    The menu price is all you pay!
+                  </Text>
+                </View>
               </Card>
 
               <Button

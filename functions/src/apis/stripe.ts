@@ -6,6 +6,8 @@ import {
   onCall,
   onRequest,
 } from "firebase-functions/v2/https";
+import { sendEmailNotification } from "../utils/email";
+import { Driver, Vendor } from "../types";
 
 const apiKey = defineString("STRIPE_SECRET_KEY");
 const signingSecret = defineString("STRIPE_SIGNING_SECRET");
@@ -271,6 +273,56 @@ export const stripeWebhook = onRequest(async (req, res) => {
             .collection("Subscriptions")
             .doc(driver)
             .set({ subscription });
+        }
+
+        if (subscription.status === "canceled") {
+          if (vendor) {
+            const vendorDoc = await admin
+              .firestore()
+              .collection("Vendors")
+              .doc(vendor)
+              .get();
+            const vendorEmail = (vendorDoc.data() as Vendor | undefined)?.email;
+            if (vendorEmail) {
+              await sendEmailNotification({
+                title: "Subscription Canceled",
+                body: "Your subscription has been canceled. To avoid loss of service and you can reactivate your subscription within the DelivFree app. If you need assistance please contact us at info@delivfree.com. Thank you.",
+                to: [vendorEmail],
+              });
+            }
+          } else if (driver) {
+            const driverDoc = await admin
+              .firestore()
+              .collection("Drivers")
+              .doc(driver)
+              .get();
+            const driverData = driverDoc.data() as Driver | undefined;
+
+            if (driverData) {
+              const vendorDoc = await admin
+                .firestore()
+                .collection("Vendors")
+                .doc(driverData.vendors[0])
+                .get();
+              const vendorData = vendorDoc.data() as Vendor | undefined;
+
+              if (driverData.email) {
+                await sendEmailNotification({
+                  title: "Subscription Canceled",
+                  body: "Your subscription has been canceled. To avoid loss of service you can reactivate your subscription within the DelivFree app. If you need assistance please contact us at info@delivfree.com. Thank you.",
+                  to: [driverData.email],
+                });
+              }
+
+              if (vendorData?.email) {
+                await sendEmailNotification({
+                  title: "Driver Subscription Canceled",
+                  body: "Your driver's subscription has been canceled. To continue to accept orders please coordinate with them to reactivate their subscription. Thank you.",
+                  to: [vendorData.email],
+                });
+              }
+            }
+          }
         }
 
         // Then define and call a function to handle the event customer.subscription.created
