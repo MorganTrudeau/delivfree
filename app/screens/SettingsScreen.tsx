@@ -41,6 +41,10 @@ export const SettingsScreen = ({ navigation, route }: Props) => {
     navigation.navigate("DeleteAccount");
   };
 
+  const navigateToChangePassword = () => {
+    navigation.navigate("ChangePassword");
+  };
+
   const contactUs = async () => {
     const namespace =
       userType === "driver"
@@ -76,6 +80,12 @@ export const SettingsScreen = ({ navigation, route }: Props) => {
         onPress={navigateToAbout}
         text="About"
         leftIcon="information-outline"
+        style={$borderBottom}
+      />
+      <ListItem
+        onPress={navigateToChangePassword}
+        text="Change password"
+        leftIcon="key"
         style={$borderBottom}
       />
       <ListItem

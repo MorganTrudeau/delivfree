@@ -133,7 +133,7 @@ export const LoginScreen = (_props: LoginScreenProps) => {
         />
         <Text
           style={$forgotPassword}
-          onPress={() => _props.navigation.navigate("ForgotPassword")}
+          onPress={() => _props.navigation.navigate("ChangePassword")}
         >
           Forgot password?
         </Text>
