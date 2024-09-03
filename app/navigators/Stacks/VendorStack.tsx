@@ -295,6 +295,10 @@ export const VendorStack = () => {
         name="PrivacyPolicy"
         component={Screens.PrivacyPolicyScreen}
       />
+      <Stack.Screen
+        name="ChangePassword"
+        component={Screens.ForgotPasswordScreen}
+      />
     </Stack.Navigator>
   );
 };

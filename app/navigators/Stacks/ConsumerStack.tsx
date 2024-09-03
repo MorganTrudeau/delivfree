@@ -99,6 +99,10 @@ export const ConsumerStack = () => {
         name="PrivacyPolicy"
         component={Screens.PrivacyPolicyScreen}
       />
+      <Stack.Screen
+        name="ChangePassword"
+        component={Screens.ForgotPasswordScreen}
+      />
     </Stack.Navigator>
   );
 };
