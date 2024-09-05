@@ -317,7 +317,7 @@ export const stripeWebhook = onRequest(async (req, res) => {
               if (vendorData?.email) {
                 await sendEmailNotification({
                   title: "Driver Subscription Canceled",
-                  body: "Your driver's subscription has been canceled. To continue to accept orders please coordinate with them to reactivate their subscription. Thank you.",
+                  body: "Your driver's subscription has been canceled. To continue to accept orders please coordinate with them to reactivate their subscription. If you need assistance please contact us at info@delivfree.com. Thank you.",
                   to: [vendorData.email],
                 });
               }

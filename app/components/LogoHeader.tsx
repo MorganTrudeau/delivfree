@@ -4,7 +4,7 @@ import { ImageStyle } from "react-native-fast-image";
 import { AppLogo } from "./AppLogo";
 import { Pressable } from "react-native";
 
-const imageRatio = 2320 / 316;
+const imageRatio = 1042 / 192;
 
 interface Props extends Object {
   style?: ImageStyle;

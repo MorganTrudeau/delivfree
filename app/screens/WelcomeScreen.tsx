@@ -14,8 +14,8 @@ import { Card } from "app/components/Card";
 import { useDimensions } from "app/hooks/useDimensions";
 import { getAppType } from "app/utils/general";
 
-const IMAGE_WIDTH = Math.min(400, Dimensions.get("window").width * 0.85);
-const IMAGE_HEIGHT = IMAGE_WIDTH * (838 / 2200);
+const IMAGE_WIDTH = Math.min(300, Dimensions.get("window").width * 0.85);
+const IMAGE_HEIGHT = IMAGE_WIDTH * (813 / 2395);
 
 interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> {}
 
