@@ -1,5 +1,5 @@
 import { createUser, updateUser } from "app/apis/user";
-import { Button, Icon, Screen, Text, TextField } from "app/components";
+import { Button, Icon, Screen, Text, TextField, Toggle } from "app/components";
 import { AddressSearchModal } from "app/components/AddressSearchModal";
 import { Card } from "app/components/Card";
 import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
@@ -30,11 +30,14 @@ import {
   Pressable,
 } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
+import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
+import { TermsAndConditionsDriver } from "app/components/TermsAndConditionsDriver";
 
 export const EditDriverProfileScreen = () => {
   const Alert = useAlert();
   const Toast = useToast();
 
+  const termsModal = useRef<BottomSheetRef>(null);
   const lastNameInput = useRef<RNInput>(null);
   const phoneNumberInput = useRef<PhoneInput>(null);
   const addressSearch = useRef<ModalRef>(null);
@@ -46,6 +49,7 @@ export const EditDriverProfileScreen = () => {
   const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const [driverState, setDriverState] = useState<Driver>(
     driver || {
@@ -239,6 +243,31 @@ export const EditDriverProfileScreen = () => {
             )}
           </View>
         )}
+
+        <View style={[$row, { paddingVertical: spacing.md }]}>
+          <Toggle
+            value={termsAccepted}
+            onPress={() => {
+              setTermsAccepted((s) => !s);
+            }}
+          />
+          <Text>
+            I agree to the DelivFree Canada Inc driver{" "}
+            <Text
+              onPress={() => termsModal.current?.snapToIndex(0)}
+              style={{ color: colors.primary }}
+            >
+              Terms and Conditions
+            </Text>
+            .
+          </Text>
+        </View>
+
+        <BottomSheet ref={termsModal}>
+          <View style={{ padding: spacing.md }}>
+            <TermsAndConditionsDriver />
+          </View>
+        </BottomSheet>
 
         <Button
           preset={fieldsComplete ? "filled" : "default"}

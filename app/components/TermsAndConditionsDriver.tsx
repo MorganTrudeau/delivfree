@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "./Text";
 
-export const TermsAndConditions = () => {
+export const TermsAndConditionsDriver = () => {
   return (
     <div>
       <p>

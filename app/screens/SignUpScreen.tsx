@@ -24,7 +24,7 @@ import { Card } from "app/components/Card";
 import { useAlert } from "app/hooks";
 import { getAppType } from "app/utils/general";
 import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
-import { TermsAndConditions } from "app/components/TermsAndConditions";
+import { TermsAndConditionsConsumer } from "app/components/TermsAndConditionsConsumer";
 
 interface SignUpScreenProps extends AppStackScreenProps<"SignUp"> {}
 
@@ -192,7 +192,7 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
         {getAppType() === "CONSUMER" && (
           <BottomSheet ref={termsModal}>
             <View style={{ padding: spacing.md }}>
-              <TermsAndConditions />
+              <TermsAndConditionsConsumer />
             </View>
           </BottomSheet>
         )}

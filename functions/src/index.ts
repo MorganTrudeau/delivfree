@@ -204,6 +204,44 @@ export const onVendorCreated = onDocumentCreated("Vendors/{id}", async () => {
   return true;
 });
 
+export const onVendorWritten = onDocumentWritten(
+  "Vendors/{id}",
+  async (event) => {
+    const dataBefore = event.data?.before as Vendor | undefined;
+    const dataAfter = event.data?.after as Vendor | undefined;
+
+    if (
+      dataBefore?.registration?.status === "pending" &&
+      (dataAfter?.registration?.status === "approved" ||
+        dataAfter?.registration?.status === "denied")
+    ) {
+      // @todo send notification
+      // const notification = {
+      //   title: "New Vendor",
+      //   body: "Review the new vendor profile.",
+      // };
+      // const data = {
+      //   type: "new_vendor",
+      // };
+      // const collapseKey = "new_vendor";
+      // const link = `${ADMIN_DOMAIN}?route=vendors`;
+      // const payload = buildMessagePayload(
+      //   notification,
+      //   data,
+      //   collapseKey,
+      //   link
+      // );
+      // await sendAdminNotifications(payload);
+      // await sendEmailNotification({
+      //   ...notification,
+      //   to: ["info@delivfree.com"],
+      // });
+    }
+
+    return true;
+  }
+);
+
 export const onVendorLocationCreated = onDocumentCreated(
   "VendorLocations/{id}",
   async () => {

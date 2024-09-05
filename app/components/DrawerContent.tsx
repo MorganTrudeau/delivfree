@@ -137,10 +137,10 @@ export const DrawerContent = ({
         <View>
           <View style={$logoContainer}>
             <FastImage
-              source={require("../../assets/images/delivfree-logo.png")}
+              source={require("../../assets/images/app-logo-inline.png")}
               style={{
-                height: headerHeight,
-                width: headerHeight * headerImageRatio,
+                height: headerHeight * 0.5,
+                width: (headerHeight * 0.5) * headerImageRatio,
               }}
               resizeMode="contain"
             />
@@ -188,7 +188,7 @@ export const DrawerContent = ({
   );
 };
 
-const headerImageRatio = 1638 / 822;
+const headerImageRatio = 1042 / 192;
 interface DemoListItem {
   item: DrawerItem;
   index: number;

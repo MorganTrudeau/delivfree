@@ -14,6 +14,7 @@ import { Linking, Platform } from "react-native";
 import { useToast } from "./useToast";
 import Stripe from "stripe";
 import { translate } from "app/i18n";
+import Bugsnag, { NotifiableError } from "@bugsnag/react-native";
 
 export const useStripeConnect = (vendor: Vendor) => {
   const Toast = useToast();
@@ -119,9 +120,6 @@ export const useStripeConnect = (vendor: Vendor) => {
           window.location.href = uri;
         } else {
           Linking.openURL(uri);
-          // navigationRef.current?.navigate("WebView", {
-          //   uri,
-          // });
         }
       } else {
         throw "missing link";
@@ -129,6 +127,7 @@ export const useStripeConnect = (vendor: Vendor) => {
       setState((state) => ({ ...state, createAccountLoading: false }));
     } catch (error) {
       console.log(error);
+      Bugsnag.notify(error as NotifiableError);
       setState((state) => ({ ...state, createAccountLoading: false }));
       Toast.show("Failed to connect. Try again.");
     }

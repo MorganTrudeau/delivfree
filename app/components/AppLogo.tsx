@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { StyleProp } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";
 
-const imageRatio = 2320 / 316;
+const imageRatio = 1042 / 192;
 
 interface Props {
   style?: StyleProp<ImageStyle>;
@@ -20,6 +20,7 @@ export const AppLogo = ({ style, height }: Props) => {
     <FastImage
       source={require("../../assets/images/app-logo-inline.png")}
       style={_style}
+      resizeMode="contain"
     />
   );
 };
