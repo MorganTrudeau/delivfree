@@ -1,17 +1,19 @@
 import { createUser, updateUser } from "app/apis/user";
-import { Button, Icon, Screen, Text, TextField } from "app/components";
+import { Button, Icon, Screen, Text, TextField, Toggle } from "app/components";
 import { Card } from "app/components/Card";
 import { DetailItem } from "app/components/DetailItem";
 import { DetailsHeader } from "app/components/Details/DetailsHeader";
-import { BottomSheetRef } from "app/components/Modal/BottomSheet";
+import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { StatusIndicator } from "app/components/StatusIndicator";
+import { TermsAndConditionsVendor } from "app/components/TermsAndConditionsVendor";
 import { ManageVendorLocationModal } from "app/components/VendorLocation/ManageVendorLocation";
 import { VendorLocationsList } from "app/components/VendorLocations/VendorLocationsList";
 import {
   $borderedArea,
   $containerPadding,
   $flex,
+  $flexShrink,
   $row,
 } from "app/components/styles";
 import { useAlert, useToast } from "app/hooks";
@@ -30,11 +32,14 @@ import {
   TextInput as RNInput,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const EditVendorProfileScreen = () => {
   const Alert = useAlert();
   const Toast = useToast();
+  const insets = useSafeAreaInsets();
 
+  const termsModal = useRef<BottomSheetRef>(null);
   const lastNameInput = useRef<RNInput>(null);
   const businessNameInput = useRef<RNInput>(null);
   const phoneNumberInput = useRef<RNInput>(null);
@@ -54,7 +59,7 @@ export const EditVendorProfileScreen = () => {
 
   const [loading, setLoading] = useState(false);
   const [editLocation, setEditLocation] = useState<VendorLocation>();
-
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [editing, setEditing] = useState(!vendor);
   const [vendorState, setVendorState] = useState<Vendor>(
     vendor || {
@@ -109,6 +114,12 @@ export const EditVendorProfileScreen = () => {
   };
 
   const handleCreateVendor = async () => {
+    if (!termsAccepted) {
+      return Alert.alert(
+        "Terms and conditions",
+        "Please review and accept the terms and conditions."
+      );
+    }
     if (!fieldsComplete) {
       return Alert.alert(
         "Missing fields",
@@ -171,7 +182,10 @@ export const EditVendorProfileScreen = () => {
     <Screen
       preset={"scroll"}
       style={$screen}
-      contentContainerStyle={$containerPadding}
+      contentContainerStyle={[
+        $containerPadding,
+        { paddingBottom: spacing.md + insets.bottom },
+      ]}
     >
       <Card smallStyle={$flex}>
         <Text style={$header} preset={"heading"} weight={"bold"}>
@@ -232,6 +246,30 @@ export const EditVendorProfileScreen = () => {
               }}
               callingCountry={vendorState.callingCountry}
             />
+            <View style={[$row, { paddingVertical: spacing.md }]}>
+              <Toggle
+                value={termsAccepted}
+                onPress={() => {
+                  setTermsAccepted((s) => !s);
+                }}
+              />
+              <Text style={[$flexShrink, { paddingLeft: spacing.xs }]}>
+                I agree to the DelivFree Canada Inc driver{" "}
+                <Text
+                  onPress={() => termsModal.current?.snapToIndex(0)}
+                  style={{ color: colors.primary }}
+                >
+                  Terms and Conditions
+                </Text>
+              </Text>
+            </View>
+
+            <BottomSheet ref={termsModal}>
+              <View style={{ padding: spacing.md }}>
+                <TermsAndConditionsVendor />
+              </View>
+            </BottomSheet>
+
             <Button
               preset={fieldsComplete ? "filled" : "default"}
               style={$button}

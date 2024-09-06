@@ -190,6 +190,7 @@ export type Driver = {
   referralCode: string;
   driversLicenseFront: string;
   driversLicenseBack: string;
+  criminalRecordCheck: string;
   vendors: string[];
   vendorLocations: string[];
   licenses: string[];
