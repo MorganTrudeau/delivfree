@@ -38,7 +38,7 @@ export const MenuCustomizationsList = ({
     ({ item }: { item: MenuCustomization }) => {
       const optionsNumberText =
         item.type === "note"
-          ? "--"
+          ? "-"
           : item.choices.length +
             " " +
             pluralFormat("Choice", item.choices.length);
