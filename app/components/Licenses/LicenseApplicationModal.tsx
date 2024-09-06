@@ -14,6 +14,7 @@ import {
   alertCommonError,
   generateUid,
   localizeCurrency,
+  pluralFormat,
 } from "app/utils/general";
 import { Button } from "../Button";
 import { useAlert } from "app/hooks";
@@ -36,12 +37,16 @@ export const LicenseApplication = ({
   const { width } = useDimensions();
   const smallScreenLayout = width <= 600;
 
-  const [loading, setLoading] = useState(false);
-  const [fullTime, setFullTime] = useState(0);
-  const [partTime, setPartTime] = useState(0);
-
   const availableFullTime = positions.maxFullTime - positions.filledFullTime;
   const availablePartTime = positions.maxPartTime - positions.filledPartTime;
+
+  const [loading, setLoading] = useState(false);
+  const [fullTime, setFullTime] = useState(
+    availableFullTime === 1 && !availablePartTime ? 1 : 0
+  );
+  const [partTime, setPartTime] = useState(
+    availablePartTime === 1 && !availableFullTime ? 1 : 0
+  );
 
   const estimatedRevenue = useMemo(
     () => localizeCurrency(fullTime * 4000 + partTime * 2000, "CAD"),
@@ -49,16 +54,23 @@ export const LicenseApplication = ({
   );
 
   const handleApply = async () => {
+    if (!(fullTime || partTime)) {
+      return Alert.alert(
+        "Select at least one license",
+        "Please select how many licences you want to apply for."
+      );
+    }
+
     const shouldContinue = await new Promise((resolve) => {
       Alert.alert(
         "Apply for license",
         `Confirm license application for ${
           fullTime
-            ? fullTime + ` Full time position${fullTime !== 1 ? "s" : ""}`
+            ? fullTime + ` Full time ${pluralFormat("license", fullTime)}`
             : ""
         }${fullTime && partTime ? "&" : ""}${
           partTime
-            ? partTime + ` Part time position${partTime !== 1 ? "s" : ""}`
+            ? partTime + ` Part time ${pluralFormat("license", partTime)}`
             : ""
         }.`,
         [
@@ -151,7 +163,7 @@ export const LicenseApplication = ({
               flex: 1,
             }}
           >
-            {fullTime} Full time position{fullTime !== 1 ? "s" : ""}
+            {fullTime} Full time {pluralFormat("license", fullTime)}
           </Text>
           <QuantitySelector
             disableDecrease={fullTime <= 0}
@@ -177,7 +189,7 @@ export const LicenseApplication = ({
               flex: 1,
             }}
           >
-            {partTime} Part time position{partTime !== 1 ? "s" : ""}
+            {partTime} Part time {pluralFormat("license", partTime)}
           </Text>
           <QuantitySelector
             disableDecrease={partTime <= 0}
@@ -198,7 +210,6 @@ export const LicenseApplication = ({
       <Button
         text="Apply for license"
         onPress={handleApply}
-        disabled={!(fullTime || partTime)}
         preset={fullTime || partTime ? "filled" : "default"}
         style={{ marginTop: spacing.md, alignSelf: "stretch" }}
         RightAccessory={Loading}
