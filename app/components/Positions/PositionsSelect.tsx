@@ -57,7 +57,7 @@ export const PositionsSelect = ({
     <View style={style}>
       <View style={$item}>
         <Text preset="semibold">
-          {maxFullTime} Full time {pluralFormat("driver", maxFullTime)} per{" "}
+          {maxFullTime} Full time {pluralFormat("independant contractor", maxFullTime)} per{" "}
           {maxFullTime * FULL_TIME_ORDERS} deliveries a day.
         </Text>
         {/* {renderFullTimePrice()} */}
@@ -70,7 +70,7 @@ export const PositionsSelect = ({
 
       <View style={[$item, { marginTop: spacing.sm }]}>
         <Text preset="semibold">
-          {maxPartTime} Part time {pluralFormat("driver", maxPartTime)} for{" "}
+          {maxPartTime} Part time {pluralFormat("independant contractor", maxPartTime)} for{" "}
           {maxPartTime * PART_TIME_ORDERS} deliveries per half day. Covers 3
           half days a week of your choice.
         </Text>
