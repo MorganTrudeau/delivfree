@@ -265,6 +265,7 @@ const ManageMenuItem = ({
             }
             label="Minimum choices"
             placeholder="Min choices"
+            value={state.minChoices}
             numberInput
             inputWrapperStyle={$flex}
             containerStyle={[$flex, { minWidth: 200 }]}
@@ -275,6 +276,7 @@ const ManageMenuItem = ({
             onChangeText={(maxChoices) =>
               setState((s) => ({ ...s, maxChoices }))
             }
+            value={state.maxChoices}
             label="Maximum choices"
             placeholder="Max choices"
             numberInput
