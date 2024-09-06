@@ -1,6 +1,6 @@
 import { useAppSelector } from "app/redux/store";
 import React from "react";
-import { View, ViewStyle } from "react-native";
+import { Platform, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
@@ -12,7 +12,7 @@ export const SubscriptionNotice = ({ style }: { style?: ViewStyle }) => {
     selectSubscriptionValid(state)
   );
 
-  if (subscriptionValid) {
+  if (subscriptionValid || Platform.OS === "web") {
     return null;
   }
 

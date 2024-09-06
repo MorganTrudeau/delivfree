@@ -9,12 +9,13 @@ import {
 import { updateVendor } from "app/apis/vendors";
 import { navigationRef } from "app/navigators";
 import { Vendor } from "delivfree";
-import { useEffect, useState } from "react";
-import { Linking, Platform } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AppState, Linking, Platform } from "react-native";
 import { useToast } from "./useToast";
 import Stripe from "stripe";
 import { translate } from "app/i18n";
 import Bugsnag, { NotifiableError } from "@bugsnag/react-native";
+import { useAppFocus } from "./useAppFocus";
 
 export const useStripeConnect = (vendor: Vendor) => {
   const Toast = useToast();
@@ -53,7 +54,7 @@ export const useStripeConnect = (vendor: Vendor) => {
       typeof vendor?.stripe?.accountId === "string" &&
       vendor?.stripe?.accountId
     ) {
-      verifyAccount();
+      verifyAccount(true);
     }
   }, []);
 
@@ -85,23 +86,38 @@ export const useStripeConnect = (vendor: Vendor) => {
     }
   };
 
-  const verifyAccount = async () => {
+  const vendorRef = useRef(vendor);
+  vendorRef.current = vendor;
+
+  const verifyAccount = useCallback(async (force?: boolean) => {
+    const _vendor = vendorRef.current;
+    console.log("OPEN");
     try {
+      if (
+        _vendor.stripe.detailsSubmitted &&
+        _vendor.stripe.payoutsEnabled &&
+        !force
+      ) {
+        return;
+      }
+
       const {
         isUpdated,
         stripeAccount,
         vendor: updatedVendor,
-      } = await verifyStripeAccount(vendor);
+      } = await verifyStripeAccount(_vendor);
 
       if (isUpdated) {
-        await updateVendor(vendor.id, { stripe: updatedVendor.stripe });
+        await updateVendor(_vendor.id, { stripe: updatedVendor.stripe });
       }
 
       setState((state) => ({ ...state, stripeAccount }));
     } catch (error) {
       console.log("Failed to fetch stripe account");
     }
-  };
+  }, []);
+
+  useAppFocus(verifyAccount);
 
   const connectAccount = async () => {
     try {
