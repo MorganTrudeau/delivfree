@@ -4,6 +4,7 @@ import { Icon } from "app/components/Icon";
 import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { QuantitySelector } from "app/components/QuantitySelector";
 import { Text } from "app/components/Text";
+import { TextInput } from "app/components/TextInput";
 import { Toggle } from "app/components/Toggle";
 import {
   $borderBottomLight,
@@ -16,8 +17,6 @@ import { useAlert } from "app/hooks";
 import { useDimensions } from "app/hooks/useDimensions";
 import { useMenusLoading } from "app/hooks/useMenusLoading";
 import {
-  CheckoutItem,
-  CheckoutItemCustomization,
   addItemToCart,
   startCart,
 } from "app/redux/reducers/checkoutCart";
@@ -25,7 +24,7 @@ import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
 import { generateUid, localizeCurrency } from "app/utils/general";
-import { MenuCustomizationChoice, MenuItem } from "delivfree";
+import { CheckoutItem, CheckoutItemCustomization, MenuCustomizationChoice, MenuItem } from "delivfree";
 import React, { forwardRef, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Platform, Pressable, View } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";
@@ -66,8 +65,10 @@ const ConsumerItemSelect = ({
     [customizationId: string]: {
       choice: MenuCustomizationChoice;
       quantity: number;
-      text: string;
     }[];
+  }>({});
+  const [customizationNotes, setCustomizationNotes] = useState<{
+    [customizationId: string]: { text: string };
   }>({});
 
   const totalPrice = useMemo(() => {
@@ -86,12 +87,30 @@ const ConsumerItemSelect = ({
       id: generateUid(),
       item,
       quantity,
-      customizations: Object.entries(customizationChoices).reduce(
-        (acc, [customization, choices]) => {
-          return [...acc, ...choices.map((c) => ({ ...c, customization }))];
-        },
-        [] as CheckoutItemCustomization[]
-      ),
+      customizations: [
+        ...Object.entries(customizationChoices).reduce(
+          (acc, [customization, choices]) => {
+            return [
+              ...acc,
+              ...choices.map((c) => ({
+                ...c,
+                type: "choice" as "choice",
+                customization,
+              })),
+            ];
+          },
+          [] as CheckoutItemCustomization[]
+        ),
+        ...Object.entries(customizationNotes).reduce(
+          (acc, [customization, note]) => {
+            return [
+              ...acc,
+              { text: note.text, type: "note" as "note", customization },
+            ];
+          },
+          [] as CheckoutItemCustomization[]
+        ),
+      ],
     };
     const newCart = {
       id: generateUid(),
@@ -129,16 +148,18 @@ const ConsumerItemSelect = ({
 
   return (
     <View style={[$flex, largeScreen && { flexDirection: "row" }]}>
-      <View style={{ padding: spacing.md }}>
-        <FastImage
-          source={imageSource}
-          resizeMode="cover"
-          style={[
-            $image,
-            largeScreen ? { width: 500 } : { width: width - spacing.md * 4 },
-          ]}
-        />
-      </View>
+      {!!item.image && (
+        <View style={{ padding: spacing.md }}>
+          <FastImage
+            source={imageSource}
+            resizeMode="cover"
+            style={[
+              $image,
+              largeScreen ? { width: 500 } : { width: width - spacing.md * 4 },
+            ]}
+          />
+        </View>
+      )}
       <View style={{ padding: spacing.md, flex: 1 }}>
         <Text preset="heading">{item.name}</Text>
         <Text size={"md"} style={{ color: colors.textDim }}>
@@ -153,12 +174,39 @@ const ConsumerItemSelect = ({
           <View style={{ marginTop: spacing.sm }}>
             {customizations.map((customization) => {
               return (
-                <View style={[$borderTop, { paddingTop: spacing.sm }]}>
+                <View
+                  style={[
+                    $borderTop,
+                    { paddingTop: spacing.sm, paddingBottom: spacing.xs },
+                  ]}
+                >
                   <Text preset="subheading">{customization.name}</Text>
-                  {Number(customization.minChoices) > 0 && (
+                  {((customization.type === "note" &&
+                    customization.noteRequired) ||
+                    Number(customization.minChoices) > 0) && (
                     <Text style={{ color: colors.textDim }} size={"xs"}>
                       Required
                     </Text>
+                  )}
+                  {customization.type === "note" && (
+                    <TextInput
+                      placeholder={
+                        customization.noteInstruction ||
+                        "Describe your customization..."
+                      }
+                      style={{ marginVertical: spacing.xs }}
+                      onChangeText={(text) => {
+                        setCustomizationNotes((s) => {
+                          return {
+                            ...s,
+                            [customization.id]: {
+                              text,
+                            },
+                          };
+                        });
+                      }}
+                      value={customizationNotes[customization.id]?.text || ""}
+                    />
                   )}
                   {customization.choices.map((choice, index, arr) => {
                     const selected = !!customizationChoices[
@@ -237,7 +285,7 @@ const ConsumerItemSelect = ({
           style={[
             $borderTop,
             $row,
-            { paddingTop: spacing.sm, marginTop: spacing.sm },
+            { paddingTop: spacing.md, marginTop: spacing.sm },
           ]}
         >
           <Text preset="semibold" style={{ marginRight: spacing.sm }}>

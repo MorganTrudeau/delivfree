@@ -1,6 +1,7 @@
 import React from "react";
 import { ViewStyle, StyleProp, Pressable } from "react-native";
 import HeaderBackIcon from "./HeaderBackIcon";
+import { spacing } from "app/theme";
 
 type Props = {
   headerColor?: string;
@@ -16,6 +17,6 @@ const HeaderBackButton = ({ headerColor, onPress, style }: Props) => {
   );
 };
 
-const $style: ViewStyle = { alignItems: "flex-start" };
+const $style: ViewStyle = { alignItems: "flex-start", marginLeft: -spacing.sm };
 
 export default HeaderBackButton;

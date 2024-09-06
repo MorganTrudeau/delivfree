@@ -35,8 +35,8 @@ export const MenusEnabledNotice = ({ style }: { style?: ViewStyle }) => {
           web: <>Please click on Menus in the side menu to get started.</>,
           default: (
             <>
-              Please visit
-              <Text preset="semibold">business.delivfree.com.</Text> to get
+              Please visit{" "}
+              <Text preset="semibold">business.delivfree.com</Text> to get
               started.
             </>
           ),

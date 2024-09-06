@@ -13,6 +13,7 @@ import {
   ScrollView,
   ScrollViewProps,
   View,
+  ViewStyle,
 } from "react-native";
 import { TextField } from "../../TextField";
 import {
@@ -39,6 +40,7 @@ import { Icon } from "app/components/Icon";
 import { MenuItemsSearch } from "../MenuItem/MenuItemsSearch";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Toggle } from "app/components/Toggle";
 
 interface ManageCustomizationProps {
   vendor: string;
@@ -63,7 +65,10 @@ const ManageMenuItem = ({
       ? { ...customization }
       : {
           id: generateUid(),
+          noteRequired: false,
           name: "",
+          noteInstruction: "",
+          type: "choices",
           choices: [],
           minChoices: "0",
           maxChoices: "0",
@@ -94,7 +99,7 @@ const ManageMenuItem = ({
         "Please enter a title for your customization."
       );
     }
-    if (!state.choices.length) {
+    if (state.type === "choices" && !state.choices.length) {
       return Alert.alert(
         "Missing Choices",
         "Please enter choices for your customization."
@@ -200,6 +205,7 @@ const ManageMenuItem = ({
                 inputWrapperStyle={$flex}
                 containerStyle={[$flex, { minWidth: 200 }]}
                 style={$flex}
+                numberInput
               />
             </View>
           </View>
@@ -221,70 +227,125 @@ const ManageMenuItem = ({
         />
 
         <View style={[$inputFormContainer, { marginTop: spacing.lg }]}>
-          <Text preset="formLabel" style={$formLabel}>
+          {/* <Text preset="formLabel" style={$formLabel}>
             Options
-          </Text>
-          <DraggableFlatList
-            data={state.choices}
-            renderItem={renderChoice}
-            keyExtractor={choiceKeyExtractor}
-            activationDistance={1}
-            onDragEnd={handleChoicesReordered}
-          />
-          <ButtonSmall
-            text="Add option"
-            leftIcon="plus"
-            style={{ alignSelf: "flex-start" }}
-            onPress={() => {
-              setState((s) => ({
-                ...s,
-                choices: [
-                  ...s.choices,
-                  { id: generateUid(), name: "", price: "" },
-                ],
-              }));
-            }}
-          />
+          </Text> */}
+          <View style={[$row, $typeButtonContainer]}>
+            <ButtonSmall
+              text={"Choices"}
+              style={[$typeButton, { marginRight: spacing.xs }]}
+              preset={state.type === "choices" ? "filled" : "default"}
+              onPress={() =>
+                setState((s) => ({
+                  ...s,
+                  type: "choices",
+                  noteRequired: false,
+                  noteInstruction: "",
+                }))
+              }
+            />
+            <ButtonSmall
+              text={"Note"}
+              style={$typeButton}
+              preset={state.type === "note" ? "filled" : "default"}
+              onPress={() =>
+                setState((s) => ({
+                  ...s,
+                  type: "note",
+                  choices: [],
+                  minChoices: "",
+                  maxChoices: "",
+                }))
+              }
+            />
+          </View>
+          {state.type === "choices" ? (
+            <>
+              <DraggableFlatList
+                data={state.choices}
+                renderItem={renderChoice}
+                keyExtractor={choiceKeyExtractor}
+                activationDistance={1}
+                onDragEnd={handleChoicesReordered}
+              />
+              <ButtonSmall
+                text="Add choice"
+                leftIcon="plus"
+                style={{ alignSelf: "flex-start" }}
+                onPress={() => {
+                  setState((s) => ({
+                    ...s,
+                    choices: [
+                      ...s.choices,
+                      { id: generateUid(), name: "", price: "" },
+                    ],
+                  }));
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <TextField
+                label={"Instruction"}
+                placeholder={"Tell your customer what to write..."}
+                maxLength={40}
+                onChangeText={(noteInstruction) =>
+                  setState((s) => ({ ...s, noteInstruction }))
+                }
+              />
+            </>
+          )}
         </View>
 
-        <View
-          style={[
-            $row,
-            $inputFormContainer,
-            {
-              flexWrap: "wrap",
-              rowGap: spacing.xs,
-              columnGap: spacing.sm,
-              marginTop: spacing.lg,
-            },
-          ]}
-        >
-          <TextField
-            onChangeText={(minChoices) =>
-              setState((s) => ({ ...s, minChoices }))
+        {state.type === "note" ? (
+          <Toggle
+            label="Required"
+            onValueChange={() =>
+              setState((s) => ({ ...s, noteRequired: !s.noteRequired }))
             }
-            label="Minimum choices"
-            placeholder="Min choices"
-            value={state.minChoices}
-            numberInput
-            inputWrapperStyle={$flex}
-            containerStyle={[$flex, { minWidth: 200 }]}
-            style={$flex}
+            value={state.noteRequired}
+            containerStyle={{ marginTop: spacing.md }}
           />
+        ) : (
+          <View
+            style={[
+              $row,
+              $inputFormContainer,
+              {
+                flexWrap: "wrap",
+                rowGap: spacing.xs,
+                columnGap: spacing.sm,
+                marginTop: spacing.lg,
+              },
+            ]}
+          >
+            <TextField
+              onChangeText={(minChoices) =>
+                setState((s) => ({ ...s, minChoices }))
+              }
+              label="Minimum choices"
+              placeholder="Min choices"
+              value={state.minChoices}
+              numberInput
+              inputWrapperStyle={$flex}
+              containerStyle={[$flex, { minWidth: 200 }]}
+              style={$flex}
+            />
 
-          <TextField
-            onChangeText={(maxChoices) =>
-              setState((s) => ({ ...s, maxChoices }))
-            }
-            value={state.maxChoices}
-            label="Maximum choices"
-            placeholder="Max choices"
-            numberInput
-            inputWrapperStyle={$flex}
-            containerStyle={[$flex, { minWidth: 200 }]}
-            style={$flex}
-          />
-        </View>
+            <TextField
+              onChangeText={(maxChoices) =>
+                setState((s) => ({ ...s, maxChoices }))
+              }
+              value={state.maxChoices}
+              label="Maximum choices"
+              placeholder="Max choices"
+              numberInput
+              inputWrapperStyle={$flex}
+              containerStyle={[$flex, { minWidth: 200 }]}
+              style={$flex}
+            />
+          </View>
+        )}
 
         <View style={[$inputFormContainer, { marginTop: spacing.lg }]}>
           <Text preset="formLabel" style={$formLabel}>
@@ -336,6 +397,13 @@ const ManageMenuItem = ({
             categories={categories}
             selectedItems={state.items}
             onSelect={updateState("items")}
+          />
+          <Button
+            text={"Save customization"}
+            preset={state.name ? "filled" : "default"}
+            onPress={onSave}
+            style={{ marginTop: spacing.lg }}
+            RightAccessory={Loading}
           />
         </View>
       </>
@@ -390,3 +458,9 @@ export const ManageMenuCustomizationModal = forwardRef<
     </BottomSheet>
   );
 });
+
+const $typeButtonContainer: ViewStyle = { paddingBottom: spacing.md };
+const $typeButton: ViewStyle = {
+  minHeight: 0,
+  borderRadius: 100,
+};

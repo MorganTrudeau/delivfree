@@ -1,4 +1,4 @@
-import { CheckoutItem } from "app/redux/reducers/checkoutCart";
+
 import { colors, spacing } from "app/theme";
 import React, { useMemo } from "react";
 import { View, ViewStyle } from "react-native";
@@ -6,6 +6,7 @@ import { Text } from "../Text";
 import { localizeCurrency } from "app/utils/general";
 import { $borderBottomLight, $row } from "../styles";
 import { QuantitySelectorInline } from "../QuantitySelectorInline";
+import { CheckoutItem } from "delivfree";
 
 export const CartItem = ({
   item,
@@ -22,6 +23,9 @@ export const CartItem = ({
     return (
       Number(item.item.price) * item.quantity +
       item.customizations.reduce((acc, choice) => {
+        if (choice.type === "note") {
+          return acc;
+        }
         return acc + (Number(choice.choice.price) || 0) * choice.quantity;
       }, 0)
     );
@@ -34,24 +38,36 @@ export const CartItem = ({
       </Text>
 
       {item.customizations.map((customization, customizationIndex) => {
-        return (
-          <View
-            key={`checkout-customization-${customization.choice.id}-${customizationIndex}`}
-          >
-            <Text style={{ color: colors.textDim }} size="xs">
-              {customization.choice.name}
-
-              {customization.choice.price &&
-              showPrice &&
-              Number(customization.choice.price)
-                ? ` +${localizeCurrency(
-                    Number(customization.choice.price),
-                    "CAD"
-                  )}`
-                : ""}
+        if (customization.type === "note") {
+          return (
+            <Text
+              style={{ color: colors.textDim }}
+              size="xs"
+              key={`checkout-customization-${customization.customization}-note`}
+            >
+              {customization.text}
             </Text>
-          </View>
-        );
+          );
+        } else {
+          return (
+            <View
+              key={`checkout-customization-${customization.choice.id}-${customizationIndex}`}
+            >
+              <Text style={{ color: colors.textDim }} size="xs">
+                {customization.choice.name}
+
+                {customization.choice.price &&
+                showPrice &&
+                Number(customization.choice.price)
+                  ? ` +${localizeCurrency(
+                      Number(customization.choice.price),
+                      "CAD"
+                    )}`
+                  : ""}
+              </Text>
+            </View>
+          );
+        }
       })}
 
       {(showPrice || onChangeQuantity) && (
