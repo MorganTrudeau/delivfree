@@ -100,11 +100,17 @@ export const DriverClockIn = () => {
   >(clockOut);
   const Loading = useLoadingIndicator(clockInLoading || clockOutLoading);
 
-  const ClockIcon = useMemo(
+  const ButtonIcon = useMemo(
     () =>
       ({ style }) =>
-        <Icon icon="timer-outline" color={"#fff"} style={style} />,
-    []
+        (
+          <Icon
+            icon={clockInStatus ? "car" : "power-sleep"}
+            color={"#fff"}
+            style={style}
+          />
+        ),
+    [clockInStatus]
   );
 
   return (
@@ -121,7 +127,7 @@ export const DriverClockIn = () => {
     >
       <View style={[$flex, { paddingRight: spacing.sm }]}>
         <Text preset="semibold" style={{ color: colors.white, flexShrink: 1 }}>
-          {clockInStatus ? "On the clock" : "Off the clock"}
+          {clockInStatus ? "Delivering for" : "Current status"}
         </Text>
         {!!activeVendorLocation && (
           <Text
@@ -136,9 +142,9 @@ export const DriverClockIn = () => {
       </View>
       <ButtonSmall
         preset={"filled"}
-        LeftAccessory={ClockIcon}
         RightAccessory={Loading}
-        text={clockInStatus ? "Clock out" : "Clock in"}
+        LeftAccessory={ButtonIcon}
+        text={clockInStatus ? "Available" : "Unavailable"}
         onPress={() => {
           if (clockInStatus) {
             handleClockout();

@@ -94,8 +94,8 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
       <View style={{ padding: spacing.md }}>
         {!clockInStatus ? (
           <EmptyList
-            icon={"timer-outline"}
-            title={"Clock in to accept orders"}
+            icon={"power-sleep"}
+            title={"Set your status to available to accept orders"}
           />
         ) : (
           <EmptyList title={"No orders at this location"} />
