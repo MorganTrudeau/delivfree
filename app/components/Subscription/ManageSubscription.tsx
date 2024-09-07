@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Button, Text } from "app/components";
 import { $borderTop, $borderedArea, $flex } from "app/components/styles";
-import { spacing } from "app/theme";
+import { colors, spacing } from "app/theme";
 import { Card } from "app/components/Card";
 import { LicenseItem } from "app/components/Licenses/LicenseItem";
 import { ActivityIndicator, Platform, View } from "react-native";
@@ -76,6 +76,12 @@ export const ManageSubscription = ({
               style={{ paddingVertical: 0 }}
             />
           </View>
+          <Text
+            size={"xs"}
+            style={{ color: colors.textDim, marginTop: spacing.xxs }}
+          >
+            Contact us at info@delivfree.com to manage your positions
+          </Text>
           {Platform.OS === "web" && (
             <PaymentMethodSelectButton
               style={{

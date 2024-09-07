@@ -75,5 +75,5 @@ const styles = StyleSheet.create({
   cardTextContainer: {
     marginLeft: spacing.sm,
   },
-  icon: { marginVertical: -5 },
+  icon: { marginVertical: -10 },
 });
