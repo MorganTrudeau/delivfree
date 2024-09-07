@@ -21,6 +21,7 @@ type Props = {
   orders: Order[];
   loadOrders: () => void;
   onOrderPress: (order: Order) => void;
+  onOrderCompleted: (order: Order) => void;
 } & Partial<FlatListProps<Order>>;
 
 export const OrdersList = ({
@@ -28,6 +29,7 @@ export const OrdersList = ({
   loadOrders,
   onOrderPress,
   ListHeaderComponent,
+  onOrderCompleted,
   ...rest
 }: Props) => {
   const Toast = useToast();
@@ -102,6 +104,7 @@ export const OrdersList = ({
           setViewCustomer(customer);
           customerDetailModal.current?.open();
         },
+        onOrderCompleted,
       };
       return largeScreenLayout ? (
         <OrderItemWeb {...props} />

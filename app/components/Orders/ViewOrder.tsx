@@ -1,22 +1,42 @@
 import { getUser } from "app/apis/user";
 import { spacing } from "app/theme";
 import { Order, User } from "delivfree";
-import React, { forwardRef, useCallback, useEffect, useState } from "react";
-import { Platform, StyleSheet, View, ViewStyle } from "react-native";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 import { Text } from "../Text";
 import { LoadingPlaceholder } from "../LoadingPlaceholder";
-import { $spacerBorder } from "../styles";
+import { $borderTop, $spacerBorder } from "../styles";
 import { BottomSheet, BottomSheetRef } from "../Modal/BottomSheet";
 import { ModalCloseButton } from "../Modal/ModalCloseButton";
 import { DetailItem } from "../DetailItem";
 import { navigateToAddress, pluralFormat } from "app/utils/general";
 import { CartItem } from "../CheckoutCart/CartItem";
 import { CheckoutTotals } from "../CheckoutCart/CheckoutTotals";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useDimensions } from "app/hooks/useDimensions";
+import { ImageViewer, ImageViewerRef } from "../ImageViewer";
 
 type Props = { order: Order };
 
 const ViewOrder = ({ order }: Props) => {
   const { total, subtotal, tax, tip, currency } = order;
+
+  const { width } = useDimensions();
+
+  const imageViewer = useRef<ImageViewerRef>(null);
 
   const [customer, setCustomer] = useState<User>();
 
@@ -28,6 +48,8 @@ const ViewOrder = ({ order }: Props) => {
   useEffect(() => {
     loadCustomer();
   }, [order.customer]);
+
+  const dropOffPicture = order.dropOffPicture;
 
   return (
     <View style={{ padding: spacing.md }}>
@@ -105,6 +127,32 @@ const ViewOrder = ({ order }: Props) => {
         tax={tax}
         tip={tip}
       />
+
+      {dropOffPicture && (
+        <>
+          <View style={$spacerBorder} />
+          <Text preset="subheading" style={$subheading}>
+            Drop off confirmation
+          </Text>
+          <Pressable
+            onPress={() => {
+              imageViewer.current?.open(dropOffPicture.uri);
+            }}
+          >
+            <Image
+              source={{ uri: dropOffPicture.uri }}
+              style={{
+                aspectRatio:
+                  (dropOffPicture.width || 1) / (dropOffPicture.height || 1),
+                width: Math.min(300, width - spacing.md * 2),
+              }}
+              resizeMode="contain"
+            />
+          </Pressable>
+        </>
+      )}
+
+      <ImageViewer ref={imageViewer} />
     </View>
   );
 };
@@ -118,7 +166,9 @@ export const ViewOrderModal = forwardRef<
 >(function ViewOrderModal(props, ref) {
   return (
     <BottomSheet ref={ref}>
-      {props.order && <ViewOrder {...props} order={props.order} />}
+      <BottomSheetScrollView>
+        {props.order && <ViewOrder {...props} order={props.order} />}
+      </BottomSheetScrollView>
       {Platform.OS === "web" && <ModalCloseButton onPress={props.onClose} />}
     </BottomSheet>
   );

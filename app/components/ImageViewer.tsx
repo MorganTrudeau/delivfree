@@ -15,11 +15,13 @@ import { spacing } from "app/theme";
 import { Icon } from "./Icon";
 import { sizing } from "app/theme/sizing";
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 import { Portal } from "react-native-portalize";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const Image = ({ image }: { image: string }) => {
   const { width: deviceWidth, height: deviceHeight } = useDimensions();
@@ -51,6 +53,8 @@ export const ImageViewer = forwardRef<ImageViewerRef>(function ImageView(
   props,
   ref
 ) {
+  const insets = useSafeAreaInsets();
+
   const visible = useSharedValue(0);
   const [image, setImage] = useState("");
 
@@ -62,7 +66,7 @@ export const ImageViewer = forwardRef<ImageViewerRef>(function ImageView(
   const close = () => {
     visible.value = withTiming(0, undefined, (finished) => {
       if (finished) {
-        setImage("");
+        runOnJS(setImage)("");
       }
     });
   };
@@ -85,7 +89,7 @@ export const ImageViewer = forwardRef<ImageViewerRef>(function ImageView(
         <Pressable
           style={[
             StyleSheet.absoluteFill,
-            { backgroundColor: "rgba(0,0,0,0.3)" },
+            { backgroundColor: "rgba(0,0,0,0.8)" },
           ]}
           onPress={close}
           disabled={!image}
@@ -94,7 +98,7 @@ export const ImageViewer = forwardRef<ImageViewerRef>(function ImageView(
         <Pressable
           style={{
             position: "absolute",
-            top: spacing.md,
+            top: insets.top + spacing.md,
             right: spacing.md,
             height: sizing.xxl,
             width: sizing.xxl,

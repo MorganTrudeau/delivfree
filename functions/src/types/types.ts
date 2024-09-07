@@ -249,6 +249,7 @@ export type Order = {
   driver: null | string;
   checkoutItems: CheckoutItem[];
   deliveryInstructions: DeliveryInstructions;
+  dropOffPicture?: {uri: string, width: number, height: number}
 };
 export type OrderCount = { count: number };
 export type Customer = {

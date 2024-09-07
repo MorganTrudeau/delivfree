@@ -190,14 +190,9 @@ const LicenseApplications = () => {
       <Text preset="subheading" style={{ marginBottom: spacing.xxs }}>
         License applications
       </Text>
-      <View
-        style={[
-          $row,
-          { flexWrap: "wrap", rowGap: spacing.sm, columnGap: spacing.sm },
-        ]}
-      >
+      <View style={[]}>
         {licenseIds.map((id) => (
-          <LicenseItem key={id} licenseId={id} />
+          <LicenseItem key={id} licenseId={id} style={$license} />
         ))}
       </View>
     </View>
@@ -214,5 +209,9 @@ const $contentWrapper: ViewStyle = {
 const $location: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
+  marginBottom: spacing.sm,
+};
+
+const $license: ViewStyle = {
   marginBottom: spacing.sm,
 };

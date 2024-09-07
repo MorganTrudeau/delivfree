@@ -9,6 +9,7 @@ import { Icon } from "../Icon";
 import { Props } from "./OrderItem";
 import React from "react";
 import { getStatusColor, getStatusText } from "app/utils/orders";
+import { IconButton } from "../IconButton";
 
 export const OrderItemMobile = ({
   order,
@@ -18,11 +19,13 @@ export const OrderItemMobile = ({
   driverId,
   changeOrderStatus,
   driverName,
+  onOrderCompleted,
 }: Props) => {
   const showClaimButton = userType === "driver" && !order.driver;
   const showStatusButtons =
     order.driver === driverId &&
-    !["complete", "incomplete", "canceled"].includes(order.status);
+    (!["complete", "incomplete", "canceled"].includes(order.status) ||
+      (order.status === "complete" && !order.dropOffPicture));
 
   return (
     <Pressable style={$listRow} onPress={() => onOrderPress(order)}>
@@ -82,29 +85,43 @@ export const OrderItemMobile = ({
             />
           )}
           {showStatusButtons && (
-            <>
-              <ButtonSmall
-                text="Arrived"
-                style={{ marginRight: spacing.sm }}
-                onPress={() => changeOrderStatus(order.id, "arrived")}
-                RightAccessory={
-                  order.status === "arrived"
-                    ? ({ style }) => (
-                        <Icon
-                          icon={"check-circle"}
-                          color={colors.primary}
-                          style={style}
-                        />
-                      )
-                    : undefined
-                }
-                disabled={order.status === "arrived"}
-              />
-              <ButtonSmall
-                text="Complete"
-                onPress={() => changeOrderStatus(order.id, "complete")}
-              />
-            </>
+            <View style={$row}>
+              <View style={[$row, $flex]}>
+                <ButtonSmall
+                  text="Arrived"
+                  style={{ marginRight: spacing.sm }}
+                  onPress={() => changeOrderStatus(order.id, "arrived")}
+                  RightAccessory={
+                    order.status === "arrived"
+                      ? ({ style }) => (
+                          <Icon
+                            icon={"check-circle"}
+                            color={colors.primary}
+                            style={style}
+                          />
+                        )
+                      : undefined
+                  }
+                  disabled={order.status === "arrived"}
+                />
+                <ButtonSmall
+                  text="Complete"
+                  onPress={() => {
+                    changeOrderStatus(order.id, "complete");
+                    onOrderCompleted(order);
+                  }}
+                  style={{ marginRight: spacing.sm }}
+                />
+              </View>
+              {order.status === "complete" && !order.dropOffPicture && (
+                <IconButton
+                  icon={"camera"}
+                  onPress={() => {
+                    onOrderCompleted(order);
+                  }}
+                />
+              )}
+            </View>
           )}
         </View>
       )}
