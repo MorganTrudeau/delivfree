@@ -50,12 +50,7 @@ export const useStripeConnect = (vendor: Vendor) => {
   });
 
   useEffect(() => {
-    if (
-      typeof vendor?.stripe?.accountId === "string" &&
-      vendor?.stripe?.accountId
-    ) {
-      verifyAccount(true);
-    }
+    verifyAccount(true);
   }, []);
 
   useEffect(() => {
@@ -91,12 +86,15 @@ export const useStripeConnect = (vendor: Vendor) => {
 
   const verifyAccount = useCallback(async (force?: boolean) => {
     const _vendor = vendorRef.current;
-    console.log("OPEN");
     try {
       if (
-        _vendor.stripe.detailsSubmitted &&
-        _vendor.stripe.payoutsEnabled &&
-        !force
+        !(
+          typeof vendor?.stripe?.accountId === "string" &&
+          vendor?.stripe?.accountId
+        ) ||
+        (_vendor.stripe.detailsSubmitted &&
+          _vendor.stripe.payoutsEnabled &&
+          !force)
       ) {
         return;
       }
