@@ -1,10 +1,9 @@
 import { updateDriver } from "app/apis/driver";
 import { listenToLicenses } from "app/apis/licenses";
 import { fetchSubscription } from "app/apis/stripe";
-import { Screen, Text } from "app/components";
+import { Icon, Screen, Text } from "app/components";
 import { DetailItem } from "app/components/DetailItem";
 import { DetailsHeader } from "app/components/Details/DetailsHeader";
-import { Drawer } from "app/components/Drawer";
 import { EmptyList } from "app/components/EmptyList";
 import { LicenseDisplayModal } from "app/components/Licenses/LicenseDisplayModal";
 import { LicensesList } from "app/components/Licenses/LicensesList";
@@ -12,7 +11,13 @@ import { ModalRef } from "app/utils/types";
 import { StatusPicker } from "app/components/StatusPicker";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import { SubscriptionInfo } from "app/components/Subscription/SubscriptionInfo";
-import { $containerPadding, $screen } from "app/components/styles";
+import {
+  $borderedArea,
+  $containerPadding,
+  $formLabel,
+  $row,
+  $screen,
+} from "app/components/styles";
 import { useReduxListener } from "app/hooks/useReduxListener";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
@@ -20,15 +25,18 @@ import { listenToDriver } from "app/redux/thunks/driver";
 import { colors, spacing } from "app/theme";
 import { Driver, License, Status } from "delivfree";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, ViewStyle } from "react-native";
+import { ActivityIndicator, Linking, Pressable, ViewStyle } from "react-native";
 import Stripe from "stripe";
 import { viewSubscriptionOnStripe } from "app/utils/subscriptions";
 import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
 import { listenToVendorLocations } from "app/redux/thunks/vendorLocations";
+import { useAlert } from "app/hooks";
 
 interface DriverDetailScreenProps extends AppStackScreenProps<"DriverDetail"> {}
 
 export const DriverDetailScreen = (props: DriverDetailScreenProps) => {
+  const Alert = useAlert();
+
   const driverId = props.route.params?.driver;
 
   const licenseDisplayModal = useRef<ModalRef>(null);
@@ -102,13 +110,24 @@ export const DriverDetailScreen = (props: DriverDetailScreenProps) => {
     await viewSubscriptionOnStripe(subscription);
   };
 
+  const downloadCriminalRecordCheck = async () => {
+    try {
+      if (!driver.criminalRecordCheck) {
+        return;
+      }
+      Linking.openURL(driver.criminalRecordCheck);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Download failed", "Please try that again.");
+    }
+  };
+
   if (!driver) {
     return (
       <Screen
         preset="scroll"
         style={$screen}
         contentContainerStyle={$containerPadding}
-        
       >
         <ActivityIndicator
           color={colors.primary}
@@ -123,7 +142,6 @@ export const DriverDetailScreen = (props: DriverDetailScreenProps) => {
       preset="scroll"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      
     >
       <ScreenHeader title={driver.firstName + " " + driver.lastName} />
 
@@ -148,13 +166,37 @@ export const DriverDetailScreen = (props: DriverDetailScreenProps) => {
         frontImage={driver.driversLicenseFront}
         backImage={driver.driversLicenseBack}
         viewOnly
-        driverId={driverId}
+        userId={driver.user}
         titleProps={{
           style: { marginTop: spacing.xxs, marginBottom: 2 },
           preset: "semibold",
           size: "xs",
         }}
       />
+      <>
+        <Text
+          preset="semibold"
+          size={"xs"}
+          style={{ marginTop: spacing.xxs, marginBottom: 2 }}
+        >
+          Criminal record check
+        </Text>
+        <Pressable
+          style={[$row, $borderedArea, { alignSelf: "flex-start" }]}
+          onPress={downloadCriminalRecordCheck}
+        >
+          <Icon
+            icon={
+              driver.criminalRecordCheck
+                ? "file-check-outline"
+                : "file-remove-outline"
+            }
+          />
+          <Text style={{ marginLeft: spacing.sm }}>
+            {driver.criminalRecordCheck ? "File uploaded" : "File missing"}
+          </Text>
+        </Pressable>
+      </>
 
       <DetailsHeader title={"Subscription"} style={$detailHeaderStyle} />
       {subscription ? (

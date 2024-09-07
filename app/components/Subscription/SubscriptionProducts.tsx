@@ -29,10 +29,13 @@ export const SubscriptionProducts = ({
   const loadProducts = async () => {
     try {
       setLoadingState({ loading: true, error: false });
-      const res = await functions().httpsCallable("fetchProducts")({
+      const res = await functions().httpsCallable<
+        { params: Stripe.ProductListParams },
+        Stripe.ApiList<Stripe.Product>
+      >("fetchProducts")({
         params: { expand: ["data.default_price"] },
       });
-      const data: Stripe.ApiList<Stripe.Product> = res.data;
+      const data = res.data;
       const _products = data.data.sort(
         (a, b) =>
           ((b.default_price as Stripe.Price).unit_amount as number) -

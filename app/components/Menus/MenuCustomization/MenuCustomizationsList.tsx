@@ -8,6 +8,7 @@ import { DataCell, TableCell } from "../../TableCell";
 import { Text } from "../../Text";
 import { EmptyList } from "../../EmptyList";
 import { colors, spacing } from "app/theme";
+import { pluralFormat } from "app/utils/general";
 
 interface Props {
   customizations: MenuCustomization[];
@@ -25,17 +26,27 @@ export const MenuCustomizationsList = ({
   const largeScreen = isLargeScreen(width);
 
   const headers = useMemo(() => {
-    const h: TableHeader[] = [{ title: "Name" }, { title: "Options" }];
+    const h: TableHeader[] = [
+      { title: "Name" },
+      { title: "Type" },
+      { title: "Options" },
+    ];
     return h;
   }, []);
 
   const renderItem = useCallback(
     ({ item }: { item: MenuCustomization }) => {
-      const optionsNumberText = item.choices.length + " options";
+      const optionsNumberText =
+        item.type === "note"
+          ? "-"
+          : item.choices.length +
+            " " +
+            pluralFormat("Choice", item.choices.length);
 
       if (largeScreen) {
         const dataCells: DataCell[] = [
           { text: item.name },
+          { text: item.type === "note" ? "Note" : "Choices" },
           {
             text: optionsNumberText,
           },

@@ -8580,8 +8580,8 @@ __metadata:
 
 "delivfree@file:functions/src/types::locator=delivfreeapp%40workspace%3A.":
   version: 1.0.0
-  resolution: "delivfree@file:functions/src/types#functions/src/types::hash=5e65b7&locator=delivfreeapp%40workspace%3A."
-  checksum: 10c0/28c3d703d2179830d255d5b25142e9cd49fa64af6d49b5aa069d09f4660a89c2899be198ec71bb6a837bdce53d8feee077b52d1e8f8940fc995260c340f4ebbc
+  resolution: "delivfree@file:functions/src/types#functions/src/types::hash=f6a5d4&locator=delivfreeapp%40workspace%3A."
+  checksum: 10c0/3ab6db96ddca46b6c79ffd106adac960d7e792171c7b6e02e0d1daa66cf63b4a2cb3dd99be9519d706e5f0baa664b11343790fe11c455565f5df556740421ba2
   languageName: node
   linkType: hard
 
@@ -8657,6 +8657,7 @@ __metadata:
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-native: "npm:4.0.0"
     expo: "npm:^51.0.22"
+    expo-document-picker: "npm:^12.0.2"
     expo-font: "npm:^12.0.9"
     expo-image-picker: "npm:^15.0.7"
     expo-localization: "npm:^15.0.3"
@@ -10025,6 +10026,15 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 10c0/3a51ef1d4de7e7a86d8ee7ef7b0e0edb6cbde981e1e09540e5d7a5dfec3327cb805df06f10614ebf87a158b01a274f63eef9f573e87d7cf1040ffd7168c8a5d1
+  languageName: node
+  linkType: hard
+
+"expo-document-picker@npm:^12.0.2":
+  version: 12.0.2
+  resolution: "expo-document-picker@npm:12.0.2"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/c3028e243ef9a9da8f5800acb7c59c9d19d1a98131a6f8225c47b5daf659b4329c7e557a28ca1c4e0ef416d68828e95eb3bcf13e1ae434dcc19878707cdb33df
   languageName: node
   linkType: hard
 

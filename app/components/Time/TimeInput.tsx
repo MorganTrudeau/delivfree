@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, useEffect, useState } from 'react';
+import React, { ForwardedRef, forwardRef, useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -6,17 +6,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   ViewStyle,
-} from 'react-native';
-import NumberTextInput from '../NumberTextInput';
+} from "react-native";
+import NumberTextInput from "../NumberTextInput";
 import {
   inputTypes,
   PossibleClockTypes,
   PossibleInputTypes,
   useInputColors,
-} from './timeUtils';
+} from "./timeUtils";
 
 interface TimeInputProps
-  extends Omit<Omit<TextInputProps, 'value'>, 'onFocus'> {
+  extends Omit<Omit<TextInputProps, "value" | "onPress">, "onFocus"> {
   value: number;
   clockType: PossibleClockTypes;
   onPress?: (type: PossibleClockTypes) => any;
@@ -39,13 +39,13 @@ function TimeInput(
     style,
     ...rest
   }: TimeInputProps,
-  ref: ForwardedRef<TextInput>,
+  ref: ForwardedRef<TextInput>
 ) {
   const [controlledValue, setControlledValue] = useState<string>(`${value}`);
 
   const onInnerChange = (text: string) => {
     setControlledValue(text);
-    if (text !== '') {
+    if (text !== "") {
       onChanged(Number(text));
     }
   };
@@ -86,10 +86,10 @@ function TimeInput(
         maxLength={2}
         onFocus={() => {
           setInputFocused(true);
-          onInnerChange('');
+          onInnerChange("");
         }}
         onBlur={() => setInputFocused(false)}
-        keyboardType='number-pad'
+        keyboardType="number-pad"
         onChangeText={onInnerChange}
         placeholderTextColor={placeholderTextColor}
         {...rest}
@@ -103,7 +103,8 @@ function TimeInput(
               borderRadius: roundness,
             },
           ]}
-          onPress={() => onPress(clockType)}>
+          onPress={() => onPress(clockType)}
+        >
           <View />
         </TouchableOpacity>
       ) : null}
@@ -112,15 +113,15 @@ function TimeInput(
 }
 
 const styles = StyleSheet.create({
-  root: { position: 'relative', height: 80, width: 96 },
+  root: { position: "relative", height: 80, width: 96 },
   input: {
     fontSize: 50,
-    textAlign: 'center',
-    textAlignVertical: 'center',
+    textAlign: "center",
+    textAlignVertical: "center",
     width: 96,
     height: 80,
   },
-  buttonOverlay: { overflow: 'hidden' },
+  buttonOverlay: { overflow: "hidden" },
 });
 
 const ForwardRefTimeInput = forwardRef(TimeInput);

@@ -20,6 +20,47 @@ const getStripe = () => {
   return _stripe;
 };
 
+export const retrieveCustomer = onCall(
+  async (data: CallableRequest<{ customer: string }>) => {
+    const customer = await getStripe().customers.retrieve(data.data.customer);
+    return customer;
+  }
+);
+
+export const attachPaymentMethod = onCall(
+  async (
+    data: CallableRequest<{
+      paymentMethod: string;
+      customer: string;
+      subscription: string;
+    }>
+  ) => {
+    const { paymentMethod, customer, subscription } = data.data;
+    const method = await getStripe().paymentMethods.attach(paymentMethod, {
+      customer,
+    });
+    await getStripe().subscriptions.update(subscription, {
+      default_payment_method: paymentMethod,
+    });
+    return method;
+  }
+);
+
+export const retrieveCustomerPaymentMethods = onCall(
+  async (data: CallableRequest<{ customer: string }>) => {
+    const paymentMethods = await getStripe().customers.listPaymentMethods(
+      data.data.customer
+    );
+    return paymentMethods.data;
+  }
+);
+
+export const retrievePaymentMethod = onCall(
+  async (data: CallableRequest<{ paymentMethod: string }>) => {
+    return await getStripe().paymentMethods.retrieve(data.data.paymentMethod);
+  }
+);
+
 export const createAccount = onCall(
   async (
     data: CallableRequest<{

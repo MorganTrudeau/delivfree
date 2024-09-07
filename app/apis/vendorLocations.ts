@@ -207,6 +207,7 @@ const loadVendorLocationDetails = async (
   );
 
   if (
+    !__DEV__ &&
     !(
       vendor &&
       vendor.registration.status === "approved" &&
@@ -223,7 +224,7 @@ const loadVendorLocationDetails = async (
   const menusActive = hasActiveMenu(menus);
   return {
     ...vendorLocation,
-    isOpen: !!menusActive && !!activeDrivers?.length,
+    isOpen: __DEV__ || (!!menusActive && !!activeDrivers?.length),
     nextOpen: !menusActive ? getMenuNextOpen(menus) : "",
   };
 };

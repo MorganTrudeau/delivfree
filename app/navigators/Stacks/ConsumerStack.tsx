@@ -70,6 +70,7 @@ export const ConsumerStack = () => {
         <Stack.Screen
           name="CheckoutCart"
           component={Screens.CheckoutCartScreen}
+          options={{ headerRight: undefined }}
         />
         <Stack.Screen name="About" component={Screens.AboutScreen} />
         <Stack.Screen

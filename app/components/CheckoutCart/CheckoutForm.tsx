@@ -25,7 +25,7 @@ import { withStripe } from "app/hocs/withStripe";
 import { useAlert, useCheckout, useLayout } from "app/hooks";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useDimensions } from "app/hooks/useDimensions";
-import { CheckoutItem, emptyCart } from "app/redux/reducers/checkoutCart";
+import { emptyCart } from "app/redux/reducers/checkoutCart";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { fetchVendor } from "app/redux/thunks/vendor";
 import { colors, spacing } from "app/theme";
@@ -36,7 +36,7 @@ import {
   getDeliveryInstructionsTitle,
 } from "app/utils/checkout";
 import { pluralFormat } from "app/utils/general";
-import { Order, TipType, User } from "delivfree";
+import { CheckoutItem, Order, TipType, User } from "delivfree";
 import React, {
   useCallback,
   useEffect,

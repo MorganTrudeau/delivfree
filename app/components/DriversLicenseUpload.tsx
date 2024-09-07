@@ -17,7 +17,7 @@ export const DriversLicenseUpload = ({
   onFrontImageUploaded,
   onBackImageUploaded,
   style,
-  driverId,
+  userId,
   viewOnly,
   titleProps,
 }: {
@@ -26,7 +26,7 @@ export const DriversLicenseUpload = ({
   onFrontImageUploaded?: (image: string) => void;
   onBackImageUploaded?: (image: string) => void;
   style?: ViewStyle;
-  driverId: string;
+  userId: string;
   viewOnly?: boolean;
   titleProps?: TextProps;
 }) => {
@@ -51,7 +51,8 @@ export const DriversLicenseUpload = ({
       side === "front" ? setFront(url) : setBack(url);
       const firebaseUrl = await uploadImage(
         url,
-        `DriversLicenses/${driverId}/drivers-license-${side}`
+        `DriversLicenses/${userId}/drivers-license-${side}`,
+        { user: userId }
       );
       side === "front"
         ? onFrontImageUploaded && onFrontImageUploaded(firebaseUrl)

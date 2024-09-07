@@ -22,7 +22,7 @@ export const DriverCodeScreen = () => {
 
   const driver = useAppSelector((state) => state.driver.activeDriver as Driver);
 
-  const [code, setCode] = useState();
+  const [code, setCode] = useState("");
 
   const createCode = async (attempts = 0) => {
     try {
@@ -43,6 +43,7 @@ export const DriverCodeScreen = () => {
       return code;
     } catch (error) {
       console.log("Failed to create code", error);
+      return undefined;
     }
   };
 
@@ -57,7 +58,9 @@ export const DriverCodeScreen = () => {
         setCode(driverCodeData.code);
       } else {
         const code = await createCode();
-        setCode(code);
+        if (code) {
+          setCode(code);
+        }
       }
     } catch (error) {
       console.log("Failed to load code", error);

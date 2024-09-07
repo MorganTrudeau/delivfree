@@ -10,6 +10,58 @@ import { Vendor, VENDOR_DOMAIN } from "delivfree";
 import { updateVendor } from "./vendors";
 import { navigationRef } from "app/navigators";
 
+export const getCustomer = async (
+  customer: string
+): Promise<Stripe.Customer> => {
+  const res = await functions().httpsCallable<
+    { customer: string },
+    Stripe.Customer
+  >("retrieveCustomer")({
+    customer,
+  });
+  return res.data;
+};
+
+export const retrieveCustomerPaymentMethods = async (
+  customer: string
+): Promise<Stripe.PaymentMethod[]> => {
+  const res = await functions().httpsCallable<
+    { customer: string },
+    Stripe.PaymentMethod[]
+  >("retrieveCustomerPaymentMethods")({
+    customer,
+  });
+  return res.data;
+};
+
+export const retrievePaymentMethod = async (
+  paymentMethod: string
+): Promise<Stripe.PaymentMethod> => {
+  const res = await functions().httpsCallable<
+    { paymentMethod: string },
+    Stripe.PaymentMethod
+  >("retrievePaymentMethod")({
+    paymentMethod,
+  });
+  return res.data;
+};
+
+export const attachPaymentMethod = async (
+  customer: string,
+  subscription: string,
+  paymentMethod: string
+): Promise<Stripe.PaymentMethod> => {
+  const res = await functions().httpsCallable<
+    { customer: string; paymentMethod: string; subscription: string },
+    Stripe.PaymentMethod
+  >("attachPaymentMethod")({
+    customer,
+    paymentMethod,
+    subscription,
+  });
+  return res.data;
+};
+
 export const getStripeAccountBalance = async (
   account: string
 ): Promise<Stripe.Balance> => {

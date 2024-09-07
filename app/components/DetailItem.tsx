@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, View } from "react-native";
+import { Pressable } from "react-native";
 import { Text } from "./Text";
 import { colors, spacing } from "app/theme";
 

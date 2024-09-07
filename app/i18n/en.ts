@@ -69,6 +69,7 @@ const en = {
     "auth_requires-recent-login": "Please try logging in again",
     "auth_network-request-failed": "Please check your internet and try again",
     "already-request-failed": "You've already created an account",
+    "invalid-credential": "Your email or password is incorrect",
     common: "Something went wrong. Please try again.",
   },
   loginScreen: {

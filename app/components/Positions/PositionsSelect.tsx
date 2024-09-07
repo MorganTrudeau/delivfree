@@ -25,39 +25,12 @@ export const PositionsSelect = ({
   const { maxFullTime, maxPartTime, filledFullTime, filledPartTime } =
     positions;
 
-  // const renderFullTimePrice = () => (
-  //   <Text size={"xs"}>
-  //     (Qty {maxFullTime}){" "}
-  //     {localizeCurrency(
-  //       (((fullTimeProduct.default_price as Stripe.Price)
-  //         .unit_amount as number) *
-  //         maxFullTime) /
-  //         100,
-  //       "USD"
-  //     )}
-  //     /Month
-  //   </Text>
-  // );
-
-  // const renderSurgePrice = () => (
-  //   <Text size={"xs"}>
-  //     (Qty {maxPartTime}){" "}
-  //     {localizeCurrency(
-  //       (((partTimeProduct.default_price as Stripe.Price)
-  //         .unit_amount as number) *
-  //         maxPartTime) /
-  //         100,
-  //       "USD"
-  //     )}
-  //     /Month
-  //   </Text>
-  // );
-
   return (
     <View style={style}>
       <View style={$item}>
         <Text preset="semibold">
-          {maxFullTime} Full time {pluralFormat("driver", maxFullTime)} per{" "}
+          {maxFullTime} Full time{" "}
+          {pluralFormat("independant contractor", maxFullTime)} per{" "}
           {maxFullTime * FULL_TIME_ORDERS} deliveries a day.
         </Text>
         {/* {renderFullTimePrice()} */}
@@ -70,7 +43,8 @@ export const PositionsSelect = ({
 
       <View style={[$item, { marginTop: spacing.sm }]}>
         <Text preset="semibold">
-          {maxPartTime} Part time {pluralFormat("driver", maxPartTime)} for{" "}
+          {maxPartTime} Part time{" "}
+          {pluralFormat("independant contractor", maxPartTime)} for{" "}
           {maxPartTime * PART_TIME_ORDERS} deliveries per half day. Covers 3
           half days a week of your choice.
         </Text>

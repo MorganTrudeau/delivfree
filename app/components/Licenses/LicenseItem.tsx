@@ -53,7 +53,21 @@ export const LicenseItem = ({
             license: licenseData,
             vendorLocation,
           });
+        } else {
+          return setState({
+            deleteLoading: false,
+            error: true,
+            license: licenseData,
+            vendorLocation: null,
+          });
         }
+      } else {
+        return setState({
+          deleteLoading: false,
+          error: true,
+          license: null,
+          vendorLocation: null,
+        });
       }
     });
   }, [licenseId]);
@@ -89,6 +103,10 @@ export const LicenseItem = ({
       Toast.show(translate("errors.common"));
     }
   };
+
+  if (error) {
+    return null;
+  }
 
   return (
     <View style={[$license, style]}>

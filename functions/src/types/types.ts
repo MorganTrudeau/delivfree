@@ -49,6 +49,9 @@ export type MenuCustomizationChoice = {
 export type MenuCustomization = {
   name: string;
   id: string;
+  type: "note" | "choices";
+  noteInstruction: string;
+  noteRequired: boolean;
   choices: MenuCustomizationChoice[];
   minChoices: string;
   maxChoices: string;
@@ -187,6 +190,7 @@ export type Driver = {
   referralCode: string;
   driversLicenseFront: string;
   driversLicenseBack: string;
+  criminalRecordCheck: string;
   vendors: string[];
   vendorLocations: string[];
   licenses: string[];
@@ -195,12 +199,14 @@ export type Driver = {
   pendingLicenses: string[];
   hasFreeSubscription?: boolean;
 };
-export type CheckoutItemCustomization = {
-  customization: string;
-  choice: MenuCustomizationChoice;
-  quantity: number;
-  text: string;
-};
+export type CheckoutItemCustomization =
+  | { type: "note"; text: string; customization: string }
+  | {
+      type: "choice";
+      customization: string;
+      choice: MenuCustomizationChoice;
+      quantity: number;
+    };
 export type CheckoutItem = {
   id: string;
   item: MenuItem;

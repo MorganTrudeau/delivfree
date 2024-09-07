@@ -12,6 +12,7 @@ import { borderRadius } from "app/theme/borderRadius";
 import { EmptyList } from "../EmptyList";
 import { useDimensions } from "app/hooks/useDimensions";
 import { Icon } from "../Icon";
+import { pluralFormat } from "app/utils/general";
 
 type Props = {
   positions: Positions[];
@@ -40,7 +41,7 @@ export const PositionsSearchList = ({
   );
 
   const renderEmpty = useCallback(
-    () => <EmptyList title="No positions in your area" />,
+    () => <EmptyList title="No available licenses in your area" />,
     []
   );
 
@@ -147,7 +148,7 @@ const PositionsItem = ({
             <Text preset="semibold" size={"md"}>
               {availableFullTime}
             </Text>{" "}
-            Full time positions
+            Full time {pluralFormat("license", availableFullTime)}
           </Text>
         )}
         {!!availablePartTime && (
@@ -155,7 +156,7 @@ const PositionsItem = ({
             <Text preset="semibold" size={"md"}>
               {availablePartTime}
             </Text>{" "}
-            Part time positions
+            Part time {pluralFormat("license", availablePartTime)}
           </Text>
         )}
       </View>

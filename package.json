@@ -93,6 +93,7 @@
     "crypto-browserify": "^3.12.0",
     "delivfree": "file:functions/src/types",
     "expo": "^51.0.22",
+    "expo-document-picker": "^12.0.2",
     "expo-font": "^12.0.9",
     "expo-image-picker": "^15.0.7",
     "expo-localization": "^15.0.3",

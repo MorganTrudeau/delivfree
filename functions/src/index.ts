@@ -215,27 +215,85 @@ export const onVendorWritten = onDocumentWritten(
       (dataAfter?.registration?.status === "approved" ||
         dataAfter?.registration?.status === "denied")
     ) {
-      // @todo send notification
-      // const notification = {
-      //   title: "New Vendor",
-      //   body: "Review the new vendor profile.",
-      // };
-      // const data = {
-      //   type: "new_vendor",
-      // };
-      // const collapseKey = "new_vendor";
-      // const link = `${ADMIN_DOMAIN}?route=vendors`;
-      // const payload = buildMessagePayload(
-      //   notification,
-      //   data,
-      //   collapseKey,
-      //   link
-      // );
-      // await sendAdminNotifications(payload);
-      // await sendEmailNotification({
-      //   ...notification,
-      //   to: ["info@delivfree.com"],
-      // });
+      const email = dataAfter.email;
+      const collapseKey = "registration_update";
+      const data = {
+        type: collapseKey,
+      };
+      let notification;
+
+      if (dataAfter.registration.status === "approved") {
+        notification = {
+          title: "Account approved",
+          body: "Visit the DelivFree app to get started.",
+        };
+      } else {
+        notification = {
+          title: "Account denied",
+          body: "Visit the DelivFree app or contact us for more information.",
+        };
+      }
+
+      const link = `${ADMIN_DOMAIN}`;
+      const payload = buildMessagePayload(
+        notification,
+        data,
+        collapseKey,
+        link
+      );
+      await sendAdminNotifications(payload);
+      await sendEmailNotification({
+        ...notification,
+        to: [email],
+      });
+    }
+
+    return true;
+  }
+);
+
+export const onDriverWritten = onDocumentWritten(
+  "Drivers/{id}",
+  async (event) => {
+    const dataBefore = event.data?.before as Driver | undefined;
+    const dataAfter = event.data?.after as Driver | undefined;
+
+    if (
+      dataBefore?.registration?.status === "pending" &&
+      (dataAfter?.registration?.status === "approved" ||
+        dataAfter?.registration?.status === "denied")
+    ) {
+      const email = dataAfter.email;
+      const collapseKey = "registration_update";
+      const data = {
+        type: collapseKey,
+      };
+      let notification;
+
+      if (dataAfter.registration.status === "approved") {
+        notification = {
+          title: "Account approved",
+          body: "Visit the DelivFree app to finish setting up your account.",
+        };
+      } else {
+        notification = {
+          title: "Account denied",
+          body: "Visit the DelivFree app or contact us for more information.",
+        };
+      }
+
+      const link = `${ADMIN_DOMAIN}`;
+      const payload = buildMessagePayload(
+        notification,
+        data,
+        collapseKey,
+        link
+      );
+      await sendAdminNotifications(payload);
+      await sendEmailNotification({
+        ...notification,
+        to: [email],
+      });
     }
 
     return true;

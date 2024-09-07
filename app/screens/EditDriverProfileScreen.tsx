@@ -9,6 +9,7 @@ import { StatusIndicator } from "app/components/StatusIndicator";
 import {
   $borderedArea,
   $flex,
+  $flexShrink,
   $formLabel,
   $input,
   $row,
@@ -32,10 +33,14 @@ import {
 import PhoneInput from "react-native-phone-number-input";
 import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { TermsAndConditionsDriver } from "app/components/TermsAndConditionsDriver";
+import { FileUpload } from "app/components/FileUpload";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const EditDriverProfileScreen = () => {
   const Alert = useAlert();
   const Toast = useToast();
+  const insets = useSafeAreaInsets();
 
   const termsModal = useRef<BottomSheetRef>(null);
   const lastNameInput = useRef<RNInput>(null);
@@ -70,6 +75,7 @@ export const EditDriverProfileScreen = () => {
       pendingLicenses: [],
       driversLicenseFront: "",
       driversLicenseBack: "",
+      criminalRecordCheck: "",
       referralCode: "",
     }
   );
@@ -87,6 +93,12 @@ export const EditDriverProfileScreen = () => {
     driverState.driversLicenseBack;
 
   const handleCreateDriver = useCallback(async () => {
+    if (!termsAccepted) {
+      return Alert.alert(
+        "Terms and conditions",
+        "Please review and accept the terms and conditions."
+      );
+    }
     if (!fieldsComplete) {
       return Alert.alert(
         "Form incomplete",
@@ -148,7 +160,13 @@ export const EditDriverProfileScreen = () => {
   );
 
   return (
-    <Screen preset={"scroll"} contentContainerStyle={$screen}>
+    <Screen
+      preset={"scroll"}
+      contentContainerStyle={[
+        $screen,
+        { paddingBottom: spacing.md + insets.bottom },
+      ]}
+    >
       <Card smallStyle={$flex}>
         <Text style={$header} preset={"heading"} weight={"bold"}>
           Driver profile
@@ -180,10 +198,7 @@ export const EditDriverProfileScreen = () => {
         <Text preset="formLabel" style={[$formLabel, $inputContainer]}>
           Address
         </Text>
-        <Pressable
-          onPress={() => addressSearch.current?.open()}
-          style={[$input, { paddingVertical: spacing.xs }]}
-        >
+        <Pressable onPress={() => addressSearch.current?.open()} style={$input}>
           <Text
             style={
               !driverState.location.address
@@ -212,8 +227,23 @@ export const EditDriverProfileScreen = () => {
           onFrontImageUploaded={updateState("driversLicenseFront")}
           onBackImageUploaded={updateState("driversLicenseBack")}
           style={$inputContainer}
-          driverId={driverState.id}
+          userId={authToken}
         />
+        <View style={$inputContainer}>
+          <Text preset="formLabel" style={$formLabel}>
+            Criminal record check document
+          </Text>
+          <FileUpload
+            label={
+              driverState.criminalRecordCheck ? "File uploaded" : "Upload file"
+            }
+            onFileUploaded={(criminalRecordCheck) =>
+              setDriverState((d) => ({ ...d, criminalRecordCheck }))
+            }
+            fileDest={`CriminalRecordChecks/${authToken}`}
+            fileMetadata={{ user: authToken }}
+          />
+        </View>
 
         {driver?.registration && (
           <View style={[$borderedArea, { marginTop: spacing.lg }]}>
@@ -251,7 +281,7 @@ export const EditDriverProfileScreen = () => {
               setTermsAccepted((s) => !s);
             }}
           />
-          <Text>
+          <Text style={[$flexShrink, { marginLeft: spacing.xs }]}>
             I agree to the DelivFree Canada Inc driver{" "}
             <Text
               onPress={() => termsModal.current?.snapToIndex(0)}
@@ -259,14 +289,13 @@ export const EditDriverProfileScreen = () => {
             >
               Terms and Conditions
             </Text>
-            .
           </Text>
         </View>
 
         <BottomSheet ref={termsModal}>
-          <View style={{ padding: spacing.md }}>
+          <BottomSheetScrollView style={{ padding: spacing.md }}>
             <TermsAndConditionsDriver />
-          </View>
+          </BottomSheetScrollView>
         </BottomSheet>
 
         <Button

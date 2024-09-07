@@ -88,6 +88,8 @@ export function firebaseAuthErrorToMessage(error: unknown) {
       return translate("errors.auth_network-request-failed");
     case "auth/provider-already-linked":
       return translate("errors.already-request-failed");
+    case "auth/invalid-credential":
+      return translate("errors.invalid-credential");
     default:
       return translate("errors.common");
   }

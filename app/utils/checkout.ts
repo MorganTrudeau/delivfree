@@ -1,5 +1,4 @@
-import { CheckoutItem } from "app/redux/reducers/checkoutCart";
-import { DeliveryInstructionsType, User } from "delivfree";
+import { CheckoutItem, DeliveryInstructionsType } from "delivfree";
 import Stripe from "stripe";
 
 export const calcCheckoutItemPrice = (item: CheckoutItem) =>
@@ -8,6 +7,9 @@ export const calcCheckoutItemPrice = (item: CheckoutItem) =>
 
 export const calcCheckoutItemCustomizationPrice = (item: CheckoutItem) =>
   item.customizations.reduce((acc, choice) => {
+    if (choice.type === "note") {
+      return acc;
+    }
     return acc + (Number(choice.choice.price) || 0) * choice.quantity;
   }, 0);
 
@@ -21,6 +23,7 @@ export const calcCheckoutOrderSubtotal = (items: CheckoutItem[]) => {
 export const getCheckoutItemCustomizationDesc = (item: CheckoutItem) =>
   item.customizations.length
     ? item.customizations
+        .filter((c) => c.type === "choice")
         .map((c) => `${c.choice.name} x ${c.quantity}`)
         .join(", ")
     : undefined;

@@ -13,6 +13,7 @@ import {
   MAX_CONTAINER_WIDTH,
 } from "app/components/styles";
 import { SubscriptionNotice } from "app/components/Subscription/SubscriptionNotice";
+import { MenusEnabledNotice } from "app/components/Tooltips/MenusEnabledTooltip";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
@@ -35,7 +36,7 @@ const TEST_CUSTOMERS = {
   d: "Rhonda Lee",
   e: "Grant Turner",
   f: "Tim Burnes",
-  g: "Sarah Vitton"
+  g: "Sarah Vitton",
 };
 const pickRandomCustomerId = () => {
   const keys = Object.keys(TEST_CUSTOMERS);
@@ -232,6 +233,7 @@ export const VendorHomeScreen = (props: HomeScreenProps) => {
       ]}
     >
       <SubscriptionNotice style={{ marginBottom: spacing.md }} />
+      <MenusEnabledNotice style={{ marginBottom: spacing.md }} />
       <PayoutsHeader vendor={vendor} style={$payouts} />
       <TaxRateSelect vendor={vendor} style={$taxRates} />
       <Text preset="heading">Today</Text>

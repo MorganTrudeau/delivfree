@@ -1,20 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { MenuCustomizationChoice, MenuItem } from "delivfree";
+import { CheckoutItem } from "delivfree";
 import { resetAppState } from "../resetAppState";
 
-export type CheckoutItemCustomization = {
-  customization: string;
-  choice: MenuCustomizationChoice;
-  quantity: number;
-  text: string;
-};
-export type CheckoutItem = {
-  id: string;
-  item: MenuItem;
-  quantity: number;
-  customizations: CheckoutItemCustomization[];
-};
 export type CheckoutOrderUpdate = {
   id: string;
   customer: string;
