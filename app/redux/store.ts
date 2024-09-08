@@ -29,7 +29,7 @@ import checkoutCart from "./reducers/checkoutCart";
 import driverClockIn from "./reducers/driverClockIn";
 
 const persistConfig = {
-  key: "4",
+  key: "5",
   storage: AsyncStorage,
   version: 0,
   tranforms: [userTransform],

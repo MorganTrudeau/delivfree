@@ -5,13 +5,16 @@ import React, {
   useCallback,
   useRef,
 } from "react";
-import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import moment, { MomentInput } from "moment";
 import { Calendar, type CalendarProps } from "react-native-calendars";
 import { Icon } from "../Icon";
 import { colors, spacing } from "app/theme";
 import { sizing } from "app/theme/sizing";
 import { isRTL } from "app/i18n";
+import { $borderBottomLight } from "../styles";
+import { Text } from "../Text";
+import { borderRadius } from "app/theme/borderRadius";
 
 type CalendarObject = {
   day: number; // day of month (1-31)
@@ -44,7 +47,6 @@ export const AppCalendar = ({
     () => selectedDate.format("YYYY-MM-DD"),
     [selectedDate]
   );
-  const localeMoment = useMemo(() => moment(formattedDate), [formattedDate]);
 
   useEffect(() => {
     if (!hasMounted.current) {
@@ -56,20 +58,6 @@ export const AppCalendar = ({
 
   const handleSetDate = () => {
     setDate(selectedDate.toDate());
-  };
-
-  const shouldSetDate = () => {
-    if (typeof dateSelectConfirmation === "function") {
-      return dateSelectConfirmation(selectedDate.toDate());
-    }
-    return true;
-  };
-
-  const submitDate = () => {
-    if (!shouldSetDate()) {
-      return;
-    }
-    handleSetDate();
   };
 
   const renderArrow = useCallback((dir: "left" | "right") => {
@@ -95,15 +83,19 @@ export const AppCalendar = ({
     return (
       <View
         style={[
-          global.row,
+          $borderBottomLight,
           {
             flexDirection: isRTL ? "row-reverse" : "row",
             justifyContent: "space-between",
+            marginBottom: spacing.xs,
           },
         ]}
       >
         <MonthArrow dir={"left"} onPress={onLeft} />
-        <Text style={[global.title, { color: colors.primary, margin: 10 }]}>
+        <Text
+          preset="semibold"
+          style={[global.title, { color: colors.primary, margin: 10 }]}
+        >
           {findMonthValue(month)}
         </Text>
         <MonthArrow dir={"right"} onPress={onRight} />
@@ -113,28 +105,6 @@ export const AppCalendar = ({
 
   return (
     <>
-      {showHeader && (
-        <View
-          style={[
-            global.row,
-            {
-              backgroundColor: colors.primary,
-              paddingHorizontal: spacing.lg,
-              paddingVertical: spacing.md,
-            },
-          ]}
-        >
-          <View>
-            <Text style={[global.textSmallWhite, { textAlign: "left" }]}>
-              {localeMoment.format("YYYY")}
-            </Text>
-            <Text style={[global.titleExtraLargeWhite, { textAlign: "left" }]}>
-              {localeMoment.format("ddd, MMMM D")}
-            </Text>
-          </View>
-        </View>
-      )}
-      {/** @ts-ignore */}
       <Calendar
         renderArrow={renderArrow}
         current={formattedDate}
@@ -143,6 +113,7 @@ export const AppCalendar = ({
         onDayPress={({ dateString }: CalendarObject) =>
           setSelectedDate(moment(dateString))
         }
+        markedDates={{ [formattedDate]: { selected: true } }}
         weekStyle={styles.weekStyle}
         customHeader={renderHeader}
         style={{
@@ -150,6 +121,7 @@ export const AppCalendar = ({
           width: "100%",
           maxWidth: 400,
           padding: 5,
+          borderRadius: borderRadius.md,
         }}
         findDayValue={findDayValue}
         findMonthValue={findMonthValue}
@@ -191,7 +163,7 @@ const MonthArrow = ({
   onPress: () => void;
 }) => {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       hitSlop={global.hitSlop}
       style={{ padding: 10 }}
@@ -201,7 +173,7 @@ const MonthArrow = ({
         color={colors.primary}
         size={sizing.md}
       />
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

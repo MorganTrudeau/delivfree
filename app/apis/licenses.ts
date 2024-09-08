@@ -39,26 +39,45 @@ export const listenToLicense = (
     .onSnapshot((doc) => onData(doc.data() as License | undefined));
 };
 
-export const listenToLicenses = (
-  onData: (licenses: { [id: string]: License }) => void,
-  params: { status?: Status; driver?: string; vendor?: string } = {}
-) => {
-  const { status, driver, vendor } = params;
+type LicenseQueryParams = {
+  status?: Status;
+  driver?: string;
+  vendor?: string;
+  vendorLocation?: string;
+};
+
+const buildLicensesQuery = (params: LicenseQueryParams = {}) => {
+  const { status, driver, vendor, vendorLocation } = params;
 
   let query: FirebaseFirestoreTypes.Query = firestore().collection("Licenses");
 
   if (status) {
     query = query.where("status", "==", status);
   }
-
   if (driver) {
     console.log("LOAD DRIVER", driver);
     query = query.where("driver", "==", driver);
   }
-
   if (vendor) {
     query = query.where("vendor", "==", vendor);
   }
+  if (vendorLocation) {
+    query = query.where("vendorLocation", "==", vendorLocation);
+  }
+
+  return query;
+};
+
+export const fetchLicenses = async (params: LicenseQueryParams = {}) => {
+  const snap = await buildLicensesQuery(params).get();
+  return snap.docs.map((doc) => doc.data() as License);
+};
+
+export const listenToLicenses = (
+  onData: (licenses: { [id: string]: License }) => void,
+  params: LicenseQueryParams = {}
+) => {
+  let query: FirebaseFirestoreTypes.Query = buildLicensesQuery(params);
 
   return query.onSnapshot((snap) => {
     const licenses = snap

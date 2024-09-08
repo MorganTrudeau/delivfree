@@ -1,6 +1,9 @@
 import { fetchDriver } from "app/apis/driver";
+import { fetchLicenses } from "app/apis/licenses";
 import { listenToOrders } from "app/apis/orders";
 import { Screen, Text } from "app/components";
+import { CalendarButton } from "app/components/Dates/CalendarButton";
+import { CalendarModal } from "app/components/Dates/CalendarModal";
 import { DateRangeSelect } from "app/components/Dates/DateRangeSelect";
 import { EmptyList } from "app/components/EmptyList";
 import { LoadingPlaceholder } from "app/components/LoadingPlaceholder";
@@ -11,11 +14,13 @@ import {
   $row,
   $screen,
 } from "app/components/styles";
+import { VendorLocationSelect } from "app/components/VendorLocation/VendorLocationSelect";
 import { AppStackScreenProps } from "app/navigators";
-import { spacing } from "app/theme";
+import { colors, spacing } from "app/theme";
+import { borderRadius } from "app/theme/borderRadius";
 import { DateFilter, getDateRangeByFilter } from "app/utils/dates";
 import { localizeCurrency, pluralFormat } from "app/utils/general";
-import { DateRange, Driver, Order } from "delivfree";
+import { DateRange, Driver, License, Order } from "delivfree";
 import moment from "moment";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, View } from "react-native";
@@ -23,33 +28,19 @@ import { FlatList, View } from "react-native";
 interface VendorTipsScreenProps extends AppStackScreenProps<"Tips"> {}
 
 export const VendorTipsScreen = (props: VendorTipsScreenProps) => {
-  const [{ dateFilter, dateRange }, setDateRangeFilter] = useState<{
-    dateFilter: DateFilter;
-    dateRange: DateRange;
-  }>({
-    dateFilter: "last7",
-    dateRange: getDateRangeByFilter("last7"),
-  });
+  const [date, setDate] = useState(moment().toDate());
+  const [selectedVendorLocation, setSelectedVendorLocation] = useState("");
 
-  const { startDate, endDate } = useMemo(
-    () => ({
-      startDate: moment(dateRange.start).valueOf(),
-      endDate: moment(dateRange.end).valueOf(),
-    }),
-    [dateRange]
-  );
-
-  const handleDateRangeChange = useCallback(
-    (_dateFilter: DateFilter, _dateRange: DateRange) => {
-      setDateRangeFilter({ dateFilter: _dateFilter, dateRange: _dateRange });
-    },
-    []
-  );
+  const handleChangeDate = (_date: Date) => {
+    setDate(_date);
+  };
 
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     setOrders([]);
+    const startDate = moment(date).startOf("day").valueOf();
+    const endDate = moment(date).endOf("day").valueOf();
     return listenToOrders(
       (orders) => {
         setOrders(orders);
@@ -57,9 +48,10 @@ export const VendorTipsScreen = (props: VendorTipsScreenProps) => {
       {
         startDate,
         endDate,
+        vendorLocation: selectedVendorLocation,
       }
     );
-  }, [startDate, endDate]);
+  }, [date, selectedVendorLocation]);
 
   const driverTipData = useMemo(() => {
     const map = orders.reduce(
@@ -89,28 +81,36 @@ export const VendorTipsScreen = (props: VendorTipsScreenProps) => {
     }) => {
       return (
         <DriverTipItem
+          vendorLocation={selectedVendorLocation}
           driver={item.driver}
           tips={item.tips}
           numOrders={item.numOrders}
         />
       );
     },
-    []
+    [selectedVendorLocation]
   );
 
   const renderEmpty = useCallback(
-    () => <EmptyList title={"No orders completed in this date range"} />,
+    () => <EmptyList title={"No orders completed on this day"} />,
     []
   );
 
   return (
     <Screen style={$screen} contentContainerStyle={$containerPadding}>
       <ScreenHeader title="Tips" />
-      <DateRangeSelect
-        dateFilter={dateFilter}
-        dateRange={dateRange}
-        onFilterByDate={handleDateRangeChange}
-        style={{ marginBottom: spacing.sm }}
+      <VendorLocationSelect
+        selectedLocationId={selectedVendorLocation}
+        onSelect={(vendorLocation) =>
+          setSelectedVendorLocation(vendorLocation.id)
+        }
+        style={{ alignSelf: "flex-start" }}
+      />
+      <CalendarButton
+        date={date}
+        setDate={handleChangeDate}
+        style={{ alignSelf: "flex-start", marginTop: spacing.sm }}
+        dayPressUpdates={true}
       />
       <FlatList
         data={driverTipData}
@@ -125,16 +125,23 @@ const DriverTipItem = React.memo(function DriverTipItem({
   driver,
   tips,
   numOrders,
+  vendorLocation,
 }: {
+  vendorLocation: string;
   driver: string;
   tips: number;
   numOrders: number;
 }) {
   const [driverData, setDriverData] = useState<Driver | null>();
+  const [positionType, setPositionType] = useState<"full-time" | "part-time">();
 
   const loadDriver = useCallback(async () => {
-    const data = await fetchDriver(driver);
-    setDriverData(data || null);
+    const _driverData = await fetchDriver(driver);
+    setDriverData(_driverData || null);
+    const _licences = await fetchLicenses({ driver, vendorLocation });
+    const _positionType =
+      _licences[0].fullTimePositions > 0 ? "full-time" : "part-time";
+    setPositionType(_positionType);
   }, [driver]);
 
   useEffect(() => {
@@ -142,6 +149,16 @@ const DriverTipItem = React.memo(function DriverTipItem({
   }, [loadDriver]);
 
   const tipAmount = useMemo(() => localizeCurrency(tips), [tips]);
+
+  const tipTopUp = useMemo(() => {
+    return Math.max(0, (positionType === "full-time" ? 24 : 12) * 7 - tips);
+  }, [positionType, numOrders, tips]);
+
+  const tipTopUpAmount = useMemo(() => localizeCurrency(tipTopUp), [tipTopUp]);
+  const tipTopUpTotal = useMemo(
+    () => localizeCurrency(tipTopUp + tips),
+    [tips, tipTopUp]
+  );
 
   return (
     <View style={[{ paddingVertical: spacing.sm }, $borderBottomLight]}>
@@ -160,6 +177,26 @@ const DriverTipItem = React.memo(function DriverTipItem({
         </Text>
         <Text preset="semibold"> • {tipAmount} Tips</Text>
       </View>
+      {!!tipTopUp && (
+        <View
+          style={{
+            borderWidth: 2,
+            borderColor: colors.primary,
+            borderRadius: borderRadius.md,
+            padding: spacing.xs,
+            alignSelf: "flex-start",
+            marginTop: spacing.xxs,
+          }}
+        >
+          <Text>
+            Tip Top-up: <Text preset="semibold">{tipTopUpAmount}</Text>
+          </Text>
+          <Text>
+            Total tips with top-up:{" "}
+            <Text preset="semibold">{tipTopUpTotal}</Text>
+          </Text>
+        </View>
+      )}
     </View>
   );
 });

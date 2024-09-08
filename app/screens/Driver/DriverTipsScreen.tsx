@@ -27,8 +27,8 @@ export const DriverTipsScreen = (props: DriverTipsScreenProps) => {
     dateFilter: DateFilter;
     dateRange: DateRange;
   }>({
-    dateFilter: "last7",
-    dateRange: getDateRangeByFilter("last7"),
+    dateFilter: "today",
+    dateRange: getDateRangeByFilter("today"),
   });
 
   const { startDate, endDate } = useMemo(

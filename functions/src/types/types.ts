@@ -100,7 +100,8 @@ export type GeoLocation = {
 export type DeliveryInstructionsType =
   | "meet-door"
   | "meet-outside"
-  | "meet-lobby";
+  | "meet-lobby"
+  | "other";
 export type DeliveryInstructions = {
   type: DeliveryInstructionsType;
   note: string;
@@ -249,6 +250,7 @@ export type Order = {
   driver: null | string;
   checkoutItems: CheckoutItem[];
   deliveryInstructions: DeliveryInstructions;
+  dropOffPicture?: {uri: string, width: number, height: number}
 };
 export type OrderCount = { count: number };
 export type Customer = {

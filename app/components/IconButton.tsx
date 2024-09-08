@@ -14,7 +14,7 @@ export const IconButton = ({ icon, size, color, ...rest }: Props) => {
 };
 
 const $button: ViewStyle = {
-  padding: spacing.xxxs,
+  padding: spacing.xxs,
   borderRadius: 5,
   borderWidth: StyleSheet.hairlineWidth,
   borderColor: colors.border,

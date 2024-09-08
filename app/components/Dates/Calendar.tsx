@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { Dates } from "./Dates";
 import { WeekDays } from "./Weekdays";
 
-type Props = {
+export type Props = {
   currentDate: Date;
   onDateChange: (date: Date) => void;
   markedDates?: {
