@@ -1,8 +1,5 @@
 import React, { forwardRef, useCallback, useState } from "react";
-import {
-  DeliveryInstructions,
-  DeliveryInstructionsType,
-} from "delivfree";
+import { DeliveryInstructions, DeliveryInstructionsType } from "delivfree";
 import { Pressable, View } from "react-native";
 import { Text } from "../Text";
 import { Toggle } from "../Toggle";
@@ -17,6 +14,7 @@ import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
 import { $flexRowBetween } from "../styles";
 import { borderRadius } from "app/theme/borderRadius";
 import { colors, spacing } from "app/theme";
+import { TextInput } from "../TextInput";
 
 interface Props {
   user: string;
@@ -35,7 +33,7 @@ const ManageDeliveryInstructions = ({
     );
 
   const updateType = (type: DeliveryInstructionsType) => () => {
-    setDeliveryInstructionsState((s) => ({ ...s, type }));
+    setDeliveryInstructionsState((s) => ({ ...s, type, note: "" }));
   };
 
   const handleUpdateDeliveryInstructions = useCallback(
@@ -75,6 +73,21 @@ const ManageDeliveryInstructions = ({
         enabled={deliveryInstructionsState.type === "meet-outside"}
         onPress={updateType("meet-outside")}
       />
+      <Option
+        title={getDeliveryInstructionsTitle("other")}
+        enabled={deliveryInstructionsState.type === "other"}
+        onPress={updateType("other")}
+      />
+      {deliveryInstructionsState.type === "other" && (
+        <TextInput
+          placeholder="Enter your delivery instructions..."
+          onChangeText={(note) =>
+            setDeliveryInstructionsState((s) => ({ ...s, note }))
+          }
+          style={{ marginTop: spacing.xs }}
+          value={deliveryInstructionsState.note}
+        />
+      )}
 
       <Button
         preset="reversed"

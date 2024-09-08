@@ -262,9 +262,12 @@ export const CheckoutForm = withStripe(function CheckoutForm({
 
                 <DetailItem
                   subtitle="Delivery instructions"
-                  title={getDeliveryInstructionsTitle(
-                    user?.deliveryInstructions?.type
-                  )}
+                  title={
+                    user?.deliveryInstructions?.note ||
+                    getDeliveryInstructionsTitle(
+                      user?.deliveryInstructions?.type
+                    )
+                  }
                   icon="account-outline"
                   onPress={handleChangeDeliveryInstructions}
                   style={{ borderBottomWidth: 0 }}
@@ -438,6 +441,7 @@ const CartItemsDropDown = ({
 const DetailItem = ({
   subtitle,
   title,
+  description,
   icon,
   onPress,
   style,
@@ -445,6 +449,7 @@ const DetailItem = ({
 }: {
   subtitle: string;
   title: string;
+  description?: string;
   icon: IconTypes;
   onPress?: () => void;
   style?: ViewStyle;
@@ -458,6 +463,11 @@ const DetailItem = ({
           {subtitle}
         </Text>
         <Text>{title}</Text>
+        {!!description && (
+          <Text style={{ color: colors.textDim }} size={"xs"}>
+            {description}
+          </Text>
+        )}
       </View>
       {RightComponent}
     </Pressable>

@@ -38,6 +38,8 @@ export const getDeliveryInstructionsTitle = (
       return "Meet in lobby";
     case "meet-outside":
       return "Meet outside";
+    case "other":
+      return "Other";
     default:
       return "Meet at door";
   }

@@ -23,6 +23,7 @@ import { sizing } from "app/theme/sizing";
 import { ImageStyle } from "react-native-fast-image";
 import { AdBanner } from "app/components/AdBanner";
 import { useIsFocused } from "@react-navigation/native";
+import { CustomerOrderTracker } from "app/components/Orders/CustomerOrderTracker";
 
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
@@ -102,6 +103,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
   const ListHeader = useMemo(
     () => (
       <View style={$listHeader}>
+        <CustomerOrderTracker style={$orderTracker} />
         {!!activeUser?.location?.address && (
           <Pressable
             style={$location}
@@ -165,3 +167,4 @@ const $emptyList: ViewStyle = {
 const $emptyIcon: ViewStyle = { marginBottom: spacing.xs };
 const $adBanner: ImageStyle = { marginTop: spacing.md };
 const $listHeader: ViewStyle = { paddingBottom: spacing.xl };
+const $orderTracker: ViewStyle = { marginBottom: spacing.md};

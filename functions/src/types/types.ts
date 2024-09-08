@@ -100,7 +100,8 @@ export type GeoLocation = {
 export type DeliveryInstructionsType =
   | "meet-door"
   | "meet-outside"
-  | "meet-lobby";
+  | "meet-lobby"
+  | "other";
 export type DeliveryInstructions = {
   type: DeliveryInstructionsType;
   note: string;

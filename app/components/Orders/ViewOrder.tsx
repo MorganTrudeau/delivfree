@@ -28,6 +28,7 @@ import { CheckoutTotals } from "../CheckoutCart/CheckoutTotals";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useDimensions } from "app/hooks/useDimensions";
 import { ImageViewer, ImageViewerRef } from "../ImageViewer";
+import { getDeliveryInstructionsTitle } from "app/utils/checkout";
 
 type Props = { order: Order };
 
@@ -83,6 +84,15 @@ const ViewOrder = ({ order }: Props) => {
           value={
             (customer?.callingCode || "") + (customer?.phoneNumber || "") ||
             "No phone number"
+          }
+        />
+      </LoadingPlaceholder>
+      <LoadingPlaceholder loading={!customer}>
+        <DetailItem
+          title={"Delivery Instructions"}
+          value={
+            customer?.deliveryInstructions?.note ||
+            getDeliveryInstructionsTitle(customer?.deliveryInstructions?.type)
           }
         />
       </LoadingPlaceholder>

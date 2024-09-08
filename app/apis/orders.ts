@@ -12,6 +12,28 @@ export const createPendingOrder = (order: Order) => {
   return firestore().collection("PendingOrders").doc(order.id).set(order);
 };
 
+export const listenToActiveCustomerOrder = (
+  user: string,
+  onData: (order: Order | undefined) => void
+) => {
+  return firestore()
+    .collection("Orders")
+    .where("customer", "==", user)
+    .where("status", "!=", "complete")
+    .onSnapshot(
+      (snap) => {
+        console.log("SNAP", snap);
+        const order = snap?.docs[0]
+          ? (snap.docs[0].data() as Order)
+          : undefined;
+        onData(order);
+      },
+      (error) => {
+        console.log("listenToActiveCustomerOrder error", error);
+      }
+    );
+};
+
 export type OrderListenerParams = {
   driver?: string;
   vendorLocation?: string;

@@ -49,7 +49,7 @@ export const LicenseApplication = ({
   );
 
   const estimatedRevenue = useMemo(
-    () => localizeCurrency(fullTime * 4000 + partTime * 2000, "CAD"),
+    () => localizeCurrency(fullTime * 4000 + partTime * 1008, "CAD"),
     [fullTime, partTime]
   );
 
