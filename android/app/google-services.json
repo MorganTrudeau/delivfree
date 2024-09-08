@@ -61,25 +61,6 @@
           "other_platform_oauth_client": []
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1045793418822:android:68e4e20d4087e20ae6e447",
-        "android_client_info": {
-          "package_name": "com.delivfree.vendor"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAsJH5dbw2NqTUYFQivc3GBVlM24LnEkrA"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
     }
   ],
   "configuration_version": "1"
