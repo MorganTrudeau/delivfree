@@ -10,12 +10,19 @@ def node_require(script)
     )", __dir__]).strip
 end
 
+project 'delivfree',
+    'Debug' => :debug,
+    'Debug Vendor' => :debug,
+    'Release' => :release,
+    'Release Vendor' => :release
+
 # Use it to require both react-native's and this package's scripts:
 node_require('react-native/scripts/react_native_pods.rb')
 node_require('react-native-permissions/scripts/setup.rb')
 
 platform :ios, 13.4
 prepare_react_native_project!
+
 
 setup_permissions([
   # 'AppTrackingTransparency',

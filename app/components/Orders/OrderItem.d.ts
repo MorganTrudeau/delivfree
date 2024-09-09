@@ -11,7 +11,7 @@ export type Props = {
   changeOrderStatus: (orderId: string, status: OrderStatus) => void;
   driverName: string;
   onViewCustomer: (customer: Customer) => void;
-  onOrderCompleted: (order: Order) => void;
+  onOrderCompleted?: (order: Order) => void;
 };
 
 export type OrderItem = React.FC<Props>;

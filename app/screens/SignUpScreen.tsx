@@ -65,8 +65,7 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
   const continueAsGuest = async () => {
     try {
       setGuestLoading(true);
-      const token = await auth().signInAnonymously();
-      console.log(token);
+      await auth().signInAnonymously();
       logAnalytics(`sign_up_guest`);
       setGuestLoading(false);
     } catch (error) {

@@ -1,7 +1,8 @@
 import * as admin from "firebase-admin";
 import { BaseMessage } from "firebase-admin/lib/messaging/messaging-api";
-import { Driver, Order, VENDOR_DOMAIN, Vendor } from "../types";
+import { Driver, Order, User, VENDOR_DOMAIN, Vendor } from "../types";
 import { sendEmailNotification } from "./email";
+import { formatOrderEmail } from "./orders";
 
 const webpushImage = "";
 
@@ -84,6 +85,43 @@ export async function sendAdminNotifications(payload: BaseMessage) {
   return sendNotifications(adminIds, payload);
 }
 
+export async function sendOrderArrivedNotification(order: Order) {
+  const userDoc = await admin
+    .firestore()
+    .collection("Users")
+    .doc(order.customer)
+    .get();
+  const user = userDoc.data() as User | undefined;
+
+  if (!user) {
+    return true;
+  }
+
+  const userNotification = {
+    title: "Order Arrived",
+    body: `Hope you're hungry. Your order is here!`,
+  };
+  const userData = {
+    orderId: order.id,
+    type: "order_arrived",
+  };
+  const userCollapseKey = "orderArrived";
+  const userLink = `${VENDOR_DOMAIN}`;
+  const userPayload = buildMessagePayload(
+    userNotification,
+    userData,
+    userCollapseKey,
+    userLink
+  );
+  await sendNotifications([user.id], userPayload);
+  await sendEmailNotification({
+    ...userNotification,
+    to: [user.email],
+  });
+
+  return true;
+}
+
 export async function sendNewOrderNotification(order: Order) {
   const vendorDoc = await admin
     .firestore()
@@ -98,22 +136,62 @@ export async function sendNewOrderNotification(order: Order) {
 
   const vendorOwners = vendor.users;
 
-  const notification = {
+  const vendorNotification = {
     title: "New Order",
     body: `An new order has been placed`,
   };
-  const data = {
+  const vendorData = {
     orderId: order.id,
     type: "order_created",
   };
-  const collapseKey = "orderCreated";
-  const link = `${VENDOR_DOMAIN}?route=orders`;
-  const payload = buildMessagePayload(notification, data, collapseKey, link);
-  await sendNotifications(vendorOwners, payload);
+  const vendorCollapseKey = "orderCreated";
+  const vendorLink = `${VENDOR_DOMAIN}?route=orders`;
+  const vendorPayload = buildMessagePayload(
+    vendorNotification,
+    vendorData,
+    vendorCollapseKey,
+    vendorLink
+  );
+  await sendNotifications(vendorOwners, vendorPayload);
   await sendEmailNotification({
-    ...notification,
+    ...vendorNotification,
     to: [vendor.email],
   });
+
+  const userDoc = await admin
+    .firestore()
+    .collection("Users")
+    .doc(order.customer)
+    .get();
+  const user = userDoc.data() as User | undefined;
+
+  if (!user) {
+    return true;
+  }
+
+  const userNotification = {
+    title: "Order Placed",
+    body: `Your order is now in progress`,
+  };
+  const userData = {
+    orderId: order.id,
+    type: "new_order",
+  };
+  const userCollapseKey = "orderCreated";
+  const userLink = `${VENDOR_DOMAIN}?route=orders`;
+  const userPayload = buildMessagePayload(
+    userNotification,
+    userData,
+    userCollapseKey,
+    userLink
+  );
+  await sendNotifications([user.id], userPayload);
+  await sendEmailNotification({
+    title: "Order Placed",
+    html: formatOrderEmail(order.checkoutItems),
+    to: [user.email],
+  });
+
   return true;
 }
 

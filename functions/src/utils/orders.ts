@@ -2,6 +2,66 @@ import { getTodaysDate } from ".";
 import { DriverClockIn, Order } from "../types";
 import * as admin from "firebase-admin";
 
+export const formatOrderEmail = (checkoutItems: Order["checkoutItems"]) => {
+  const formatCustomizations = (
+    customizations: Order["checkoutItems"][number]["customizations"]
+  ) => {
+    return customizations
+      .map((c) => {
+        if (c.type === "note") {
+          return `<p><${c.text}</p>`;
+        } else if (c.type === "choice") {
+          const price = (Number(c.choice.price) * c.quantity).toLocaleString(
+            undefined,
+            {
+              style: "currency",
+              currency: "CAD",
+              // @ts-ignore
+              currencyDisplay: "narrowSymbol", // This fails on some OS
+            }
+          );
+          return `<p>${c.choice.name} (x${c.quantity}) ${price}</p>`;
+        }
+        return "";
+      })
+      .join("");
+  };
+
+  const orderItems = checkoutItems
+    .map((item) => {
+      const price = (Number(item.item.price) * item.quantity).toLocaleString(
+        undefined,
+        {
+          style: "currency",
+          currency: "CAD",
+          // @ts-ignore
+          currencyDisplay: "narrowSymbol", // This fails on some OS
+        }
+      );
+
+      return `<div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+        <img src="${item.item.image}" alt="${
+        item.item.name
+      }" style="width: 100px; height: 100px; object-fit: cover;">
+        <h2 style="margin: 0;">${item.item.name}</h2>
+        <span style="color: #666;">Qty: ${item.quantity}</span>
+        <h4>Price: $${price}</h4>
+        ${formatCustomizations(item.customizations)}
+      </div>`;
+    })
+    .join("");
+
+  return `
+    <div style="font-family: Arial, sans-serif;">
+      <h1>Your Order</h1>
+      ${orderItems}
+      <footer style="margin-top: 20px; font-size: 12px; color: #666;">
+        Thank you for your order!
+      </footer>
+    </div>
+  `;
+};
+
 export const assignOrderDriver = async (order: Order) => {
   const activeDriverSnap = await admin
     .firestore()

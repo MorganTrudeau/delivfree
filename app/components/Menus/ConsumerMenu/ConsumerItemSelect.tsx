@@ -348,4 +348,5 @@ export const ConsumerItemSelectModal = forwardRef<
 const $image: ImageStyle = {
   aspectRatio: 1.5,
   borderRadius: borderRadius.md,
+  alignSelf: 'center'
 };

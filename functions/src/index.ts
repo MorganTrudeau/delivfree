@@ -15,6 +15,7 @@ import {
   sendAdminNotifications,
   sendDriverLicenseApprovedNotification,
   sendNewOrderNotification,
+  sendOrderArrivedNotification,
   sendOrderDriverAssignedNotification,
   sendVendorPositionFilledNotification,
 } from "./utils/notifications";
@@ -178,6 +179,14 @@ export const onOrderWritten = onDocumentWritten(
         await sendOrderDriverAssignedNotification(orderAfter);
       } catch (error) {
         console.log("Failed to notify driver of new order", error);
+      }
+    }
+
+    if (orderBefore?.status === "pending" && orderAfter?.status === "arrived") {
+      try {
+        await sendOrderArrivedNotification(orderAfter);
+      } catch (error) {
+        console.log("Failed to notify order arrived", error);
       }
     }
 
@@ -685,23 +694,25 @@ export const createLicense = onCall(
 
 export const sendEmail = onCall(
   {},
-  (
+  async (
     request: CallableRequest<{
       title: string;
       body: string;
-      from: string;
+      from?: string;
       to: string[];
+      html?: string;
     }>
   ) => {
     checkAuthentication(request.auth?.uid);
 
-    const { title, body, from, to } = request.data;
+    const { title, body, from, to, html } = request.data;
 
-    return sendEmailNotification({
+    await sendEmailNotification({
       title,
       body,
       from,
       to,
+      html,
     });
   }
 );

@@ -13,6 +13,10 @@ export const UserTypeManager = () => {
     shallowEqual
   );
   const dispatch = useAppDispatch();
+
+  const userDriver = !!user?.driver;
+  const userVendor = !!user?.vendor;
+
   useEffect(() => {
     let newUserType: typeof userType;
 
@@ -23,17 +27,17 @@ export const UserTypeManager = () => {
     } else if (appType === "ADMIN") {
       newUserType = "admin";
     } else if (appType === "VENDOR") {
-      if (user?.driver) {
+      if (userDriver) {
         newUserType = "driver";
-      } else if (user?.vendor) {
+      } else if (userVendor) {
         newUserType = "vendor";
       }
     }
-    console.log("NEW USER", newUserType, userType);
+
     if (newUserType !== userType) {
       dispatch(setUserType(newUserType));
     }
-  }, [user, userType]);
+  }, [userDriver, userVendor, userType]);
 
   return null;
 };

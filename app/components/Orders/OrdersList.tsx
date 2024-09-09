@@ -21,7 +21,7 @@ type Props = {
   orders: Order[];
   loadOrders: () => void;
   onOrderPress: (order: Order) => void;
-  onOrderCompleted: (order: Order) => void;
+  onOrderCompleted?: (order: Order) => void;
 } & Partial<FlatListProps<Order>>;
 
 export const OrdersList = ({
@@ -96,8 +96,8 @@ export const OrdersList = ({
         driverId,
         changeOrderStatus: updateOrderStatus,
         driverName: order.driver
-          ? `${vendorDrivers[order.driver]?.firstName} ${
-              vendorDrivers[order.driver]?.lastName
+          ? `${vendorDrivers[order.driver]?.firstName || ""} ${
+              vendorDrivers[order.driver]?.lastName || ""
             }`
           : "Unassigned",
         onViewCustomer: (customer: Customer) => {
