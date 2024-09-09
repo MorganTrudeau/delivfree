@@ -2,17 +2,14 @@ import { defineString } from "firebase-functions/params";
 
 const mailgunApiKey = defineString("MAILGUN_API_KEY");
 
-export const sendEmailNotification = async ({
-  title,
-  body,
-  to,
-  from,
-}: {
-  from?: string;
-  to: string[];
-  title: string;
-  body: string;
-}) => {
+export const sendEmailNotification = async (
+  data: {
+    from?: string;
+    to: string[];
+    title: string;
+  } & ({ html: string } | { body: string })
+) => {
+  const { title, to, from } = data;
   const formData = await import("form-data");
   const Mailgun = (await import("mailgun.js")).default;
   const mailgun = new Mailgun(formData);
@@ -20,14 +17,20 @@ export const sendEmailNotification = async ({
     username: "api",
     key: mailgunApiKey.value(),
   });
+
+  const baseParams = {
+    from: from || "DelivFree Canada Inc. <admin@delivfree.com>",
+    to: to,
+    subject: title,
+  };
+
+  const params =
+    "body" in data
+      ? { ...baseParams, text: data.body }
+      : { ...baseParams, html: data.html };
+
   mg.messages
-    .create("delivfree.com", {
-      from: from || "DelivFree Canada Inc. <admin@delivfree.com>",
-      to: to,
-      subject: title,
-      text: body,
-      // html: "<h1>Testing some Mailgun awesomeness!</h1>",
-    })
+    .create("delivfree.com", params)
     .then((msg) => console.log(msg)) // logs response data
     .catch((err) => console.log(err)); // logs any error
 };

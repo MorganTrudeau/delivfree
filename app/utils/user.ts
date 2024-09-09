@@ -12,13 +12,14 @@ export const createUserKeywords = (username: string) => {
 };
 
 export const isUserRegistered = (user: User | null | undefined) => {
-  if (!user || !(user.firstName && user.lastName)) {
+  if (!user) {
     return false;
   }
   if (Config.REACT_NATIVE_APP === "ADMIN") {
     return !!user.admin;
   } else if (Config.REACT_NATIVE_APP === "VENDOR") {
     return !!user.vendor?.ids || !!user.driver?.id;
+  } else {
+    return !!user.consumer;
   }
-  return !!user.consumer;
 };

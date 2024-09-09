@@ -24,7 +24,6 @@ import { ImageStyle } from "react-native-fast-image";
 import { AdBanner } from "app/components/AdBanner";
 import { useIsFocused } from "@react-navigation/native";
 import { CustomerOrderTracker } from "app/components/Orders/CustomerOrderTracker";
-
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
 export const HomeScreen = (props: HomeScreenProps) => {
@@ -39,6 +38,22 @@ export const HomeScreen = (props: HomeScreenProps) => {
   );
 
   const isFocused = useIsFocused();
+
+  // useEffect(() => {
+  //   const sendEmail = async () => {
+  //     try {
+  //       await functions().httpsCallable("sendEmail")({
+  //         title: "HTML email",
+  //         html: `<div><h1>Hello World</h1></div>`,
+  //         to: ["morgantrudeau@gmail.com"],
+  //       });
+  //       console.log("SENT");
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   sendEmail();
+  // }, []);
 
   useEffect(() => {
     if (isFocused && !activeUser?.location) {
@@ -167,4 +182,4 @@ const $emptyList: ViewStyle = {
 const $emptyIcon: ViewStyle = { marginBottom: spacing.xs };
 const $adBanner: ImageStyle = { marginTop: spacing.md };
 const $listHeader: ViewStyle = { paddingBottom: spacing.xl };
-const $orderTracker: ViewStyle = { marginBottom: spacing.md};
+const $orderTracker: ViewStyle = { marginBottom: spacing.md };

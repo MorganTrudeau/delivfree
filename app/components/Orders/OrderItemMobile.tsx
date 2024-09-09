@@ -108,19 +108,21 @@ export const OrderItemMobile = ({
                   text="Complete"
                   onPress={() => {
                     changeOrderStatus(order.id, "complete");
-                    onOrderCompleted(order);
+                    onOrderCompleted && onOrderCompleted(order);
                   }}
                   style={{ marginRight: spacing.sm }}
                 />
               </View>
-              {order.status === "complete" && !order.dropOffPicture && (
-                <IconButton
-                  icon={"camera"}
-                  onPress={() => {
-                    onOrderCompleted(order);
-                  }}
-                />
-              )}
+              {order.status === "complete" &&
+                !order.dropOffPicture &&
+                onOrderCompleted && (
+                  <IconButton
+                    icon={"camera"}
+                    onPress={() => {
+                      onOrderCompleted(order);
+                    }}
+                  />
+                )}
             </View>
           )}
         </View>
