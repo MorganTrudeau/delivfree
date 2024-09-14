@@ -14,7 +14,7 @@ export const listenToVendor = (
   return firestore()
     .collection("Vendors")
     .doc(vendor)
-    .onSnapshot((doc) => onData(doc.data() as Vendor | undefined));
+    .onSnapshot((doc) => onData(doc?.data() as Vendor | undefined));
 };
 
 export const fetchVendor = async (vendor: string) => {

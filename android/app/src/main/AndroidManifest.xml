@@ -25,6 +25,6 @@
         <data android:scheme="delivfree" />
       </intent-filter>
     </activity>
-    <meta-data android:name="com.bugsnag.android.API_KEY" android:value="2727de78e97014a81b4dcada43321b1f" />
+    <meta-data android:name="com.bugsnag.android.API_KEY" android:value="18934277c12ec1730446633c2b309576" />
   </application>
 </manifest>

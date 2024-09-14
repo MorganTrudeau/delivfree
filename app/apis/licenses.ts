@@ -36,7 +36,7 @@ export const listenToLicense = (
   return firestore()
     .collection("Licenses")
     .doc(license)
-    .onSnapshot((doc) => onData(doc.data() as License | undefined));
+    .onSnapshot((doc) => onData(doc?.data() as License | undefined));
 };
 
 type LicenseQueryParams = {

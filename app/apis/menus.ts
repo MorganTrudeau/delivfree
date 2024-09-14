@@ -53,7 +53,7 @@ export const listenToMenuCustomizations = (
 
   return query.onSnapshot((snap) => {
     const menus = snap
-      ? snap.docs.map((doc) => doc.data() as MenuCustomization)
+      ? snap.docs.map((doc) => doc?.data() as MenuCustomization)
       : [];
     onData(menus);
   }, onError);

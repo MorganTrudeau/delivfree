@@ -28,10 +28,12 @@ export const listenToCustomers = (
   }
 
   return query.onSnapshot((snap) => {
-    const customers = snap.docs.reduce(
-      (acc, doc) => ({ ...acc, [doc.id]: doc.data() as Customer }),
-      {} as { [id: string]: Customer }
-    );
+    const customers = snap
+      ? snap.docs.reduce(
+          (acc, doc) => ({ ...acc, [doc.id]: doc.data() as Customer }),
+          {} as { [id: string]: Customer }
+        )
+      : {};
     onData(customers);
   });
 };
