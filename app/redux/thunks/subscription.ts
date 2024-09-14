@@ -15,7 +15,7 @@ export const listenToVendorSubscription = createAsyncThunk(
       .onSnapshot((doc) =>
         dispatch(
           setVendorSubscription(
-            (doc.data()?.subscription || null) as Stripe.Subscription | null
+            (doc?.data()?.subscription || null) as Stripe.Subscription | null
           )
         )
       );
@@ -31,7 +31,7 @@ export const listenToDriverSubscription = createAsyncThunk(
       .onSnapshot((doc) =>
         dispatch(
           setDriverSubscription(
-            (doc.data()?.subscription || null) as Stripe.Subscription | null
+            (doc?.data()?.subscription || null) as Stripe.Subscription | null
           )
         )
       );

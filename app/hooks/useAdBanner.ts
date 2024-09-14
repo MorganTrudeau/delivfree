@@ -17,13 +17,15 @@ export const useAdBanner = () => {
     return firestore()
       .collection("AdBanners")
       .onSnapshot((adSnap) => {
-        const _ads = adSnap.docs.reduce(
-          (acc, doc) => ({
-            ...acc,
-            [doc.id]: doc.data(),
-          }),
-          {} as AdCache
-        );
+        const _ads = adSnap
+          ? adSnap.docs.reduce(
+              (acc, doc) => ({
+                ...acc,
+                [doc.id]: doc.data(),
+              }),
+              {} as AdCache
+            )
+          : {};
         getAdBannerCache().setAdCache(_ads);
         setAds(_ads);
       });
