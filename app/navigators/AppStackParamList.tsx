@@ -43,4 +43,6 @@ export type AppStackParamList = {
   Payment: { clientSecret: string };
   CheckoutCart: undefined;
   Tips: undefined;
+  VendorTermsAndConditions: undefined;
+  ConsumerTermsAndConditions: undefined;
 };

@@ -256,7 +256,6 @@ export const VendorStack = () => {
           options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
         <Stack.Screen name="WebView" component={Screens.WebViewScreen} />
-    
       </>
     );
   };
@@ -283,6 +282,10 @@ export const VendorStack = () => {
     <Stack.Navigator screenOptions={screenOptions}>
       {renderStack()}
       <Stack.Screen
+        name="VendorTermsAndConditions"
+        component={Screens.VendorTermsScreen}
+      />
+      <Stack.Screen
         name="PrivacyPolicy"
         component={Screens.PrivacyPolicyScreen}
       />
@@ -294,10 +297,10 @@ export const VendorStack = () => {
         }}
       />
       <Stack.Screen name="About" component={Screens.AboutScreen} />
-        <Stack.Screen
-          name="DeleteAccount"
-          component={Screens.DeleteAccountScreen}
-        />
+      <Stack.Screen
+        name="DeleteAccount"
+        component={Screens.DeleteAccountScreen}
+      />
     </Stack.Navigator>
   );
 };

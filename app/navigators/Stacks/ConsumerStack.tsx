@@ -97,12 +97,19 @@ export const ConsumerStack = () => {
     <Stack.Navigator screenOptions={screenOptions}>
       {renderStack()}
       <Stack.Screen
+        name="ConsumerTermsAndConditions"
+        component={Screens.ConsumerTermsScreen}
+        options={{ headerRight: undefined }}
+      />
+      <Stack.Screen
         name="PrivacyPolicy"
         component={Screens.PrivacyPolicyScreen}
+        options={{ headerRight: undefined }}
       />
       <Stack.Screen
         name="ChangePassword"
         component={Screens.ForgotPasswordScreen}
+        options={{ headerRight: undefined }}
       />
     </Stack.Navigator>
   );
