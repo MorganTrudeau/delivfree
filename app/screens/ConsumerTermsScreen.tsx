@@ -129,7 +129,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <ol style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}>
+        <ol style={{ marginTop: 0, marginBottom: 0 }}>
           <li
             dir="ltr"
             style={{
@@ -144,7 +144,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "1.6500000000000021pt",
               paddingLeft: "8.3pt",
             }}
             aria-level={1}
@@ -179,8 +178,15 @@ export const ConsumerTermsScreen = ({
 
         <br />
 
-        <div dir="ltr" style={{ marginLeft: "49.1pt" }}>
-          <table style={{ border: "none", borderCollapse: "collapse" }}>
+        <div dir="ltr">
+          <table
+            style={{
+              border: "none",
+              borderCollapse: "collapse",
+              tableLayout: "fixed",
+              width: "100%",
+            }}
+          >
             <tbody>
               <tr style={{ height: "57pt" }}>
                 <td
@@ -192,6 +198,7 @@ export const ConsumerTermsScreen = ({
                     verticalAlign: "top",
                     overflow: "hidden",
                     overflowWrap: "break-word",
+                    width: "25%",
                   }}
                 >
                   <p
@@ -683,7 +690,7 @@ export const ConsumerTermsScreen = ({
             <br />
           </span>
         </p>
-        <div dir="ltr" style={{ marginLeft: "49.1pt" }}>
+        <div dir="ltr">
           <table style={{ border: "none", borderCollapse: "collapse" }}>
             <tbody>
               <tr style={{ height: "57pt" }}>
@@ -696,6 +703,7 @@ export const ConsumerTermsScreen = ({
                     verticalAlign: "top",
                     overflow: "hidden",
                     overflowWrap: "break-word",
+                    width: "25%",
                   }}
                 >
                   <p
@@ -776,7 +784,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <div dir="ltr" style={{ marginLeft: "49.1pt" }}>
+        <div dir="ltr">
           <table style={{ border: "none", borderCollapse: "collapse" }}>
             <tbody>
               <tr style={{ height: "44.95pt" }}>
@@ -789,6 +797,7 @@ export const ConsumerTermsScreen = ({
                     verticalAlign: "top",
                     overflow: "hidden",
                     overflowWrap: "break-word",
+                    width: "25%",
                   }}
                 >
                   <p
@@ -1728,7 +1737,7 @@ export const ConsumerTermsScreen = ({
             <br />
           </span>
         </p>
-        <div dir="ltr" style={{ marginLeft: "49.1pt" }}>
+        <div dir="ltr">
           <table style={{ border: "none", borderCollapse: "collapse" }}>
             <tbody>
               <tr style={{ height: "70.5pt" }}>
@@ -1741,6 +1750,7 @@ export const ConsumerTermsScreen = ({
                     verticalAlign: "top",
                     overflow: "hidden",
                     overflowWrap: "break-word",
+                    width: "25%",
                   }}
                 >
                   <p
@@ -1822,7 +1832,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <div dir="ltr" style={{ marginLeft: "49.1pt" }}>
+        <div dir="ltr">
           <table style={{ border: "none", borderCollapse: "collapse" }}>
             <tbody>
               <tr style={{ height: "44.95pt" }}>
@@ -1835,6 +1845,7 @@ export const ConsumerTermsScreen = ({
                     verticalAlign: "top",
                     overflow: "hidden",
                     overflowWrap: "break-word",
+                    width: "25%",
                   }}
                 >
                   <p
@@ -1998,10 +2009,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <ol
-          style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-          start={2}
-        >
+        <ol style={{ marginTop: 0, marginBottom: 0 }} start={2}>
           <li
             dir="ltr"
             style={{
@@ -2016,7 +2024,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "1.6500000000000021pt",
               paddingLeft: "8.3pt",
             }}
             aria-level={1}
@@ -2049,7 +2056,7 @@ export const ConsumerTermsScreen = ({
           </li>
         </ol>
         <br />
-        <ol style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}>
+        <ol style={{ marginTop: 0, marginBottom: 0 }}>
           <li
             dir="ltr"
             style={{
@@ -2064,8 +2071,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2113,8 +2118,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2166,8 +2169,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2219,8 +2220,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2286,10 +2285,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <ol
-          style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-          start={3}
-        >
+        <ol style={{ marginTop: 0, marginBottom: 0 }} start={3}>
           <li
             dir="ltr"
             style={{
@@ -2304,7 +2300,7 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "1.6500000000000021pt",
+
               paddingLeft: "8.3pt",
             }}
             aria-level={1}
@@ -2393,7 +2389,7 @@ export const ConsumerTermsScreen = ({
           </span>
         </p>
         <br />
-        <ol style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}>
+        <ol style={{ marginTop: 0, marginBottom: 0 }}>
           <li
             dir="ltr"
             style={{
@@ -2408,8 +2404,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2460,8 +2454,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2512,8 +2504,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2561,10 +2551,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <ol
-          style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-          start={4}
-        >
+        <ol style={{ marginTop: 0, marginBottom: 0 }} start={4}>
           <li
             dir="ltr"
             style={{
@@ -2579,7 +2566,7 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "1.6500000000000021pt",
+
               paddingLeft: "8.3pt",
             }}
             aria-level={1}
@@ -2614,7 +2601,7 @@ export const ConsumerTermsScreen = ({
 
         <br />
 
-        <ol style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}>
+        <ol style={{ marginTop: 0, marginBottom: 0 }}>
           <li
             dir="ltr"
             style={{
@@ -2629,8 +2616,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2682,8 +2667,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2734,8 +2717,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2787,8 +2768,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -2820,9 +2799,7 @@ export const ConsumerTermsScreen = ({
                 the full price of the Order in the following cases:
               </span>
             </p>
-            <ol
-              style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-            >
+            <ol style={{ marginTop: 0, marginBottom: 0 }}>
               <li
                 dir="ltr"
                 style={{
@@ -3001,8 +2978,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3047,10 +3022,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <ol
-          style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-          start={5}
-        >
+        <ol style={{ marginTop: 0, marginBottom: 0 }} start={5}>
           <li
             dir="ltr"
             style={{
@@ -3065,7 +3037,7 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "1.6500000000000021pt",
+
               paddingLeft: "8.3pt",
             }}
             aria-level={1}
@@ -3100,7 +3072,7 @@ export const ConsumerTermsScreen = ({
 
         <br />
 
-        <ol style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}>
+        <ol style={{ marginTop: 0, marginBottom: 0 }}>
           <li
             dir="ltr"
             style={{
@@ -3115,8 +3087,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3170,8 +3140,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3213,10 +3181,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <ol
-          style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-          start={6}
-        >
+        <ol style={{ marginTop: 0, marginBottom: 0 }} start={6}>
           <li
             dir="ltr"
             style={{
@@ -3231,7 +3196,7 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "1.6500000000000021pt",
+
               paddingLeft: "8.3pt",
             }}
             aria-level={1}
@@ -3266,7 +3231,7 @@ export const ConsumerTermsScreen = ({
 
         <br />
 
-        <ol style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}>
+        <ol style={{ marginTop: 0, marginBottom: 0 }}>
           <li
             dir="ltr"
             style={{
@@ -3281,8 +3246,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3333,8 +3296,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3407,8 +3368,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3463,8 +3422,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3516,8 +3473,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3564,8 +3519,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3607,10 +3560,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <ol
-          style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-          start={7}
-        >
+        <ol style={{ marginTop: 0, marginBottom: 0 }} start={7}>
           <li
             dir="ltr"
             style={{
@@ -3625,7 +3575,7 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "1.6500000000000021pt",
+
               paddingLeft: "8.3pt",
             }}
             aria-level={1}
@@ -3660,7 +3610,7 @@ export const ConsumerTermsScreen = ({
 
         <br />
 
-        <ol style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}>
+        <ol style={{ marginTop: 0, marginBottom: 0 }}>
           <li
             dir="ltr"
             style={{
@@ -3675,8 +3625,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3724,8 +3672,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3779,8 +3725,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3822,10 +3766,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <ol
-          style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-          start={8}
-        >
+        <ol style={{ marginTop: 0, marginBottom: 0 }} start={8}>
           <li
             dir="ltr"
             style={{
@@ -3840,7 +3781,7 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "1.6500000000000021pt",
+
               paddingLeft: "8.3pt",
             }}
             aria-level={1}
@@ -3875,7 +3816,7 @@ export const ConsumerTermsScreen = ({
 
         <br />
 
-        <ol style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}>
+        <ol style={{ marginTop: 0, marginBottom: 0 }}>
           <li
             dir="ltr"
             style={{
@@ -3890,8 +3831,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3941,8 +3880,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -3973,6 +3910,16 @@ export const ConsumerTermsScreen = ({
                 All intellectual property rights regarding the software,
                 documentation or information used or developed by or on behalf
                 of DelivFree during the provision of the information society
+                services under these General Terms (incl. the DelivFree Food
+                Platform and any material uploaded therein) belong to DelivFree
+                (or, sometimes, to a limited extent, the Restaurant Operator).
+                The User shall not copy, modify, adapt, reverse-engineer,
+                decompile or otherwise discover the source code of the DelivFree
+                Food Platform or any other software used by DelivFree or extract
+                or use any data on the DelivFree Food Platform for commercial
+                purposes or any other purpose than ordering Meals. The User
+                shall use the DelivFree Food Platform solely for his/her
+                personal, non-commercial purposes.
               </span>
               <span
                 style={{
@@ -3993,46 +3940,7 @@ export const ConsumerTermsScreen = ({
             </p>
           </li>
         </ol>
-        <p
-          dir="ltr"
-          style={{
-            lineHeight: "1.4000000000000001",
-            marginLeft: "82pt",
-            marginRight: "11.8pt",
-            textAlign: "justify",
-            marginTop: "3.35pt",
-            marginBottom: "0pt",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "10pt",
-              fontFamily: "Arial,sans-serif",
-              color: "#000000",
-              backgroundColor: "transparent",
-              fontWeight: 400,
-              fontStyle: "normal",
-              fontVariant: "normal",
-              textDecoration: "none",
-              verticalAlign: "baseline",
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            services under these General Terms (incl. the DelivFree Food
-            Platform and any material uploaded therein) belong to DelivFree (or,
-            sometimes, to a limited extent, the Restaurant Operator). The User
-            shall not copy, modify, adapt, reverse-engineer, decompile or
-            otherwise discover the source code of the DelivFree Food Platform or
-            any other software used by DelivFree or extract or use any data on
-            the DelivFree Food Platform for commercial purposes or any other
-            purpose than ordering Meals. The User shall use the DelivFree Food
-            Platform solely for his/her personal, non-commercial purposes.
-          </span>
-        </p>
-        <ol
-          style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-          start={3}
-        >
+        <ol style={{ marginTop: 0, marginBottom: 0 }} start={3}>
           <li
             dir="ltr"
             style={{
@@ -4047,8 +3955,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -4096,8 +4002,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -4141,10 +4045,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <ol
-          style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-          start={9}
-        >
+        <ol style={{ marginTop: 0, marginBottom: 0 }} start={9}>
           <li
             dir="ltr"
             style={{
@@ -4159,7 +4060,7 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "1.6500000000000021pt",
+
               paddingLeft: "8.3pt",
             }}
             aria-level={1}
@@ -4194,7 +4095,7 @@ export const ConsumerTermsScreen = ({
 
         <br />
 
-        <ol style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}>
+        <ol style={{ marginTop: 0, marginBottom: 0 }}>
           <li
             dir="ltr"
             style={{
@@ -4209,8 +4110,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -4260,8 +4159,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -4309,8 +4206,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -4362,8 +4257,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "29.299999999999997pt",
-              paddingLeft: "16.700000000000003pt",
             }}
             aria-level={2}
           >
@@ -4405,10 +4298,7 @@ export const ConsumerTermsScreen = ({
         <p>
           <br />
         </p>
-        <ol
-          style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}
-          start={10}
-        >
+        <ol style={{ marginTop: 0, marginBottom: 0 }} start={10}>
           <li
             dir="ltr"
             style={{
@@ -4423,8 +4313,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "-3.8999999999999986pt",
-              paddingLeft: "13.850000000000001pt",
             }}
             aria-level={1}
           >
@@ -4456,7 +4344,7 @@ export const ConsumerTermsScreen = ({
           </li>
         </ol>
         <br />
-        <ol style={{ marginTop: 0, marginBottom: 0, paddingInlineStart: 48 }}>
+        <ol style={{ marginTop: 0, marginBottom: 0 }}>
           <li
             dir="ltr"
             style={{
@@ -4471,8 +4359,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "23.799999999999997pt",
-              paddingLeft: "22.200000000000003pt",
             }}
             aria-level={2}
           >
@@ -4520,8 +4406,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "23.799999999999997pt",
-              paddingLeft: "22.200000000000003pt",
             }}
             aria-level={2}
           >
@@ -4571,8 +4455,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "23.799999999999997pt",
-              paddingLeft: "22.200000000000003pt",
             }}
             aria-level={2}
           >
@@ -4582,7 +4464,7 @@ export const ConsumerTermsScreen = ({
                 lineHeight: "1.4000000000000001",
                 marginRight: "12.4pt",
                 textAlign: "justify",
-                marginTop: "10.55pt",
+                marginTop: "10.45pt",
                 marginBottom: "0pt",
               }}
             >
@@ -4636,8 +4518,6 @@ export const ConsumerTermsScreen = ({
               textDecoration: "none",
               verticalAlign: "baseline",
               whiteSpace: "pre",
-              marginLeft: "23.799999999999997pt",
-              paddingLeft: "22.200000000000003pt",
             }}
             aria-level={2}
           >
@@ -4647,7 +4527,7 @@ export const ConsumerTermsScreen = ({
                 lineHeight: "1.4000000000000001",
                 marginRight: "12.1pt",
                 textAlign: "justify",
-                marginTop: "3.35pt",
+                marginTop: "10.45pt",
                 marginBottom: "0pt",
               }}
             >
