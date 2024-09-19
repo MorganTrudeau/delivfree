@@ -255,7 +255,6 @@ export const VendorStack = () => {
           component={Screens.SettingsScreen}
           options={{ headerLeft: DrawerIconButton, headerBackVisible: false }}
         />
-        <Stack.Screen name="WebView" component={Screens.WebViewScreen} />
       </>
     );
   };
@@ -301,6 +300,7 @@ export const VendorStack = () => {
         name="DeleteAccount"
         component={Screens.DeleteAccountScreen}
       />
+      <Stack.Screen name="WebView" component={Screens.WebViewScreen} />
     </Stack.Navigator>
   );
 };

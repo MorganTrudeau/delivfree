@@ -1,15 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Screen } from "app/components";
 import { colors, spacing } from "app/theme";
 import { View } from "react-native";
+import { AppStackScreenProps } from "app/navigators";
 
-export const ConsumerTermsScreen = () => {
+interface ConsumerTermsScreenProps
+  extends AppStackScreenProps<"ConsumerTermsAndConditions"> {}
+
+export const ConsumerTermsScreen = ({
+  navigation,
+  route,
+}: ConsumerTermsScreenProps) => {
+  useEffect(() => {
+    if (route.params?.mobile) {
+      navigation.setOptions({ header: () => null });
+    }
+  }, [route.params?.mobile]);
+
   return (
     <Screen preset="scroll" backgroundColor={colors.palette.neutral200}>
       <View
         style={{
           backgroundColor: colors.background,
-          padding: spacing.lg,
+          padding: route.params?.mobile ? spacing.md : spacing.lg,
           flex: 1,
           paddingBottom: 50,
         }}

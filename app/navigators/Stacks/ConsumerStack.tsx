@@ -111,6 +111,11 @@ export const ConsumerStack = () => {
         component={Screens.ForgotPasswordScreen}
         options={{ headerRight: undefined }}
       />
+      <Stack.Screen
+        name="WebView"
+        component={Screens.WebViewScreen}
+        options={{ headerRight: undefined }}
+      />
     </Stack.Navigator>
   );
 };
