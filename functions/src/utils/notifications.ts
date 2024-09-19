@@ -1,6 +1,14 @@
 import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
 import { BaseMessage } from "firebase-admin/lib/messaging/messaging-api";
-import { Driver, Order, User, VENDOR_DOMAIN, Vendor } from "../types";
+import {
+  Driver,
+  Order,
+  User,
+  VENDOR_DOMAIN,
+  Vendor,
+  VendorLocation,
+} from "../types";
 import { sendEmailNotification } from "./email";
 import { formatOrderEmail } from "./orders";
 
@@ -85,6 +93,43 @@ export async function sendAdminNotifications(payload: BaseMessage) {
   return sendNotifications(adminIds, payload);
 }
 
+export async function sendOrderCompleteNotification(order: Order) {
+  const userDoc = await admin
+    .firestore()
+    .collection("Users")
+    .doc(order.customer)
+    .get();
+  const user = userDoc.data() as User | undefined;
+
+  if (!user) {
+    return true;
+  }
+
+  const userNotification = {
+    title: "Order Complete",
+    body: `Enjoy your meal. Thank you for ordering with DelivFree!`,
+  };
+  const userData = {
+    orderId: order.id,
+    type: "order_complete",
+  };
+  const userCollapseKey = "orderComplete";
+  const userLink = `${VENDOR_DOMAIN}`;
+  const userPayload = buildMessagePayload(
+    userNotification,
+    userData,
+    userCollapseKey,
+    userLink
+  );
+  await sendNotifications([user.id], userPayload);
+  await sendEmailNotification({
+    ...userNotification,
+    to: [user.email],
+  });
+
+  return true;
+}
+
 export async function sendOrderArrivedNotification(order: Order) {
   const userDoc = await admin
     .firestore()
@@ -131,6 +176,7 @@ export async function sendNewOrderNotification(order: Order) {
   const vendor = vendorDoc.data() as Vendor | undefined;
 
   if (!vendor) {
+    functions.logger.log("missing-vendor");
     return true;
   }
 
@@ -138,7 +184,7 @@ export async function sendNewOrderNotification(order: Order) {
 
   const vendorNotification = {
     title: "New Order",
-    body: `An new order has been placed`,
+    body: `A new order has been placed`,
   };
   const vendorData = {
     orderId: order.id,
@@ -166,6 +212,19 @@ export async function sendNewOrderNotification(order: Order) {
   const user = userDoc.data() as User | undefined;
 
   if (!user) {
+    functions.logger.log("missing-user");
+    return true;
+  }
+
+  const vendorLocationDoc = await admin
+    .firestore()
+    .collection("VendorLocations")
+    .doc(order.vendorLocation)
+    .get();
+  const vendorLocation = vendorLocationDoc.data() as VendorLocation | undefined;
+
+  if (!vendorLocation) {
+    functions.logger.log("missing-vendor-location");
     return true;
   }
 
@@ -188,7 +247,7 @@ export async function sendNewOrderNotification(order: Order) {
   await sendNotifications([user.id], userPayload);
   await sendEmailNotification({
     title: "Order Placed",
-    html: formatOrderEmail(order.checkoutItems),
+    html: formatOrderEmail(order, vendorLocation),
     to: [user.email],
   });
 

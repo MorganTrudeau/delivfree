@@ -1,8 +1,10 @@
 import firestore, {
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
-import { MOMENT_DATE_FORMAT, Order } from "delivfree";
+import { MOMENT_DATE_FORMAT, Order, VendorLocation } from "delivfree";
 import moment from "moment";
+import functions from "@react-native-firebase/functions";
+import { fetchVendorLocation } from "./vendorLocations";
 
 export const createOrder = (order: Order) => {
   return firestore().collection("Orders").doc(order.id).set(order);
@@ -10,6 +12,11 @@ export const createOrder = (order: Order) => {
 
 export const createPendingOrder = (order: Order) => {
   return firestore().collection("PendingOrders").doc(order.id).set(order);
+};
+
+export const fetchOrder = async (id: string) => {
+  const doc = await firestore().collection("Orders").doc(id).get();
+  return doc.data() as Order | undefined;
 };
 
 export const listenToActiveCustomerOrder = (
@@ -156,4 +163,103 @@ export const listenToOrderCount = (
         onData({});
       }
     });
+};
+
+export const sendOrderConfirmationEmail = async () => {
+  const order = await fetchOrder("0b5cf96ef4fdbc7a579cd3da38d12672b926");
+
+  if (!order) {
+    throw "missing-order";
+  }
+
+  const vendorLocation = await fetchVendorLocation(order.vendorLocation);
+
+  if (!vendorLocation) {
+    throw "missing-vendor-location";
+  }
+
+  // console.log(formatOrderEmail(order));
+
+  return functions().httpsCallable("sendEmail")({
+    to: "morgantrudeau@gmail.com",
+    title: "Order Receipt",
+    html: formatOrderEmail(order, vendorLocation),
+  });
+};
+
+export const formatOrderEmail = (
+  order: Order,
+  vendorLocation: VendorLocation
+) => {
+  const formatCustomizations = (
+    customizations: Order["checkoutItems"][number]["customizations"]
+  ) => {
+    return customizations
+      .map((c, index) => {
+        const style = `color: #666;margin-bottom:0;margin-top:${
+          index === 0 ? 10 : 5
+        }px;`;
+        if (c.type === "note") {
+          return `<div style="${style}">${c.text}</div>`;
+        } else if (c.type === "choice") {
+          const price = (Number(c.choice.price) * c.quantity).toLocaleString(
+            undefined,
+            {
+              style: "currency",
+              currency: "CAD",
+              // @ts-ignore
+              currencyDisplay: "narrowSymbol", // This fails on some OS
+            }
+          );
+          return `<div style="${style}">${c.choice.name} (x${c.quantity}) ${price}</div>`;
+        }
+        return "";
+      })
+      .join("");
+  };
+
+  const orderItems = order.checkoutItems
+    .map((item) => {
+      const price = (Number(item.item.price) * item.quantity).toLocaleString(
+        undefined,
+        {
+          style: "currency",
+          currency: "CAD",
+          // @ts-ignore
+          currencyDisplay: "narrowSymbol", // This fails on some OS
+        }
+      );
+
+      return `<div style="border: 1px solid #ccc; padding: 10px 15px; margin-bottom: 10px; border-radius: 5px;">
+          <div style="display:flex;">
+            <h3 style="margin: 0;">${
+              item.item.name
+            } <span style="font-weight:300;">(x${
+              item.quantity
+            })</span> ${price}</h4>
+          </div>
+        ${formatCustomizations(item.customizations)}
+      </div>`;
+    })
+    .join("");
+
+  return `
+    <div style="font-family: Arial, sans-serif;background-color: #faf9f9;padding: 20px;">
+      <div style="max-width: 600px;background-color: #fff;margin: 0 auto;padding: 30px;">
+        <h1>Your Order</h1>
+        <h3>Here is your receipt from ${vendorLocation.name}</h3>
+        ${orderItems}
+        <div style="padding: 15px 0">
+          <span>Subtotal: ${order.subtotal}</span><br/>
+          <span>Tip: ${order.tip}</span><br/>
+          <span>Tax: ${order.tax}</span><br/>
+          <span><strong>Total: ${order.total}</strong></span>
+        </div>
+
+        <footer style="color: #666;">
+          Thank you for your order!
+        </footer>
+      </div>
+    </div>
+  `;
 };
