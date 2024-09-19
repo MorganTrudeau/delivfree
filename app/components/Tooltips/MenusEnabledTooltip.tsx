@@ -10,7 +10,7 @@ import { hasActiveMenu } from "app/utils/menus";
 export const MenusEnabledNotice = ({ style }: { style?: ViewStyle }) => {
   const vendor = useAppSelector((state) => state.vendor.activeVendor?.id);
 
-  const { menus, loadMenus } = useMenusLoading({ vendor });
+  const { menus, loadMenus, menusLoaded } = useMenusLoading({ vendor });
 
   useEffect(() => {
     loadMenus();
@@ -18,7 +18,7 @@ export const MenusEnabledNotice = ({ style }: { style?: ViewStyle }) => {
 
   const activeMenu = useMemo(() => hasActiveMenu(menus), [menus]);
 
-  if (activeMenu) {
+  if (!menusLoaded || activeMenu) {
     return null;
   }
 
