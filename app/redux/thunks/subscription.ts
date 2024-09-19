@@ -12,12 +12,16 @@ export const listenToVendorSubscription = createAsyncThunk(
     return firestore()
       .collection("Subscriptions")
       .doc(vendorId)
-      .onSnapshot((doc) =>
-        dispatch(
-          setVendorSubscription(
-            (doc?.data()?.subscription || null) as Stripe.Subscription | null
-          )
-        )
+      .onSnapshot(
+        (doc) =>
+          dispatch(
+            setVendorSubscription(
+              (doc?.data()?.subscription || null) as Stripe.Subscription | null
+            )
+          ),
+        (error) => {
+          console.log("Vendor subscription error:", error);
+        }
       );
   }
 );
@@ -28,12 +32,16 @@ export const listenToDriverSubscription = createAsyncThunk(
     return firestore()
       .collection("Subscriptions")
       .doc(driverId)
-      .onSnapshot((doc) =>
-        dispatch(
-          setDriverSubscription(
-            (doc?.data()?.subscription || null) as Stripe.Subscription | null
-          )
-        )
+      .onSnapshot(
+        (doc) =>
+          dispatch(
+            setDriverSubscription(
+              (doc?.data()?.subscription || null) as Stripe.Subscription | null
+            )
+          ),
+        (error) => {
+          console.log("Driver subscription error:", error);
+        }
       );
   }
 );

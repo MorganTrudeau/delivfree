@@ -1,5 +1,5 @@
 import { useAppSelector } from "app/redux/store";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Platform, View, ViewStyle } from "react-native";
 import { Text } from "../Text";
 import { colors, spacing } from "app/theme";
@@ -10,11 +10,15 @@ import { hasActiveMenu } from "app/utils/menus";
 export const MenusEnabledNotice = ({ style }: { style?: ViewStyle }) => {
   const vendor = useAppSelector((state) => state.vendor.activeVendor?.id);
 
-  const { menus } = useMenusLoading({ vendor });
+  const { menus, loadMenus } = useMenusLoading({ vendor });
 
-  const activeMenus = useMemo(() => hasActiveMenu(menus), [menus]);
+  useEffect(() => {
+    loadMenus();
+  }, []);
 
-  if (activeMenus) {
+  const activeMenu = useMemo(() => hasActiveMenu(menus), [menus]);
+
+  if (activeMenu) {
     return null;
   }
 
@@ -35,9 +39,8 @@ export const MenusEnabledNotice = ({ style }: { style?: ViewStyle }) => {
           web: <>Please click on Menus in the side menu to get started.</>,
           default: (
             <>
-              Please visit{" "}
-              <Text preset="semibold">business.delivfree.com</Text> to get
-              started.
+              Please visit <Text preset="semibold">business.delivfree.com</Text>{" "}
+              to get started.
             </>
           ),
         })}
