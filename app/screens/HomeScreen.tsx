@@ -24,6 +24,7 @@ import { ImageStyle } from "react-native-fast-image";
 import { AdBanner } from "app/components/AdBanner";
 import { useIsFocused } from "@react-navigation/native";
 import { CustomerOrderTracker } from "app/components/Orders/CustomerOrderTracker";
+import { sendOrderConfirmationEmail } from "app/apis/orders";
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
 export const HomeScreen = (props: HomeScreenProps) => {
@@ -42,11 +43,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
   // useEffect(() => {
   //   const sendEmail = async () => {
   //     try {
-  //       await functions().httpsCallable("sendEmail")({
-  //         title: "HTML email",
-  //         html: `<div><h1>Hello World</h1></div>`,
-  //         to: ["morgantrudeau@gmail.com"],
-  //       });
+  //       await sendOrderConfirmationEmail();
   //       console.log("SENT");
   //     } catch (error) {
   //       console.log(error);
@@ -124,7 +121,9 @@ export const HomeScreen = (props: HomeScreenProps) => {
             style={$location}
             onPress={() => locationModal.current?.snapToIndex(0)}
           >
-            <Text style={$flexShrink}>{activeUser?.location?.address}</Text>
+            <Text style={[$flexShrink, { paddingRight: spacing.sm }]}>
+              {activeUser?.location?.address}
+            </Text>
             <Icon icon={"chevron-down"} />
           </Pressable>
         )}

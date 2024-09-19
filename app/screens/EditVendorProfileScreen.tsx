@@ -17,6 +17,7 @@ import {
   $row,
 } from "app/components/styles";
 import { useAlert, useToast } from "app/hooks";
+import { AppStackScreenProps } from "app/navigators";
 import { FirebaseUser } from "app/redux/reducers/auth";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { createVendor } from "app/redux/thunks/vendor";
@@ -31,10 +32,17 @@ import {
   ViewStyle,
   TextInput as RNInput,
   View,
+  Platform,
+  Linking,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export const EditVendorProfileScreen = () => {
+interface EditVendorProfileScreenProps
+  extends AppStackScreenProps<"VendorRegistration"> {}
+
+export const EditVendorProfileScreen = ({
+  navigation,
+}: EditVendorProfileScreenProps) => {
   const Alert = useAlert();
   const Toast = useToast();
   const insets = useSafeAreaInsets();
@@ -249,14 +257,27 @@ export const EditVendorProfileScreen = () => {
             <View style={[$row, { paddingVertical: spacing.md }]}>
               <Toggle
                 value={termsAccepted}
-                onPress={() => {
+                onValueChange={() => {
                   setTermsAccepted((s) => !s);
                 }}
               />
               <Text style={[$flexShrink, { paddingLeft: spacing.xs }]}>
                 I agree to the DelivFree Canada Inc driver{" "}
                 <Text
-                  onPress={() => termsModal.current?.snapToIndex(0)}
+                  onPress={async () => {
+                    // termsModal.current?.snapToIndex(0);
+                    if (Platform.OS === "web") {
+                      navigation.navigate("VendorTermsAndConditions");
+                    } else {
+                      try {
+                        await Linking.openURL(
+                          `https://order.delivfree.com/vendor-terms-and-conditions`
+                        );
+                      } catch (error) {
+                        console.log(error);
+                      }
+                    }
+                  }}
                   style={{ color: colors.primary }}
                 >
                   Terms and Conditions
@@ -264,11 +285,11 @@ export const EditVendorProfileScreen = () => {
               </Text>
             </View>
 
-            <BottomSheet ref={termsModal}>
+            {/* <BottomSheet ref={termsModal}>
               <View style={{ padding: spacing.md }}>
                 <TermsAndConditionsVendor />
               </View>
-            </BottomSheet>
+            </BottomSheet> */}
 
             <Button
               preset={fieldsComplete ? "filled" : "default"}

@@ -9,7 +9,9 @@ export const sendEmailNotification = async (
     title: string;
   } & ({ html: string } | { body: string })
 ) => {
-  const { title, to, from } = data;
+  // @ts-expect-error fix this typing
+  const { from, to, title, html, body } = data;
+
   const formData = await import("form-data");
   const Mailgun = (await import("mailgun.js")).default;
   const mailgun = new Mailgun(formData);
@@ -18,19 +20,13 @@ export const sendEmailNotification = async (
     key: mailgunApiKey.value(),
   });
 
-  const baseParams = {
-    from: from || "DelivFree Canada Inc. <admin@delivfree.com>",
-    to: to,
+  const params = {
+    text: body,
+    to,
     subject: title,
+    html,
+    from: from || "DelivFree Canada Inc. <admin@mail.delivfree.com>",
   };
 
-  const params =
-    "body" in data
-      ? { ...baseParams, text: data.body }
-      : { ...baseParams, html: data.html };
-
-  mg.messages
-    .create("delivfree.com", params)
-    .then((msg) => console.log(msg)) // logs response data
-    .catch((err) => console.log(err)); // logs any error
+  return mg.messages.create("mail.delivfree.com", params);
 };

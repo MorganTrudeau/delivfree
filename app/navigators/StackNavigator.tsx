@@ -32,6 +32,8 @@ export const linkingConfigScreens: {
   Checkout: "checkout",
   PrivacyPolicy: "privacy-policy",
   Tips: "tips",
+  ConsumerTermsAndConditions: "consumer-terms-and-conditions",
+  VendorTermsAndConditions: "vendor-terms-and-conditions",
 };
 
 export const screenOptions: NativeStackNavigationOptions = {

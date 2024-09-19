@@ -149,7 +149,7 @@ export const EditDriverProfileScreen = () => {
       setLoading(false);
       Alert.alert("Something went wrong", "Please try that again.");
     }
-  }, [driverState, authToken, dispatch, Alert]);
+  }, [driverState, authToken, dispatch, Alert, termsAccepted]);
 
   const Loading = useMemo(
     () =>
@@ -277,7 +277,7 @@ export const EditDriverProfileScreen = () => {
         <View style={[$row, { paddingVertical: spacing.md }]}>
           <Toggle
             value={termsAccepted}
-            onPress={() => {
+            onValueChange={() => {
               setTermsAccepted((s) => !s);
             }}
           />

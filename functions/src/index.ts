@@ -16,6 +16,7 @@ import {
   sendDriverLicenseApprovedNotification,
   sendNewOrderNotification,
   sendOrderArrivedNotification,
+  sendOrderCompleteNotification,
   sendOrderDriverAssignedNotification,
   sendVendorPositionFilledNotification,
 } from "./utils/notifications";
@@ -185,6 +186,17 @@ export const onOrderWritten = onDocumentWritten(
     if (orderBefore?.status === "pending" && orderAfter?.status === "arrived") {
       try {
         await sendOrderArrivedNotification(orderAfter);
+      } catch (error) {
+        console.log("Failed to notify order arrived", error);
+      }
+    }
+
+    if (
+      orderBefore?.status !== "complete" &&
+      orderAfter?.status === "complete"
+    ) {
+      try {
+        await sendOrderCompleteNotification(orderAfter);
       } catch (error) {
         console.log("Failed to notify order arrived", error);
       }

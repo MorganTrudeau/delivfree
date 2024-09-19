@@ -1,6 +1,8 @@
 import React, { FC, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Linking,
+  Platform,
   TextInput,
   TextStyle,
   View,
@@ -165,7 +167,20 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
             By signing up you are agreeing to the DelivFree{" "}
             <Text
               style={{ color: colors.primary }}
-              onPress={() => termsModal.current?.snapToIndex(0)}
+              onPress={async () => {
+                // termsModal.current?.snapToIndex(0);
+                if (Platform.OS === "web") {
+                  _props.navigation.navigate("ConsumerTermsAndConditions");
+                } else {
+                  try {
+                    await Linking.openURL(
+                      `https://order.delivfree.com/consumer-terms-and-conditions`
+                    );
+                  } catch (error) {
+                    console.log(error);
+                  }
+                }
+              }}
             >
               Terms and conditions
             </Text>
@@ -188,13 +203,13 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
           </>
         )}
 
-        {getAppType() === "CONSUMER" && (
+        {/* {getAppType() === "CONSUMER" && (
           <BottomSheet ref={termsModal}>
             <View style={{ padding: spacing.md }}>
               <TermsAndConditionsConsumer />
             </View>
           </BottomSheet>
-        )}
+        )} */}
       </Card>
     </Screen>
   );
@@ -221,14 +236,3 @@ const $guestAccountTitle: TextStyle = {
   textAlign: "center",
   marginTop: spacing.xl,
 };
-
-const $guestAccountMessage: TextStyle = {
-  textAlign: "center",
-  marginBottom: spacing.md,
-};
-
-// const $loginMessage: TextStyle = { marginTop: spacing.lg, textAlign: "center" };
-
-// const $loginText: TextStyle = {
-//   color: colors.palette.primary600,
-// };

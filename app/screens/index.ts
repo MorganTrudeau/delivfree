@@ -21,6 +21,7 @@ export * from "./PaymentScreen";
 export * from "./CheckoutCartScreen";
 export * from "./WebViewScreen";
 export * from "./PrivacyPolicyScreen";
+export * from "./ConsumerTermsScreen";
 
 // Vendor
 export * from "./EditDriverProfileScreen";
@@ -37,6 +38,7 @@ export * from "./Vendor/VendorDriversScreen";
 export * from "./Vendor/VendorPositionsScreen";
 export * from "./Vendor/VendorMenusScreen";
 export * from "./Vendor/VendorTipsScreen";
+export * from "./VendorTermsScreen";
 
 // Driver
 export * from "./Driver/DriverCodeScreen";

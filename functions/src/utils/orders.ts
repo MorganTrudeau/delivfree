@@ -1,63 +1,72 @@
 import { getTodaysDate } from ".";
-import { DriverClockIn, Order } from "../types";
+import { DriverClockIn, Order, VendorLocation } from "../types";
 import * as admin from "firebase-admin";
 
-export const formatOrderEmail = (checkoutItems: Order["checkoutItems"]) => {
+export const formatOrderEmail = (
+  order: Order,
+  vendorLocation: VendorLocation
+) => {
+  const formatPrice = (price: string | number) => {
+    Number(price).toLocaleString(undefined, {
+      style: "currency",
+      currency: "CAD",
+      // @ts-ignore
+      currencyDisplay: "narrowSymbol", // This fails on some OS
+    });
+  };
+
   const formatCustomizations = (
     customizations: Order["checkoutItems"][number]["customizations"]
   ) => {
     return customizations
-      .map((c) => {
+      .map((c, index) => {
+        const style = `color: #666;margin-bottom:0;margin-top:${
+          index === 0 ? 10 : 5
+        }px;`;
         if (c.type === "note") {
-          return `<p><${c.text}</p>`;
+          return `<div style="${style}">${c.text}</div>`;
         } else if (c.type === "choice") {
-          const price = (Number(c.choice.price) * c.quantity).toLocaleString(
-            undefined,
-            {
-              style: "currency",
-              currency: "CAD",
-              // @ts-ignore
-              currencyDisplay: "narrowSymbol", // This fails on some OS
-            }
-          );
-          return `<p>${c.choice.name} (x${c.quantity}) ${price}</p>`;
+          return `<div style="${style}">${c.choice.name} (x${
+            c.quantity
+          }) ${formatPrice(Number(c.choice.price) * c.quantity)}</div>`;
         }
         return "";
       })
       .join("");
   };
 
-  const orderItems = checkoutItems
+  const orderItems = order.checkoutItems
     .map((item) => {
-      const price = (Number(item.item.price) * item.quantity).toLocaleString(
-        undefined,
-        {
-          style: "currency",
-          currency: "CAD",
-          // @ts-ignore
-          currencyDisplay: "narrowSymbol", // This fails on some OS
-        }
-      );
-
-      return `<div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-        <img src="${item.item.image}" alt="${
-        item.item.name
-      }" style="width: 100px; height: 100px; object-fit: cover;">
-        <h2 style="margin: 0;">${item.item.name}</h2>
-        <span style="color: #666;">Qty: ${item.quantity}</span>
-        <h4>Price: $${price}</h4>
+      return `<div style="border: 1px solid #ccc; padding: 10px 15px; margin-bottom: 10px; border-radius: 5px;">
+          <div style="display:flex;">
+            <h3 style="margin: 0;">${
+              item.item.name
+            } <span style="font-weight:300;">(x${
+        item.quantity
+      })</span> ${formatPrice(Number(item.item.price) * item.quantity)}</h4>
+          </div>
         ${formatCustomizations(item.customizations)}
       </div>`;
     })
     .join("");
 
   return `
-    <div style="font-family: Arial, sans-serif;">
-      <h1>Your Order</h1>
-      ${orderItems}
-      <footer style="margin-top: 20px; font-size: 12px; color: #666;">
-        Thank you for your order!
-      </footer>
+    <div style="font-family: Arial, sans-serif;background-color: #faf9f9;padding: 20px;">
+      <div style="max-width: 600px;background-color: #fff;margin: 0 auto;padding: 30px;">
+        <h1>Your Order</h1>
+        <h3>Here is your receipt from ${vendorLocation.name}</h3>
+        ${orderItems}
+        <div style="padding: 15px 0">
+          <span>Subtotal: ${formatPrice(order.subtotal)}</span><br/>
+          <span>Tip: ${formatPrice(order.tip)}</span><br/>
+          <span>Tax: ${formatPrice(order.tax)}</span><br/>
+          <span><strong>Total: ${formatPrice(order.total)}</strong></span>
+        </div>
+
+        <footer style="color: #666;">
+          Thank you for your order!
+        </footer>
+      </div>
     </div>
   `;
 };
