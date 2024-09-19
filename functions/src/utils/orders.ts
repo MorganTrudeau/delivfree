@@ -62,10 +62,10 @@ export const formatOrderEmail = (
           <span>Tax: ${formatPrice(order.tax)}</span><br/>
           <span><strong>Total: ${formatPrice(order.total)}</strong></span>
         </div>
-
         <footer style="color: #666;">
           Thank you for your order!
         </footer>
+        <img src="https://order.delivfree.com/app-logo-inline.png" width=100 height=auto style="margin-top: 15px;" />
       </div>
     </div>
   `;

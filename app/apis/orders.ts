@@ -259,6 +259,7 @@ export const formatOrderEmail = (
         <footer style="color: #666;">
           Thank you for your order!
         </footer>
+        <img src="https://order.delivfree.com/app-logo-inline.png" width=100 height=auto style="margin-top: 15px;" />
       </div>
     </div>
   `;
