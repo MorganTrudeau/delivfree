@@ -1,11 +1,9 @@
 import React, { FC, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Linking,
   Platform,
   TextInput,
   TextStyle,
-  View,
   ViewStyle,
 } from "react-native";
 import {
@@ -25,8 +23,6 @@ import { NO_TOP_BOTTOM_SAFE_AREA_EDGES } from "app/components/styles";
 import { Card } from "app/components/Card";
 import { useAlert } from "app/hooks";
 import { getAppType } from "app/utils/general";
-import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
-import { TermsAndConditionsConsumer } from "app/components/TermsAndConditionsConsumer";
 
 interface SignUpScreenProps extends AppStackScreenProps<"SignUp"> {}
 
@@ -34,7 +30,6 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
   const Alert = useAlert();
 
   const authPasswordInput = useRef<TextInput>(null);
-  const termsModal = useRef<BottomSheetRef>(null);
 
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
@@ -168,17 +163,12 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
             <Text
               style={{ color: colors.primary }}
               onPress={async () => {
-                // termsModal.current?.snapToIndex(0);
                 if (Platform.OS === "web") {
                   _props.navigation.navigate("ConsumerTermsAndConditions");
                 } else {
-                  try {
-                    await Linking.openURL(
-                      `https://order.delivfree.com/consumer-terms-and-conditions`
-                    );
-                  } catch (error) {
-                    console.log(error);
-                  }
+                  _props.navigation.navigate("WebView", {
+                    uri: "https://order.delivfree.com/consumer-terms-and-conditions?mobile=true",
+                  });
                 }
               }}
             >
@@ -202,14 +192,6 @@ export const SignUpScreen: FC<SignUpScreenProps> = (_props) => {
             />
           </>
         )}
-
-        {/* {getAppType() === "CONSUMER" && (
-          <BottomSheet ref={termsModal}>
-            <View style={{ padding: spacing.md }}>
-              <TermsAndConditionsConsumer />
-            </View>
-          </BottomSheet>
-        )} */}
       </Card>
     </Screen>
   );

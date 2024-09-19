@@ -265,17 +265,12 @@ export const EditVendorProfileScreen = ({
                 I agree to the DelivFree Canada Inc driver{" "}
                 <Text
                   onPress={async () => {
-                    // termsModal.current?.snapToIndex(0);
                     if (Platform.OS === "web") {
                       navigation.navigate("VendorTermsAndConditions");
                     } else {
-                      try {
-                        await Linking.openURL(
-                          `https://order.delivfree.com/vendor-terms-and-conditions`
-                        );
-                      } catch (error) {
-                        console.log(error);
-                      }
+                      navigation.navigate("WebView", {
+                        uri: "https://order.delivfree.com/vendor-terms-and-conditions?mobile=true",
+                      });
                     }
                   }}
                   style={{ color: colors.primary }}
