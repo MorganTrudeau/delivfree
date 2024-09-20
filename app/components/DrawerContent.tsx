@@ -34,6 +34,7 @@ const ConsumerItems: DrawerItem[] = [
       web: "https://business.delivfree.com",
       default: "https://business.delivfree.com",
     }),
+    include: () => Platform.OS === "web",
   },
   {
     text: "Sign up as a Driver",
@@ -41,6 +42,7 @@ const ConsumerItems: DrawerItem[] = [
       web: "https://business.delivfree.com",
       default: "https://business.delivfree.com",
     }),
+    include: () => Platform.OS === "web",
   },
   {
     text: "Rate App",
@@ -140,7 +142,7 @@ export const DrawerContent = ({
               source={require("../../assets/images/app-logo-inline.png")}
               style={{
                 height: headerHeight * 0.5,
-                width: (headerHeight * 0.5) * headerImageRatio,
+                width: headerHeight * 0.5 * headerImageRatio,
               }}
               resizeMode="contain"
             />

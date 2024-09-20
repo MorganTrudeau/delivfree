@@ -269,7 +269,7 @@ export const EditVendorProfileScreen = ({
                       navigation.navigate("VendorTermsAndConditions");
                     } else {
                       navigation.navigate("WebView", {
-                        uri: "https://order.delivfree.com/vendor-terms-and-conditions?mobile=true",
+                        uri: "https://business.delivfree.com/vendor-terms-and-conditions?mobile=true",
                       });
                     }
                   }}
