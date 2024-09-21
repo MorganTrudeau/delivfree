@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
   TextInput,
   TextStyle,
@@ -102,7 +103,6 @@ export const LoginScreen = (_props: LoginScreenProps) => {
           preset="heading"
           style={$signIn}
         />
-        {/* <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails} /> */}
 
         <TextField
           value={authEmail}
@@ -147,7 +147,8 @@ export const LoginScreen = (_props: LoginScreenProps) => {
           RightAccessory={Loading}
         />
 
-        {getAppType() !== "ADMIN" && (
+        {(getAppType() === "CONSUMER" ||
+          (getAppType() === "VENDOR" && Platform.OS === "web")) && (
           <Pressable onPress={() => _props.navigation.navigate("SignUp")}>
             <Text style={$loginMessage}>
               Don't have an account? <Text style={$loginText}>Sign Up</Text>
