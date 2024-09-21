@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, View, ViewStyle } from "react-native";
+import { Dimensions, Platform, View, ViewStyle } from "react-native";
 import { Button, Screen } from "../components";
 import { AppStackScreenProps } from "../navigators";
 import { colors, spacing } from "../theme";
@@ -57,7 +57,8 @@ export const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
         </View>
 
         <View style={$bottomContainer}>
-          {getAppType() !== "ADMIN" && (
+          {(getAppType() === "CONSUMER" ||
+            (getAppType() === "VENDOR" && Platform.OS === "web")) && (
             <Button
               testID="sign-up-button"
               preset="filled"
