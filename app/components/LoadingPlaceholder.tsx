@@ -9,6 +9,7 @@ export type Props = {
   loadingStyle?: StyleProp<ViewStyle>;
   loading: boolean;
   children?: ViewProps["children"];
+  disableAutoHeight?: boolean;
 };
 
 export const LoadingPlaceholder = ({
@@ -19,6 +20,7 @@ export const LoadingPlaceholder = ({
   loadingStyle,
   loading,
   children,
+  disableAutoHeight,
 }: Props) => {
   const opacity = useRef(new Animated.Value(1)).current;
 
@@ -55,9 +57,10 @@ export const LoadingPlaceholder = ({
   return (
     <Animated.View
       style={[
-        style,
         loadingStyle,
-        { backgroundColor, width, height, borderRadius: 5 },
+        style,
+        { backgroundColor, width, borderRadius: 5 },
+        !disableAutoHeight && { height },
         { opacity },
       ]}
     />

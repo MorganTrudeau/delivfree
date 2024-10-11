@@ -1,6 +1,6 @@
 import { Order } from "delivfree";
 import { DataCache, useDataListener } from "./useDataLoading";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { OrderListenerParams, listenToOrders } from "app/apis/orders";
 import { hasValidParams } from "./utils";
 
@@ -25,10 +25,14 @@ export const useOrderData = (params: Omit<OrderListenerParams, "limit">) => {
     [vendorLocation, driver, startDate, endDate]
   );
 
+  const cacheKey = useMemo(() => {
+    return JSON.stringify(vendorLocation);
+  }, [vendorLocation]);
+
   const { data, loadData } = useDataListener<Order>(
     handleLoadOrders,
     cache,
-    vendorLocation
+    cacheKey
   );
 
   return { data, loadData, cache };

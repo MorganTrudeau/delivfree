@@ -1,10 +1,11 @@
 import { getUser } from "app/apis/user";
 import { spacing } from "app/theme";
-import { Order, User } from "delivfree";
+import { Driver, Order, User } from "delivfree";
 import React, {
   forwardRef,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -29,10 +30,17 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useDimensions } from "app/hooks/useDimensions";
 import { ImageViewer, ImageViewerRef } from "../ImageViewer";
 import { getDeliveryInstructionsTitle } from "app/utils/checkout";
+import { DriverSelect } from "../Drivers/DriverSelect";
+import { updateOrder } from "app/apis/orders";
+import { useToast } from "app/hooks";
+import { fetchDriver } from "app/apis/driver";
+import { VendorLocationInfo } from "../VendorLocations/VendorLocationInfo";
 
-type Props = { order: Order };
+type Props = { order: Order; isVendor?: boolean };
 
-const ViewOrder = ({ order }: Props) => {
+const ViewOrder = ({ order, isVendor }: Props) => {
+  const Toast = useToast();
+
   const { total, subtotal, tax, tip, currency } = order;
 
   const { width } = useDimensions();
@@ -40,6 +48,8 @@ const ViewOrder = ({ order }: Props) => {
   const imageViewer = useRef<ImageViewerRef>(null);
 
   const [customer, setCustomer] = useState<User>();
+  const [driverId, setDriverId] = useState<string | null>(order.driver);
+  const [driver, setDriver] = useState<Driver>();
 
   const loadCustomer = useCallback(async () => {
     const data = await getUser(order.customer);
@@ -50,13 +60,40 @@ const ViewOrder = ({ order }: Props) => {
     loadCustomer();
   }, [order.customer]);
 
+  const loadDriver = useCallback(async () => {
+    if (driverId) {
+      const data = await fetchDriver(driverId);
+      data && setDriver(data);
+    }
+  }, [driverId]);
+
+  useEffect(() => {
+    loadDriver();
+  }, [loadDriver]);
+
+  const handleAssignDriver = useCallback(async (driver: Driver | undefined) => {
+    try {
+      setDriverId(driver?.id || null);
+      await updateOrder(order.id, { driver: driver ? driver.id : null });
+    } catch (error) {
+      console.log(error);
+      Toast.show("Failed to assign driver. Please try again.");
+    }
+  }, []);
+
   const dropOffPicture = order.dropOffPicture;
+
+  const vendorLocations = useMemo(
+    () => [order.vendorLocation],
+    [order.vendorLocation]
+  );
 
   return (
     <View style={{ padding: spacing.md }}>
       <Text preset="subheading" style={$subheading}>
         Customer
       </Text>
+
       <LoadingPlaceholder loading={!customer}>
         <DetailItem
           title={"Name"}
@@ -102,6 +139,41 @@ const ViewOrder = ({ order }: Props) => {
           value={customer?.phoneNumber || "No number"}
         />
       </LoadingPlaceholder> */}
+
+      <View style={$spacerBorder} />
+
+      <Text preset="subheading" style={$subheading}>
+        Location
+      </Text>
+
+      <VendorLocationInfo
+        vendorLocationId={order.vendorLocation}
+        style={{ marginTop: spacing.xs }}
+      />
+
+      <View style={$spacerBorder} />
+
+      <Text preset="subheading" style={$subheading}>
+        Driver
+      </Text>
+
+      {!!driverId && (
+        <LoadingPlaceholder loading={!driver}>
+          <DetailItem
+            title={"Name"}
+            value={`${driver?.firstName} ${driver?.lastName}`}
+          />
+        </LoadingPlaceholder>
+      )}
+
+      {isVendor && !driverId && (
+        <DriverSelect
+          vendorLocations={vendorLocations}
+          onDriverSelect={handleAssignDriver}
+          selectedDriver={order.driver}
+          placeholder={"Assign driver"}
+        />
+      )}
 
       <View style={$spacerBorder} />
 

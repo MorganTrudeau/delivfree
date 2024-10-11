@@ -10,6 +10,7 @@ import { Props } from "./OrderItem";
 import React from "react";
 import { getStatusColor, getStatusText } from "app/utils/orders";
 import { IconButton } from "../IconButton";
+import { VendorLocationName } from "../VendorLocations/VendorLocationName";
 
 export const OrderItemMobile = ({
   order,
@@ -20,6 +21,8 @@ export const OrderItemMobile = ({
   changeOrderStatus,
   driverName,
   onOrderCompleted,
+  showDriver,
+  showVendorLocation,
 }: Props) => {
   const showClaimButton = userType === "driver" && !order.driver;
   const showStatusButtons =
@@ -39,6 +42,14 @@ export const OrderItemMobile = ({
         {order.checkoutItems.length}{" "}
         {pluralFormat("item", order.checkoutItems.length)}
       </Text>
+
+      {showVendorLocation && (
+        <VendorLocationName
+          id={order.vendorLocation}
+          preset="semibold"
+          size={"xs"}
+        />
+      )}
 
       <View style={$row}>
         <Text style={{ marginRight: spacing.md }} size={"xs"}>
@@ -70,7 +81,7 @@ export const OrderItemMobile = ({
         </Text>
       </View>
 
-      {!driverId && !!driverName && (
+      {!driverId && !!driverName && showDriver && (
         <Text style={{ marginTop: spacing.xs }} size={"xs"}>
           Driver: {driverName}
         </Text>

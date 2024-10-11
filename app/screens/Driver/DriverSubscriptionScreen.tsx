@@ -2,7 +2,6 @@ import React from "react";
 import { Screen } from "app/components";
 import { $containerPadding } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
-import { Drawer } from "app/components/Drawer";
 import { ManageDriverSubscription } from "app/components/Subscription/ManageDriverSubscription";
 
 interface VendorSubscriptionScreenProps
@@ -16,9 +15,11 @@ export const DriverSubscriptionScreen = ({
       preset="scroll"
       style={{ flex: 1, maxWidth: undefined }}
       contentContainerStyle={$containerPadding}
-      
     >
-      <ManageDriverSubscription displayOnly={true} />
+      <ManageDriverSubscription
+        displayOnly={true}
+        onApplyForLicense={() => navigation.navigate("PositionsSearch")}
+      />
     </Screen>
   );
 };

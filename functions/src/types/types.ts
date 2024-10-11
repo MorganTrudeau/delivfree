@@ -1,9 +1,10 @@
 import { Cuisines } from "./enums";
 
-export type DriverClockIn = {
+export type DriverAvailability = {
   vendorLocation: string;
   date: number;
   ordersTaken: number;
+  driver: string;
 };
 export type DaysAndTimes = {
   days: number[];
@@ -63,6 +64,8 @@ export type Status = "approved" | "denied" | "pending";
 export type License = {
   id: string;
   driver: string;
+  fullTimeDrivers: string[];
+  partTimeDrivers: string[];
   position: string;
   vendor: string;
   vendorLocation: string;
@@ -250,7 +253,7 @@ export type Order = {
   driver: null | string;
   checkoutItems: CheckoutItem[];
   deliveryInstructions: DeliveryInstructions;
-  dropOffPicture?: {uri: string, width: number, height: number}
+  dropOffPicture?: { uri: string; width: number; height: number };
 };
 export type OrderCount = { count: number };
 export type Customer = {
