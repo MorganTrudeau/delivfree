@@ -14,8 +14,6 @@ export type AppStackParamList = {
   Home: undefined;
   Restaurants: { cuisine: Cuisine };
   RestaurantDetail: { restaurantId: string };
-  EditVendorProfile: undefined;
-  EditDriverProfile: undefined;
   VendorDriverSelect: undefined;
   Orders: undefined;
   Profile: undefined;

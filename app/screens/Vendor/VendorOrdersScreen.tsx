@@ -81,11 +81,14 @@ export const VendorOrdersScreen = (props: VendorOrdersScreenProps) => {
         loadOrders={loadData}
         onOrderPress={onOrderPress}
         ListHeaderComponent={renderHeader}
+        showDriver={true}
+        showVendorLocation={false}
       />
       <ViewOrderModal
         ref={viewOrderModal}
         onClose={closeCreateOrder}
         order={selectedOrder}
+        isVendor
       />
     </Screen>
   );

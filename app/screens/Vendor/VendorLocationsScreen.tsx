@@ -1,6 +1,4 @@
 import { Screen } from "app/components";
-import { Drawer } from "app/components/Drawer";
-import { ModalRef } from "app/utils/types";
 import { ManageVendorLocationModal } from "app/components/VendorLocation/ManageVendorLocation";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import { VendorLocationsList } from "app/components/VendorLocations/VendorLocationsList";
