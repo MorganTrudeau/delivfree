@@ -1,33 +1,18 @@
 import { updateDriver } from "app/apis/driver";
-import { updateVendor } from "app/apis/vendors";
-import {
-  Button,
-  HeaderProps,
-  Icon,
-  Screen,
-  Text,
-  TextField,
-} from "app/components";
-import { Drawer } from "app/components/Drawer";
+import { Button, Screen, TextField } from "app/components";
 import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
 import { ScreenHeader } from "app/components/ScreenHeader";
-import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
+import { $containerPadding, $screen } from "app/components/styles";
 import { useAlert, useToast } from "app/hooks";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
-import { colors, spacing } from "app/theme";
+import { spacing } from "app/theme";
 import { isValidEmail } from "app/utils/general";
-import { Driver, Vendor } from "delivfree";
-import React, { useCallback, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Platform,
-  Pressable,
-  TextStyle,
-  View,
-} from "react-native";
+import { Driver } from "delivfree";
+import React, { useCallback, useState } from "react";
+import { TextStyle } from "react-native";
 
 interface DriverProfileScreenProps extends AppStackScreenProps<"Profile"> {}
 
@@ -106,7 +91,7 @@ export const DriverProfileScreen = (props: DriverProfileScreenProps) => {
         onFrontImageUploaded={updateValue("driversLicenseFront")}
         onBackImageUploaded={updateValue("driversLicenseBack")}
         style={$input}
-        driverId={driver.id}
+        userId={driver.id}
         viewOnly
       />
       <Button

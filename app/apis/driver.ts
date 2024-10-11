@@ -17,6 +17,20 @@ export const fetchDriver = async (driver: string) => {
   return doc.data() as Driver | undefined;
 };
 
+export const fetchDrivers = async (params: {
+  vendorLocations: string[];
+}) => {
+  const snap = await firestore()
+    .collection("Drivers")
+    .where(
+      "vendorLocations",
+      "array-contains-any",
+      params.vendorLocations
+    )
+    .get();
+  return snap ? snap.docs.map((doc) => doc.data() as Driver) : [];
+};
+
 export const listenToDriver = (
   driver: string,
   onData: (driver: Driver | null) => void

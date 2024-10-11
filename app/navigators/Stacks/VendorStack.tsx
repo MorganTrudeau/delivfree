@@ -102,6 +102,7 @@ export const VendorStack = () => {
         <>
           <Stack.Screen
             name="PositionsSearch"
+            key={"register"}
             component={Screens.PositionsSearchScreen}
             options={{
               headerTitle: "",
@@ -165,6 +166,15 @@ export const VendorStack = () => {
           name="AddressSearch"
           component={Screens.AddressSearchScreen}
           options={{ headerRight: undefined }}
+        />
+        <Stack.Screen
+          name="PositionsSearch"
+          key={"main"}
+          component={Screens.PositionsSearchScreen}
+          options={{
+            headerLeft: DrawerIconButton,
+            headerBackVisible: false,
+          }}
         />
       </>
     );

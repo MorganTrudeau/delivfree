@@ -13,6 +13,7 @@ import { StatusIndicator } from "../StatusIndicator";
 import { IconButton } from "../IconButton";
 import { License, VendorLocation } from "delivfree";
 import { translate } from "app/i18n";
+import { VendorLocationInfo } from "../VendorLocations/VendorLocationInfo";
 
 export const LicenseItem = ({
   licenseId,
@@ -26,47 +27,29 @@ export const LicenseItem = ({
   const Alert = useAlert();
   const Toast = useToast();
 
-  const [{ license, vendorLocation, error, deleteLoading }, setState] =
-    useState<{
-      license: License | null;
-      vendorLocation: VendorLocation | null;
-      error: boolean;
-      deleteLoading: boolean;
-    }>({
-      license: null,
-      vendorLocation: null,
-      error: false,
-      deleteLoading: false,
-    });
+  const [{ license, error, deleteLoading }, setState] = useState<{
+    license: License | null;
+    error: boolean;
+    deleteLoading: boolean;
+  }>({
+    license: null,
+    error: false,
+    deleteLoading: false,
+  });
 
   useEffect(() => {
     return listenToLicense(licenseId, async (licenseData) => {
       if (licenseData) {
-        const vendorLocation = await fetchVendorLocation(
-          licenseData?.vendorLocation
-        );
-
-        if (vendorLocation) {
-          return setState({
-            deleteLoading: false,
-            error: false,
-            license: licenseData,
-            vendorLocation,
-          });
-        } else {
-          return setState({
-            deleteLoading: false,
-            error: true,
-            license: licenseData,
-            vendorLocation: null,
-          });
-        }
+        return setState({
+          deleteLoading: false,
+          error: false,
+          license: licenseData,
+        });
       } else {
         return setState({
           deleteLoading: false,
           error: true,
           license: null,
-          vendorLocation: null,
         });
       }
     });
@@ -110,43 +93,7 @@ export const LicenseItem = ({
 
   return (
     <View style={[$license, style]}>
-      <View style={$row}>
-        <LoadingPlaceholder
-          loading={!license}
-          style={[
-            $imageContainer,
-            { width: 150, borderRadius: borderRadius.sm },
-          ]}
-        >
-          <FastImage
-            style={[$image, { borderRadius: borderRadius.sm }]}
-            source={{ uri: vendorLocation?.image }}
-          />
-        </LoadingPlaceholder>
-
-        <View style={{ marginLeft: spacing.sm, flex: 1 }}>
-          <LoadingPlaceholder loading={!license} height={18} width={125}>
-            <Text preset="semibold" numberOfLines={2} ellipsizeMode="tail">
-              {vendorLocation?.name}
-            </Text>
-          </LoadingPlaceholder>
-          <LoadingPlaceholder
-            loading={!license}
-            height={13}
-            width={100}
-            style={{ marginTop: !license ? 4 : 0 }}
-          >
-            <Text
-              style={{ color: colors.textDim, maxWidth: 250, flex: 1 }}
-              size={"xs"}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {vendorLocation?.address}
-            </Text>
-          </LoadingPlaceholder>
-        </View>
-      </View>
+      <VendorLocationInfo vendorLocationId={license?.vendorLocation} />
 
       <View style={{ marginTop: spacing.xs }}>
         <LoadingPlaceholder loading={!license} height={22} width={300}>
@@ -193,7 +140,8 @@ export const LicenseItem = ({
           {deleteLoading ? (
             <ActivityIndicator color={colors.primary} />
           ) : (
-            license && (
+            license &&
+            license.status !== "approved" && (
               <IconButton
                 icon={"delete"}
                 color={colors.textDim}

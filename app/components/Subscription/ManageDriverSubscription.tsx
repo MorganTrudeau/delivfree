@@ -14,8 +14,10 @@ import { withStripe } from "app/hocs/withStripe";
 export const ManageDriverSubscription = withStripe(
   function ManageDriverSubscription({
     displayOnly,
+    onApplyForLicense,
   }: {
     displayOnly?: boolean;
+    onApplyForLicense?: () => void;
   }) {
     const Alert = useAlert();
     const Toast = useToast();
@@ -115,6 +117,7 @@ export const ManageDriverSubscription = withStripe(
         onReferralCodeVerified={setReferralCode}
         noSubscriptionMessage={"You do not have active licenses"}
         title={"Licenses"}
+        onApplyForLicense={onApplyForLicense}
       />
     );
   }
