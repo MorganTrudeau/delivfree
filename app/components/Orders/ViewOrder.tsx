@@ -35,6 +35,7 @@ import { updateOrder } from "app/apis/orders";
 import { useToast } from "app/hooks";
 import { fetchDriver } from "app/apis/driver";
 import { VendorLocationInfo } from "../VendorLocations/VendorLocationInfo";
+import { useDriverCache } from "app/hooks/useCache/useDriverCache";
 
 type Props = { order: Order; isVendor?: boolean };
 
@@ -49,7 +50,8 @@ const ViewOrder = ({ order, isVendor }: Props) => {
 
   const [customer, setCustomer] = useState<User>();
   const [driverId, setDriverId] = useState<string | null>(order.driver);
-  const [driver, setDriver] = useState<Driver>();
+
+  const driver = useDriverCache(driverId);
 
   const loadCustomer = useCallback(async () => {
     const data = await getUser(order.customer);
@@ -59,17 +61,6 @@ const ViewOrder = ({ order, isVendor }: Props) => {
   useEffect(() => {
     loadCustomer();
   }, [order.customer]);
-
-  const loadDriver = useCallback(async () => {
-    if (driverId) {
-      const data = await fetchDriver(driverId);
-      data && setDriver(data);
-    }
-  }, [driverId]);
-
-  useEffect(() => {
-    loadDriver();
-  }, [loadDriver]);
 
   const handleAssignDriver = useCallback(async (driver: Driver | undefined) => {
     try {
