@@ -64,8 +64,6 @@ export type Status = "approved" | "denied" | "pending";
 export type License = {
   id: string;
   driver: string;
-  fullTimeDrivers: string[];
-  partTimeDrivers: string[];
   position: string;
   vendor: string;
   vendorLocation: string;

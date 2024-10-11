@@ -18,9 +18,9 @@ export const VendorDriverSelectScreen = (
 
   const selectRole = (role: "driver" | "vendor") => () => {
     if (role === "driver") {
-      props.navigation.navigate("EditDriverProfile");
+      props.navigation.navigate("DriverRegistration");
     } else {
-      props.navigation.navigate("EditVendorProfile");
+      props.navigation.navigate("VendorRegistration");
     }
   };
   return (

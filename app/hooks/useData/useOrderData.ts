@@ -26,7 +26,9 @@ export const useOrderData = (params: Omit<OrderListenerParams, "limit">) => {
   );
 
   const cacheKey = useMemo(() => {
-    return JSON.stringify(vendorLocation);
+    return Array.isArray(vendorLocation)
+      ? JSON.stringify(vendorLocation)
+      : vendorLocation;
   }, [vendorLocation]);
 
   const { data, loadData } = useDataListener<Order>(
