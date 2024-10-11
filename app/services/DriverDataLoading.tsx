@@ -10,6 +10,7 @@ import { Component } from "react";
 import { ConnectedProps, connect } from "react-redux";
 import { selectVendorLocationIdsFromLicenses } from "app/redux/reducers/driver";
 import { equalArrays } from "app/utils/general";
+import { listenToDriverAvailability } from "app/redux/thunks/driverAvailability";
 
 interface Props extends ReduxProps {}
 
@@ -82,10 +83,14 @@ export class DriverDataLoading extends Component<Props> {
     const licensesListener = await this.props
       .listenToDriverLicenses(subscriptionDriverId)
       .then(unwrapResult);
+    const driverAvailabilityListener = await this.props
+      .listenToDriverAvailability(subscriptionDriverId)
+      .then(unwrapResult);
 
     this.driverListeners.add(driverListener);
     this.driverListeners.add(driverSubscriptionListener);
     this.driverListeners.add(licensesListener);
+    this.driverListeners.add(driverAvailabilityListener);
   };
 
   listenToVendorData = async () => {
@@ -124,6 +129,7 @@ const mapDispatch = {
   listenToVendorLocations,
   listenToCustomers,
   listenToDriverLicenses,
+  listenToDriverAvailability,
 };
 
 const connector = connect(mapState, mapDispatch);

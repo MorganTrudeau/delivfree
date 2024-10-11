@@ -1,19 +1,23 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Customer, ModalRef, Order, OrderStatus } from "delivfree";
 import { FlatList, FlatListProps, ViewStyle } from "react-native";
-import { colors, spacing } from "app/theme";
 import { useAppSelector } from "app/redux/store";
 import { updateOrder } from "app/apis/orders";
 import { OrderItemMobile } from "./OrderItemMobile";
 import { Props as OrderItemProps } from "./OrderItem";
-import { HEADERS } from "app/utils/orders";
 import { $flex, LARGE_SCREEN } from "../styles";
 import { useDimensions } from "app/hooks/useDimensions";
 import { OrderItemWeb } from "./OrderItemWeb";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CustomerDetailModal } from "../Customers/CustomerDetailModal";
 import { EmptyList } from "../EmptyList";
-import { TableHeaders } from "../TableHeaders";
+import { TableHeader, TableHeaders } from "../TableHeaders";
 import { translate } from "app/i18n";
 import { useToast } from "app/hooks";
 
@@ -22,11 +26,15 @@ type Props = {
   loadOrders: () => void;
   onOrderPress: (order: Order) => void;
   onOrderCompleted?: (order: Order) => void;
+  showDriver: boolean;
+  showVendorLocation: boolean;
 } & Partial<FlatListProps<Order>>;
 
 export const OrdersList = ({
   orders,
   loadOrders,
+  showDriver,
+  showVendorLocation,
   onOrderPress,
   ListHeaderComponent,
   onOrderCompleted,
@@ -85,6 +93,23 @@ export const OrdersList = ({
     setViewCustomer(undefined);
   };
 
+  const headers = useMemo(() => {
+    const _headers: TableHeader[] = [
+      { title: "Amount", value: "amount" },
+      { title: "Tip", value: "tip" },
+      { title: "Items", value: "items" },
+      { title: "Date", value: "date" },
+      {
+        title: "Location",
+        value: "vendorLocation",
+        visible: showVendorLocation,
+      },
+      { title: "Driver", value: "driver", visible: showDriver },
+      { title: "Status", value: "status" },
+    ];
+    return _headers.filter((h) => h.visible !== false);
+  }, [showDriver]);
+
   const renderItem = useCallback(
     ({ item: order }: { item: Order }) => {
       const props: OrderItemProps = {
@@ -105,6 +130,9 @@ export const OrdersList = ({
           customerDetailModal.current?.open();
         },
         onOrderCompleted,
+        showDriver,
+        showVendorLocation,
+        headers,
       };
       return largeScreenLayout ? (
         <OrderItemWeb {...props} />
@@ -112,7 +140,14 @@ export const OrdersList = ({
         <OrderItemMobile {...props} />
       );
     },
-    [claimLoading, userType, onOrderPress, claimOrder, largeScreenLayout]
+    [
+      claimLoading,
+      userType,
+      onOrderPress,
+      claimOrder,
+      largeScreenLayout,
+      headers,
+    ]
   );
 
   const renderEmptyComponent = useCallback(
@@ -131,10 +166,10 @@ export const OrdersList = ({
             <ListHeaderComponent />
           )
         ) : null}
-        {largeScreenLayout && <TableHeaders headers={HEADERS} />}
+        {largeScreenLayout && <TableHeaders headers={headers} />}
       </>
     );
-  }, [ListHeaderComponent, largeScreenLayout]);
+  }, [ListHeaderComponent, largeScreenLayout, headers]);
 
   return (
     <>
@@ -156,21 +191,6 @@ export const OrdersList = ({
       />
     </>
   );
-};
-
-const $header: ViewStyle = {
-  paddingVertical: spacing.xs,
-  flexDirection: "row",
-  alignItems: "center",
-  borderTopWidth: 1,
-  borderTopColor: colors.border,
-  borderBottomWidth: 1,
-  borderBottomColor: colors.borderLight,
-};
-
-const $tableCell: ViewStyle = {
-  flex: 1,
-  paddingEnd: spacing.md,
 };
 
 const $content: ViewStyle = { flexGrow: 1 };

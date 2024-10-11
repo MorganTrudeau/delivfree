@@ -67,7 +67,7 @@ export const $card: ViewStyle = {
   elevation: 2,
   zIndex: 2,
   width: "100%",
-  maxWidth: MAX_CONTAINER_WIDTH,
+  maxWidth: MAX_CONTENT_WIDTH,
   alignSelf: Platform.select({ default: "center", web: "center" }),
   borderRadius: 6,
   backgroundColor: colors.background,

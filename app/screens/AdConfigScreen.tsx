@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Screen, Text, TextField } from "app/components";
-import { Drawer } from "app/components/Drawer";
 import { $containerPadding, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
 import { useAlert, useToast, useUploadImage } from "app/hooks";

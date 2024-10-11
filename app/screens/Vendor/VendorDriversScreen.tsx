@@ -1,5 +1,4 @@
 import { Screen } from "app/components";
-import { Drawer } from "app/components/Drawer";
 import { AddDriverModal } from "app/components/Drivers/AddDriverModal";
 import { DriversList } from "app/components/Drivers/DriversList";
 import { ModalRef } from "app/utils/types";
@@ -30,7 +29,6 @@ export const VendorDriversScreen = (props: VendorLocationsScreenProps) => {
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      
     >
       <ScreenHeader
         title="Drivers"

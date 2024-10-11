@@ -5,6 +5,7 @@ import { MOMENT_DATE_FORMAT, Order, VendorLocation } from "delivfree";
 import moment from "moment";
 import functions from "@react-native-firebase/functions";
 import { fetchVendorLocation } from "./vendorLocations";
+import { equalStringOrInArray } from "./utils";
 
 export const createOrder = (order: Order) => {
   return firestore().collection("Orders").doc(order.id).set(order);
@@ -43,7 +44,7 @@ export const listenToActiveCustomerOrder = (
 
 export type OrderListenerParams = {
   driver?: string;
-  vendorLocation?: string;
+  vendorLocation?: string | string[];
   limit?: number;
   startDate?: number;
   endDate?: number;
@@ -62,7 +63,11 @@ export const listenToOrders = (
   }
 
   if (vendorLocation) {
-    query = query.where("vendorLocation", "==", vendorLocation);
+    query = query.where(
+      "vendorLocation",
+      equalStringOrInArray(vendorLocation),
+      vendorLocation
+    );
   }
 
   if (startDate) {
@@ -235,8 +240,8 @@ export const formatOrderEmail = (
             <h3 style="margin: 0;">${
               item.item.name
             } <span style="font-weight:300;">(x${
-              item.quantity
-            })</span> ${price}</h4>
+        item.quantity
+      })</span> ${price}</h4>
           </div>
         ${formatCustomizations(item.customizations)}
       </div>`;

@@ -34,6 +34,7 @@ export const linkingConfigScreens: {
   Tips: "tips",
   ConsumerTermsAndConditions: "consumer-terms-and-conditions",
   VendorTermsAndConditions: "vendor-terms-and-conditions",
+  DeleteAccount: "delete-account",
 };
 
 export const screenOptions: NativeStackNavigationOptions = {

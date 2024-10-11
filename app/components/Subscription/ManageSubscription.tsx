@@ -4,8 +4,8 @@ import { $borderTop, $borderedArea, $flex } from "app/components/styles";
 import { colors, spacing } from "app/theme";
 import { Card } from "app/components/Card";
 import { LicenseItem } from "app/components/Licenses/LicenseItem";
-import { ActivityIndicator, Platform, View } from "react-native";
-import { License } from "delivfree";
+import { ActivityIndicator, Platform, Pressable, View } from "react-native";
+import { License, UserType } from "delivfree";
 import { SubscriptionInfo } from "./SubscriptionInfo";
 import Stripe from "stripe";
 import { ReferralCodeInput } from "./ReferralCodeInput";
@@ -22,6 +22,7 @@ export const ManageSubscription = ({
   freeTrialReward,
   noSubscriptionMessage,
   title,
+  onApplyForLicense,
 }: {
   loading: boolean;
   onSubscribe: () => void;
@@ -33,6 +34,7 @@ export const ManageSubscription = ({
   freeTrialReward?: boolean;
   title: string;
   noSubscriptionMessage: string;
+  onApplyForLicense?: () => void;
 }) => {
   const Loading = useMemo(
     () =>
@@ -125,6 +127,12 @@ export const ManageSubscription = ({
         ))
       ) : (
         <Text>You have no approved licenses</Text>
+      )}
+
+      {onApplyForLicense && (
+        <Pressable onPress={onApplyForLicense}>
+          <Text style={{ color: colors.primary }}>Apply for license</Text>
+        </Pressable>
       )}
     </Card>
   );

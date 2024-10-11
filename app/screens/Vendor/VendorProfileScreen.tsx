@@ -1,32 +1,18 @@
 import { updateVendor } from "app/apis/vendors";
-import {
-  Button,
-  HeaderProps,
-  Icon,
-  Screen,
-  Text,
-  TextField,
-} from "app/components";
-import { Drawer } from "app/components/Drawer";
+import { Button, Screen, TextField } from "app/components";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { ScreenHeader } from "app/components/ScreenHeader";
-import { $containerPadding, $flex, $row, $screen } from "app/components/styles";
+import { $containerPadding, $screen } from "app/components/styles";
 import { useAlert, useToast } from "app/hooks";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
 import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
-import { colors, spacing } from "app/theme";
+import { spacing } from "app/theme";
 import { isValidEmail } from "app/utils/general";
 import { Vendor } from "delivfree";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Platform,
-  Pressable,
-  TextStyle,
-  View,
-} from "react-native";
+import React, { useCallback, useState } from "react";
+import { TextStyle } from "react-native";
 
 interface VendorProfileScreenProps extends AppStackScreenProps<"Profile"> {}
 

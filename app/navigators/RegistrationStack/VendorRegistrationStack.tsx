@@ -21,13 +21,13 @@ export const renderVendorRegistrationStack = ({
       )}
       {(!hasSelectedRole || user?.vendor) && (
         <Stack.Screen
-          name="EditVendorProfile"
+          name="VendorRegistration"
           component={Screens.EditVendorProfileScreen}
         />
       )}
       {(!hasSelectedRole || user?.driver) && (
         <Stack.Screen
-          name="EditDriverProfile"
+          name="DriverRegistration"
           component={Screens.EditDriverProfileScreen}
         />
       )}

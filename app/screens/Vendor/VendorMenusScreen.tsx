@@ -1,5 +1,4 @@
 import { Screen } from "app/components";
-import { Drawer } from "app/components/Drawer";
 import { MenuCategories } from "../../components/Menus/MenuCategory/MenuCategories";
 import { MenuItems } from "../../components/Menus/MenuItem/MenuItems";
 import { MenuOverview } from "app/components/Menus/MenuOverview";
@@ -14,12 +13,7 @@ import { ManageMenuModal } from "app/components/Menus/Menu/ManageMenuModal";
 import { ManageMenuCategoryModal } from "app/components/Menus/MenuCategory/ManageMenuCategoryModal";
 import { useEditModalControl } from "app/hooks/useEditModalControl";
 import { ManageMenuItemModal } from "app/components/Menus/MenuItem/ManageMenuItemModal";
-import {
-  Menu,
-  MenuCategory,
-  MenuCustomization,
-  MenuItem,
-} from "delivfree";
+import { Menu, MenuCategory, MenuCustomization, MenuItem } from "delivfree";
 import { MenuCustomizations } from "app/components/Menus/MenuCustomization/MenuCustomizations";
 import { ManageMenuCustomizationModal } from "app/components/Menus/MenuCustomization/ManageMenuCustomizationModal";
 
@@ -179,7 +173,6 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
     <Screen
       style={$screen}
       contentContainerStyle={[$containerPadding, { minWidth: 550 }]}
-      
       preset="scroll"
     >
       <ListTabs
