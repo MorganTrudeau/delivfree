@@ -1,6 +1,6 @@
 import {
   Cuisine,
-  DriverClockIn,
+  DriverAvailability,
   LatLng,
   Menu,
   Positions,
@@ -196,14 +196,14 @@ const loadVendorLocationDetails = async (
     .where("vendor", "==", vendorLocation.vendor)
     .get();
   const activeDriversSnap = await firestore()
-    .collection("DriverClockIns")
+    .collection("DriverAvailability")
     .where("vendorLocation", "==", vendorLocation.id)
     .get();
 
   const vendor = vendorDoc.data();
   const menus = menusSnap.docs.map((doc) => doc.data() as Menu);
   const activeDrivers = activeDriversSnap.docs.map(
-    (doc) => doc.data() as DriverClockIn
+    (doc) => doc.data() as DriverAvailability
   );
 
   if (

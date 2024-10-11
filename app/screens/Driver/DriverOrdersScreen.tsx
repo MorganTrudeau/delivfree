@@ -1,17 +1,21 @@
-import { Screen } from "app/components";
+import { Icon, Screen, Text } from "app/components";
 import { OrdersList } from "app/components/Orders/OrdersList";
 import { ScreenHeader } from "app/components/ScreenHeader";
-import { $containerPadding, $screen } from "app/components/styles";
+import {
+  $borderedArea,
+  $containerPadding,
+  $row,
+  $screen,
+} from "app/components/styles";
 import { useOrderData, useUploadImage } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
 import { useAppSelector } from "app/redux/store";
-import { spacing } from "app/theme";
+import { colors, spacing } from "app/theme";
 import { Order } from "delivfree";
-import React, { useCallback, useRef, useState } from "react";
-import { View } from "react-native";
-import { BottomSheetRef } from "app/components/Modal/BottomSheet";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { Pressable, View } from "react-native";
+import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { ViewOrderModal } from "app/components/Orders/ViewOrder";
-import { DriverClockIn } from "app/components/Drivers/DriverClockIn";
 import { EmptyList } from "app/components/EmptyList";
 import { SubscriptionNotice } from "app/components/Subscription/SubscriptionNotice";
 import { selectSubscriptionValid } from "app/redux/selectors";
@@ -20,11 +24,14 @@ import {
   requestCameraPermissionsAsync,
 } from "expo-image-picker";
 import { updateOrder } from "app/apis/orders";
+import { DriverAvailabilitySelect } from "app/components/Drivers/DriverAvailability";
+import { pluralFormat } from "app/utils/general";
 
 interface DriverOrdersScreenProps extends AppStackScreenProps<"Orders"> {}
 
 export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
   const viewOrderModal = useRef<BottomSheetRef>(null);
+  const driverAvailabilityModal = useRef<BottomSheetRef>(null);
 
   const { uploadImage } = useUploadImage();
 
@@ -34,12 +41,16 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
   );
 
   const [selectedOrder, setSelectedOrder] = useState<Order>();
-  const clockInStatus = useAppSelector((state) => state.driverClockIn.data);
+  const driverAvailability = useAppSelector(
+    (state) => state.driverAvailability.data
+  );
 
-  console.log(clockInStatus?.vendorLocation);
+  const vendorLocations = useMemo(() => {
+    return driverAvailability.map((d) => d.vendorLocation);
+  }, [driverAvailability]);
 
   const { data, loadData } = useOrderData({
-    vendorLocation: clockInStatus?.vendorLocation,
+    vendorLocation: vendorLocations,
     driver,
   });
 
@@ -85,24 +96,41 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
     }
   };
 
-  const renderHeader = useCallback(() => <ScreenHeader title={"Orders"} />, []);
+  const renderHeader = useCallback(
+    () => (
+      <>
+        <ScreenHeader title={"Orders"} />
+        <Pressable
+          onPress={() => driverAvailabilityModal.current?.snapToIndex(0)}
+          style={[
+            { marginBottom: spacing.md, alignSelf: "flex-start" },
+            $borderedArea,
+          ]}
+        >
+          <Text>
+            Delivering for {driverAvailability.length}{" "}
+            {pluralFormat("location", driverAvailability.length)}
+          </Text>
+          <View style={$row}>
+            <Icon icon={"swap-horizontal"} color={colors.primary} />
+            <Text
+              size={"xs"}
+              style={{ color: colors.primary, marginLeft: spacing.xxs }}
+            >
+              Change availability
+            </Text>
+          </View>
+        </Pressable>
+      </>
+    ),
+    [driverAvailability]
+  );
   const renderEmpty = useCallback(() => {
     if (!subscriptionValid) {
       return <EmptyList icon={"food"} title={"Find your orders here"} />;
     }
-    return (
-      <View style={{ padding: spacing.md }}>
-        {!clockInStatus ? (
-          <EmptyList
-            icon={"power-sleep"}
-            title={"Set your status to available to accept orders"}
-          />
-        ) : (
-          <EmptyList title={"No orders at this location"} />
-        )}
-      </View>
-    );
-  }, [clockInStatus, subscriptionValid]);
+    return <EmptyList title={"No orders right now"} />;
+  }, [subscriptionValid]);
 
   return (
     <>
@@ -112,21 +140,34 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
         contentContainerStyle={$containerPadding}
       >
         <SubscriptionNotice style={{ marginBottom: spacing.md }} />
-        <OrdersList
-          orders={data}
-          loadOrders={loadData}
-          onOrderPress={onOrderPress}
-          ListHeaderComponent={renderHeader}
-          ListEmptyComponent={renderEmpty}
-          onOrderCompleted={takeOrderDropOffPicture}
-        />
+        {driverAvailability.length === 0 ? (
+          <>
+            <ScreenHeader title={"Orders"} />
+            <DriverAvailabilitySelect />
+          </>
+        ) : (
+          <OrdersList
+            orders={data}
+            loadOrders={loadData}
+            onOrderPress={onOrderPress}
+            ListHeaderComponent={renderHeader}
+            ListEmptyComponent={renderEmpty}
+            onOrderCompleted={takeOrderDropOffPicture}
+            showDriver={false}
+            showVendorLocation={true}
+          />
+        )}
         <ViewOrderModal
           ref={viewOrderModal}
           onClose={closeCreateOrder}
           order={selectedOrder}
         />
+        <BottomSheet ref={driverAvailabilityModal}>
+          <DriverAvailabilitySelect
+            onChange={() => driverAvailabilityModal.current?.collapse()}
+          />
+        </BottomSheet>
       </Screen>
-      {subscriptionValid && <DriverClockIn />}
     </>
   );
 };

@@ -1,5 +1,4 @@
 import { Screen } from "app/components";
-import { Drawer } from "app/components/Drawer";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import { UsersList } from "app/components/Users/UsersList";
 import { $containerPadding, $screen } from "app/components/styles";
@@ -24,7 +23,6 @@ export const AdminUsersScreen = (props: AdminUsersScreenProps) => {
       preset="fixed"
       style={$screen}
       contentContainerStyle={$containerPadding}
-      
     >
       <ScreenHeader title="Users" />
       <UsersList

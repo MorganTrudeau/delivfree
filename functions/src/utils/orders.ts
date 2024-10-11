@@ -1,5 +1,5 @@
 import { getTodaysDate } from ".";
-import { DriverClockIn, Order, VendorLocation } from "../types";
+import { DriverAvailability, Order, VendorLocation } from "../types";
 import * as admin from "firebase-admin";
 
 export const formatOrderEmail = (
@@ -74,15 +74,15 @@ export const formatOrderEmail = (
 export const assignOrderDriver = async (order: Order) => {
   const activeDriverSnap = await admin
     .firestore()
-    .collection("DriverClockIns")
+    .collection("DriverAvailability")
     .where("vendorLocation", "==", order.vendorLocation)
     .get();
 
   const activeDrivers = activeDriverSnap.docs.map((doc) => {
-    const driverClockIn = doc.data() as DriverClockIn;
+    const driverClockIn = doc.data() as DriverAvailability;
     return {
       ...driverClockIn,
-      driverId: doc.id,
+      driverId: driverClockIn.driver,
       ordersTaken: driverClockIn.ordersTaken || 0,
     };
   });

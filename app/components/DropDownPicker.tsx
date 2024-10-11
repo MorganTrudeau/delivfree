@@ -36,7 +36,7 @@ interface Props<V> {
   containerStyle?: ViewStyle;
 }
 
-export const DropDownPicker = <V extends string>({
+export const DropDownPicker = <V extends any>({
   items,
   onSelect,
   selectedValues,
@@ -161,22 +161,31 @@ export const DropDownPicker = <V extends string>({
             style={{ maxHeight: height / 3 }}
             showsVerticalScrollIndicator={false}
           >
-            {items.map((item, index, arr) => (
-              <Pressable
-                key={item.value}
-                style={[$pickerItem, index !== arr.length - 1 && $borderBottom]}
-                onPress={() => handleSelect(item.value)}
-              >
-                <Text style={$flex}>{item.label}</Text>
-                {selectedValues?.includes(item.value) && (
-                  <Icon
-                    icon={"check-circle"}
-                    color={colors.primary}
-                    size={sizing.md}
-                  />
-                )}
-              </Pressable>
-            ))}
+            {!items.length ? (
+              <View style={$pickerItem}>
+                <Text style={$flex}>No items</Text>
+              </View>
+            ) : (
+              items.map((item, index, arr) => (
+                <Pressable
+                  key={`${item.label} + ${index}`}
+                  style={[
+                    $pickerItem,
+                    index !== arr.length - 1 && $borderBottom,
+                  ]}
+                  onPress={() => handleSelect(item.value)}
+                >
+                  <Text style={$flex}>{item.label}</Text>
+                  {selectedValues?.includes(item.value) && (
+                    <Icon
+                      icon={"check-circle"}
+                      color={colors.primary}
+                      size={sizing.md}
+                    />
+                  )}
+                </Pressable>
+              ))
+            )}
           </ScrollView>
         </Animated.View>
       </Portal>

@@ -1,22 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { resetAppState } from "../resetAppState";
+import { DriverAvailability } from "delivfree";
 
-export interface DriverClockInState {
-  data: { vendorLocation: string; date: number } | null;
+export interface DriverAvailabilityState {
+  data: DriverAvailability[];
 }
 
-const initialState: DriverClockInState = {
-  data: null,
+const initialState: DriverAvailabilityState = {
+  data: [],
 };
 
 export const driverClockInSlice = createSlice({
-  name: "driverClockIn",
+  name: "driverAvailability",
   initialState,
   reducers: {
-    setDriverClockInStatus: (
+    setDriverAvailability: (
       state,
-      action: PayloadAction<{ vendorLocation: string; date: number } | null>
+      action: PayloadAction<DriverAvailability[]>
     ) => {
       state.data = action.payload;
     },
@@ -27,6 +28,6 @@ export const driverClockInSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setDriverClockInStatus } = driverClockInSlice.actions;
+export const { setDriverAvailability } = driverClockInSlice.actions;
 
 export default driverClockInSlice.reducer;
