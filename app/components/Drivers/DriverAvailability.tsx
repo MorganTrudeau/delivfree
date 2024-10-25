@@ -79,7 +79,7 @@ export const DriverAvailabilitySelect = ({
     <Card>
       <Text preset="subheading">Set your availability</Text>
       <Text style={{ marginBottom: spacing.sm, color: colors.textDim }}>
-        Select the restaurants your are delivering for today.
+        Select the restaurants you are delivering for today.
       </Text>
       {licensesArray.map((license) => {
         return (
