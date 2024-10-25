@@ -43,7 +43,7 @@ export const formatOrderEmail = (
               item.item.name
             } <span style="font-weight:300;">(x${
         item.quantity
-      })</span> ${formatPrice(Number(item.item.price) * item.quantity)}</h4>
+      })</span> ${formatPrice(Number(item.item.price) * item.quantity)}</h3>
           </div>
         ${formatCustomizations(item.customizations)}
       </div>`;
@@ -56,7 +56,7 @@ export const formatOrderEmail = (
         <h1>Your Order</h1>
         <h3>Here is your receipt from ${vendorLocation.name}</h3>
         ${orderItems}
-        <div style="padding: 15px 0">
+        <div style="padding: 10px 0">
           <span>Subtotal: ${formatPrice(order.subtotal)}</span><br/>
           <span>Tip: ${formatPrice(order.tip)}</span><br/>
           <span>Tax: ${formatPrice(order.tax)}</span><br/>
