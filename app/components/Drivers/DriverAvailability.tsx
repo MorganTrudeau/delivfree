@@ -29,9 +29,7 @@ export const DriverAvailabilitySelect = ({
 
   const licensesArray = useMemo(() => Object.values(licenses), [licenses]);
 
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([
-    ...currentAvailability.map((a) => a.vendorLocation),
-  ]);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
 
   const handleLocationSelect = useCallback((vendorLocation: string) => {
     setSelectedLocations((state) =>
