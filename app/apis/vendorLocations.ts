@@ -4,6 +4,7 @@ import {
   LatLng,
   Menu,
   Positions,
+  Vendor,
   VendorLocation,
 } from "delivfree";
 import * as geofire from "geofire-common";
@@ -63,13 +64,16 @@ export const fetchVendorLocation = async (id: string) => {
   return doc.data() as VendorLocation | undefined;
 };
 
-export const fetchVendorLocationDetail = async (id: string) => {
+export const fetchVendorLocationDetail = async (
+  id: string,
+  testUser: boolean
+) => {
   const doc = await firestore().collection("VendorLocations").doc(id).get();
   const vendorLocation = doc.data() as VendorLocation | undefined;
   if (!vendorLocation) {
     return undefined;
   }
-  return loadVendorLocationDetails(vendorLocation);
+  return loadVendorLocationDetails(vendorLocation, testUser);
 };
 
 export const listenToVendorLocations = (
@@ -106,7 +110,8 @@ export const listenToVendorLocations = (
 export const fetchVendorLocations = async (
   centerLatLng: LatLng,
   queryOptions: { cuisine?: Cuisine; limit?: number; keyword?: string } = {},
-  radiusKm = 10
+  radiusKm = 10,
+  testUser: boolean
 ): Promise<VendorLocation[]> => {
   const { cuisine, limit, keyword } = queryOptions;
 
@@ -163,7 +168,7 @@ export const fetchVendorLocations = async (
 
   const vendorLocationDetails = await Promise.all(
     vendorLocations.map((vendorLocation) =>
-      loadVendorLocationDetails(vendorLocation)
+      loadVendorLocationDetails(vendorLocation, testUser)
     )
   );
 
@@ -185,7 +190,8 @@ export const fetchVendorLocations = async (
 };
 
 const loadVendorLocationDetails = async (
-  vendorLocation: VendorLocation
+  vendorLocation: VendorLocation,
+  isTestUser: boolean
 ): Promise<VendorLocation | null> => {
   const vendorDoc = await firestore()
     .collection("Vendors")
@@ -200,14 +206,16 @@ const loadVendorLocationDetails = async (
     .where("vendorLocation", "==", vendorLocation.id)
     .get();
 
-  const vendor = vendorDoc.data();
+  const vendor = vendorDoc.data() as Vendor;
   const menus = menusSnap.docs.map((doc) => doc.data() as Menu);
   const activeDrivers = activeDriversSnap.docs.map(
     (doc) => doc.data() as DriverAvailability
   );
 
+  const forceShow = isTestUser && vendor?.isTest;
+
   if (
-    !__DEV__ &&
+    !forceShow &&
     !(
       vendor &&
       vendor.registration.status === "approved" &&
@@ -224,7 +232,7 @@ const loadVendorLocationDetails = async (
   const menusActive = hasActiveMenu(menus);
   return {
     ...vendorLocation,
-    isOpen: __DEV__ || (!!menusActive && !!activeDrivers?.length),
+    isOpen: !!menusActive && !!activeDrivers?.length,
     nextOpen: !menusActive ? getMenuNextOpen(menus) : "",
   };
 };

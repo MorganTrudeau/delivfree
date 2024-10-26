@@ -121,6 +121,7 @@ export type User = {
   vendor?: { ids: string[] };
   driver?: { id: string; parentDriver?: string };
   admin?: {};
+  isTester?: boolean | null;
 };
 export type Cuisine = (typeof Cuisines)[keyof typeof Cuisines];
 export type VendorLocation = {
@@ -175,6 +176,7 @@ export type Vendor = {
   };
   subscriptionStatus?: "active" | "inactive";
   hasFreeSubscription?: boolean;
+  isTest?: boolean | null;
 };
 export type Driver = {
   id: string;

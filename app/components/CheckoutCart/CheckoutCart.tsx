@@ -14,6 +14,7 @@ import { CartItem } from "./CartItem";
 import { Button } from "../Button";
 import { LoadingPlaceholder } from "../LoadingPlaceholder";
 import { Icon } from "../Icon";
+import { isTestUser } from "app/redux/selectors";
 
 export const CheckoutCart = ({
   onCheckout,
@@ -22,6 +23,7 @@ export const CheckoutCart = ({
   onCheckout: () => void;
   style?: ViewStyle;
 }) => {
+  const testUser = useAppSelector(isTestUser);
   const cart = useAppSelector((state) => state.checkoutCart.order);
   const vendorLocations = useAppSelector((state) => state.vendorLocations.data);
   const dispatch = useAppDispatch();
@@ -36,7 +38,10 @@ export const CheckoutCart = ({
     if (cartVendorLocation && !vendorLocation) {
       const loadVendorData = async () => {
         try {
-          const data = await fetchVendorLocationDetail(cartVendorLocation);
+          const data = await fetchVendorLocationDetail(
+            cartVendorLocation,
+            testUser
+          );
           if (data) {
             setVendorLocation(data);
           }

@@ -2,6 +2,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import { getTotalPositions } from "app/utils/positions";
 import { getPositionsFromSubscription } from "app/utils/subscriptions";
+import { User } from "delivfree";
 
 const getVendor = (state: RootState) => state.vendor.activeVendor;
 const getDriver = (state: RootState) => state.driver.activeDriver;
@@ -12,6 +13,7 @@ const getDriverSubscription = (state: RootState) =>
 const getUserType = (state: RootState) => state.appConfig.userType;
 const getVendorLicenses = (state: RootState) => state.vendor.licenses;
 const getDriverLicenses = (state: RootState) => state.driver.licenses;
+const getActiveUser = (state: RootState) => state.user.user;
 
 export const selectSubscriptionValid = createSelector(
   [
@@ -67,3 +69,7 @@ export const selectSubscriptionValid = createSelector(
     );
   }
 );
+
+export const isTestUser = createSelector([getActiveUser], (user) => {
+  return !!user?.isTester;
+});
