@@ -13,6 +13,8 @@ import { $flex, MAX_CONTENT_WIDTH } from "app/components/styles";
 import { getRestaurantCache } from "app/hooks";
 import { useMenusLoading } from "app/hooks/useMenusLoading";
 import { AppStackScreenProps } from "app/navigators";
+import { isTestUser } from "app/redux/selectors";
+import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
 import { isMenuActive } from "app/utils/menus";
@@ -49,6 +51,8 @@ export const RestaurantDetailScreen = ({
 }: RestaurantsScreenProps) => {
   const { restaurantId } = route.params;
 
+  const testUser = useAppSelector(isTestUser);
+
   const [vendorLocation, setVendorLocation] = useState<
     VendorLocation | undefined
   >(getRestaurantCache().cache[restaurantId]);
@@ -56,7 +60,7 @@ export const RestaurantDetailScreen = ({
   useEffect(() => {
     if (!vendorLocation) {
       const load = async () => {
-        const data = await fetchVendorLocationDetail(restaurantId);
+        const data = await fetchVendorLocationDetail(restaurantId, testUser);
 
         if (data) {
           setVendorLocation(data);
@@ -64,7 +68,7 @@ export const RestaurantDetailScreen = ({
       };
       load();
     }
-  }, [vendorLocation]);
+  }, [vendorLocation, testUser]);
 
   const checkoutPopUp = useRef<CheckoutPopUpRef>(null);
 

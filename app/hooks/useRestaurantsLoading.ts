@@ -24,7 +24,9 @@ export const useRestaurantsLoading = (cuisine: Cuisine) => {
         latitude: activeUser?.location?.latitude as number,
         longitude: activeUser?.location?.longitude as number,
       },
-      { cuisine, limit }
+      { cuisine, limit },
+      undefined,
+      !!activeUser?.isTester
     );
     setRestaurants(restaurants);
     cache.current.updateCache(cuisine, restaurants);
