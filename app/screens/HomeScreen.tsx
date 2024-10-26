@@ -25,6 +25,7 @@ import { AdBanner } from "app/components/AdBanner";
 import { useIsFocused } from "@react-navigation/native";
 import { CustomerOrderTracker } from "app/components/Orders/CustomerOrderTracker";
 import { sendOrderConfirmationEmail } from "app/apis/orders";
+import { isTestUser } from "app/redux/selectors";
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
 export const HomeScreen = (props: HomeScreenProps) => {
@@ -97,7 +98,9 @@ export const HomeScreen = (props: HomeScreenProps) => {
         latitude: activeUser?.location?.latitude as number,
         longitude: activeUser?.location?.longitude as number,
       },
-      { keyword: query }
+      { keyword: query },
+      undefined,
+      !!activeUser?.isTester
     );
     setRestaurants(_restaurants);
     setSearchLoading(false);
