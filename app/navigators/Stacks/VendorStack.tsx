@@ -110,7 +110,7 @@ export const VendorStack = () => {
             }}
           />
           <Stack.Screen
-            name="DriverRegistration"
+            name="Profile"
             component={Screens.EditDriverProfileScreen}
           />
           <Stack.Screen

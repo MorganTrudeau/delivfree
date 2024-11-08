@@ -54,7 +54,7 @@ export const PositionsSearchScreen = ({ navigation }: Props) => {
             <View style={[$row, $headerButton]}>
               <Pressable
                 style={$row}
-                onPress={() => navigation.navigate("DriverRegistration")}
+                onPress={() => navigation.navigate("Profile")}
               >
                 <StatusIndicator
                   status={registrationStatus}
