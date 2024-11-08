@@ -6,6 +6,8 @@ import { User } from "delivfree";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "app/redux/store";
 import functions from "@react-native-firebase/functions";
+import { deleteVendor } from "./vendors";
+import { deleteDriver } from "./driver";
 
 export const listenToUsers = (
   limit: number,
@@ -35,6 +37,26 @@ export const unblockUser = (activeUserId: string, userId: string) => {
 
 export const deleteAccount = () => {
   return functions().httpsCallable("deleteAccount")();
+};
+
+export const deleteUser = async (user: User) => {
+  if (user.admin) {
+    return;
+  }
+
+  const batch = firestore().batch();
+
+  if (user.vendor?.ids?.[0]) {
+    await deleteVendor(user.vendor.ids[0], batch);
+  }
+
+  if (user.driver?.id) {
+    await deleteDriver(user.driver.id, batch);
+  }
+
+  batch.delete(firestore().collection("Users").doc(user.id));
+
+  return batch.commit();
 };
 
 export const listenToUser = (

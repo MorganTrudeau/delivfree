@@ -2,6 +2,7 @@ import firestore, {
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
 import { Status, Vendor } from "delivfree";
+import { deleteVendorLocation } from "./vendorLocations";
 
 export const updateVendor = (id: string, update: Partial<Vendor>) => {
   return firestore().collection("Vendors").doc(id).update(update);
@@ -20,6 +21,27 @@ export const listenToVendor = (
 export const fetchVendor = async (vendor: string) => {
   const doc = await firestore().collection("Vendors").doc(vendor).get();
   return doc.data() as Vendor | undefined;
+};
+
+export const deleteVendor = async (
+  vendor: string,
+  batchArg?: FirebaseFirestoreTypes.WriteBatch
+) => {
+  const batch = batchArg || firestore().batch();
+
+  const vendorLocationSnap = await firestore()
+    .collection("VendorLocations")
+    .where("vendor", "==", vendor)
+    .get();
+  await Promise.all(
+    vendorLocationSnap.docs.map((doc) => deleteVendorLocation(doc.id, batch))
+  );
+
+  batch.delete(firestore().collection("Vendors").doc(vendor));
+
+  if (!batchArg) {
+    return batch.commit();
+  }
 };
 
 export const listenToVendors = (

@@ -25,6 +25,11 @@ export const data: { cuisine: Cuisine; image: number; title: string }[] = [
     title: "Chinese",
   },
   {
+    cuisine: Cuisines.Thai,
+    image: require("../../assets/images/cuisines/thai.jpg"),
+    title: "Thai",
+  },
+  {
     cuisine: Cuisines.Sushi,
     image: require("../../assets/images/cuisines/sushi.jpg"),
     title: "Sushi",

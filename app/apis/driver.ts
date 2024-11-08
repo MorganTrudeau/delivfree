@@ -17,16 +17,29 @@ export const fetchDriver = async (driver: string) => {
   return doc.data() as Driver | undefined;
 };
 
-export const fetchDrivers = async (params: {
-  vendorLocations: string[];
-}) => {
+export const deleteDriver = async (
+  driver: string,
+  batchArg?: FirebaseFirestoreTypes.WriteBatch
+) => {
+  const batch = batchArg || firestore().batch();
+
+  const licensesSnap = await firestore()
+    .collection("Licenses")
+    .where("driver", "==", driver)
+    .get();
+
+  licensesSnap.docs.forEach((doc) => batch.delete(doc.ref));
+  batch.delete(firestore().collection("Drivers").doc(driver));
+
+  if (!batchArg) {
+    return batch.commit();
+  }
+};
+
+export const fetchDrivers = async (params: { vendorLocations: string[] }) => {
   const snap = await firestore()
     .collection("Drivers")
-    .where(
-      "vendorLocations",
-      "array-contains-any",
-      params.vendorLocations
-    )
+    .where("vendorLocations", "array-contains-any", params.vendorLocations)
     .get();
   return snap ? snap.docs.map((doc) => doc.data() as Driver) : [];
 };

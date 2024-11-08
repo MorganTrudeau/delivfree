@@ -1,7 +1,7 @@
 import { listenToLicenses } from "app/apis/licenses";
 import { listenToPositions } from "app/apis/positions";
 import { fetchSubscription } from "app/apis/stripe";
-import { updateVendor } from "app/apis/vendors";
+import { deleteVendor, updateVendor } from "app/apis/vendors";
 import { Screen, Text } from "app/components";
 import { DetailItem } from "app/components/DetailItem";
 import { DetailsHeader } from "app/components/Details/DetailsHeader";
@@ -41,11 +41,18 @@ import { ActivityIndicator, Linking, View, ViewStyle } from "react-native";
 import Stripe from "stripe";
 import { viewSubscriptionOnStripe } from "app/utils/subscriptions";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
+import { ButtonSmall } from "app/components/ButtonSmall";
+import { useAsyncFunction } from "app/hooks/useAsyncFunction";
+import { useAlert } from "app/hooks";
+import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
+import { confirmDelete } from "app/utils/general";
 
 interface VendorDetailScreenProps extends AppStackScreenProps<"VendorDetail"> {}
 
 export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
   const vendorId = props.route.params?.vendor;
+
+  const Alert = useAlert();
 
   const vendorLocationModal = useRef<BottomSheetRef>(null);
   const positionsModal = useRef<ModalRef>(null);
@@ -167,6 +174,30 @@ export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
     await viewSubscriptionOnStripe(subscription);
   };
 
+  const handleDeleteVendor = useCallback(async () => {
+    try {
+      const shouldDelete = await confirmDelete(Alert);
+      if (!shouldDelete) {
+        return;
+      }
+      await deleteVendor(vendorId);
+      props.navigation.navigate("Vendors");
+    } catch (error) {
+      console.log("Failed to delete vendor", error);
+      Alert.alert(
+        "Something went wrong",
+        "Failed to delete vendor. Please try again."
+      );
+    }
+  }, [vendorId]);
+
+  const { loading: deleteLoading, exec: execDeleteVendor } =
+    useAsyncFunction(handleDeleteVendor);
+
+  const DeleteLoading = useLoadingIndicator(deleteLoading, {
+    color: colors.primary,
+  });
+
   if (!vendor) {
     return (
       <Screen
@@ -248,6 +279,19 @@ export const VendorDetailScreen = (props: VendorDetailScreenProps) => {
         onPress={handleLicensePress}
         style={{ flexGrow: 0 }}
         showDriver
+      />
+
+      <ButtonSmall
+        text="Delete Vendor"
+        style={{
+          marginTop: spacing.xl,
+          alignSelf: "center",
+          width: "100%",
+          maxWidth: 300,
+        }}
+        textStyle={{ color: colors.primary }}
+        onPress={execDeleteVendor}
+        RightAccessory={DeleteLoading}
       />
 
       <LicenseDisplayModal

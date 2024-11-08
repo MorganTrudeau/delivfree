@@ -25,6 +25,7 @@ export const linkingConfigScreens: {
   Vendors: "vendors",
   VendorDetail: "vendor-detail",
   DriverDetail: "driver-detail",
+  UserDetail: "user-detail",
   AdConfig: "ad-config",
   PositionsSearch: "positions-search",
   Menus: "menus",
