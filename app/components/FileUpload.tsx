@@ -30,13 +30,17 @@ export const FileUpload = ({
   const pickFile = async () => {
     const res = await getDocumentAsync();
     if (!res.canceled && res.assets[0]) {
-      setFile(res.assets[0]);
-      const uploadUri = await uploadImage(
-        res.assets[0].uri,
-        fileDest,
-        fileMetadata
-      );
-      onFileUploaded(uploadUri);
+      try {
+        setFile(res.assets[0]);
+        const uploadUri = await uploadImage(
+          res.assets[0].uri,
+          fileDest,
+          fileMetadata
+        );
+        onFileUploaded(uploadUri);
+      } catch (error) {
+        setFile(null);
+      }
     }
   };
 
