@@ -1,4 +1,4 @@
-import { updateDriver } from "app/apis/driver";
+import { deleteDriver, updateDriver } from "app/apis/driver";
 import { listenToLicenses } from "app/apis/licenses";
 import { fetchSubscription } from "app/apis/stripe";
 import { Icon, Screen, Text } from "app/components";
@@ -31,6 +31,10 @@ import { viewSubscriptionOnStripe } from "app/utils/subscriptions";
 import { DriversLicenseUpload } from "app/components/DriversLicenseUpload";
 import { listenToVendorLocations } from "app/redux/thunks/vendorLocations";
 import { useAlert } from "app/hooks";
+import { ButtonSmall } from "app/components/ButtonSmall";
+import { useAsyncFunction } from "app/hooks/useAsyncFunction";
+import { useLoadingIndicator } from "app/hooks/useLoadingIndicator";
+import { confirmDelete } from "app/utils/general";
 
 interface DriverDetailScreenProps extends AppStackScreenProps<"DriverDetail"> {}
 
@@ -121,6 +125,30 @@ export const DriverDetailScreen = (props: DriverDetailScreenProps) => {
       Alert.alert("Download failed", "Please try that again.");
     }
   };
+
+  const handleDeleteDriver = useCallback(async () => {
+    try {
+      const shouldDelete = await confirmDelete(Alert);
+      if (!shouldDelete) {
+        return;
+      }
+      await deleteDriver(driverId);
+      props.navigation.navigate("Drivers");
+    } catch (error) {
+      console.log("Failed to delete driver", error);
+    Alert.alert(
+        "Something went wrong",
+        "Failed to delete driver. Please try again."
+      );
+    }
+  }, [driverId]);
+
+  const { loading: deleteLoading, exec: execDeleteDriver } =
+    useAsyncFunction(handleDeleteDriver);
+
+  const DeleteLoading = useLoadingIndicator(deleteLoading, {
+    color: colors.primary,
+  });
 
   if (!driver) {
     return (
@@ -221,6 +249,19 @@ export const DriverDetailScreen = (props: DriverDetailScreenProps) => {
         license={licenseDisplay}
         onChange={handleLicenseDisplayChange}
         editable={false}
+      />
+
+      <ButtonSmall
+        text="Delete Driver"
+        style={{
+          marginTop: spacing.xl,
+          alignSelf: "center",
+          width: "100%",
+          maxWidth: 300,
+        }}
+        textStyle={{ color: colors.primary }}
+        RightAccessory={DeleteLoading}
+        onPress={execDeleteDriver}
       />
     </Screen>
   );
