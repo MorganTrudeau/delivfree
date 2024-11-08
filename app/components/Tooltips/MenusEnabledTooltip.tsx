@@ -16,7 +16,10 @@ export const MenusEnabledNotice = ({ style }: { style?: ViewStyle }) => {
     loadMenus();
   }, []);
 
-  const activeMenu = useMemo(() => hasActiveMenu(menus), [menus]);
+  const activeMenu = useMemo(
+    () => menus && menus.find((m) => m.active),
+    [menus]
+  );
 
   if (!menusLoaded || activeMenu) {
     return null;
