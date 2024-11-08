@@ -17,12 +17,12 @@ const devPrices = {
 };
 const livePrices = {
   vendor: {
-    fullTime: "price_1PNfKO076A0nkV3SBq6O3DWy",
-    partTime: "price_1Pc5WY076A0nkV3S5x8VbjDP",
+    fullTime: "price_1QIwz7076A0nkV3SoDVSWj3F",
+    partTime: "price_1QIx1W076A0nkV3SoacMzSq1",
   },
   driver: {
-    fullTime: "price_1PNfJM076A0nkV3SBJuEagTk",
-    partTime: "price_1PNfIp076A0nkV3SO2VM1VDz",
+    fullTime: "price_1QIx2l076A0nkV3SGC1cWMEj",
+    partTime: "price_1QIx3J076A0nkV3SUMMp7FHx",
   },
 };
 const prices = livePrices;
