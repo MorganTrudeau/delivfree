@@ -43,4 +43,5 @@ export type AppStackParamList = {
   Tips: undefined;
   VendorTermsAndConditions: undefined | { mobile?: boolean };
   ConsumerTermsAndConditions: undefined | { mobile?: boolean };
+  UserDetail: { user: string };
 };

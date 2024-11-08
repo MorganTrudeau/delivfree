@@ -10,7 +10,9 @@ import React, { useEffect } from "react";
 interface AdminUsersScreenProps extends AppStackScreenProps<"Users"> {}
 
 export const AdminUsersScreen = (props: AdminUsersScreenProps) => {
-  const handleUserPress = (user: User) => {};
+  const handleUserPress = (user: User) => {
+    props.navigation.navigate("UserDetail", { user: user.id });
+  };
 
   const { data, loadData } = useUserData();
 

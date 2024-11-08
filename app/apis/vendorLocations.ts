@@ -14,8 +14,11 @@ import firestore, {
 import { equalStringOrInArray } from "./utils";
 import { getMenuNextOpen, hasActiveMenu } from "app/utils/menus";
 
-export const deleteVendorLocation = async (vendorLocation: string) => {
-  const batch = firestore().batch();
+export const deleteVendorLocation = async (
+  vendorLocation: string,
+  batchArg?: FirebaseFirestoreTypes.WriteBatch
+) => {
+  const _batch = batchArg || firestore().batch();
 
   const vendorLocationDoc = firestore()
     .collection("VendorLocations")
@@ -29,11 +32,13 @@ export const deleteVendorLocation = async (vendorLocation: string) => {
     .where("vendorLocation", "==", vendorLocation)
     .get();
 
-  positionsSnap.docs.forEach((doc) => batch.delete(doc.ref));
-  licensesSnap.docs.forEach((doc) => batch.delete(doc.ref));
-  batch.delete(vendorLocationDoc);
+  positionsSnap.docs.forEach((doc) => _batch.delete(doc.ref));
+  licensesSnap.docs.forEach((doc) => _batch.delete(doc.ref));
+  _batch.delete(vendorLocationDoc);
 
-  return batch.commit();
+  if (!batchArg) {
+    return _batch.commit();
+  }
 };
 
 export const updateVendorLocation = (
