@@ -85,12 +85,15 @@ export const EditDriverProfileScreen = () => {
   };
 
   const fieldsComplete =
+    driverState.location.address &&
+    driverState.location.geohash &&
     driverState.firstName &&
     driverState.lastName &&
     driverState.phoneNumber &&
     driverState.email &&
     driverState.driversLicenseFront &&
-    driverState.driversLicenseBack;
+    driverState.driversLicenseBack &&
+    termsAccepted;
 
   const handleCreateDriver = useCallback(async () => {
     if (!termsAccepted) {

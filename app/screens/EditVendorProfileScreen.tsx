@@ -100,7 +100,8 @@ export const EditVendorProfileScreen = ({
     vendorState.lastName &&
     vendorState.businessName &&
     vendorState.phoneNumber &&
-    vendorState.email;
+    vendorState.email &&
+    termsAccepted;
 
   const openVendorLocationModal = useCallback(() => {
     vendorLocationModal.current?.snapToIndex(0);
