@@ -53,6 +53,11 @@ export const deleteAccount = onCall(async (data: CallableRequest<{}>) => {
 
   if (user.driver && user.driver.id) {
     batch.delete(firestore().collection("Drivers").doc(user.driver.id));
+    const licensesCollection = firestore().collection("Licenses");
+    const licences = await licensesCollection
+      .where("driver", "==", user.driver.id)
+      .get();
+    licences.docs.map((l) => batch.delete(licensesCollection.doc(l.id)));
   }
 
   batch.delete(firestore().collection("Users").doc(uid));

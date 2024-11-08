@@ -14,6 +14,7 @@ export const Cuisines = {
   BreakfastBrunch: "breakfast_brunch",
   DessertsSweets: "desserts_sweets",
   CoffeeShopsCafes: "coffee_shops_cafes",
+  Thai: "thai",
 } as const;
 
 export const AppMessageTypes = {

@@ -60,6 +60,11 @@ export const AdminStack = () => {
           options={{ headerLeft: DrawerIconButton }}
         />
         <Stack.Screen
+          name="UserDetail"
+          component={Screens.UserDetailScreen}
+          options={{ headerLeft: DrawerIconButton }}
+        />
+        <Stack.Screen
           name="About"
           component={Screens.AboutScreen}
           options={{ headerLeft: DrawerIconButton }}
