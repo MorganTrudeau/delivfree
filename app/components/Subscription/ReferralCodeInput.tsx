@@ -56,7 +56,7 @@ export const ReferralCodeInput = ({
     <View style={style}>
       {freeTrialReward && (
         <>
-          <Text preset="subheading">2 Months fee with referral</Text>
+          <Text preset="subheading">2 Months free with referral</Text>
           <Text
             size={"xs"}
             style={{ color: colors.textDim, marginBottom: spacing.xxs }}
