@@ -88,8 +88,8 @@ android {
         applicationId project.env.get("APP_ID")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 24
-        versionName "1.1.7"
+        versionCode 25
+        versionName "1.1.8"
         manifestPlaceholders = [appIcon: "@mipmap/ic_launcher", appIconRound: "@mipmap/ic_launcher_round"]
     }
     signingConfigs {
