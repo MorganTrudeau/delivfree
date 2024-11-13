@@ -485,28 +485,57 @@ export const onLicenseDeleted = onDocumentDeleted(
   "Licenses/{id}",
   async (event) => {
     const license = event.data?.data() as License | undefined;
+
     if (!license) {
       return;
     }
+
+    const batch = admin.firestore().batch();
+
     const driver = await admin
       .firestore()
       .collection("Drivers")
       .doc(license.driver)
       .get();
-    if (!driver.data()) {
-      return;
+    const driverExists = driver.data();
+
+    if (driverExists) {
+      batch.update(
+        admin.firestore().collection("Drivers").doc(license.driver),
+        {
+          updated: Date.now(),
+          licenses: admin.firestore.FieldValue.arrayRemove(license.id),
+          pendingLicenses: admin.firestore.FieldValue.arrayRemove(license.id),
+        }
+      );
     }
-    const update: {
-      [Property in keyof Partial<Driver>]: admin.firestore.FieldValue;
-    } = {
-      licenses: admin.firestore.FieldValue.arrayRemove(license.id),
-      pendingLicenses: admin.firestore.FieldValue.arrayRemove(license.id),
-    };
-    await admin
+
+    const position = await admin
       .firestore()
-      .collection("Drivers")
-      .doc(license.driver)
-      .update(update);
+      .collection("Positions")
+      .doc(license.position)
+      .get();
+    const positionExists = position.data();
+
+    if (positionExists) {
+      if (license.status === "approved") {
+        await decreaseLicensePositionsBatch(batch, license);
+      }
+
+      batch.update(
+        admin.firestore().collection("Positions").doc(license.position),
+        {
+          updated: Date.now(),
+          licenses: admin.firestore.FieldValue.arrayRemove(license.id),
+        }
+      );
+    }
+
+    if (positionExists || driverExists) {
+      await batch.commit();
+    }
+
+    return true;
   }
 );
 
@@ -616,30 +645,8 @@ export const denyLicense = onCall({}, async (request) => {
 
 export const deleteLicense = onCall({}, async (request) => {
   checkAuthentication(request.auth?.uid);
-
   const { license: licenseId } = request.data;
-  const license = await getLicenseData(licenseId);
-
-  const batch = admin.firestore().batch();
-
-  if (license.status === "approved") {
-    await decreaseLicensePositionsBatch(batch, license);
-  }
-
-  batch.update(admin.firestore().collection("Drivers").doc(license.driver), {
-    updated: Date.now(),
-    licenses: admin.firestore.FieldValue.arrayRemove(license.id),
-  });
-  batch.update(
-    admin.firestore().collection("Positions").doc(license.position),
-    {
-      updated: Date.now(),
-      licenses: admin.firestore.FieldValue.arrayRemove(license.id),
-    }
-  );
-  batch.delete(admin.firestore().collection("Licenses").doc(licenseId));
-
-  return await batch.commit();
+  return await admin.firestore().collection("Licenses").doc(licenseId).delete();
 });
 
 export const createLicense = onCall(
