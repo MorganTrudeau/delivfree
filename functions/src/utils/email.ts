@@ -25,7 +25,7 @@ export const sendEmailNotification = async (
     to,
     subject: title,
     html,
-    from: from || "DelivFree Canada Inc. <admin@mail.delivfree.com>",
+    from: from || "DelivFree Canada <admin@mail.delivfree.com>",
   };
 
   return mg.messages.create("mail.delivfree.com", params);
