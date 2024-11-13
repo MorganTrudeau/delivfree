@@ -263,7 +263,7 @@ export const EditVendorProfileScreen = ({
                 }}
               />
               <Text style={[$flexShrink, { paddingLeft: spacing.xs }]}>
-                I agree to the DelivFree Canada Inc driver{" "}
+                I agree to the DelivFree Canada Inc. vendor{" "}
                 <Text
                   onPress={async () => {
                     if (Platform.OS === "web") {
