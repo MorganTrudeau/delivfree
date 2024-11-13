@@ -285,7 +285,7 @@ export const EditDriverProfileScreen = () => {
             }}
           />
           <Text style={[$flexShrink, { marginLeft: spacing.xs }]}>
-            I agree to the DelivFree Canada Inc driver{" "}
+            I agree to the DelivFree Canada Inc. driver{" "}
             <Text
               onPress={() => termsModal.current?.snapToIndex(0)}
               style={{ color: colors.primary }}
