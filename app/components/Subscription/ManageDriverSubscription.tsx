@@ -79,7 +79,7 @@ export const ManageDriverSubscription = withStripe(
         }
         setLoading(true);
         await onSubscribe({
-          freeTrial: true,
+          freeTrial: false,
           email: user.email,
           lineItems,
           subscription: subscription,
