@@ -2,6 +2,7 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import { BaseMessage } from "firebase-admin/lib/messaging/messaging-api";
 import {
+  CONSUMER_DOMAIN,
   Driver,
   Order,
   User,
@@ -237,7 +238,7 @@ export async function sendNewOrderNotification(order: Order) {
     type: "new_order",
   };
   const userCollapseKey = "orderCreated";
-  const userLink = `${VENDOR_DOMAIN}?route=orders`;
+  const userLink = `${CONSUMER_DOMAIN}`;
   const userPayload = buildMessagePayload(
     userNotification,
     userData,
@@ -267,7 +268,7 @@ export async function sendOrderDriverAssignedNotification(order: Order) {
   if (!driver) {
     return;
   }
-  const userIds = [order.driver];
+  const userIds = [driver.user];
   const notification = {
     title: "New Order",
     body: `View order details and prepare for delivery.`,
@@ -277,7 +278,7 @@ export async function sendOrderDriverAssignedNotification(order: Order) {
     type: "order_driver_assigned",
   };
   const collapseKey = "orderCreated";
-  const link = `${VENDOR_DOMAIN}?route=orders`;
+  const link = `${VENDOR_DOMAIN}/orders`;
   const payload = buildMessagePayload(notification, data, collapseKey, link);
   await sendNotifications(userIds, payload);
   await sendEmailNotification({

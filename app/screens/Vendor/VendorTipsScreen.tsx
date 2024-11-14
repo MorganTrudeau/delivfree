@@ -189,14 +189,13 @@ const DriverTipItem = React.memo(function DriverTipItem({
           }}
         >
           <Text>
-            Tip Top-up: <Text preset="semibold">{tipTopUpAmount}</Text>
-          </Text>
-          <Text>
-            Total tips with top-up:{" "}
-            <Text preset="semibold">{tipTopUpTotal}</Text>
+            Tip top-up: <Text preset="semibold">{tipTopUpAmount}</Text>
           </Text>
         </View>
       )}
+      <Text style={{ marginVertical: spacing.xxs }}>
+        Restaurant owes driver: <Text preset="semibold">{tipTopUpTotal}</Text>
+      </Text>
     </View>
   );
 });
