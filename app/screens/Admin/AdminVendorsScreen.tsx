@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Screen } from "app/components";
 import { StatusFilter } from "app/components/Filters/StatusFilter";
 import { ScreenHeader } from "app/components/ScreenHeader";
@@ -9,6 +9,8 @@ import { AppStackScreenProps } from "app/navigators";
 import { spacing } from "app/theme";
 import { Status, Vendor } from "delivfree";
 import { View } from "react-native";
+import firestore from "@react-native-firebase/firestore";
+import { generateUid } from "app/utils/general";
 
 interface AdminVendorsScreenProps extends AppStackScreenProps<"Vendors"> {}
 
@@ -20,6 +22,21 @@ export const AdminVendorsScreen = (props: AdminVendorsScreenProps) => {
   const [dataParams, setDataParams] = useState<{ status?: Status }>({});
 
   const { data, loadData } = useVendorData(dataParams);
+
+  const runTest = async () => {
+    const orderDoc = await firestore()
+      .collection("Orders")
+      .doc("1eaa8bf9a5e434e03b49890dc94074308e5b")
+      .get();
+    const order = orderDoc.data();
+    console.log(order);
+    const newOrder = { ...order, id: generateUid() };
+    await firestore().collection("Orders").doc(newOrder.id).set(newOrder);
+  };
+
+  // useEffect(() => {
+  //   runTest();
+  // }, []);
 
   return (
     <Screen

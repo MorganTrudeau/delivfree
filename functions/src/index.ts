@@ -321,6 +321,35 @@ export const onDriverWritten = onDocumentWritten(
   }
 );
 
+export const onDriverDeleted = onDocumentDeleted(
+  "Drivers/{id}",
+  async (event) => {
+    const driver = event.data as Driver | undefined;
+
+    if (!driver) {
+      return true;
+    }
+
+    const driverAvailabilityRef = admin
+      .firestore()
+      .collection("DriverAvailability");
+
+    const driverAvailabilitySnap = await driverAvailabilityRef
+      .where("driver", "==", driver.id)
+      .get();
+
+    const batch = admin.firestore().batch();
+
+    driverAvailabilitySnap.docs.forEach((doc) =>
+      batch.delete(driverAvailabilityRef.doc(doc.id))
+    );
+
+    await batch.commit();
+
+    return true;
+  }
+);
+
 export const onVendorLocationCreated = onDocumentCreated(
   "VendorLocations/{id}",
   async () => {
