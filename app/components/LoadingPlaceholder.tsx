@@ -1,5 +1,14 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, StyleProp, View, ViewProps, ViewStyle } from "react-native";
+import {
+  Animated,
+  Platform,
+  StyleProp,
+  View,
+  ViewProps,
+  ViewStyle,
+} from "react-native";
+
+const isWeb = Platform.OS === "web";
 
 export type Props = {
   backgroundColor?: string;
@@ -32,12 +41,12 @@ export const LoadingPlaceholder = ({
         Animated.sequence([
           Animated.timing(opacity, {
             toValue: 0.6,
-            useNativeDriver: true,
+            useNativeDriver: !isWeb,
             duration: 1000,
           }),
           Animated.timing(opacity, {
             toValue: 1,
-            useNativeDriver: true,
+            useNativeDriver: !isWeb,
             duration: 1000,
           }),
         ])

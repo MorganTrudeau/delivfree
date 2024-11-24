@@ -118,7 +118,7 @@ export function Button(props: ButtonProps) {
   );
 
   return (
-    <Pressable style={$viewStyle} accessibilityRole="button" {...rest}>
+    <Pressable style={$viewStyle} role="button" {...rest}>
       {LeftIcon}
 
       {!!LeftAccessory && <LeftAccessory style={$leftAccessoryStyle} />}

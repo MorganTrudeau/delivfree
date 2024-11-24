@@ -1,5 +1,3 @@
-ENV["USE_HERMES"]="0"
-
 require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 def node_require(script)
   # Resolve script with node to allow for hoisting

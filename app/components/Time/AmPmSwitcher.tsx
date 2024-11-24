@@ -97,7 +97,7 @@ function SwitchButton({
       accessibilityTraits={disabled ? ["button", "disabled"] : "button"}
       // @ts-ignore old React Native versions
       accessibilityComponentType="button"
-      accessibilityRole="button"
+      role="button"
       accessibilityState={{ disabled }}
       disabled={disabled}
     >

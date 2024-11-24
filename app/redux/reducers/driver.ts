@@ -68,8 +68,9 @@ export const selectVendorIdsFromLicenses = createSelector(
 );
 export const selectVendorLocationIdsFromLicenses = createSelector(
   [(state: RootState) => state.driver.licenses],
-  (licenses) =>
-    Object.values(licenses)
+  (licenses) => {
+    return Object.values(licenses)
       .filter((l) => l.status === "approved")
-      .map((l) => l.vendorLocation)
+      .map((l) => l.vendorLocation);
+  }
 );
