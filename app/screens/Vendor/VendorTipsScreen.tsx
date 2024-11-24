@@ -133,14 +133,22 @@ const DriverTipItem = React.memo(function DriverTipItem({
   numOrders: number;
 }) {
   const [driverData, setDriverData] = useState<Driver | null>();
-  const [positionType, setPositionType] = useState<"full-time" | "part-time">();
+  const [positionType, setPositionType] = useState<
+    "full-time" | "part-time" | "flex"
+  >();
 
   const loadDriver = useCallback(async () => {
     const _driverData = await fetchDriver(driver);
     setDriverData(_driverData || null);
     const _licences = await fetchLicenses({ driver, vendorLocation });
-    const _positionType =
-      _licences[0].fullTimePositions > 0 ? "full-time" : "part-time";
+    if (!_licences[0]) {
+      return;
+    }
+    const _positionType = _licences[0]?.flexDriver
+      ? "flex"
+      : _licences[0].fullTimePositions > 0
+      ? "full-time"
+      : "part-time";
     setPositionType(_positionType);
   }, [driver]);
 
@@ -151,7 +159,16 @@ const DriverTipItem = React.memo(function DriverTipItem({
   const tipAmount = useMemo(() => localizeCurrency(tips), [tips]);
 
   const tipTopUp = useMemo(() => {
-    return Math.max(0, (positionType === "full-time" ? 24 : 12) * 7 - tips);
+    return Math.max(
+      0,
+      (positionType === "flex"
+        ? numOrders
+        : positionType === "full-time"
+        ? 24
+        : 12) *
+        7 -
+        tips
+    );
   }, [positionType, numOrders, tips]);
 
   const tipTopUpAmount = useMemo(() => localizeCurrency(tipTopUp), [tipTopUp]);

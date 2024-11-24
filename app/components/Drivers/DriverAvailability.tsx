@@ -81,6 +81,7 @@ export const DriverAvailabilitySelect = ({
       {licensesArray.map((license) => {
         return (
           <VendorLocationSelectItem
+            key={license.id}
             vendorLocationId={license.vendorLocation}
             onPress={handleLocationSelect}
             selected={selectedLocations.includes(license.vendorLocation)}

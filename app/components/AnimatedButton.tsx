@@ -116,7 +116,7 @@ export function AnimatedButton(props: ButtonProps) {
   return (
     <AnimatedPressable
       style={[$viewPresets[preset], $viewStyleOverride]}
-      accessibilityRole="button"
+      role="button"
       {...rest}
     >
       {(state) => (
