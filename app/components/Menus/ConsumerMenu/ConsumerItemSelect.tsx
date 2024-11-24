@@ -256,8 +256,6 @@ const ConsumerItemSelect = ({
                         });
                       }}
                       value={customizationNotes[customization.id]?.text || ""}
-                      placeholderTextColor={colors.textDim}
-                      scrollEnabled={false}
                     />
                   )}
                   {customization.choices.map((choice, index, arr) => {
