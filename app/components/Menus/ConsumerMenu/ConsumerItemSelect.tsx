@@ -10,7 +10,6 @@ import {
   $borderBottomLight,
   $borderTop,
   $flex,
-  $input,
   $row,
   isLargeScreen,
 } from "app/components/styles";
@@ -30,7 +29,13 @@ import {
   MenuItem,
 } from "delivfree";
 import React, { forwardRef, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Platform, Pressable, View } from "react-native";
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  View,
+  ViewStyle,
+} from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";
 
 interface Props {
@@ -239,7 +244,7 @@ const ConsumerItemSelect = ({
                         customization.noteInstruction ||
                         "Describe your customization..."
                       }
-                      style={[$input, { marginVertical: spacing.xs }]}
+                      style={$input}
                       onChangeText={(text) => {
                         setCustomizationNotes((s) => {
                           return {
@@ -398,3 +403,5 @@ const $image: ImageStyle = {
   borderRadius: borderRadius.md,
   alignSelf: "center",
 };
+
+const $input: ViewStyle = { marginVertical: spacing.xs };
