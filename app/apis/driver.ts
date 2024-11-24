@@ -48,10 +48,16 @@ export const listenToDriver = (
   driver: string,
   onData: (driver: Driver | null) => void
 ) => {
+  return;
   return firestore()
     .collection("Drivers")
     .doc(driver)
-    .onSnapshot((doc) => onData((doc?.data() || null) as Driver | null));
+    .onSnapshot(
+      (doc) => onData((doc?.data() || null) as Driver | null),
+      (error) => {
+        console.log("Failed to load driver", error);
+      }
+    );
 };
 
 export type DriversListenerParams = {
