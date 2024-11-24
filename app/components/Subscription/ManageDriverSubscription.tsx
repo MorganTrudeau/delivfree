@@ -24,7 +24,6 @@ export const ManageDriverSubscription = withStripe(
 
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [referralCode, setReferralCode] = useState("");
 
     const user = useAppSelector((state) => state.user.user);
     const driver = useAppSelector((state) => state.driver.activeDriver);
@@ -86,9 +85,6 @@ export const ManageDriverSubscription = withStripe(
           metadata: { driver: driver.id },
         });
         setLoading(false);
-        if (referralCode) {
-          await updateDriver(driver.id, { referralCode });
-        }
         if (subscription && subscription.status !== "canceled") {
           Toast.show("Subscription activated successfully!");
         }
@@ -114,7 +110,6 @@ export const ManageDriverSubscription = withStripe(
         subscription={subscription}
         description={description}
         displayOnly={displayOnly}
-        onReferralCodeVerified={setReferralCode}
         noSubscriptionMessage={"You do not have active licenses"}
         title={"Licenses"}
         onApplyForLicense={onApplyForLicense}

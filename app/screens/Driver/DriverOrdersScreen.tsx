@@ -13,7 +13,7 @@ import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
 import { Order } from "delivfree";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { Pressable, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { ViewOrderModal } from "app/components/Orders/ViewOrder";
 import { EmptyList } from "app/components/EmptyList";
@@ -164,10 +164,15 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
         />
         <BottomSheet ref={driverAvailabilityModal}>
           <DriverAvailabilitySelect
-            onChange={() => driverAvailabilityModal.current?.collapse()}
+            onChange={() => driverAvailabilityModal.current?.close()}
+            style={styles.driverAvailabilityModal}
           />
         </BottomSheet>
       </Screen>
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  driverAvailabilityModal: { padding: spacing.md },
+});

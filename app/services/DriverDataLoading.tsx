@@ -1,6 +1,5 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { RootState } from "app/redux/store";
-import { listenToCustomers } from "app/redux/thunks/customers";
 import { listenToActiveDriver } from "app/redux/thunks/driver";
 import { listenToDriverLicenses } from "app/redux/thunks/licenses";
 import { listenToVendorLocations } from "app/redux/thunks/vendorLocations";
@@ -103,12 +102,8 @@ export class DriverDataLoading extends Component<Props> {
     const vendorLocationsListener = await this.props
       .listenToVendorLocations({ id: vendorLocationsIds })
       .then(unwrapResult);
-    const customersListener = await this.props
-      .listenToCustomers({ vendorLocation: vendorLocationsIds })
-      .then(unwrapResult);
 
     this.vendorListeners.add(vendorLocationsListener);
-    this.vendorListeners.add(customersListener);
   };
 
   render() {
@@ -127,7 +122,6 @@ const mapDispatch = {
   listenToActiveDriver,
   listenToDriverSubscription,
   listenToVendorLocations,
-  listenToCustomers,
   listenToDriverLicenses,
   listenToDriverAvailability,
 };

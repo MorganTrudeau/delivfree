@@ -72,6 +72,7 @@ export type License = {
   status: Status;
   statusMessage?: string | null;
   updated: number;
+  flexDriver?: boolean;
 };
 export type Positions = {
   id: string;
@@ -166,6 +167,8 @@ export type Vendor = {
     accountId: string | null;
     detailsSubmitted: boolean;
     payoutsEnabled: boolean;
+    actionsDue: boolean;
+    accountPending: boolean;
     currency: string;
     taxRates: {
       id: string;

@@ -8580,8 +8580,8 @@ __metadata:
 
 "delivfree@file:functions/src/types::locator=delivfreeapp%40workspace%3A.":
   version: 1.0.0
-  resolution: "delivfree@file:functions/src/types#functions/src/types::hash=c78c3b&locator=delivfreeapp%40workspace%3A."
-  checksum: 10c0/b484e3dbe58ef2c2444c0c64cc99ad32aa9ec6de60e4896251dbd090ce581679aca8c90e0f9fc6f06df35c0ffc104aea63622cd339e16e594168469af5d59be9
+  resolution: "delivfree@file:functions/src/types#functions/src/types::hash=112bc2&locator=delivfreeapp%40workspace%3A."
+  checksum: 10c0/643220698f94c965806300e74b5adcef1b2522db95849869fabf04e123c4d3b4a9c2e458d3cce239e14f462c083d7a5018450cacf9cdb1c87c502d79859656a7
   languageName: node
   linkType: hard
 

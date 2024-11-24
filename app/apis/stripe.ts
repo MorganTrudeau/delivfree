@@ -86,12 +86,18 @@ export const verifyStripeAccount = async (
   }
 
   const stripeAccount = await getStripeAccount(vendor.stripe.accountId);
-  const { details_submitted, payouts_enabled } = stripeAccount;
-  const { detailsSubmitted, payoutsEnabled } = vendor.stripe;
+  const { details_submitted, payouts_enabled, requirements } = stripeAccount;
+  const { detailsSubmitted, payoutsEnabled, accountPending, actionsDue } =
+    vendor.stripe;
+
+  const pending = !!requirements?.pending_verification?.length;
+  const due = !!requirements?.currently_due?.length;
 
   if (
     details_submitted !== detailsSubmitted ||
-    payouts_enabled !== payoutsEnabled
+    payouts_enabled !== payoutsEnabled ||
+    accountPending !== pending ||
+    actionsDue !== due
   ) {
     const updatedVendor = {
       ...vendor,
@@ -99,6 +105,8 @@ export const verifyStripeAccount = async (
         ...vendor.stripe,
         detailsSubmitted: details_submitted,
         payoutsEnabled: payouts_enabled,
+        actionsDue: due,
+        accountPending: pending,
       },
     };
     return { vendor: updatedVendor, stripeAccount, isUpdated: true };
