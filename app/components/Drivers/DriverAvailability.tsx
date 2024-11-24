@@ -1,6 +1,6 @@
 import { useAppSelector } from "app/redux/store";
 import React, { useCallback, useMemo, useState } from "react";
-import { Pressable } from "react-native";
+import { Pressable, ViewStyle } from "react-native";
 import { VendorLocationInfo } from "../VendorLocations/VendorLocationInfo";
 import { Card } from "../Card";
 import { Text } from "../Text";
@@ -16,16 +16,15 @@ import { setDriverAvailability } from "app/redux/reducers/driverAvailability";
 
 export const DriverAvailabilitySelect = ({
   onChange,
+  style,
 }: {
   onChange?: () => void;
+  style?: ViewStyle;
 }) => {
   const Alert = useAlert();
 
   const licenses = useAppSelector((state) => state.driver.licenses);
   const driver = useAppSelector((state) => state.driver.activeDriver);
-  const currentAvailability = useAppSelector(
-    (state) => state.driverAvailability.data
-  );
 
   const licensesArray = useMemo(() => Object.values(licenses), [licenses]);
 
@@ -74,7 +73,7 @@ export const DriverAvailabilitySelect = ({
   }
 
   return (
-    <Card>
+    <Card style={style}>
       <Text preset="subheading">Set your availability</Text>
       <Text style={{ marginBottom: spacing.sm, color: colors.textDim }}>
         Select the restaurants you are delivering for today.

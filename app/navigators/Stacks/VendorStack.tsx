@@ -172,8 +172,8 @@ export const VendorStack = () => {
           key={"main"}
           component={Screens.PositionsSearchScreen}
           options={{
-            headerLeft: DrawerIconButton,
             headerBackVisible: false,
+            headerTitle: () => null,
           }}
         />
       </>

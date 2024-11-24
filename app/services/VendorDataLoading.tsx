@@ -1,6 +1,5 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { RootState } from "app/redux/store";
-import { listenToCustomers } from "app/redux/thunks/customers";
 import { listenToPositions } from "app/redux/thunks/positions";
 import { listenToVendorLocations } from "app/redux/thunks/vendorLocations";
 import { fetchProducts } from "app/redux/thunks/stripe";
