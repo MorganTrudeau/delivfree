@@ -344,6 +344,19 @@ export const onDriverDeleted = onDocumentDeleted(
       batch.delete(driverAvailabilityRef.doc(doc.id))
     );
 
+    const usersCollection = admin.firestore().collection("Users");
+    const userSnap = await usersCollection
+      .where("driver.id", "==", driver.id)
+      .get();
+
+    if (userSnap.docs.length) {
+      userSnap.docs.forEach((doc) =>
+        batch.update(usersCollection.doc(doc.id), {
+          driver: admin.firestore.FieldValue.delete(),
+        })
+      );
+    }
+
     await batch.commit();
 
     return true;

@@ -48,7 +48,6 @@ export const listenToDriver = (
   driver: string,
   onData: (driver: Driver | null) => void
 ) => {
-  return;
   return firestore()
     .collection("Drivers")
     .doc(driver)
