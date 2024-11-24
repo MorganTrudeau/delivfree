@@ -49,6 +49,19 @@ export const PayoutsHeader = ({
     color: colors.white,
   });
 
+  const getMessage = () => {
+    if (vendor.stripe.actionsDue) {
+      return "Additional information required";
+    }
+    if (vendor.stripe.accountPending) {
+      return "Account verification in progress";
+    }
+    if (accountActive) {
+      return "Enabled";
+    }
+    return "Set up your account to accept payments";
+  };
+
   return (
     <View
       style={[
@@ -63,14 +76,16 @@ export const PayoutsHeader = ({
         <View style={$row}>
           <Icon
             icon={accountActive ? "check-circle" : "alert-circle"}
-            color={accountActive ? colors.success : colors.error}
+            color={
+              vendor.stripe.accountPending
+                ? colors.palette.accent500
+                : accountActive
+                ? colors.success
+                : colors.error
+            }
             style={{ marginRight: spacing.xs }}
           />
-          <Text>
-            {accountActive
-              ? "Enabled"
-              : "Set up your account to accept payments"}
-          </Text>
+          <Text>{getMessage()}</Text>
         </View>
       </View>
       {accountActive && (

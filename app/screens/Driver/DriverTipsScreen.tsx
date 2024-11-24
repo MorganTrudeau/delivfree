@@ -28,7 +28,9 @@ export const DriverTipsScreen = (props: DriverTipsScreenProps) => {
   const [selectedVendorLocation, setSelectedVendorLocation] = useState("");
   const [date, setDate] = useState(moment().toDate());
   const [orders, setOrders] = useState<Order[]>([]);
-  const [positionType, setPositionType] = useState<"full-time" | "part-time">();
+  const [positionType, setPositionType] = useState<
+    "full-time" | "part-time" | "flex"
+  >();
 
   const handleChangeDate = (_date: Date) => {
     setDate(_date);
@@ -64,8 +66,11 @@ export const DriverTipsScreen = (props: DriverTipsScreenProps) => {
           driver: driverId,
           vendorLocation: selectedVendorLocation,
         });
-        const _positionType =
-          _licences[0].fullTimePositions > 0 ? "full-time" : "part-time";
+        const _positionType = _licences[0].flexDriver
+          ? "flex"
+          : _licences[0].fullTimePositions > 0
+          ? "full-time"
+          : "part-time";
         setPositionType(_positionType);
       };
       loadPositionType();
@@ -88,7 +93,16 @@ export const DriverTipsScreen = (props: DriverTipsScreenProps) => {
   const tipAmount = useMemo(() => localizeCurrency(tips), [tips]);
 
   const tipTopUp = useMemo(() => {
-    return Math.max(0, (positionType === "full-time" ? 24 : 12) * 7 - tips);
+    return Math.max(
+      0,
+      (positionType === "flex"
+        ? numOrders
+        : positionType === "full-time"
+        ? 24
+        : 12) *
+        7 -
+        tips
+    );
   }, [positionType, numOrders, tips]);
 
   const tipTopUpAmount = useMemo(() => localizeCurrency(tipTopUp), [tipTopUp]);

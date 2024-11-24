@@ -1,7 +1,11 @@
 import React, { useCallback, forwardRef } from "react";
 
 import { TextInput } from "./TextInput";
-import { TextInput as RNTextInput, TextInputProps } from "react-native";
+import {
+  Platform,
+  TextInput as RNTextInput,
+  TextInputProps,
+} from "react-native";
 import { useBottomSheetInternal } from "@gorhom/bottom-sheet";
 
 export const BottomSheetTextInput = forwardRef<RNTextInput, TextInputProps>(
@@ -38,4 +42,7 @@ export const BottomSheetTextInput = forwardRef<RNTextInput, TextInputProps>(
   }
 );
 
-export default BottomSheetTextInput;
+export default Platform.select({
+  web: TextInput,
+  default: BottomSheetTextInput,
+});

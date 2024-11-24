@@ -1,30 +1,34 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheetTextInput from "app/components/BottomSheetTextInput";
 import { Button } from "app/components/Button";
 import { Icon } from "app/components/Icon";
 import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { QuantitySelector } from "app/components/QuantitySelector";
 import { Text } from "app/components/Text";
-import { TextInput } from "app/components/TextInput";
 import { Toggle } from "app/components/Toggle";
 import {
   $borderBottomLight,
   $borderTop,
   $flex,
+  $input,
   $row,
   isLargeScreen,
 } from "app/components/styles";
 import { useAlert } from "app/hooks";
 import { useDimensions } from "app/hooks/useDimensions";
 import { useMenusLoading } from "app/hooks/useMenusLoading";
-import {
-  addItemToCart,
-  startCart,
-} from "app/redux/reducers/checkoutCart";
+import { addItemToCart, startCart } from "app/redux/reducers/checkoutCart";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
 import { generateUid, localizeCurrency } from "app/utils/general";
-import { CheckoutItem, CheckoutItemCustomization, MenuCustomizationChoice, MenuItem } from "delivfree";
+import {
+  CheckoutItem,
+  CheckoutItemCustomization,
+  MenuCustomization,
+  MenuCustomizationChoice,
+  MenuItem,
+} from "delivfree";
 import React, { forwardRef, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Platform, Pressable, View } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";
@@ -70,6 +74,8 @@ const ConsumerItemSelect = ({
   const [customizationNotes, setCustomizationNotes] = useState<{
     [customizationId: string]: { text: string };
   }>({});
+  const [incompleteCustomizations, setIncompleteCustomizations] =
+    useState(false);
 
   const totalPrice = useMemo(() => {
     return (
@@ -82,7 +88,34 @@ const ConsumerItemSelect = ({
     );
   }, [quantity, item.price, customizationChoices]);
 
+  const customizationIncomplete = (c: MenuCustomization) => {
+    if (
+      c.type === "note" &&
+      c.noteRequired &&
+      !customizationNotes[c.id]?.text
+    ) {
+      return true;
+    } else if (
+      c.type === "choices" &&
+      Number(c.minChoices) > 0 &&
+      !customizationChoices[c.id]?.length
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   const handleAddItemToCart = () => {
+    const incompleteCustomizations = !!customizations.find((c) => {
+      return customizationIncomplete(c);
+    });
+    setIncompleteCustomizations(incompleteCustomizations);
+    if (incompleteCustomizations) {
+      return Alert.alert(
+        "Incomplete order",
+        "Please fill out all required customizations."
+      );
+    }
     const checkoutItem: CheckoutItem = {
       id: generateUid(),
       item,
@@ -170,6 +203,7 @@ const ConsumerItemSelect = ({
         )}
 
         {!customizationsLoaded && <ActivityIndicator color={colors.primary} />}
+
         {customizations.length > 0 && (
           <View style={{ marginTop: spacing.sm }}>
             {customizations.map((customization) => {
@@ -184,17 +218,28 @@ const ConsumerItemSelect = ({
                   {((customization.type === "note" &&
                     customization.noteRequired) ||
                     Number(customization.minChoices) > 0) && (
-                    <Text style={{ color: colors.textDim }} size={"xs"}>
-                      Required
-                    </Text>
+                    <View style={$row}>
+                      <Text style={{ color: colors.textDim }} size={"xs"}>
+                        Required
+                      </Text>
+                      {incompleteCustomizations &&
+                        customizationIncomplete(customization) && (
+                          <Icon
+                            icon={"information"}
+                            size={15}
+                            color={colors.error}
+                            style={{ marginLeft: 4 }}
+                          />
+                        )}
+                    </View>
                   )}
                   {customization.type === "note" && (
-                    <TextInput
+                    <BottomSheetTextInput
                       placeholder={
                         customization.noteInstruction ||
                         "Describe your customization..."
                       }
-                      style={{ marginVertical: spacing.xs }}
+                      style={[$input, { marginVertical: spacing.xs }]}
                       onChangeText={(text) => {
                         setCustomizationNotes((s) => {
                           return {
@@ -206,6 +251,8 @@ const ConsumerItemSelect = ({
                         });
                       }}
                       value={customizationNotes[customization.id]?.text || ""}
+                      placeholderTextColor={colors.textDim}
+                      scrollEnabled={false}
                     />
                   )}
                   {customization.choices.map((choice, index, arr) => {
@@ -214,6 +261,7 @@ const ConsumerItemSelect = ({
                     ]?.find((c) => c.choice.id === choice.id);
                     return (
                       <Pressable
+                        key={`${choice.id}-${index}`}
                         onPress={() => {
                           setCustomizationChoices((s) => {
                             const _customization = s[customization.id];
@@ -348,5 +396,5 @@ export const ConsumerItemSelectModal = forwardRef<
 const $image: ImageStyle = {
   aspectRatio: 1.5,
   borderRadius: borderRadius.md,
-  alignSelf: 'center'
+  alignSelf: "center",
 };

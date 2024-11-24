@@ -227,7 +227,7 @@ export function Toggle(props: ToggleProps) {
     <TouchableOpacity
       disabled={disabled || !onValueChange}
       activeOpacity={1}
-      accessibilityRole={variant}
+      role={variant}
       accessibilityState={{ checked: value, disabled }}
       {...WrapperProps}
       style={$containerStyles}

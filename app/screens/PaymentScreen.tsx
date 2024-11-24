@@ -40,7 +40,11 @@ export const PaymentScreen = (props: Props) => {
   }
 
   return (
-    <Screen style={$screen} contentContainerStyle={$containerPadding}>
+    <Screen
+      style={$screen}
+      contentContainerStyle={$containerPadding}
+      preset="scroll"
+    >
       <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
