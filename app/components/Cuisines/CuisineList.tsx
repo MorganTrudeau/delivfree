@@ -10,19 +10,20 @@ import FastImage from "react-native-fast-image";
 import { $image, $imageContainer, MAX_CONTENT_WIDTH } from "../styles";
 import { spacing } from "app/theme";
 import { Text } from "../Text";
-import { data } from "../../utils/cuisines";
-import { Cuisine, VendorLocation } from "delivfree";
+import { Cuisine, CuisineId, VendorLocation } from "delivfree";
 import RestaurantListItem from "../RestaurantListItem";
 import { useDimensions } from "app/hooks/useDimensions";
 
-interface Props extends Partial<FlatListProps<Data | VendorLocation>> {
-  onCuisinePress: (cuisine: Cuisine) => void;
+interface Props extends Partial<FlatListProps<Cuisine | VendorLocation>> {
+  cuisines: Cuisine[];
+  onCuisinePress: (cuisine: CuisineId) => void;
   onRestaurantPress: (restaurant: VendorLocation) => void;
   restaurants: VendorLocation[];
   showRestaurants: boolean;
 }
 
 const CuisineList = ({
+  cuisines,
   onCuisinePress,
   onRestaurantPress,
   contentContainerStyle,
@@ -43,21 +44,22 @@ const CuisineList = ({
     [contentContainerStyle]
   );
   const renderCuisine = useCallback(
-    ({ item }: { item: Data }) => {
+    ({ item }: { item: Cuisine }) => {
+      console.log(item);
       return (
         <Pressable
-          onPress={() => onCuisinePress(item.cuisine)}
+          onPress={() => onCuisinePress(item.id)}
           style={[$cuisineListItem, { width: `${itemWidth}%` }]}
         >
           <View style={[$imageContainer, { maxWidth: 500 }]}>
             <FastImage
-              source={item.image}
+              source={{ uri: item.image }}
               style={$image}
               resizeMode="cover"
             />
           </View>
           <Text preset={"subheading"} style={$title}>
-            {item.title}
+            {item.name}
           </Text>
         </Pressable>
       );
@@ -81,7 +83,7 @@ const CuisineList = ({
     <FlatList
       key={numColumns}
       numColumns={numColumns}
-      data={showRestaurants ? restaurants : data}
+      data={showRestaurants ? restaurants : cuisines}
       // @ts-ignore
       renderItem={showRestaurants ? renderRestaurant : renderCuisine}
       style={$list}
@@ -103,8 +105,7 @@ const CuisineList = ({
 
 export default CuisineList;
 
-const keyExtractor = (item: Data | VendorLocation) =>
-  "id" in item ? item.id : item.cuisine;
+const keyExtractor = (item: Cuisine | VendorLocation) => item.id;
 
 const $list: ViewStyle = { flex: 1 };
 const $content: ViewStyle = {
@@ -114,5 +115,3 @@ const $content: ViewStyle = {
 const $title = { marginTop: spacing.xxs };
 const $separator: ViewStyle = { height: spacing.md };
 const $cuisineListItem: ViewStyle = {};
-
-type Data = (typeof data)[number];

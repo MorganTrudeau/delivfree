@@ -15,11 +15,10 @@ import { persistor, store } from "./redux/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import LocalWebNotificationProvider from "app/context/LocalWebNotificationContext";
+import PopoverProvider from "./components/Popover/PopoverContext";
 
 // Use a local emulator in development
-import functions from "@react-native-firebase/functions";
-import { isEmulatorSync } from "react-native-device-info";
-import PopoverProvider from "./components/Popover/PopoverContext";
+// import functions from "@react-native-firebase/functions";
 
 // if (__DEV__ && isEmulatorSync()) {
 //   // If you are running on a physical device, replace http://localhost with the local ip of your PC. (http://192.168.x.x)

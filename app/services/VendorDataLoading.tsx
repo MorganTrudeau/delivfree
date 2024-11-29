@@ -8,6 +8,7 @@ import { listenToActiveVendor } from "app/redux/thunks/vendor";
 import { Component } from "react";
 import { ConnectedProps, connect } from "react-redux";
 import { listenToVendorLicenses } from "app/redux/thunks/licenses";
+import { listenToCuisines } from "app/redux/thunks/cuisines";
 
 interface Props extends ReduxProps {}
 
@@ -29,6 +30,7 @@ export class VendorDataLoading extends Component<Props> {
 
   componentDidMount(): void {
     this.props.fetchProducts();
+    this.props.listenToCuisines();
     this.vendorLoaded(this.props) && this.listenToVendorData();
     this.vendorSelected(this.props) && this.listenToVendor();
   }
@@ -108,6 +110,7 @@ const mapDispatch = {
   listenToVendorLicenses,
   listenToVendorLocations,
   listenToPositions,
+  listenToCuisines,
   fetchProducts,
 };
 

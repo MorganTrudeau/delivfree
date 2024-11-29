@@ -11,7 +11,7 @@ import {
   generateVendorLocationKeywords,
   getAppType,
 } from "app/utils/general";
-import { Cuisines, Positions, Status, VendorLocation } from "delivfree";
+import { Positions, Status, VendorLocation } from "delivfree";
 import {
   ActivityIndicator,
   Platform,
@@ -27,7 +27,6 @@ import { TextField } from "../TextField";
 import { colors, spacing } from "app/theme";
 import { DropDownPicker } from "../DropDownPicker";
 import { ModalRef } from "app/utils/types";
-import { getCuisineTitle } from "app/utils/cuisines";
 import { Text } from "../Text";
 import {
   $borderedArea,
@@ -58,6 +57,7 @@ import { StatusPicker } from "../StatusPicker";
 import { BottomSheet, BottomSheetRef } from "../Modal/BottomSheet";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAppSelector } from "app/redux/store";
 
 interface Props {
   editLocation?: VendorLocation | null;
@@ -102,6 +102,8 @@ export const ManageVendorLocation = ({
   const phoneNumberInput = useRef<PhoneInput>(null);
 
   const Alert = useAlert();
+
+  const cuisines = useAppSelector((state) => state.cuisines.data);
 
   const { uploadImage, progress, uploadTask } = useUploadImage();
 
@@ -179,11 +181,11 @@ export const ManageVendorLocation = ({
 
   const pickerItems = useMemo(
     () =>
-      Object.values(Cuisines).map((c) => ({
-        label: getCuisineTitle(c),
-        value: c,
+      cuisines.map((c) => ({
+        label: c.name,
+        value: c.id,
       })),
-    []
+    [cuisines]
   );
 
   const deleteLocation = async () => {

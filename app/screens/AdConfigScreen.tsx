@@ -3,8 +3,7 @@ import { Screen, Text, TextField } from "app/components";
 import { $containerPadding, $screen } from "app/components/styles";
 import { AppStackScreenProps } from "app/navigators";
 import { useAlert, useToast, useUploadImage } from "app/hooks";
-import { Cuisine, Cuisines } from "delivfree";
-import { getCuisineTitle } from "app/utils/cuisines";
+import { CuisineId } from "delivfree";
 import { DropDownPicker } from "app/components/DropDownPicker";
 import {
   ActivityIndicator,
@@ -19,6 +18,7 @@ import { AdCache, AdConfig, AdType, useAdBanner } from "app/hooks/useAdBanner";
 import { ImageUpload } from "app/components/ImageUpload";
 import { ScreenHeader } from "app/components/ScreenHeader";
 import firestore from "@react-native-firebase/firestore";
+import { useAppSelector } from "app/redux/store";
 
 interface AdConfigScreenProps extends AppStackScreenProps<"AdConfig"> {}
 
@@ -32,6 +32,8 @@ export const AdConfigScreen = ({ navigation }: AdConfigScreenProps) => {
 
   const [adUploads, setAdUploads] = useState<AdCache>({});
   const [loading, setLoading] = useState(false);
+
+  const cuisines = useAppSelector((state) => state.cuisines.data);
 
   const hasUnsavedChanges = useMemo(
     () => !!Object.values(adUploads).length,
@@ -106,14 +108,14 @@ export const AdConfigScreen = ({ navigation }: AdConfigScreenProps) => {
 
   const pickerItems = useMemo(
     () =>
-      Object.values(Cuisines).map((c) => ({
-        label: getCuisineTitle(c),
-        value: c,
+      cuisines.map((c) => ({
+        label: c.name,
+        value: c.id,
       })),
-    []
+    [cuisines]
   );
 
-  const onCuisineSelect = (cuisines: Cuisine[]) => {
+  const onCuisineSelect = (cuisines: CuisineId[]) => {
     const cuisine = cuisines[0];
     if (!cuisine) {
       return;
@@ -246,7 +248,8 @@ export const AdConfigScreen = ({ navigation }: AdConfigScreenProps) => {
       {typeof cuisineAds === "object" &&
         Object.entries(cuisineAds).map(([cuisine, cuisineAd]) => {
           const cuisineAdType = cuisine as AdType;
-          const title = getCuisineTitle(cuisine as Cuisine);
+          const title =
+            cuisines.find((c) => c.id === cuisine)?.name || "Unknown Cuisine";
           return (
             <View style={$uploadSection}>
               <Text preset="subheading" style={$heading}>
