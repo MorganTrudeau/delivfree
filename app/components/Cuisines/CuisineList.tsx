@@ -45,7 +45,6 @@ const CuisineList = ({
   );
   const renderCuisine = useCallback(
     ({ item }: { item: Cuisine }) => {
-      console.log(item);
       return (
         <Pressable
           onPress={() => onCuisinePress(item.id)}
