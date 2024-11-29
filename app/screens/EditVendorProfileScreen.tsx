@@ -89,6 +89,8 @@ export const EditVendorProfileScreen = ({
         accountId: "",
         detailsSubmitted: false,
         payoutsEnabled: false,
+        actionsDue: false,
+        accountPending: false,
         currency: "CAD",
         taxRates: [],
       },

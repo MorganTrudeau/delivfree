@@ -67,7 +67,6 @@ export const Icon = React.memo((props: IconProps) => {
   return (
     <Pressable
       disabled={!isPressable}
-      role={isPressable ? "imagebutton" : undefined}
       {...WrapperProps}
       style={$containerStyleOverride}
     >
