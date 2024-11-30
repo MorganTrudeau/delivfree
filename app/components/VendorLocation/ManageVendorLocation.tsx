@@ -181,10 +181,12 @@ export const ManageVendorLocation = ({
 
   const pickerItems = useMemo(
     () =>
-      cuisines.map((c) => ({
-        label: c.name,
-        value: c.id,
-      })),
+      cuisines
+        .sort((a, b) => (a.name < b.name ? -1 : 1))
+        .map((c) => ({
+          label: c.name,
+          value: c.id,
+        })),
     [cuisines]
   );
 
