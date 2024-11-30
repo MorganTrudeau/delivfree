@@ -10,6 +10,7 @@ import { ConnectedProps, connect } from "react-redux";
 import { selectVendorLocationIdsFromLicenses } from "app/redux/reducers/driver";
 import { equalArrays } from "app/utils/general";
 import { listenToDriverAvailability } from "app/redux/thunks/driverAvailability";
+import { listenToCuisines } from "app/redux/thunks/cuisines";
 
 interface Props extends ReduxProps {}
 
@@ -30,6 +31,7 @@ export class DriverDataLoading extends Component<Props> {
   };
 
   componentDidMount(): void {
+    this.props.listenToCuisines();
     this.driverSelected(this.props) && this.listenToDriverData();
     this.vendorSelected(this.props) && this.listenToVendorData();
   }
@@ -73,8 +75,6 @@ export class DriverDataLoading extends Component<Props> {
 
     const subscriptionDriverId =
       this.props.user?.driver?.parentDriver || driverId;
-
-    console.log({ subscriptionDriverId });
 
     const driverSubscriptionListener = await this.props
       .listenToDriverSubscription(subscriptionDriverId)
@@ -124,6 +124,7 @@ const mapDispatch = {
   listenToVendorLocations,
   listenToDriverLicenses,
   listenToDriverAvailability,
+  listenToCuisines,
 };
 
 const connector = connect(mapState, mapDispatch);

@@ -2,7 +2,7 @@ import { useAppSelector } from "app/redux/store";
 import React from "react";
 import DriverDataLoading from "./DriverDataLoading";
 import VendorDataLoading from "./VendorDataLoading";
-import { ConsumerDataLoading } from "./ConsumerDataLoading";
+import ConsumerDataLoading from "./ConsumerDataLoading";
 import AdminDataLoading from "./AdminDataLoading";
 
 export const DataLoadingManager = () => {

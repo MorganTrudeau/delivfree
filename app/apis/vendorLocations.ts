@@ -1,5 +1,5 @@
 import {
-  Cuisine,
+  CuisineId,
   DriverAvailability,
   LatLng,
   Menu,
@@ -114,7 +114,7 @@ export const listenToVendorLocations = (
 
 export const fetchVendorLocations = async (
   centerLatLng: LatLng,
-  queryOptions: { cuisine?: Cuisine; limit?: number; keyword?: string } = {},
+  queryOptions: { cuisine?: CuisineId; limit?: number; keyword?: string } = {},
   radiusKm = 10,
   testUser: boolean
 ): Promise<VendorLocation[]> => {

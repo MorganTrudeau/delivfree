@@ -13,7 +13,7 @@ import { colors, spacing } from "app/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TextInput } from "app/components/TextInput";
 import { AppStackScreenProps } from "app/navigators";
-import { Cuisine, VendorLocation } from "delivfree";
+import { CuisineId, VendorLocation } from "delivfree";
 import LocationModal from "app/components/Modal/LocationModal";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { useAppSelector } from "app/redux/store";
@@ -24,14 +24,13 @@ import { ImageStyle } from "react-native-fast-image";
 import { AdBanner } from "app/components/AdBanner";
 import { useIsFocused } from "@react-navigation/native";
 import { CustomerOrderTracker } from "app/components/Orders/CustomerOrderTracker";
-import { sendOrderConfirmationEmail } from "app/apis/orders";
-import { isTestUser } from "app/redux/selectors";
 interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 
 export const HomeScreen = (props: HomeScreenProps) => {
   const insets = useSafeAreaInsets();
 
   const activeUser = useAppSelector((state) => state.user.user);
+  const cuisines = useAppSelector((state) => state.cuisines.data);
 
   const locationModal = useRef<BottomSheetRef>(null);
   const closeLocationModal = useCallback(
@@ -40,18 +39,6 @@ export const HomeScreen = (props: HomeScreenProps) => {
   );
 
   const isFocused = useIsFocused();
-
-  // useEffect(() => {
-  //   const sendEmail = async () => {
-  //     try {
-  //       await sendOrderConfirmationEmail();
-  //       console.log("SENT");
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   sendEmail();
-  // }, []);
 
   useEffect(() => {
     if (isFocused && !activeUser?.location) {
@@ -71,7 +58,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
   );
 
   const navigateToCuisine = useCallback(
-    (cuisine: Cuisine) => {
+    (cuisine: CuisineId) => {
       props.navigation.navigate("Restaurants", { cuisine });
     },
     [props.navigation]
@@ -143,6 +130,9 @@ export const HomeScreen = (props: HomeScreenProps) => {
   );
 
   const EmptySearch = useMemo(() => {
+    if (!search) {
+      return <ActivityIndicator color={colors.primary} />;
+    }
     return !searchLoading ? (
       <View style={$emptyList}>
         <Icon icon={"magnify"} size={sizing.xxl} style={$emptyIcon} />
@@ -160,6 +150,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
         onCuisinePress={navigateToCuisine}
         onRestaurantPress={navigateToRestaurant}
         ListHeaderComponent={ListHeader}
+        cuisines={cuisines}
         restaurants={restaurants}
         showRestaurants={!!search}
         ListEmptyComponent={EmptySearch}

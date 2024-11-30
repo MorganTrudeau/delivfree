@@ -4306,6 +4306,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native/assets-registry@patch:@react-native/assets-registry@npm%3A0.74.87#~/.yarn/patches/@react-native-assets-registry-npm-0.74.87-5dc5ec21ec.patch":
+  version: 0.74.87
+  resolution: "@react-native/assets-registry@patch:@react-native/assets-registry@npm%3A0.74.87#~/.yarn/patches/@react-native-assets-registry-npm-0.74.87-5dc5ec21ec.patch::version=0.74.87&hash=c62c98"
+  checksum: 10c0/e7d947b801ee14f07cff56f42facf3b6a7bfe3a3cebddcaaa86956a687cccdacc427390166e39301dcdfce43f3696c2d62478a37e79872b20dc63d6a352fa783
+  languageName: node
+  linkType: hard
+
 "@react-native/babel-plugin-codegen@npm:0.74.85":
   version: 0.74.85
   resolution: "@react-native/babel-plugin-codegen@npm:0.74.85"
@@ -8667,8 +8674,8 @@ __metadata:
 
 "delivfree@file:functions/src/types::locator=delivfreeapp%40workspace%3A.":
   version: 1.0.0
-  resolution: "delivfree@file:functions/src/types#functions/src/types::hash=6b4609&locator=delivfreeapp%40workspace%3A."
-  checksum: 10c0/3ed0edd4bcbe3ea894a56e754019a3379d1624f0b203ea87e5ff22725833d9478d8eda183c6c061735a30272ffa5416c4b83cff94a3b314600c2ae08dcda86b0
+  resolution: "delivfree@file:functions/src/types#functions/src/types::hash=1e0d62&locator=delivfreeapp%40workspace%3A."
+  checksum: 10c0/817af3f61a35f5f23ed202fb9ff7c8fb16b20b6da2090ed0978b3033ea3fa640d1c77a2fd8d705a7ee991f15e63c2778a0f66a9b39265821a5e897dd999b3dc4
   languageName: node
   linkType: hard
 

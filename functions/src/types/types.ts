@@ -124,13 +124,19 @@ export type User = {
   admin?: {};
   isTester?: boolean | null;
 };
-export type Cuisine = (typeof Cuisines)[keyof typeof Cuisines];
+export type CuisineId = (typeof Cuisines)[keyof typeof Cuisines];
+export type Cuisine = {
+  id: CuisineId;
+  name: string;
+  image: string;
+  order?: number
+};
 export type VendorLocation = {
   address: string;
   latitude: number;
   longitude: number;
   geohash: string;
-  cuisines: Cuisine[];
+  cuisines: CuisineId[];
   id: string;
   keywords: string[];
   vendor: string;
