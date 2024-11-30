@@ -108,7 +108,7 @@ export const AdConfigScreen = ({ navigation }: AdConfigScreenProps) => {
 
   const pickerItems = useMemo(
     () =>
-      cuisines
+      [...cuisines]
         .sort((a, b) => (a.name < b.name ? -1 : 1))
         .map((c) => ({
           label: c.name,
