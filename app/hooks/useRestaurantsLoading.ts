@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Cuisine, VendorLocation } from "delivfree";
+import { CuisineId, VendorLocation } from "delivfree";
 import { fetchVendorLocations } from "app/apis/vendorLocations";
 import { useAppSelector } from "app/redux/store";
 
 const PAGE_SIZE = 15;
 
-export const useRestaurantsLoading = (cuisine: Cuisine) => {
+export const useRestaurantsLoading = (cuisine: CuisineId) => {
   const cache = useRef(getRestaurantCache());
 
   const activeUser = useAppSelector((state) => state.user.user);

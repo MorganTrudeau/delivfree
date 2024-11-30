@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
-import { Cuisine } from "delivfree";
+import { CuisineId } from "delivfree";
 
-export type AdType = "general" | "checkout" | Cuisine;
+export type AdType = "general" | "checkout" | CuisineId;
 export type AdConfig = { image: string; title: string; text: string };
 export type AdCache = {
   [Property in AdType]?: AdConfig;

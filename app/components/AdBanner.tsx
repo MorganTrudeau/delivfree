@@ -1,6 +1,6 @@
 import { useAdBanner } from "app/hooks/useAdBanner";
 import { borderRadius } from "app/theme/borderRadius";
-import { Cuisine } from "delivfree";
+import { CuisineId } from "delivfree";
 import React from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 import FastImage from "react-native-fast-image";
@@ -9,7 +9,7 @@ import { colors, spacing } from "app/theme";
 import { $adNoText, $adWithText } from "./styles";
 
 interface Props {
-  type: "general" | "checkout" | Cuisine;
+  type: "general" | "checkout" | CuisineId;
   style?: ViewStyle;
 }
 

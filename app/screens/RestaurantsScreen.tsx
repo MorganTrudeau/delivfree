@@ -1,16 +1,11 @@
 import { Screen, Text } from "app/components";
 import { AdBanner } from "app/components/AdBanner";
 import RestaurantsList from "app/components/RestaurantsList";
-import {
-  $image,
-  $imageContainer,
-  $screen,
-  HORIZONTAL_SAFE_AREA_EDGES,
-} from "app/components/styles";
+import { $image, $imageContainer, $screen } from "app/components/styles";
 import { useRestaurantsLoading } from "app/hooks";
 import { AppStackScreenProps } from "app/navigators";
+import { useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
-import { getCuisineImage, getCuisineTitle } from "app/utils/cuisines";
 import { VendorLocation } from "delivfree";
 import React, { useCallback, useMemo } from "react";
 import { ActivityIndicator, TextStyle, View, ViewStyle } from "react-native";
@@ -30,6 +25,12 @@ export const RestaurantsScreen = ({
   const { cuisine } = route.params;
 
   const insets = useSafeAreaInsets();
+
+  const cuisines = useAppSelector((state) => state.cuisines.data);
+  const cuisineData = useMemo(
+    () => cuisines.find((c) => c.id === cuisine),
+    [cuisine, cuisines]
+  );
 
   const { restaurants, loadRestaurants, refreshRestaurants } =
     useRestaurantsLoading(route.params.cuisine);
@@ -58,7 +59,7 @@ export const RestaurantsScreen = ({
     () => (
       <View style={$listHeader}>
         <Text preset={"heading"} style={$heading}>
-          {getCuisineTitle(cuisine)}
+          {cuisineData?.name}
         </Text>
         <AdBanner type={cuisine} style={$adBanner} />
       </View>
@@ -71,7 +72,7 @@ export const RestaurantsScreen = ({
       loaded ? (
         <View style={{ maxWidth: 400 }}>
           <View style={$imageContainer}>
-            <FastImage source={getCuisineImage(cuisine)} style={$image} />
+            <FastImage source={{ uri: cuisineData?.image }} style={$image} />
           </View>
           <Text preset={"subheading"} style={$emptyText}>
             Coming Soon in your area!

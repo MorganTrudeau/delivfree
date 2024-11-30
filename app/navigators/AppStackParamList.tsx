@@ -1,4 +1,4 @@
-import { Cuisine } from "delivfree";
+import { CuisineId } from "delivfree";
 
 export type AppStackParamList = {
   PrivacyPolicy: undefined;
@@ -12,7 +12,7 @@ export type AppStackParamList = {
   About: undefined;
   DeleteAccount: undefined;
   Home: undefined;
-  Restaurants: { cuisine: Cuisine };
+  Restaurants: { cuisine: CuisineId };
   RestaurantDetail: { restaurantId: string };
   VendorDriverSelect: undefined;
   Orders: undefined;

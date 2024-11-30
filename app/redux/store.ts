@@ -27,6 +27,7 @@ import vendorDrivers from "./reducers/vendorDrivers";
 import positions from "./reducers/positions";
 import checkoutCart from "./reducers/checkoutCart";
 import driverAvailability from "./reducers/driverAvailability";
+import cuisines from "./reducers/cuisines";
 
 const persistConfig = {
   key: "5",
@@ -37,6 +38,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth,
+  cuisines,
   driver,
   user,
   appConfig,
