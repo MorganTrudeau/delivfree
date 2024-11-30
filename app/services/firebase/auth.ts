@@ -15,15 +15,17 @@ import { listenToUser } from "app/apis/user";
 import { getAppType } from "app/utils/general";
 import { setVendor } from "app/redux/reducers/vendor";
 import { setActiveDriver } from "app/redux/reducers/driver";
+import Bugsnag from "@bugsnag/react-native";
 
 export const FirebaseAuth = () => {
   const authToken = useRef<string>();
 
   const dispatch = useAppDispatch();
 
-  const loginCrashlytics = async (userId: string) => {
+  const loginCrashReports = async (userId: string) => {
     try {
       await crashlytics().setUserId(userId);
+      Bugsnag.setUser(userId);
     } catch (error) {
       console.log("Failed to login crashlytics: ", error);
     }
@@ -34,7 +36,7 @@ export const FirebaseAuth = () => {
       if (user) {
         if (authToken.current !== user.uid) {
           authToken.current = user.uid;
-          loginCrashlytics(user.uid);
+          loginCrashReports(user.uid);
           dispatch(setAuthToken(user.uid));
           dispatch(
             setAuthUser({
