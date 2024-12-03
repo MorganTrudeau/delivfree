@@ -7,7 +7,7 @@ export const formatOrderEmail = (
   vendorLocation: VendorLocation
 ) => {
   const formatPrice = (price: string | number) => {
-    Number(price).toLocaleString(undefined, {
+    return Number(price).toLocaleString(undefined, {
       style: "currency",
       currency: "CAD",
       // @ts-ignore
