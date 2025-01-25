@@ -1,6 +1,6 @@
 import { useAppSelector } from "app/redux/store";
 import React, { useCallback, useMemo, useState } from "react";
-import { Pressable, ViewStyle } from "react-native";
+import { Pressable, ScrollView, ViewStyle } from "react-native";
 import { VendorLocationInfo } from "../VendorLocations/VendorLocationInfo";
 import { Card } from "../Card";
 import { Text } from "../Text";
@@ -78,16 +78,18 @@ export const DriverAvailabilitySelect = ({
       <Text style={{ marginBottom: spacing.sm, color: colors.textDim }}>
         Select the restaurants you are delivering for today.
       </Text>
-      {licensesArray.map((license) => {
-        return (
-          <VendorLocationSelectItem
-            key={license.id}
-            vendorLocationId={license.vendorLocation}
-            onPress={handleLocationSelect}
-            selected={selectedLocations.includes(license.vendorLocation)}
-          />
-        );
-      })}
+      <ScrollView>
+        {licensesArray.map((license) => {
+          return (
+            <VendorLocationSelectItem
+              key={license.id}
+              vendorLocationId={license.vendorLocation}
+              onPress={handleLocationSelect}
+              selected={selectedLocations.includes(license.vendorLocation)}
+            />
+          );
+        })}
+      </ScrollView>
       <Button
         text="Change availability"
         style={{ marginTop: spacing.md }}
