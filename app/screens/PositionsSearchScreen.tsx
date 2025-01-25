@@ -135,7 +135,6 @@ export const PositionsSearchScreen = ({ navigation }: Props) => {
             <Icon icon={"chevron-down"} />
           </Pressable>
         )}
-        {/* <TextInput placeholder="Search" /> */}
       </View>
     );
   }, [userAddress]);

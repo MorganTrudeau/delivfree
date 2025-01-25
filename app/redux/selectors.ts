@@ -39,7 +39,7 @@ export const selectSubscriptionValid = createSelector(
     ).filter((l) => l.status === "approved");
 
     const hasFreeSubscription =
-      (userType === "vendor" && vendor && vendor?.hasFreeSubscription) ||
+      (userType === "vendor" && vendor && vendor.hasFreeSubscription) ||
       (userType === "driver" && driver && driver.hasFreeSubscription);
 
     if (hasFreeSubscription) {
