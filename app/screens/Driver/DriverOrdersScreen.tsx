@@ -27,7 +27,7 @@ import { updateOrder } from "app/apis/orders";
 import { DriverAvailabilitySelect } from "app/components/Drivers/DriverAvailability";
 import { pluralFormat } from "app/utils/general";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
 
 interface DriverOrdersScreenProps extends AppStackScreenProps<"Orders"> {}
 
@@ -176,6 +176,7 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
               padding: spacing.md,
               paddingBottom: spacing.md + insets.bottom,
             }}
+            ScrollViewComponent={BottomSheetScrollView}
           />
         </BottomSheet>
       </Screen>
