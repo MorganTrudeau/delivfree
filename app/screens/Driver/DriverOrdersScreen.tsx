@@ -26,12 +26,16 @@ import {
 import { updateOrder } from "app/apis/orders";
 import { DriverAvailabilitySelect } from "app/components/Drivers/DriverAvailability";
 import { pluralFormat } from "app/utils/general";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
 
 interface DriverOrdersScreenProps extends AppStackScreenProps<"Orders"> {}
 
 export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
   const viewOrderModal = useRef<BottomSheetRef>(null);
   const driverAvailabilityModal = useRef<BottomSheetRef>(null);
+
+  const insets = useSafeAreaInsets();
 
   const { uploadImage } = useUploadImage();
 
@@ -143,7 +147,9 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
         {driverAvailability.length === 0 ? (
           <>
             <ScreenHeader title={"Orders"} />
-            <DriverAvailabilitySelect />
+            <DriverAvailabilitySelect
+              style={{ flex: 1, paddingBottom: insets.bottom }}
+            />
           </>
         ) : (
           <OrdersList
@@ -165,7 +171,11 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
         <BottomSheet ref={driverAvailabilityModal}>
           <DriverAvailabilitySelect
             onChange={() => driverAvailabilityModal.current?.close()}
-            style={styles.driverAvailabilityModal}
+            style={{
+              flex: 1,
+              padding: spacing.md,
+              paddingBottom: spacing.md + insets.bottom,
+            }}
           />
         </BottomSheet>
       </Screen>
@@ -174,5 +184,5 @@ export const DriverOrdersScreen = (props: DriverOrdersScreenProps) => {
 };
 
 const styles = StyleSheet.create({
-  driverAvailabilityModal: { padding: spacing.md },
+  driverAvailabilityModal: { flex: 1, padding: spacing.md },
 });

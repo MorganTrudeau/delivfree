@@ -591,11 +591,8 @@ export const onLicensesWritten = onDocumentWritten(
     const licenseBefore = event.data.before.data() as License | undefined;
     const licenseAfter = event.data.after.data() as License | undefined;
 
-    const id = licenseBefore?.id || licenseAfter?.id;
     const driver = licenseBefore?.driver || licenseAfter?.driver;
     const vendor = licenseBefore?.vendor || licenseAfter?.vendor;
-    const vendorLocation =
-      licenseBefore?.vendorLocation || licenseAfter?.vendorLocation;
 
     if (!driver) {
       return true;
@@ -615,25 +612,39 @@ export const onLicensesWritten = onDocumentWritten(
     }
 
     if (statusBefore !== statusAfter) {
-      const update: {
-        [Property in keyof Pick<
-          Driver,
-          "pendingLicenses" | "vendors" | "vendorLocations"
-        >]?: admin.firestore.FieldValue;
-      } & Pick<Driver, "updated"> = {
+      const driverLicensesSnap = await admin
+        .firestore()
+        .collection("Licenses")
+        .where("driver", "==", driver)
+        .get();
+      const driverLicenses = driverLicensesSnap.docs.map(
+        (doc) => doc.data() as License
+      );
+      const { vendors, vendorLocations, pendingLicenses } =
+        driverLicenses.reduce(
+          (acc, license) => {
+            if (license.status === "pending") {
+              acc.pendingLicenses.push(license.id);
+            } else if (license.status === "approved") {
+              acc.vendors.push(license.vendor);
+              acc.vendorLocations.push(license.vendorLocation);
+            }
+            return acc;
+          },
+          {
+            vendors: [] as string[],
+            vendorLocations: [] as string[],
+            pendingLicenses: [] as string[],
+          }
+        );
+      const update: Pick<
+        Driver,
+        "updated" | "pendingLicenses" | "vendors" | "vendorLocations"
+      > = {
         updated: Date.now(),
-        vendors:
-          statusAfter === "approved"
-            ? admin.firestore.FieldValue.arrayUnion(vendor)
-            : admin.firestore.FieldValue.arrayRemove(vendor),
-        vendorLocations:
-          statusAfter === "approved"
-            ? admin.firestore.FieldValue.arrayUnion(vendorLocation)
-            : admin.firestore.FieldValue.arrayRemove(vendorLocation),
-        pendingLicenses:
-          statusAfter === "pending"
-            ? admin.firestore.FieldValue.arrayUnion(id)
-            : admin.firestore.FieldValue.arrayRemove(id),
+        vendors,
+        vendorLocations,
+        pendingLicenses,
       };
       await admin.firestore().collection("Drivers").doc(driver).update(update);
     }
