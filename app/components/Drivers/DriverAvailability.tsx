@@ -1,6 +1,6 @@
 import { useAppSelector } from "app/redux/store";
-import React, { useCallback, useMemo, useState } from "react";
-import { Pressable, ScrollView, ViewStyle } from "react-native";
+import React, { FC, useCallback, useMemo, useState } from "react";
+import { Pressable, ScrollView as RNScrollView, ViewStyle } from "react-native";
 import { VendorLocationInfo } from "../VendorLocations/VendorLocationInfo";
 import { Card } from "../Card";
 import { Text } from "../Text";
@@ -17,9 +17,11 @@ import { setDriverAvailability } from "app/redux/reducers/driverAvailability";
 export const DriverAvailabilitySelect = ({
   onChange,
   style,
+  ScrollViewComponent,
 }: {
   onChange?: () => void;
   style?: ViewStyle;
+  ScrollViewComponent?: FC<any>;
 }) => {
   const Alert = useAlert();
 
@@ -61,6 +63,11 @@ export const DriverAvailabilitySelect = ({
   const { exec: handleStartWork, loading } = useAsyncFunction(startWork);
 
   const Loading = useLoadingIndicator(loading);
+
+  const ScrollView = useMemo(
+    () => ScrollViewComponent || RNScrollView,
+    [ScrollViewComponent]
+  );
 
   if (licensesArray.length === 0) {
     return (
