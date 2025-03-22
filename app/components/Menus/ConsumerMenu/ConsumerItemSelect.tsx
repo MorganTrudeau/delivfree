@@ -28,7 +28,14 @@ import {
   MenuCustomizationChoice,
   MenuItem,
 } from "delivfree";
-import React, { forwardRef, useEffect, useMemo, useState } from "react";
+import React, {
+  forwardRef,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -37,6 +44,7 @@ import {
   ViewStyle,
 } from "react-native";
 import FastImage, { ImageStyle } from "react-native-fast-image";
+import { ConsumerCustomization } from "./ConsumerCustomization";
 
 interface Props {
   item: MenuItem;
@@ -67,14 +75,20 @@ const ConsumerItemSelect = ({
     loadCustomizations(false);
   }, []);
 
-  const imageSource = useMemo(() => ({ uri: item.image }), []);
+  const price = useMemo(
+    () =>
+      Number(item.price) ? localizeCurrency(Number(item.price), "CAD") : "",
+    [item.price]
+  );
 
   const [quantity, setQuantity] = useState(1);
   const [customizationChoices, setCustomizationChoices] = useState<{
     [customizationId: string]: {
-      choice: MenuCustomizationChoice;
-      quantity: number;
-    }[];
+      [choiceId: string]: {
+        choice: MenuCustomizationChoice;
+        quantity: number;
+      };
+    };
   }>({});
   const [customizationNotes, setCustomizationNotes] = useState<{
     [customizationId: string]: { text: string };
@@ -82,16 +96,121 @@ const ConsumerItemSelect = ({
   const [incompleteCustomizations, setIncompleteCustomizations] =
     useState(false);
 
+  console.log(customizationChoices);
+
+  const choiceQuantities = useMemo(
+    () =>
+      Object.entries(customizationChoices).reduce(
+        (acc, [customizationId, choices]) => {
+          Object.values(choices).forEach((choice) => {
+            acc.customizations[customizationId] =
+              (acc.customizations[customizationId] || 0) + choice.quantity;
+            acc.choices[choice.choice.id] = choice.quantity;
+          });
+          return acc;
+        },
+        { choices: {}, customizations: {} } as {
+          choices: { [choiceId: string]: number | undefined };
+          customizations: { [customizationId: string]: number | undefined };
+        }
+      ),
+    [customizationChoices]
+  );
+
   const totalPrice = useMemo(() => {
     return (
       Number(item.price) * quantity +
       Object.values(customizationChoices).reduce((acc, choices) => {
         return (
-          acc + choices.reduce((acc, c) => acc + Number(c.choice.price), 0)
+          acc +
+          Object.values(choices).reduce(
+            (acc, c) => acc + Number(c.choice.price) * c.quantity,
+            0
+          )
         );
       }, 0)
     );
   }, [quantity, item.price, customizationChoices]);
+
+  const changeCustomizationNote = useCallback(
+    (id: string, text: string) =>
+      setCustomizationNotes((s) => {
+        return {
+          ...s,
+          [id]: {
+            text,
+          },
+        };
+      }),
+    []
+  );
+
+  const changeChoiceQuantity = useCallback(
+    (
+      customization: MenuCustomization,
+      choice: MenuCustomizationChoice,
+      quantity: number
+    ) => {
+      setCustomizationChoices((s) => {
+        const newCustomization = {
+          ...s[customization.id],
+          [choice.id]: { choice, quantity },
+        };
+
+        const totalQuantity = Object.values(newCustomization).reduce(
+          (acc, c) => acc + (c.choice.id === choice.id ? quantity : c.quantity),
+          0
+        );
+
+        const max = Number(customization.maxChoices);
+        if (max && totalQuantity > max) {
+          return s;
+        }
+
+        return {
+          ...s,
+          [customization.id]: newCustomization,
+        };
+      });
+    },
+    []
+  );
+
+  const toggleCustomizationChoice = useCallback(
+    (customization: MenuCustomization, choice: MenuCustomizationChoice) => {
+      setCustomizationChoices((s) => {
+        const _customization = s[customization.id];
+        const selected = !!_customization?.[choice.id]?.quantity;
+
+        if (selected) {
+          const newCustomization = { ..._customization };
+          delete newCustomization[choice.id];
+          return {
+            ...s,
+            [customization.id]: newCustomization,
+          };
+        }
+
+        const max = Number(customization.maxChoices);
+        if (max && Object.values(_customization || {}).length >= max) {
+          return s;
+        }
+
+        return {
+          ...s,
+          [customization.id]: {
+            ...s[customization.id],
+            [choice.id]: {
+              choice,
+              quantity: 1,
+              text: "",
+            },
+          },
+        };
+      });
+    },
+    []
+  );
 
   const customizationIncomplete = (c: MenuCustomization) => {
     if (
@@ -103,22 +222,11 @@ const ConsumerItemSelect = ({
     } else if (
       c.type === "choices" &&
       Number(c.minChoices) > 0 &&
-      !customizationChoices[c.id]?.length
+      (choiceQuantities.customizations[c.id] || 0) < Number(c.minChoices)
     ) {
       return true;
     }
     return false;
-  };
-
-  const customizationNumSelected = (c: MenuCustomization): number => {
-    const customizationChoice = customizationChoices[c.id];
-    if (!customizationChoice) {
-      return 0;
-    }
-    return customizationChoice.reduce(
-      (acc, choice) => acc + choice.quantity,
-      0
-    );
   };
 
   const handleAddItemToCart = () => {
@@ -141,10 +249,13 @@ const ConsumerItemSelect = ({
           (acc, [customization, choices]) => {
             return [
               ...acc,
-              ...choices.map((c) => ({
+              ...Object.values(choices).map((c) => ({
                 ...c,
                 type: "choice" as "choice",
                 customization,
+                allowsQuantity: !!customizations.find(
+                  (c) => c.id === customization
+                )?.allowsQuantity,
               })),
             ];
           },
@@ -198,22 +309,19 @@ const ConsumerItemSelect = ({
   return (
     <View style={[$flex, largeScreen && { flexDirection: "row" }]}>
       {!!item.image && (
-        <View style={{ padding: spacing.md }}>
-          <FastImage
-            source={imageSource}
-            resizeMode="cover"
-            style={[
-              $image,
-              largeScreen ? { width: 500 } : { width: width - spacing.md * 4 },
-            ]}
-          />
-        </View>
+        <ItemImage
+          uri={item.image}
+          largeScreen={largeScreen}
+          screenWidth={width}
+        />
       )}
       <View style={{ padding: spacing.md, flex: 1 }}>
         <Text preset="heading">{item.name}</Text>
-        <Text size={"md"} style={{ color: colors.textDim }}>
-          {localizeCurrency(Number(item.price), "CAD")}
-        </Text>
+        {!!price && (
+          <Text size={"md"} style={{ color: colors.textDim }}>
+            {price}
+          </Text>
+        )}
         {!!item.description && (
           <Text style={{ color: colors.textDim }}>{item.description}</Text>
         )}
@@ -224,126 +332,21 @@ const ConsumerItemSelect = ({
           <View style={{ marginTop: spacing.sm }}>
             {customizations.map((customization) => {
               return (
-                <View
-                  style={[
-                    $borderTop,
-                    { paddingTop: spacing.sm, paddingBottom: spacing.xs },
-                  ]}
-                >
-                  <Text preset="subheading">{customization.name}</Text>
-                  {Number(customization.maxChoices) && (
-                    <Text size="xs">
-                      Choices: {customizationNumSelected(customization)}/
-                      {customization.maxChoices}
-                    </Text>
-                  )}
-                  {((customization.type === "note" &&
-                    customization.noteRequired) ||
-                    Number(customization.minChoices) > 0) && (
-                    <View style={$row}>
-                      <Text style={{ color: colors.textDim }} size={"xs"}>
-                        Required
-                      </Text>
-                      {incompleteCustomizations &&
-                        customizationIncomplete(customization) && (
-                          <Icon
-                            icon={"information"}
-                            size={15}
-                            color={colors.error}
-                            style={{ marginLeft: 4 }}
-                          />
-                        )}
-                    </View>
-                  )}
-                  {customization.type === "note" && (
-                    <BottomSheetTextInput
-                      placeholder={
-                        customization.noteInstruction ||
-                        "Describe your customization..."
-                      }
-                      style={$input}
-                      onChangeText={(text) => {
-                        setCustomizationNotes((s) => {
-                          return {
-                            ...s,
-                            [customization.id]: {
-                              text,
-                            },
-                          };
-                        });
-                      }}
-                      value={customizationNotes[customization.id]?.text || ""}
-                    />
-                  )}
-                  {customization.choices.map((choice, index, arr) => {
-                    const selected = !!customizationChoices[
-                      customization.id
-                    ]?.find((c) => c.choice.id === choice.id);
-                    return (
-                      <Pressable
-                        key={`${choice.id}-${index}`}
-                        onPress={() => {
-                          setCustomizationChoices((s) => {
-                            const _customization = s[customization.id];
-                            if (_customization) {
-                              if (selected) {
-                                return {
-                                  ...s,
-                                  [customization.id]: s[
-                                    customization.id
-                                  ].filter((c) => c.choice.id !== choice.id),
-                                };
-                              }
-                              const max = Number(customization.maxChoices);
-                              const choices =
-                                max && _customization.length >= max
-                                  ? [..._customization].slice(1, max)
-                                  : _customization.slice();
-                              return {
-                                ...s,
-                                [customization.id]: [
-                                  ...choices,
-                                  {
-                                    choice,
-                                    quantity: 1,
-                                    text: "",
-                                  },
-                                ],
-                              };
-                            } else {
-                              return {
-                                ...s,
-                                [customization.id]: [
-                                  {
-                                    choice,
-                                    quantity: 1,
-                                    text: "",
-                                  },
-                                ],
-                              };
-                            }
-                          });
-                        }}
-                        style={[
-                          { paddingVertical: spacing.xs },
-                          $row,
-                          $borderBottomLight,
-                          index === arr.length - 1 && { borderBottomWidth: 0 },
-                        ]}
-                      >
-                        <View style={$flex}>
-                          <Text>{choice.name}</Text>
-                          {!!choice.price && Number(choice.price) && (
-                            <Text size={"xs"}>
-                              +{localizeCurrency(Number(choice.price), "CAD")}
-                            </Text>
-                          )}
-                        </View>
-                        <Toggle value={selected} />
-                      </Pressable>
-                    );
-                  })}
-                </View>
+                <ConsumerCustomization
+                  key={customization.id}
+                  customization={customization}
+                  totalChoicesSelected={
+                    choiceQuantities.customizations[customization.id] || 0
+                  }
+                  incomplete={
+                    incompleteCustomizations &&
+                    customizationIncomplete(customization)
+                  }
+                  onChangeNote={changeCustomizationNote}
+                  onSelectChoice={toggleCustomizationChoice}
+                  onQuantityChange={changeChoiceQuantity}
+                  choiceQuantities={choiceQuantities.choices}
+                />
               );
             })}
           </View>
@@ -381,6 +384,31 @@ const ConsumerItemSelect = ({
     </View>
   );
 };
+
+const ItemImage = memo(
+  ({
+    uri,
+    largeScreen,
+    screenWidth,
+  }: {
+    uri: string;
+    largeScreen: boolean;
+    screenWidth: number;
+  }) => (
+    <View style={{ padding: spacing.md }}>
+      <FastImage
+        source={{ uri }}
+        resizeMode="cover"
+        style={[
+          $image,
+          largeScreen
+            ? { width: 500 }
+            : { width: screenWidth - spacing.md * 4 },
+        ]}
+      />
+    </View>
+  )
+);
 
 export const ConsumerItemSelectModal = forwardRef<
   BottomSheetRef,

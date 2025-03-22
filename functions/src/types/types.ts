@@ -221,6 +221,7 @@ export type CheckoutItemCustomization =
       customization: string;
       choice: MenuCustomizationChoice;
       quantity: number;
+      allowsQuantity: boolean;
     };
 export type CheckoutItem = {
   id: string;
