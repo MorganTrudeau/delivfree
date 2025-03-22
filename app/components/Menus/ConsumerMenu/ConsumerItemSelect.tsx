@@ -110,6 +110,17 @@ const ConsumerItemSelect = ({
     return false;
   };
 
+  const customizationNumSelected = (c: MenuCustomization): number => {
+    const customizationChoice = customizationChoices[c.id];
+    if (!customizationChoice) {
+      return 0;
+    }
+    return customizationChoice.reduce(
+      (acc, choice) => acc + choice.quantity,
+      0
+    );
+  };
+
   const handleAddItemToCart = () => {
     const incompleteCustomizations = !!customizations.find((c) => {
       return customizationIncomplete(c);
@@ -220,6 +231,12 @@ const ConsumerItemSelect = ({
                   ]}
                 >
                   <Text preset="subheading">{customization.name}</Text>
+                  {Number(customization.maxChoices) && (
+                    <Text size="xs">
+                      Choices: {customizationNumSelected(customization)}/
+                      {customization.maxChoices}
+                    </Text>
+                  )}
                   {((customization.type === "note" &&
                     customization.noteRequired) ||
                     Number(customization.minChoices) > 0) && (

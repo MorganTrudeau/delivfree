@@ -12,6 +12,7 @@ import {
   Pressable,
   ScrollView,
   ScrollViewProps,
+  StyleSheet,
   View,
   ViewStyle,
 } from "react-native";
@@ -68,13 +69,20 @@ const ManageMenuItem = ({
           noteRequired: false,
           name: "",
           noteInstruction: "",
+          allowsQuantity: false,
           type: "choices",
           choices: [],
-          minChoices: "0",
-          maxChoices: "0",
+          maxQuantity: "",
+          minChoices: "",
+          maxChoices: "",
           items: [],
           vendor,
         }
+  );
+
+  const toggleQuantitySelection = useCallback(
+    () => setState((s) => ({ ...s, allowsQuantity: !s.allowsQuantity })),
+    []
   );
 
   const choicesOrder = useMemo(
@@ -227,9 +235,6 @@ const ManageMenuItem = ({
         />
 
         <View style={[$inputFormContainer, { marginTop: spacing.lg }]}>
-          {/* <Text preset="formLabel" style={$formLabel}>
-            Options
-          </Text> */}
           <View style={[$row, $typeButtonContainer]}>
             <ButtonSmall
               text={"Choices"}
@@ -315,7 +320,7 @@ const ManageMenuItem = ({
                 flexWrap: "wrap",
                 rowGap: spacing.xs,
                 columnGap: spacing.sm,
-                marginTop: spacing.lg,
+                marginTop: spacing.md,
               },
             ]}
           >
@@ -323,7 +328,7 @@ const ManageMenuItem = ({
               onChangeText={(minChoices) =>
                 setState((s) => ({ ...s, minChoices }))
               }
-              label="Minimum choices"
+              label="Min choices"
               placeholder="Min choices"
               value={state.minChoices}
               numberInput
@@ -337,7 +342,7 @@ const ManageMenuItem = ({
                 setState((s) => ({ ...s, maxChoices }))
               }
               value={state.maxChoices}
-              label="Maximum choices"
+              label="Max choices"
               placeholder="Max choices"
               numberInput
               inputWrapperStyle={$flex}
@@ -347,7 +352,56 @@ const ManageMenuItem = ({
           </View>
         )}
 
-        <View style={[$inputFormContainer, { marginTop: spacing.lg }]}>
+        <View
+          style={{
+            borderTopWidth: StyleSheet.hairlineWidth,
+            borderTopColor: colors.border,
+            marginVertical: spacing.md,
+          }}
+        />
+
+        <Text preset="formLabel">Requires quantity selection</Text>
+        <Text size="xs" style={[$formLabel, { color: colors.textDim }]}>
+          Enable this setting if customers are required to select a quantity for
+          their choice.
+        </Text>
+        <Pressable
+          style={[$row, { marginTop: spacing.xxs }]}
+          onPress={toggleQuantitySelection}
+        >
+          <Toggle
+            value={state.allowsQuantity}
+            containerStyle={{ marginRight: 2 }}
+          />
+          <Text size="sm">
+            {state.allowsQuantity
+              ? "Quantity selection enabled"
+              : "Quantity selection disabled"}
+          </Text>
+        </Pressable>
+        {state.allowsQuantity && (
+          <TextField
+            onChangeText={(maxQuantity) =>
+              setState((s) => ({ ...s, maxQuantity }))
+            }
+            value={state.maxQuantity}
+            label="Max quantity"
+            placeholder="Max quantity"
+            numberInput
+            inputWrapperStyle={$flex}
+            containerStyle={{ marginTop: spacing.sm }}
+          />
+        )}
+
+        <View
+          style={{
+            borderTopWidth: StyleSheet.hairlineWidth,
+            borderTopColor: colors.border,
+            marginVertical: spacing.md,
+          }}
+        />
+
+        <View>
           <Text preset="formLabel" style={$formLabel}>
             Menu items
           </Text>
