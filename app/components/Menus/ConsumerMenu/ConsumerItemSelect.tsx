@@ -96,8 +96,6 @@ const ConsumerItemSelect = ({
   const [incompleteCustomizations, setIncompleteCustomizations] =
     useState(false);
 
-  console.log(customizationChoices);
-
   const choiceQuantities = useMemo(
     () =>
       Object.entries(customizationChoices).reduce(
