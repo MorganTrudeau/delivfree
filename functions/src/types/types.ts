@@ -54,6 +54,8 @@ export type MenuCustomization = {
   noteInstruction: string;
   noteRequired: boolean;
   choices: MenuCustomizationChoice[];
+  allowsQuantity: boolean;
+  maxQuantity: string;
   minChoices: string;
   maxChoices: string;
   items: string[];
@@ -129,7 +131,7 @@ export type Cuisine = {
   id: CuisineId;
   name: string;
   image: string;
-  order?: number
+  order?: number;
 };
 export type VendorLocation = {
   address: string;
@@ -219,6 +221,7 @@ export type CheckoutItemCustomization =
       customization: string;
       choice: MenuCustomizationChoice;
       quantity: number;
+      allowsQuantity: boolean;
     };
 export type CheckoutItem = {
   id: string;

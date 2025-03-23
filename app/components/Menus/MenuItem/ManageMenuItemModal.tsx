@@ -103,11 +103,23 @@ const ManageMenuItem = ({
     if (!state.name) {
       return Alert.alert("Missing name", "Please enter a name for your item.");
     }
-    if (!state.price) {
-      return Alert.alert(
-        "Missing price",
-        "Please enter a price for your item."
+
+    const price = (state.price || "0.00").replace(/[^0-9.]/g, "");
+
+    if (!Number(price) && (!item || Number(item.price))) {
+      const allowNoPrice = await new Promise((resolve) =>
+        Alert.alert(
+          "No price added",
+          "Do you want this item to have no cost?",
+          [
+            { text: "Cancel", onPress: () => resolve(false) },
+            { text: "Confirm", onPress: () => resolve(true) },
+          ]
+        )
       );
+      if (!allowNoPrice) {
+        return;
+      }
     }
 
     let image = state.image;
@@ -120,7 +132,7 @@ const ManageMenuItem = ({
 
     await saveMenuItem({
       ...state,
-      price: state.price.replace(/[^0-9.]/g, ""),
+      price,
       image,
     });
     onClose();
