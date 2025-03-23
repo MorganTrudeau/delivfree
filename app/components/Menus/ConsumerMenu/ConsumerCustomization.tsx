@@ -174,7 +174,7 @@ const QuantityChoice = memo(function QuantityChoice({
         isLastItem && { borderBottomWidth: 0 },
       ]}
     >
-      <View style={$flex}>
+      <View style={[$flex, { paddingRight: 5 }]}>
         <Text>{choice.name}</Text>
         {!!choice.price && Number(choice.price) && (
           <Text size={"xs"}>
