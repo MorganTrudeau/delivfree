@@ -1,4 +1,3 @@
-
 import { colors, spacing } from "app/theme";
 import React, { useMemo } from "react";
 import { View, ViewStyle } from "react-native";
@@ -54,13 +53,17 @@ export const CartItem = ({
               key={`checkout-customization-${customization.choice.id}-${customizationIndex}`}
             >
               <Text style={{ color: colors.textDim }} size="xs">
+                {customization.allowsQuantity
+                  ? `( ${customization.quantity} ) `
+                  : ""}
                 {customization.choice.name}
 
                 {customization.choice.price &&
                 showPrice &&
                 Number(customization.choice.price)
                   ? ` +${localizeCurrency(
-                      Number(customization.choice.price),
+                      Number(customization.choice.price) *
+                        customization.quantity,
                       "CAD"
                     )}`
                   : ""}

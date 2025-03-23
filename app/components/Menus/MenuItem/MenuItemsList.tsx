@@ -46,7 +46,10 @@ export const MenuItemsList = ({
             .join(", ")
         : "-";
 
-      const price = localizeCurrency(Number(item.price), "CAD");
+      const priceNumber = Number(item.price);
+      const price = !priceNumber
+        ? "-"
+        : localizeCurrency(Number(item.price), "CAD");
 
       if (largeScreen) {
         const dataCells: DataCell[] = [

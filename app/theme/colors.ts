@@ -70,7 +70,7 @@ export const colors = {
   /**
    * Secondary text information.
    */
-  textDim: palette.neutral500,
+  textDim: palette.neutral600,
   /**
    * Inactive views
    */

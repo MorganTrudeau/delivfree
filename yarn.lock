@@ -8674,8 +8674,8 @@ __metadata:
 
 "delivfree@file:functions/src/types::locator=delivfreeapp%40workspace%3A.":
   version: 1.0.0
-  resolution: "delivfree@file:functions/src/types#functions/src/types::hash=1e0d62&locator=delivfreeapp%40workspace%3A."
-  checksum: 10c0/817af3f61a35f5f23ed202fb9ff7c8fb16b20b6da2090ed0978b3033ea3fa640d1c77a2fd8d705a7ee991f15e63c2778a0f66a9b39265821a5e897dd999b3dc4
+  resolution: "delivfree@file:functions/src/types#functions/src/types::hash=27119b&locator=delivfreeapp%40workspace%3A."
+  checksum: 10c0/f2162ac1f4eb38c7c39f6bf3af22939a820cdfcfed59e1e2b1883ad594c16020d0e7f76888dfb98367ce8369e1d151d1986f6a658d6a9d00eb9f27d36d6548d9
   languageName: node
   linkType: hard
 
@@ -11241,9 +11241,9 @@ __metadata:
   linkType: hard
 
 "google-libphonenumber@npm:^3.2.10":
-  version: 3.2.38
-  resolution: "google-libphonenumber@npm:3.2.38"
-  checksum: 10c0/c5a8ec4ff6ed17d8336a48299e565ed3e79ace44b4dea3b3e3664bd633ff1a9fbc9cf7eda65eb410d7430feea88693e5dca4bc313b81cf5bbd1e1ed7a97d0908
+  version: 3.2.40
+  resolution: "google-libphonenumber@npm:3.2.40"
+  checksum: 10c0/997857e0dfdd39b169171cfee72ba268e9b0f9c655317701e21f61b2725d48384df3b2dea6977b49fb47efbde319fd71a1f2ec46589e91ab832ada9f54793cff
   languageName: node
   linkType: hard
 
@@ -16376,7 +16376,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/d9d6464c8dc6050d5a4d278884cdd092ce9775a4be3ecb852de78e24a9233e581373f7d68d9c723f6de46210ba1085ecd0f28c7a1b58385ae5f3babae221b8d1
+  checksum: 10c0/5371787614e86cdddb12a83adb016563dcb12b9084f64e76e95628096c6cbc4fdaeda502f29de18fbecdb3fe5f1632243cfe120dc77383cad49b13dab59a3ce7
   languageName: node
   linkType: hard
 

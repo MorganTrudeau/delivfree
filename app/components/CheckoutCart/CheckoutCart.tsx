@@ -107,8 +107,8 @@ export const CheckoutCart = ({
         </Text>
       </View>
       <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
+        style={[{ flex: 1 }, $borderBottomLight]}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: spacing.sm }}
         showsVerticalScrollIndicator={false}
       >
         {cartItems.map((item, itemIndex, itemsArr) => {

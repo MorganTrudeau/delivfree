@@ -17,6 +17,8 @@ export const CheckoutCartTracker = ({
 }: {
   color?: string;
 }) => {
+  const { height } = useDimensions();
+
   const cart = useAppSelector((state) => state.checkoutCart.order);
 
   const popover = useRef<PopoverRef>(null);
@@ -39,7 +41,7 @@ export const CheckoutCartTracker = ({
         <Icon icon={"close"} onPress={() => popover.current?.dismiss()} />
         <CheckoutCart
           onCheckout={handleCheckout}
-          style={{ paddingTop: spacing.sm }}
+          style={{ paddingTop: spacing.sm, maxHeight: height * 0.75 }}
         />
       </CartItemsContainer>
     );
