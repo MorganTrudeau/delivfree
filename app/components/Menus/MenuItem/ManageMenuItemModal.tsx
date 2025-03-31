@@ -2,10 +2,23 @@ import {
   confirmDelete,
   generateUid,
   localizeCurrency,
+  reorder,
+  reorderFromIds,
 } from "app/utils/general";
-import { MenuCategory, MenuItem, MenuItemAttribute } from "delivfree";
-import React, { forwardRef, useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+import {
+  MenuCategory,
+  MenuCustomization,
+  MenuItem,
+  MenuItemAttribute,
+} from "delivfree";
+import React, { forwardRef, useCallback, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 import { TextField } from "../../TextField";
 import {
   $borderedArea,
@@ -18,7 +31,11 @@ import { Text } from "../../Text";
 import { colors, spacing } from "app/theme";
 import { Button } from "../../Button";
 import { useAsyncFunction } from "app/hooks/useAsyncFunction";
-import { deleteMenuItem, saveMenuItem } from "app/apis/menus";
+import {
+  deleteMenuItem,
+  saveCustomizationOrder,
+  saveMenuItem,
+} from "app/apis/menus";
 import { useAlert, useUploadImage } from "app/hooks";
 import { BottomSheet, BottomSheetRef } from "../../Modal/BottomSheet";
 import { Icon, IconTypes } from "app/components/Icon";
@@ -26,12 +43,18 @@ import { sizing } from "app/theme/sizing";
 import { DropDownPicker } from "app/components/DropDownPicker";
 import { ImageUpload } from "app/components/ImageUpload";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
+import DraggableFlatList, {
+  DragEndParams,
+  RenderItemParams,
+} from "react-native-draggable-flatlist";
+import { DraggableItem } from "app/components/Draggable/DraggableItem";
 
 interface ManageMenuProps {
   vendor: string;
   item?: MenuItem | null | undefined;
   itemCategory?: string | null | undefined;
   categories: MenuCategory[];
+  customizations: MenuCustomization[];
   onClose: () => void;
 }
 
@@ -40,6 +63,7 @@ const ManageMenuItem = ({
   itemCategory,
   categories,
   vendor,
+  customizations,
   onClose,
 }: ManageMenuProps) => {
   const Alert = useAlert();
@@ -70,6 +94,26 @@ const ManageMenuItem = ({
           attributes: [],
           order: {},
         }
+  );
+
+  const [customizationOrder, setCustomizationOrder] = useState<string[]>([]);
+
+  const itemCustomizations = useMemo(() => {
+    const filteredCustomizations = [...customizations].filter((c) =>
+      c.items.includes(state.id)
+    );
+    if (customizationOrder.length) {
+      return reorderFromIds(filteredCustomizations, customizationOrder);
+    } else {
+      return reorder(filteredCustomizations, state.id);
+    }
+  }, [customizations, state.id, customizationOrder]);
+
+  const handleCustomizationsOrderChange = useCallback(
+    (params: DragEndParams<MenuCustomization>) => {
+      setCustomizationOrder(params.data.map((d) => d.id));
+    },
+    []
   );
 
   const updateState =
@@ -130,6 +174,10 @@ const ManageMenuItem = ({
       });
     }
 
+    if (customizationOrder.length) {
+      await saveCustomizationOrder(state.id, customizationOrder);
+    }
+
     await saveMenuItem({
       ...state,
       price,
@@ -159,6 +207,15 @@ const ManageMenuItem = ({
         ? ({ style }) => <ActivityIndicator style={style} color={"#fff"} />
         : undefined,
     [loading]
+  );
+
+  const renderCustomization = useCallback(
+    ({ item, drag, isActive }: RenderItemParams<MenuCustomization>) => (
+      <DraggableItem drag={drag} isActive={isActive} innerStyle={$draggable}>
+        <Text>{item.name}</Text>
+      </DraggableItem>
+    ),
+    []
   );
 
   return (
@@ -279,6 +336,21 @@ const ManageMenuItem = ({
         />
       </View>
 
+      {itemCustomizations.length > 0 && (
+        <View style={$inputFormContainer}>
+          <Text preset="formLabel" style={$formLabel}>
+            Customization order
+          </Text>
+          <DraggableFlatList
+            data={itemCustomizations}
+            renderItem={renderCustomization}
+            keyExtractor={customizationKeyExtractor}
+            activationDistance={1}
+            onDragEnd={handleCustomizationsOrderChange}
+          />
+        </View>
+      )}
+
       <Button
         text={"Save item"}
         preset={state.name ? "filled" : "default"}
@@ -341,7 +413,7 @@ const Attribute = ({
         color={active ? "#fff" : ""}
         size={sizing.md}
       />
-      <Text size={"xs"} style={{ color: active ? "#fff" : colors.text }}>
+      <Text size={"xs"} style={{ color: active ? colors.white : colors.text }}>
         {text}
       </Text>
     </Pressable>
@@ -358,3 +430,6 @@ export const ManageMenuItemModal = forwardRef<
     </BottomSheet>
   );
 });
+
+const customizationKeyExtractor = (item: MenuCustomization) => item.id;
+const $draggable: ViewStyle = { paddingVertical: spacing.sm };

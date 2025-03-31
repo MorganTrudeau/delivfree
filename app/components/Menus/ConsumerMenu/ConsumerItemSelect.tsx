@@ -20,7 +20,7 @@ import { addItemToCart, startCart } from "app/redux/reducers/checkoutCart";
 import { useAppDispatch, useAppSelector } from "app/redux/store";
 import { colors, spacing } from "app/theme";
 import { borderRadius } from "app/theme/borderRadius";
-import { generateUid, localizeCurrency } from "app/utils/general";
+import { generateUid, localizeCurrency, reorder } from "app/utils/general";
 import {
   CheckoutItem,
   CheckoutItemCustomization,
@@ -95,6 +95,37 @@ const ConsumerItemSelect = ({
   }>({});
   const [incompleteCustomizations, setIncompleteCustomizations] =
     useState(false);
+
+  const orderedCustomizations = useMemo(
+    () =>
+      reorder([...customizations], item.id).filter((c) => {
+        let showCustomization = true;
+        if (c.rules) {
+          c.rules.forEach((rule) => {
+            const customizationChoice =
+              customizationChoices[rule.customization];
+
+            if (rule.condition === "requires") {
+              if (!customizationChoice) {
+                showCustomization = false;
+              } else {
+                showCustomization = Object.values(customizationChoice).some(
+                  ({ choice, quantity }) =>
+                    quantity > 0 && rule.choices.includes(choice.id)
+                );
+              }
+            } else if (customizationChoice) {
+              showCustomization = !Object.values(customizationChoice).some(
+                ({ choice, quantity }) =>
+                  quantity > 0 && rule.choices.includes(choice.id)
+              );
+            }
+          });
+        }
+        return showCustomization;
+      }),
+    [item.id, customizations, customizationChoices]
+  );
 
   const choiceQuantities = useMemo(
     () =>
@@ -191,6 +222,29 @@ const ConsumerItemSelect = ({
 
         const max = Number(customization.maxChoices);
         if (max && Object.values(_customization || {}).length >= max) {
+          if (_customization) {
+            const newCustomization = Object.entries(_customization).reduce(
+              (acc, [key, item], index) =>
+                index === 0 ? acc : { ...acc, [key]: item },
+              {} as {
+                [choiceId: string]: {
+                  choice: MenuCustomizationChoice;
+                  quantity: number;
+                };
+              }
+            );
+            return {
+              ...s,
+              [customization.id]: {
+                ...newCustomization,
+                [choice.id]: {
+                  choice,
+                  quantity: 1,
+                  text: "",
+                },
+              },
+            };
+          }
           return s;
         }
 
@@ -326,9 +380,9 @@ const ConsumerItemSelect = ({
 
         {!customizationsLoaded && <ActivityIndicator color={colors.primary} />}
 
-        {customizations.length > 0 && (
+        {orderedCustomizations.length > 0 && (
           <View style={{ marginTop: spacing.sm }}>
-            {customizations.map((customization) => {
+            {orderedCustomizations.map((customization) => {
               return (
                 <ConsumerCustomization
                   key={customization.id}
