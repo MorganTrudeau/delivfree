@@ -4,10 +4,15 @@ import DraggableFlatList, {
   NestableDraggableFlatList,
   NestableScrollContainer,
   RenderItemParams,
-  ScaleDecorator,
   ShadowDecorator,
 } from "react-native-draggable-flatlist";
-import { Pressable, StyleProp, View, ViewStyle } from "react-native";
+import {
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 import { Text } from "../Text";
 import { Icon } from "../Icon";
 import { colors, spacing } from "app/theme";
@@ -26,6 +31,7 @@ import { borderRadius } from "app/theme/borderRadius";
 import { ButtonSmall } from "../ButtonSmall";
 import { sizing } from "app/theme/sizing";
 import { useOnChange } from "app/hooks";
+import { DraggableItem } from "../Draggable/DraggableItem";
 
 interface MenuSection {
   category: MenuCategory;
@@ -150,7 +156,7 @@ const SectionHeader = ({
   );
   return (
     <Pressable style={$itemOuter} onPressIn={onPressIn} onPressOut={onPressOut}>
-      <Icon icon={"drag-vertical"} />
+      <Icon icon={"drag-vertical"} style={$dragIcon} />
       <Animated.View style={[$itemInner, animatedStyle]}>
         <View style={$flex}>
           <Text preset="semibold">{section.category.name}</Text>
@@ -291,42 +297,19 @@ const Item = React.memo(function Item({
   drag: () => void;
   isActive: boolean;
 }) {
-  const activeAnimation = useSharedValue(isActive ? 1 : 0);
-  const animatedStyle = useAnimatedStyle(
-    () => ({
-      borderBottomColor: interpolateColor(
-        activeAnimation.value,
-        [0, 1],
-        [colors.border, "transparent"],
-        "HSV"
-      ),
-    }),
-    [isActive]
-  );
-  const onPressIn = useCallback(() => {
-    activeAnimation.value = withTiming(1, { duration: 100 });
-    drag();
-  }, []);
-  const onPressOut = useCallback(() => {
-    activeAnimation.value = withTiming(0);
-  }, []);
   return (
-    <ShadowDecorator>
-      <Pressable
-        style={$itemOuter}
-        onPressIn={onPressIn}
-        onPressOut={onPressOut}
-      >
-        <Icon icon={"drag-vertical"} />
-        <Animated.View style={[$itemInner, animatedStyle]}>
-          <FastImage source={{ uri: item.image }} style={$itemImage} />
-          <Text preset="semibold" style={$flex}>
-            {item.name}
-          </Text>
-          <TextInput value={item.price} />
-        </Animated.View>
-      </Pressable>
-    </ShadowDecorator>
+    <DraggableItem
+      drag={drag}
+      isActive={isActive}
+      outerStyle={$itemOuter}
+      innerStyle={$itemInner}
+    >
+      <FastImage source={{ uri: item.image }} style={$itemImage} />
+      <Text preset="semibold" style={$flex}>
+        {item.name}
+      </Text>
+      <TextInput value={item.price} />
+    </DraggableItem>
   );
 });
 
@@ -336,7 +319,7 @@ const $itemOuter: StyleProp<ViewStyle> = [
   { backgroundColor: colors.background },
   $row,
 ];
-const $itemInner: StyleProp<ViewStyle> = [
+const $itemInner: ViewStyle = StyleSheet.flatten([
   $borderBottom,
   {
     height: ITEM_HEIGHT,
@@ -346,7 +329,7 @@ const $itemInner: StyleProp<ViewStyle> = [
     flex: 1,
   },
   $row,
-];
+]);
 const $itemImage: ImageStyle = {
   height: ITEM_IMAGE_SIZE,
   width: ITEM_IMAGE_SIZE,
@@ -369,3 +352,5 @@ const $categoryFooterInner: StyleProp<ViewStyle> = {
   justifyContent: "center",
   alignItems: "flex-start",
 };
+
+const $dragIcon: ViewStyle = { marginRight: spacing.xs };

@@ -207,6 +207,7 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
         categories={categories}
         onClose={closeEditItem}
         onDismiss={onEditItemClose}
+        customizations={customizations}
       />
 
       <ManageMenuCustomizationModal
@@ -217,6 +218,7 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
         onDismiss={onEditCustomizationClose}
         items={items}
         categories={categories}
+        customizations={customizations}
       />
     </Screen>
   );

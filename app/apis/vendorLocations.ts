@@ -237,7 +237,7 @@ const loadVendorLocationDetails = async (
   const menusActive = hasActiveMenu(menus);
   return {
     ...vendorLocation,
-    isOpen: !!menusActive && !!activeDrivers?.length,
+    isOpen: (!!menusActive && !!activeDrivers?.length) || !!forceShow,
     nextOpen: !menusActive ? getMenuNextOpen(menus) : "",
   };
 };

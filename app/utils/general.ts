@@ -7,6 +7,24 @@ import React from "react";
 import { VendorLocation } from "delivfree";
 import { AlertProps } from "app/components/Alert/AlertProvider";
 
+export const reorderFromIds = <V extends { id: string }>(
+  arr: V[],
+  order: string[]
+) => {
+  const orderMap = {};
+  order.forEach((id, index) => {
+    orderMap[id] = index;
+  });
+  return arr.sort((a, b) => orderMap[a.id] - orderMap[b.id]);
+};
+
+export const reorder = <V extends { order?: { [id: string]: number } }>(
+  arr: V[],
+  id: string
+) => {
+  return arr.sort((a, b) => (a.order?.[id] || 0) - (b.order?.[id] || 0));
+};
+
 export const generateKeywords = (str: string) => {
   const keywords: string[] = [];
   for (let i = 1; i < str.length + 1; i++) {

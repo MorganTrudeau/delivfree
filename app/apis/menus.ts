@@ -3,6 +3,19 @@ import firestore, {
 } from "@react-native-firebase/firestore";
 import { Menu, MenuCategory, MenuCustomization, MenuItem } from "delivfree";
 
+export const saveCustomizationOrder = (item: string, order: string[]) => {
+  const customizationCollection = firestore().collection("MenuCustomizations");
+  const batch = firestore().batch();
+
+  order.forEach((customization, index) => {
+    batch.update(customizationCollection.doc(customization), {
+      order: { [item]: index },
+    });
+  });
+
+  return batch.commit();
+};
+
 export const saveCategoryOrder = (order: { [menu: string]: string[] }) => {
   const categoriesCollection = firestore().collection("MenuCategories");
   const batch = firestore().batch();

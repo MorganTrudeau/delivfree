@@ -1,7 +1,6 @@
 import { ButtonSmall } from "app/components/ButtonSmall";
 import { Icon } from "app/components/Icon";
 import { Text } from "app/components/Text";
-import { TextInput } from "app/components/TextInput";
 import { Toggle } from "app/components/Toggle";
 import { $borderBottom, $flex, $row } from "app/components/styles";
 import { colors, spacing } from "app/theme";
@@ -167,8 +166,6 @@ export const MenuItemsSearch = ({
     </View>
   );
 };
-
-const $searchInput: ViewStyle = { marginBottom: spacing.sm };
 
 const $category: StyleProp<ViewStyle> = [
   {

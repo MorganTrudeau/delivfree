@@ -60,6 +60,15 @@ export type MenuCustomization = {
   maxChoices: string;
   items: string[];
   vendor: string;
+  rules?: MenuCustomizationRule[];
+  order?: { [item: string]: number };
+};
+export type MenuCustomizationRule = {
+  id: string;
+  title: "string";
+  customization: string;
+  choices: string[];
+  condition: "requires" | "excludes";
 };
 
 export type Status = "approved" | "denied" | "pending";

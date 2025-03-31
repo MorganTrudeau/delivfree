@@ -4,6 +4,7 @@ import {
   MenuCategory,
   MenuCustomization,
   MenuCustomizationChoice,
+  MenuCustomizationRule,
   MenuItem,
 } from "delivfree";
 import {
@@ -42,12 +43,14 @@ import { MenuItemsSearch } from "../MenuItem/MenuItemsSearch";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Toggle } from "app/components/Toggle";
+import { ManageMenuCustomizationRule } from "./ManageMenuCustomizationRule";
 
 interface ManageCustomizationProps {
   vendor: string;
   customization?: MenuCustomization | null | undefined;
   items: MenuItem[];
   categories: MenuCategory[];
+  customizations: MenuCustomization[];
   onClose: () => void;
 }
 
@@ -55,12 +58,17 @@ const ManageMenuItem = ({
   customization,
   items,
   categories,
+  customizations,
   vendor,
   onClose,
 }: ManageCustomizationProps) => {
   const Alert = useAlert();
 
   const [editItems, setEditItems] = useState(false);
+  const [editRule, setEditRule] = useState<{
+    rule: MenuCustomizationRule | undefined;
+    visible: boolean;
+  }>({ rule: undefined, visible: false });
   const [state, setState] = useState<MenuCustomization>(
     customization
       ? { ...customization }
@@ -77,6 +85,7 @@ const ManageMenuItem = ({
           maxChoices: "",
           items: [],
           vendor,
+          rules: [],
         }
   );
 
@@ -149,6 +158,20 @@ const ManageMenuItem = ({
     (item: MenuCustomizationChoice) => item.id,
     []
   );
+
+  const confirmDeleteRule = useCallback(
+    async (rule: MenuCustomizationRule) => {
+      const shouldDelete = await confirmDelete(Alert);
+      if (shouldDelete) {
+        setState((s) => ({
+          ...s,
+          rules: s.rules?.filter((r) => r.id !== rule.id),
+        }));
+      }
+    },
+    [Alert]
+  );
+
   const renderChoice = useCallback(
     ({ item: choice, drag }: RenderItemParams<MenuCustomizationChoice>) => {
       return (
@@ -416,6 +439,50 @@ const ManageMenuItem = ({
           />
         </View>
 
+        <View
+          style={{
+            borderTopWidth: StyleSheet.hairlineWidth,
+            borderTopColor: colors.border,
+            marginVertical: spacing.md,
+          }}
+        />
+
+        <View>
+          <Text preset="formLabel" style={$formLabel}>
+            Rules
+          </Text>
+          <Text>
+            Specify rules that control when to show this customization.
+          </Text>
+          {state.rules?.map((rule, index) => (
+            <Pressable
+              key={rule.id}
+              style={[{ paddingLeft: spacing.sm }, $row, $borderBottomLight]}
+              onPress={() => {
+                setEditRule({ rule, visible: true });
+              }}
+            >
+              <Text style={$flex}>
+                {index + 1}. {rule.title}
+              </Text>
+              <Pressable
+                style={$deleteButton}
+                onPress={() => confirmDeleteRule(rule)}
+              >
+                <Icon icon={"close"} />
+              </Pressable>
+            </Pressable>
+          ))}
+          <ButtonSmall
+            text="Add rule"
+            leftIcon="plus"
+            style={{ alignSelf: "flex-start", marginTop: spacing.xs }}
+            onPress={() => {
+              setEditRule({ rule: undefined, visible: true });
+            }}
+          />
+        </View>
+
         <Button
           text={"Save customization"}
           preset={state.name ? "filled" : "default"}
@@ -429,45 +496,77 @@ const ManageMenuItem = ({
 
   const renderEditItems = () => {
     return (
-      <>
-        <View>
-          <Pressable
-            onPress={() => setEditItems(false)}
-            style={[$row, { marginBottom: spacing.sm }]}
-          >
-            <Icon
-              icon={"arrow-left"}
-              style={{ marginRight: spacing.xs }}
-              color={colors.primary}
-            />
-            <Text style={{ color: colors.primary }}>Back to customization</Text>
-          </Pressable>
-          <Text preset="subheading">Edit menu items</Text>
-          <Text size="xs" style={{ marginBottom: spacing.xs }}>
-            Select which menu items show this customization
-          </Text>
-          <MenuItemsSearch
-            items={items}
-            categories={categories}
-            selectedItems={state.items}
-            onSelect={updateState("items")}
+      <View>
+        <Pressable
+          onPress={() => setEditItems(false)}
+          style={[$row, { marginBottom: spacing.sm }]}
+        >
+          <Icon
+            icon={"arrow-left"}
+            style={{ marginRight: spacing.xs }}
+            color={colors.primary}
           />
-          <Button
-            text={"Save customization"}
-            preset={state.name ? "filled" : "default"}
-            onPress={onSave}
-            style={{ marginTop: spacing.lg }}
-            RightAccessory={Loading}
+          <Text style={{ color: colors.primary }}>Back to customization</Text>
+        </Pressable>
+        <Text preset="subheading">Edit menu items</Text>
+        <Text size="xs" style={{ marginBottom: spacing.xs }}>
+          Select which menu items show this customization
+        </Text>
+        <MenuItemsSearch
+          items={items}
+          categories={categories}
+          selectedItems={state.items}
+          onSelect={updateState("items")}
+        />
+        <Button
+          text={"Save customization"}
+          preset={state.name ? "filled" : "default"}
+          onPress={onSave}
+          style={{ marginTop: spacing.lg }}
+          RightAccessory={Loading}
+        />
+      </View>
+    );
+  };
+
+  const renderRule = () => {
+    return (
+      <View>
+        <Pressable
+          onPress={() => setEditRule({ rule: undefined, visible: false })}
+          style={[$row, { marginBottom: spacing.sm }]}
+        >
+          <Icon
+            icon={"arrow-left"}
+            style={{ marginRight: spacing.xs }}
+            color={colors.primary}
           />
-        </View>
-      </>
+          <Text style={{ color: colors.primary }}>Back to customization</Text>
+        </Pressable>
+        <Text preset="subheading">Customization rule</Text>
+        <ManageMenuCustomizationRule
+          customizations={customizations}
+          sourceCustomization={state.id}
+          style={$manageCustomizationRule}
+          rule={editRule.rule}
+          onSave={(rule) => {
+            setState((s) => ({
+              ...s,
+              rules: s.rules?.find((r) => r.id === rule.id)
+                ? s.rules?.map((r) => (r.id === rule.id ? rule : r))
+                : [...(s.rules || []), rule],
+            }));
+            setEditRule({ rule: undefined, visible: false });
+          }}
+        />
+      </View>
     );
   };
 
   return (
     <View style={$flex}>
       <View style={[$row, { marginBottom: spacing.xs }]}>
-        <Text preset="heading" style={{ flex: 1 }}>
+        <Text preset="heading" style={$flex}>
           {customization ? "Edit customization" : "New customization"}
         </Text>
         {customization && (
@@ -482,7 +581,11 @@ const ManageMenuItem = ({
           </Pressable>
         )}
       </View>
-      {editItems ? renderEditItems() : renderForm()}
+      {editItems
+        ? renderEditItems()
+        : editRule.visible
+        ? renderRule()
+        : renderForm()}
     </View>
   );
 };
@@ -501,8 +604,8 @@ export const ManageMenuCustomizationModal = forwardRef<
     <BottomSheet ref={ref} onClose={onDismiss}>
       <ScrollContainer
         contentContainerStyle={{
-          padding: spacing.md,
           paddingBottom: spacing.md + insets.bottom,
+          padding: spacing.md,
           flexGrow: 1,
         }}
         showsVerticalScrollIndicator={false}
@@ -518,3 +621,5 @@ const $typeButton: ViewStyle = {
   minHeight: 0,
   borderRadius: 100,
 };
+const $manageCustomizationRule: ViewStyle = { paddingTop: spacing.sm };
+const $deleteButton: ViewStyle = { padding: spacing.sm };

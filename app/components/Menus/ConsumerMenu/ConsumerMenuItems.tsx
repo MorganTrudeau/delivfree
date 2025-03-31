@@ -1,7 +1,13 @@
 import { $row } from "app/components/styles";
 import { useMenusLoading } from "app/hooks/useMenusLoading";
 import { colors, spacing } from "app/theme";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ActivityIndicator, View } from "react-native";
 import { ConsumerMenuItem } from "./ConsumerMenuItem";
 import { MenuItem } from "delivfree";
@@ -9,6 +15,7 @@ import { ConsumerItemSelectModal } from "./ConsumerItemSelect";
 import { ModalRef } from "app/utils/types";
 import { useDimensions } from "app/hooks/useDimensions";
 import { BottomSheetRef } from "app/components/Modal/BottomSheet";
+import { reorder } from "app/utils/general";
 
 interface Props {
   category: string;
@@ -46,6 +53,11 @@ export const ConsumerMenuItems = ({
     [vendorLocationClosed]
   );
 
+  const orderedItems = useMemo(
+    () => reorder(items, category),
+    [items, category]
+  );
+
   return (
     <View>
       {!itemsLoaded && <ActivityIndicator color={colors.primary} />}
@@ -55,7 +67,7 @@ export const ConsumerMenuItems = ({
           { flexWrap: "wrap", rowGap: spacing.md, columnGap: spacing.md },
         ]}
       >
-        {items.map((item) => {
+        {orderedItems.map((item) => {
           return (
             <ConsumerMenuItem
               key={item.id}

@@ -5,6 +5,7 @@ import React, { useEffect, useMemo } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { ConsumerMenuItems } from "./ConsumerMenuItems";
 import { EmptyList } from "app/components/EmptyList";
+import { reorder } from "app/utils/general";
 
 interface Props {
   menu: string;
@@ -28,8 +29,8 @@ export const ConsumerMenuCategories = ({
   }, [menu]);
 
   const orderedCategories = useMemo(
-    () => categories.sort((a, b) => a.order[menu] - b.order[menu]),
-    [categories]
+    () => reorder(categories, menu),
+    [categories, menu]
   );
 
   return (
