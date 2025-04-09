@@ -3,15 +3,15 @@ import firestore, {
 } from "@react-native-firebase/firestore";
 import { Menu, MenuCategory, MenuCustomization, MenuItem } from "delivfree";
 
-export const saveCustomizationOrder = (item: string, order: string[]) => {
+export const saveCustomizationOrder = async (item: string, order: string[]) => {
   const customizationCollection = firestore().collection("MenuCustomizations");
   const batch = firestore().batch();
 
-  order.forEach((customization, index) => {
+  order.forEach((customization, index) =>
     batch.update(customizationCollection.doc(customization), {
-      order: { [item]: index },
-    });
-  });
+      [`order.${item}`]: index,
+    })
+  );
 
   return batch.commit();
 };
@@ -23,7 +23,7 @@ export const saveCategoryOrder = (order: { [menu: string]: string[] }) => {
   Object.entries(order).forEach(([menu, categories]) => {
     categories.forEach((category, index) => {
       batch.update(categoriesCollection.doc(category), {
-        order: { [menu]: index },
+        [`order.${menu}`]: index,
       });
     });
   });
@@ -38,7 +38,7 @@ export const saveItemOrder = (order: { [category: string]: string[] }) => {
   Object.entries(order).forEach(([category, items]) => {
     items.forEach((item, index) => {
       batch.update(categoriesCollection.doc(item), {
-        order: { [category]: index },
+        [`order.${category}`]: index,
       });
     });
   });
