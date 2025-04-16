@@ -1,7 +1,13 @@
 import React, { useCallback, useMemo } from "react";
 import { Menu } from "delivfree";
 import { TableHeader, TableHeaders } from "../../TableHeaders";
-import { ActivityIndicator, FlatList, Pressable, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  FlatListProps,
+  Pressable,
+  View,
+} from "react-native";
 import { useDimensions } from "app/hooks/useDimensions";
 import { $borderBottom, $row, isLargeScreen } from "../../styles";
 import { DataCell, TableCell } from "../../TableCell";
@@ -11,13 +17,13 @@ import { Icon } from "../../Icon";
 import { colors, spacing } from "app/theme";
 import { formattedDaysAndTimes } from "app/utils/dates";
 
-interface Props {
+interface Props extends Omit<FlatListProps<Menu>, "data" | "renderItem"> {
   data: Menu[];
   onPress?: (data: Menu) => void;
   loaded: boolean;
 }
 
-export const MenusList = ({ data, onPress, loaded }: Props) => {
+export const MenusList = ({ data, onPress, loaded, ...rest }: Props) => {
   const { width } = useDimensions();
   const largeScreen = isLargeScreen(width);
 
@@ -85,6 +91,7 @@ export const MenusList = ({ data, onPress, loaded }: Props) => {
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
         showsVerticalScrollIndicator={false}
+        {...rest}
       />
     </>
   );

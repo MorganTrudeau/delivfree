@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import { MenuNames } from "./Menu/MenuNames";
 import { Text } from "../Text";
 import { colors, spacing } from "app/theme";
@@ -171,7 +171,7 @@ export const MenuOverview = React.memo(function MenuOverview({
   >(saveMenu);
 
   return (
-    <View>
+    <ScrollView>
       <MenuNames
         menus={menus}
         onAdd={onAddMenu}
@@ -212,7 +212,7 @@ export const MenuOverview = React.memo(function MenuOverview({
           addItem={onAddItem}
         />
       )}
-    </View>
+    </ScrollView>
   );
 });
 

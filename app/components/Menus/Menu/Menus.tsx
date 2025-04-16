@@ -4,6 +4,7 @@ import { Menu } from "delivfree";
 import { $menusScreenHeader } from "../../styles";
 import { ScreenHeader } from "../../ScreenHeader";
 import { MenusList } from "./MenusList";
+import { useListSearch } from "app/hooks/useListSearch";
 
 interface Props {
   menus: Menu[];
@@ -13,10 +14,7 @@ interface Props {
 }
 
 export const Menus = ({ menus, menusLoaded, onAddMenu, onEditMenu }: Props) => {
-  const sortedMenus = useMemo(
-    () => menus.sort((a, b) => (a.name < b.name ? -1 : 1)),
-    [menus]
-  );
+  const { filteredItems, renderSearch } = useListSearch(menus, queryExtractor);
   return (
     <View>
       <ScreenHeader
@@ -25,7 +23,14 @@ export const Menus = ({ menus, menusLoaded, onAddMenu, onEditMenu }: Props) => {
         buttonTitle={"New menu"}
         onButtonPress={onAddMenu}
       />
-      <MenusList data={sortedMenus} onPress={onEditMenu} loaded={menusLoaded} />
+      <MenusList
+        ListHeaderComponent={renderSearch}
+        data={filteredItems}
+        onPress={onEditMenu}
+        loaded={menusLoaded}
+      />
     </View>
   );
 };
+
+const queryExtractor = (item: Menu) => item.name;

@@ -1,10 +1,9 @@
-import React, { useCallback, useRef, useState } from "react";
+import React from "react";
 import { Menu, MenuCategory } from "delivfree";
 import { MenuCategoriesList } from "./MenuCategoriesList";
 import { ScreenHeader } from "../../ScreenHeader";
 import { $menusScreenHeader } from "../../styles";
-import { ManageMenuCategoryModal } from "./ManageMenuCategoryModal";
-import { BottomSheetRef } from "../../Modal/BottomSheet";
+import { useListSearch } from "app/hooks/useListSearch";
 
 interface Props {
   categories: MenuCategory[];
@@ -21,6 +20,10 @@ export const MenuCategories = ({
   onAdd,
   onEdit,
 }: Props) => {
+  const { filteredItems, renderSearch } = useListSearch(
+    categories,
+    queryExtractor
+  );
   return (
     <>
       <ScreenHeader
@@ -30,7 +33,8 @@ export const MenuCategories = ({
         style={$menusScreenHeader}
       />
       <MenuCategoriesList
-        categories={categories}
+        ListHeaderComponent={renderSearch}
+        categories={filteredItems}
         menus={menus}
         onPress={onEdit}
         loaded={loaded}
@@ -38,3 +42,5 @@ export const MenuCategories = ({
     </>
   );
 };
+
+const queryExtractor = (item: MenuCategory) => item.name;

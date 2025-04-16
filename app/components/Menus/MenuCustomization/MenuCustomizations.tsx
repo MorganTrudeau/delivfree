@@ -1,9 +1,10 @@
 import React from "react";
 import { View } from "react-native";
 import { MenuCustomization, MenuItem } from "delivfree";
-import { $menusScreenHeader } from "../../styles";
+import { $flex, $menusScreenHeader } from "../../styles";
 import { ScreenHeader } from "../../ScreenHeader";
 import { MenuCustomizationsList } from "./MenuCustomizationsList";
+import { useListSearch } from "app/hooks/useListSearch";
 
 interface Props {
   customizations: MenuCustomization[];
@@ -20,8 +21,12 @@ export const MenuCustomizations = ({
   onAdd,
   onEdit,
 }: Props) => {
+  const { filteredItems, renderSearch } = useListSearch(
+    customizations,
+    queryExtractor
+  );
   return (
-    <View>
+    <View style={$flex}>
       <ScreenHeader
         title={"Customizations"}
         style={$menusScreenHeader}
@@ -29,7 +34,8 @@ export const MenuCustomizations = ({
         onButtonPress={onAdd}
       />
       <MenuCustomizationsList
-        customizations={customizations}
+        ListHeaderComponent={renderSearch}
+        customizations={filteredItems}
         items={items}
         onPress={onEdit}
         loaded={loaded}
@@ -37,3 +43,5 @@ export const MenuCustomizations = ({
     </View>
   );
 };
+
+const queryExtractor = (item: MenuCustomization) => item.name;

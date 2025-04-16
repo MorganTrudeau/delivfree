@@ -3,6 +3,7 @@ import { Button, Icon, Screen, Text, TextField, Toggle } from "app/components";
 import { Card } from "app/components/Card";
 import { DetailItem } from "app/components/DetailItem";
 import { DetailsHeader } from "app/components/Details/DetailsHeader";
+import { LogoutButton } from "app/components/LogoutButton";
 import { BottomSheet, BottomSheetRef } from "app/components/Modal/BottomSheet";
 import { PhoneNumberInput } from "app/components/PhoneNumberInput";
 import { StatusIndicator } from "app/components/StatusIndicator";

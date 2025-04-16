@@ -173,7 +173,7 @@ export const VendorMenusScreen = (props: VendorMenusScreenProps) => {
     <Screen
       style={$screen}
       contentContainerStyle={[$containerPadding, { minWidth: 550 }]}
-      preset="scroll"
+      preset="fixed"
     >
       <ListTabs
         tabs={tabItems}

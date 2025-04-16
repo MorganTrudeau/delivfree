@@ -74,9 +74,14 @@ export const $card: ViewStyle = {
   borderColor: colors.border,
   borderWidth: StyleSheet.hairlineWidth,
 };
+
+export const $paddingMd: ViewStyle = { padding: spacing.md };
+
+export const $paddingVerticalSm: ViewStyle = { paddingVertical: spacing.sm };
+export const $paddingVerticalMd: ViewStyle = { paddingVertical: spacing.md };
+
 export const $containerPadding: ViewStyle = {
   paddingHorizontal: spacing.md,
-  paddingVertical: spacing.md,
   flexGrow: 1,
 };
 export const $screen: ViewStyle = {
