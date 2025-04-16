@@ -1,9 +1,10 @@
 import React from "react";
 import { View } from "react-native";
 import { MenuCategory, MenuItem } from "delivfree";
-import { $menusScreenHeader } from "../../styles";
+import { $flex, $menusScreenHeader } from "../../styles";
 import { ScreenHeader } from "../../ScreenHeader";
 import { MenuItemsList } from "./MenuItemsList";
+import { useListSearch } from "app/hooks/useListSearch";
 
 interface Props {
   items: MenuItem[];
@@ -20,8 +21,9 @@ export const MenuItems = ({
   onAdd,
   onEdit,
 }: Props) => {
+  const { filteredItems, renderSearch } = useListSearch(items, queryExtractor);
   return (
-    <View>
+    <View style={$flex}>
       <ScreenHeader
         title={"Items"}
         style={$menusScreenHeader}
@@ -29,7 +31,8 @@ export const MenuItems = ({
         onButtonPress={onAdd}
       />
       <MenuItemsList
-        items={items}
+        ListHeaderComponent={renderSearch}
+        items={filteredItems}
         categories={categories}
         onPress={onEdit}
         loaded={loaded}
@@ -37,3 +40,5 @@ export const MenuItems = ({
     </View>
   );
 };
+
+const queryExtractor = (item: MenuItem) => item.name;

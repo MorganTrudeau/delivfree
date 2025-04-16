@@ -1,7 +1,12 @@
 import React, { useCallback, useMemo } from "react";
 import { Menu, MenuCategory } from "delivfree";
 import { TableHeader, TableHeaders } from "../../TableHeaders";
-import { ActivityIndicator, FlatList, Pressable } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  FlatListProps,
+  Pressable,
+} from "react-native";
 import { useDimensions } from "app/hooks/useDimensions";
 import { $borderBottom, isLargeScreen } from "../../styles";
 import { DataCell, TableCell } from "../../TableCell";
@@ -9,7 +14,8 @@ import { Text } from "../../Text";
 import { EmptyList } from "../../EmptyList";
 import { colors, spacing } from "app/theme";
 
-interface Props {
+interface Props
+  extends Omit<FlatListProps<MenuCategory>, "data" | "renderItem"> {
   categories: MenuCategory[];
   menus: Menu[];
   onPress?: (category: MenuCategory) => void;
@@ -21,6 +27,7 @@ export const MenuCategoriesList = ({
   menus,
   onPress,
   loaded,
+  ...rest
 }: Props) => {
   const { width } = useDimensions();
   const largeScreen = isLargeScreen(width);
@@ -80,6 +87,7 @@ export const MenuCategoriesList = ({
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
         showsVerticalScrollIndicator={false}
+        {...rest}
       />
     </>
   );

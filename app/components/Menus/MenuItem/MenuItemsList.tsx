@@ -1,7 +1,13 @@
 import React, { useCallback, useMemo } from "react";
 import { MenuCategory, MenuItem } from "delivfree";
 import { TableHeader, TableHeaders } from "../../TableHeaders";
-import { ActivityIndicator, FlatList, Pressable, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  FlatListProps,
+  Pressable,
+  View,
+} from "react-native";
 import { useDimensions } from "app/hooks/useDimensions";
 import { $borderBottom, $row, isLargeScreen } from "../../styles";
 import { DataCell, TableCell } from "../../TableCell";
@@ -12,7 +18,7 @@ import { colors, spacing } from "app/theme";
 import FastImage from "react-native-fast-image";
 import { borderRadius } from "app/theme/borderRadius";
 
-interface Props {
+interface Props extends Omit<FlatListProps<MenuItem>, "data" | "renderItem"> {
   items: MenuItem[];
   categories: MenuCategory[];
   onPress?: (data: MenuItem) => void;
@@ -24,6 +30,7 @@ export const MenuItemsList = ({
   categories,
   onPress,
   loaded,
+  ...rest
 }: Props) => {
   const { width } = useDimensions();
   const largeScreen = isLargeScreen(width);
@@ -109,6 +116,8 @@ export const MenuItemsList = ({
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+        {...rest}
       />
     </>
   );
